@@ -18,33 +18,9 @@ public:
 		map4D_[right_int(s->r())][left_int(s->x())][left_int(s->y())][left_int(s->z())].insert(s);
 	}
 
-	void remove(const Sphere* s)
-	{
-		typename Map4D::const_iterator it4=map4D_.find(get_radius_class(s));
-		if(it4!=map4D_.end())
-		{
-			const Map3D& map3D=it4->second;
-			typename Map3D::const_iterator it3=map3D.find(left_int(s->x));
-			if(it3!=map3D.end())
-			{
-				const Map2D& map2D=it3->second;
-				typename Map2D::const_iterator it2=map2D.find(left_int(s->y));
-				if(it2!=map2D.end())
-				{
-					const Map1D& map1D=it2->second;
-					typename Map1D::const_iterator it1=map1D.find(left_int(s->z));
-					if(it1!=map1D.end()) { map1D.erase(it1); }
-					if(map1D.empty()) { map2D.erase(it2); }
-					if(map2D.empty()) { map3D.erase(it3); }
-					if(map3D.empty()) { map4D_.erase(it4); }
-				}
-			}
-		}
-	}
-
 	Set find_potential_neighbours(const Sphere& s) const
 	{
-		Set ns;
+		Set result;
 		for(typename Map4D::const_iterator r_iter=map4D_.begin();r_iter!=map4D_.end();r_iter++)
 		{
 			const int max_r=r_iter->first;
@@ -76,12 +52,13 @@ public:
 
 					for(;z_iter!=z_end;z_iter++)
 					{
-						//
+						const Set& set=y_iter->second;
+						result.insert(set.begin(), set.end());
 					}
 				}
 			}
 		}
-		return ns;
+		return result;
 	}
 
 private:
