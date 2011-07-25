@@ -32,7 +32,34 @@ public:
 		}
 	}
 
-	Set find_potential_neighbours(const Sphere& s) const
+	void remove(const Sphere* s)
+	{
+		if(s->r()<=max_mappeable_radius_)
+		{
+			typename MapR::const_iterator iter_r=map_r_.find(radius_int(s->r()));
+			if(iter_r==map_r_.end()) return;
+
+			const MapX& map_x=iter_r->second;
+			typename MapR::const_iterator iter_x=map_x.find(coordinate_int(s->x()));
+			if(iter_x==map_x.end()) return;
+
+			const MapX& map_y=iter_r->second;
+			typename MapR::const_iterator iter_y=map_y.find(coordinate_int(s->y()));
+			if(iter_y==map_y.end()) return;
+
+			const MapX& map_z=iter_r->second;
+			typename MapR::const_iterator iter_z=map_z.find(coordinate_int(s->z()));
+			if(iter_z==map_z.end()) return;
+
+			iter_z->second.erase(s);
+		}
+		else
+		{
+			unmapped_.erase(s);
+		}
+	}
+
+	Set find_potential_intersections(const Sphere& s) const
 	{
 		Set result;
 		for(typename MapR::const_iterator iter_r=map_r_.begin();iter_r!=map_r_.end();iter_r++)
@@ -57,7 +84,7 @@ public:
 
 					for(;iter_z!=end_z;iter_z++)
 					{
-						const Set& set=iter_y->second;
+						const Set& set=iter_z->second;
 						result.insert(set.begin(), set.end());
 					}
 				}
