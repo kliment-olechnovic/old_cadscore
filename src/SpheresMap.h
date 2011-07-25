@@ -11,48 +11,42 @@ class SpheresMap
 public:
 	typedef std::tr1::unordered_set<const Sphere*> Set;
 
-	SpheresMap(const double scale_factor=1.0) : scale_factor_(scale_factor) {}
+	SpheresMap(const double coordinate_scale_factor, const double radius_scale_factor) :
+		coordinate_scale_factor_(coordinate_scale_factor),
+		radius_scale_factor_(radius_scale_factor)
+	{}
 
 	void add(const Sphere* s)
 	{
-		map4D_[right_int(s->r())][left_int(s->x())][left_int(s->y())][left_int(s->z())].insert(s);
+		map_r_[radius_int(s->r())][coordinate_int(s->x())][coordinate_int(s->y())][coordinate_int(s->z())].insert(s);
 	}
 
 	Set find_potential_neighbours(const Sphere& s) const
 	{
 		Set result;
-		for(typename Map4D::const_iterator r_iter=map4D_.begin();r_iter!=map4D_.end();r_iter++)
+		for(typename MapR::const_iterator iter_r=map_r_.begin();iter_r!=map_r_.end();iter_r++)
 		{
-			const int max_r=r_iter->first;
+			const double offset=s.r()+(iter_r->first*radius_scale_factor_);
 
-			const int lx=left_int(s.x()-s.r()-max_r);
-			const int rx=right_int(s.x()+s.r()+max_r);
-			const Map3D& map3D=r_iter->second;
-			typename Map3D::const_iterator x_iter=map3D.lower_bound(lx);
-			if(x_iter->first<lx) { x_iter++; }
-			typename Map3D::const_iterator x_end=map3D.upper_bound(rx);
+			const MapX& map_x=iter_r->second;
+			typename MapX::const_iterator iter_x=map_x.lower_bound(coordinate_int(s.x()-offset));
+			const typename MapX::const_iterator end_x=map_x.upper_bound(coordinate_int(s.x()+offset));
 
-			for(;x_iter!=x_end;x_iter++)
+			for(;iter_x!=end_x;iter_x++)
 			{
-				const int ly=left_int(s.y()-s.r()-max_r);
-				const int ry=right_int(s.y()+s.r()+max_r);
-				const Map2D& map2D=x_iter->second;
-				typename Map2D::const_iterator y_iter=map2D.lower_bound(ly);
-				if(y_iter->first<ly) { y_iter++; }
-				typename Map2D::const_iterator y_end=map2D.upper_bound(ry);
+				const MapY& map_y=iter_x->second;
+				typename MapY::const_iterator iter_y=map_y.lower_bound(coordinate_int(s.y()-offset));
+				const typename MapY::const_iterator end_y=map_y.upper_bound(coordinate_int(s.y()+offset));
 
-				for(;y_iter!=y_end;y_iter++)
+				for(;iter_y!=end_y;iter_y++)
 				{
-					const int lz=left_int(s.z()-s.r()-max_r);
-					const int rz=right_int(s.z()+s.r()+max_r);
-					const Map1D& map1D=y_iter->second;
-					typename Map1D::const_iterator z_iter=map1D.lower_bound(lz);
-					if(z_iter->first<lz) { z_iter++; }
-					typename Map1D::const_iterator z_end=map1D.upper_bound(rz);
+					const MapZ& map_z=iter_y->second;
+					typename MapZ::const_iterator iter_z=map_z.lower_bound(coordinate_int(s.z()-offset));
+					const typename MapZ::const_iterator end_z=map_z.upper_bound(coordinate_int(s.z()+offset));
 
-					for(;z_iter!=z_end;z_iter++)
+					for(;iter_z!=end_z;iter_z++)
 					{
-						const Set& set=y_iter->second;
+						const Set& set=iter_y->second;
 						result.insert(set.begin(), set.end());
 					}
 				}
@@ -62,23 +56,24 @@ public:
 	}
 
 private:
-	typedef std::map< int, Set > Map1D;
-	typedef std::map< int, Map1D > Map2D;
-	typedef std::map< int, Map2D > Map3D;
-	typedef std::map< int, Map3D > Map4D;
+	typedef std::map< int, Set > MapZ;
+	typedef std::map< int, MapZ > MapY;
+	typedef std::map< int, MapY > MapX;
+	typedef std::map< int, MapX > MapR;
 
-	int left_int(const double v) const
+	int coordinate_int(const double v) const
 	{
-		return static_cast<int>(floor(v*scale_factor_));
+		return static_cast<int>(floor(v*coordinate_scale_factor_));
 	}
 
-	int right_int(const double v) const
+	int radius_int(const double v) const
 	{
-		return static_cast<int>(ceil(v*scale_factor_));
+		return static_cast<int>(ceil(v*radius_scale_factor_));
 	}
 
-	double scale_factor_;
-	Map4D map4D_;
+	double coordinate_scale_factor_;
+	double radius_scale_factor_;
+	MapR map_r_;
 };
 
 #endif /* SPHERESMAP_H_ */
