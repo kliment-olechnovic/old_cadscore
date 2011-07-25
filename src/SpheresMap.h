@@ -11,14 +11,25 @@ class SpheresMap
 public:
 	typedef std::tr1::unordered_set<const Sphere*> Set;
 
-	SpheresMap(const double coordinate_scale_factor, const double radius_scale_factor) :
-		coordinate_scale_factor_(coordinate_scale_factor),
-		radius_scale_factor_(radius_scale_factor)
+	SpheresMap(
+			const double coordinate_scale_factor,
+			const double radius_scale_factor,
+			const double max_mappeable_radius) :
+				coordinate_scale_factor_(coordinate_scale_factor),
+				radius_scale_factor_(radius_scale_factor),
+				max_mappeable_radius_(max_mappeable_radius)
 	{}
 
 	void add(const Sphere* s)
 	{
-		map_r_[radius_int(s->r())][coordinate_int(s->x())][coordinate_int(s->y())][coordinate_int(s->z())].insert(s);
+		if(s->r()<=max_mappeable_radius_)
+		{
+			map_r_[radius_int(s->r())][coordinate_int(s->x())][coordinate_int(s->y())][coordinate_int(s->z())].insert(s);
+		}
+		else
+		{
+			unmapped_.insert(s);
+		}
 	}
 
 	Set find_potential_neighbours(const Sphere& s) const
@@ -52,6 +63,7 @@ public:
 				}
 			}
 		}
+		result.insert(unmapped_.begin(), unmapped_.end());
 		return result;
 	}
 
@@ -73,7 +85,9 @@ private:
 
 	double coordinate_scale_factor_;
 	double radius_scale_factor_;
+	double max_mappeable_radius_;
 	MapR map_r_;
+	Set unmapped_;
 };
 
 #endif /* SPHERESMAP_H_ */
