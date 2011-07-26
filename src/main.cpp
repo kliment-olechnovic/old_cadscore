@@ -1,5 +1,6 @@
 #include <iostream>
 #include "SpheresMap.h"
+#include "SpheresCollisionDetection.h"
 
 struct TestSphere
 {

@@ -5,11 +5,11 @@
 #include <tr1/unordered_set>
 #include <cmath>
 
-template<typename SPHERE>
+template<typename SphereType>
 class SpheresMap
 {
 public:
-	typedef SPHERE Sphere;
+	typedef SphereType Sphere;
 	typedef std::tr1::unordered_set<const Sphere*> Set;
 
 	SpheresMap(
@@ -23,46 +23,57 @@ public:
 
 	void add(const Sphere* s)
 	{
-		if(s->r()<=max_mappeable_radius_)
+		if(all_.find(s)==all_.end())
 		{
-			map_r_[radius_int(s->r())][coordinate_int(s->x())][coordinate_int(s->y())][coordinate_int(s->z())].insert(s);
-		}
-		else
-		{
-			unmapped_.insert(s);
+			if(s->r()<=max_mappeable_radius_)
+			{
+				map_r_[radius_int(s->r())][coordinate_int(s->x())][coordinate_int(s->y())][coordinate_int(s->z())].insert(s);
+			}
+			else
+			{
+				unmapped_.insert(s);
+			}
+			all_.insert(s);
 		}
 	}
 
 	void remove(const Sphere* s)
 	{
-		if(s->r()<=max_mappeable_radius_)
+		if(all_.find(s)!=all_.end())
 		{
-			typename MapR::iterator iter_r=map_r_.find(radius_int(s->r()));
-			if(iter_r==map_r_.end()) return;
-
-			MapX& map_x=iter_r->second;
-			typename MapX::iterator iter_x=map_x.find(coordinate_int(s->x()));
-			if(iter_x==map_x.end()) return;
-
-			MapY& map_y=iter_x->second;
-			typename MapY::iterator iter_y=map_y.find(coordinate_int(s->y()));
-			if(iter_y==map_y.end()) return;
-
-			MapZ& map_z=iter_y->second;
-			typename MapZ::iterator iter_z=map_z.find(coordinate_int(s->z()));
-			if(iter_z==map_z.end()) return;
-
-			Set& set=iter_z->second;
-			set.erase(s);
-
-			if(set.empty()) { map_z.erase(iter_z); }
-			if(map_z.empty()) { map_y.erase(iter_y); }
-			if(map_y.empty()) { map_x.erase(iter_x); }
-			if(map_x.empty()) { map_r_.erase(iter_r); }
-		}
-		else
-		{
-			unmapped_.erase(s);
+			if(s->r()<=max_mappeable_radius_)
+			{
+				typename MapR::iterator iter_r=map_r_.find(radius_int(s->r()));
+				if(iter_r!=map_r_.end())
+				{
+					MapX& map_x=iter_r->second;
+					typename MapX::iterator iter_x=map_x.find(coordinate_int(s->x()));
+					if(iter_x!=map_x.end())
+					{
+						MapY& map_y=iter_x->second;
+						typename MapY::iterator iter_y=map_y.find(coordinate_int(s->y()));
+						if(iter_y!=map_y.end())
+						{
+							MapZ& map_z=iter_y->second;
+							typename MapZ::iterator iter_z=map_z.find(coordinate_int(s->z()));
+							if(iter_z!=map_z.end())
+							{
+								Set& set=iter_z->second;
+								set.erase(s);
+								if(set.empty()) { map_z.erase(iter_z); }
+							}
+							if(map_z.empty()) { map_y.erase(iter_y); }
+						}
+						if(map_y.empty()) { map_x.erase(iter_x); }
+					}
+					if(map_x.empty()) { map_r_.erase(iter_r); }
+				}
+			}
+			else
+			{
+				unmapped_.erase(s);
+			}
+			all_.erase(s);
 		}
 	}
 
@@ -120,6 +131,7 @@ private:
 	double coordinate_scale_factor_;
 	double radius_scale_factor_;
 	double max_mappeable_radius_;
+	Set all_;
 	MapR map_r_;
 	Set unmapped_;
 };
