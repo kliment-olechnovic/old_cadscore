@@ -2,7 +2,6 @@
 #define POINT_H_
 
 #include <cmath>
-#include "FloatingPointHandler.h"
 
 class Point
 {
