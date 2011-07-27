@@ -10,12 +10,13 @@ class SpheresMap
 {
 public:
 	typedef SphereType Sphere;
+	typedef typename Sphere::FloatType FloatType;
 	typedef std::tr1::unordered_set<const Sphere*> Set;
 
 	SpheresMap(
-			const double coordinate_scale_factor,
-			const double radius_scale_factor,
-			const double max_mappeable_radius) :
+			const FloatType coordinate_scale_factor,
+			const FloatType radius_scale_factor,
+			const FloatType max_mappeable_radius) :
 				coordinate_scale_factor_(coordinate_scale_factor),
 				radius_scale_factor_(radius_scale_factor),
 				max_mappeable_radius_(max_mappeable_radius)
@@ -82,7 +83,7 @@ public:
 		Set result;
 		for(typename MapR::const_iterator iter_r=map_r_.begin();iter_r!=map_r_.end();iter_r++)
 		{
-			const double offset=s.r()+(iter_r->first*radius_scale_factor_);
+			const FloatType offset=s.r()+(iter_r->first*radius_scale_factor_);
 
 			const MapX& map_x=iter_r->second;
 			typename MapX::const_iterator iter_x=map_x.lower_bound(coordinate_int(s.x()-offset));
@@ -118,19 +119,19 @@ private:
 	typedef std::map< int, MapY > MapX;
 	typedef std::map< int, MapX > MapR;
 
-	int coordinate_int(const double v) const
+	int coordinate_int(const FloatType v) const
 	{
 		return static_cast<int>(floor(v*coordinate_scale_factor_));
 	}
 
-	int radius_int(const double v) const
+	int radius_int(const FloatType v) const
 	{
 		return static_cast<int>(ceil(v*radius_scale_factor_));
 	}
 
-	double coordinate_scale_factor_;
-	double radius_scale_factor_;
-	double max_mappeable_radius_;
+	FloatType coordinate_scale_factor_;
+	FloatType radius_scale_factor_;
+	FloatType max_mappeable_radius_;
 	Set all_;
 	MapR map_r_;
 	Set unmapped_;
