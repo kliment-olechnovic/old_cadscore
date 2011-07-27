@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	Set find_potential_intersections(const Sphere& s) const
+	Set find_neighbours(const Sphere& s) const
 	{
 		Set result;
 		for(typename MapR::const_iterator iter_r=map_r_.begin();iter_r!=map_r_.end();iter_r++)
