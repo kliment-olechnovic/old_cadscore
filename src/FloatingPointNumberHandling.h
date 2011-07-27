@@ -5,25 +5,25 @@ template<typename FloatingPointNumberType>
 class FloatingPointNumberHandling
 {
 public:
-	typedef FloatingPointNumberType Number;
+	typedef FloatingPointNumberType FloatType;
 
-	static bool equal(const Number a, const Number b)
+	static bool equal(const FloatType a, const FloatType b)
 	{
 		return (((a-b)<epsilon()) && ((b-a)<epsilon()));
 	}
 
-	static bool less(const Number a, const Number b)
+	static bool less(const FloatType a, const FloatType b)
 	{
 		return ((a+epsilon())<b);
 	}
 
-	static bool greater(const Number a, const Number b)
+	static bool greater(const FloatType a, const FloatType b)
 	{
 		return ((a-epsilon())>b);
 	}
 
 private:
-	static Number epsilon()
+	static FloatType epsilon()
 	{
 		return 0.00000001;
 	}
