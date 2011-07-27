@@ -14,7 +14,7 @@ public:
 		const Set candidates=spheres_map.find_potential_intersections(sphere);
 		for(typename Set::const_iterator it=candidates.begin();it!=candidates.end();it++)
 		{
-			const typename SpheresMapType::Sphere* s=(*it);
+			const Sphere* s=(*it);
 			if(only_containment ? s->contains(sphere) : s->intersects_with(sphere)<0)
 			{
 				return true;
@@ -23,11 +23,11 @@ public:
 		return false;
 	}
 
-	template<typename SpheresContainerType>
-	static Set filter_colliders(const SpheresMap& spheres_map, const SpheresContainerType& candidates, bool only_containment)
+	template<typename InputContainerType, typename OutputContainerType>
+	static OutputContainerType select_colliders(const SpheresMap& spheres_map, const InputContainerType& candidates, bool only_containment)
 	{
-		Set result;
-		for(typename SpheresContainerType::const_iterator it=candidates.begin();it!=candidates.end();it++)
+		OutputContainerType result;
+		for(typename InputContainerType::const_iterator it=candidates.begin();it!=candidates.end();it++)
 		{
 			const Sphere* s=(*it);
 			if(check_for_any_collision(spheres_map, (*s), only_containment))
