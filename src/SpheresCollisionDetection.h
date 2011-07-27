@@ -23,11 +23,11 @@ public:
 		return false;
 	}
 
-	template<typename InputContainerType, typename OutputContainerType>
-	static OutputContainerType select_colliders(const SpheresMap& spheres_map, const InputContainerType& candidates, bool only_containment)
+	template<typename SpheresContainerType>
+	static Set select_colliders(const SpheresMap& spheres_map, const SpheresContainerType& candidates, bool only_containment)
 	{
-		OutputContainerType result;
-		for(typename InputContainerType::const_iterator it=candidates.begin();it!=candidates.end();it++)
+		Set result;
+		for(typename SpheresContainerType::const_iterator it=candidates.begin();it!=candidates.end();it++)
 		{
 			const Sphere* s=(*it);
 			if(check_for_any_collision(spheres_map, (*s), only_containment))
