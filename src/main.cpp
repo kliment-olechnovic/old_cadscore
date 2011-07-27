@@ -1,4 +1,5 @@
 #include <iostream>
+#include "StandardTypeProxies.h"
 #include "SpheresMap.h"
 
 template<typename FloatingPointNumberType>
@@ -14,7 +15,7 @@ struct TestSphere
 
 int main()
 {
-	SpheresMap< TestSphere<double> > sm(1.0, 1.0, 10.0);
+	SpheresMap< TestSphere<double>, StandardTypeProxies::UnorderedSetTypeProxy, StandardTypeProxies::OrderedMapTypeProxy > sm(1.0, 1.0, 10.0);
 	TestSphere<double> ts;
 	sm.add(&ts);
 	sm.find_neighbours(ts);
