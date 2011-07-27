@@ -25,4 +25,6 @@ public:
 	}
 };
 
+typedef FloatingPointHandler fph;
+
 #endif /* FLOATINGPOINTHANDLER_H_ */
