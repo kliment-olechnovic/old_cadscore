@@ -1,17 +1,15 @@
 #ifndef SPHERESMAP_H_
 #define SPHERESMAP_H_
 
-#include <map>
-#include <tr1/unordered_set>
 #include <cmath>
 
-template<typename SphereType>
+template<typename SphereType, template<typename> class UnorderedSetTypeProxy, template<typename, typename> class OrderedMapTypeProxy>
 class SpheresMap
 {
 public:
 	typedef SphereType Sphere;
 	typedef typename Sphere::FloatType FloatType;
-	typedef std::tr1::unordered_set<const Sphere*> Set;
+	typedef typename UnorderedSetTypeProxy<const Sphere*>::Type Set;
 
 	SpheresMap(
 			const FloatType coordinate_scale_factor,
@@ -114,10 +112,10 @@ public:
 	}
 
 private:
-	typedef std::map< int, Set > MapZ;
-	typedef std::map< int, MapZ > MapY;
-	typedef std::map< int, MapY > MapX;
-	typedef std::map< int, MapX > MapR;
+	typedef typename OrderedMapTypeProxy< int, Set >::Type MapZ;
+	typedef typename OrderedMapTypeProxy< int, MapZ >::Type MapY;
+	typedef typename OrderedMapTypeProxy< int, MapY >::Type MapX;
+	typedef typename OrderedMapTypeProxy< int, MapX >::Type MapR;
 
 	int coordinate_int(const FloatType v) const
 	{
