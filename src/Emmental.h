@@ -32,31 +32,21 @@ public:
 	{
 		const Box box=bounding_box(s);
 		List result;
-		for(int xi=box.x0;xi<=box.x1;xi++)
+
+		for(typename MapX::const_iterator iter_x=map_x_.lower_bound(box.x0); iter_x!=map_x_.end() && iter_x->first<=box.x1; ++iter_x)
 		{
-			typename MapX::const_iterator iter_x=map_x_.find(xi);
-			if(iter_x!=map_x_.end())
+			const MapY& map_y=iter_x->second;
+			for(typename MapY::const_iterator iter_y=map_y.lower_bound(box.y0); iter_y!=map_y.end() && iter_y->first<=box.y1; ++iter_y)
 			{
-				const MapY& map_y=iter_x->second;
-				for(int yi=box.y0;yi<=box.y1;yi++)
+				const MapZ& map_z=iter_y->second;
+				for(typename MapZ::const_iterator iter_z=map_z.lower_bound(box.z0); iter_z!=map_z.end() && iter_z->first<=box.z1; ++iter_z)
 				{
-					typename MapY::const_iterator iter_y=map_y.find(yi);
-					if(iter_y!=map_y.end())
-					{
-						const MapZ& map_z=iter_y->second;
-						for(int zi=box.z0;zi<=box.z1;zi++)
-						{
-							typename MapZ::const_iterator iter_z=map_z.find(zi);
-							if(iter_z!=map_z.end())
-							{
-								const List& list=iter_z->second;
-								result.insert(result.end(), list.begin(), list.end());
-							}
-						}
-					}
+					const List& list=iter_z->second;
+					result.insert(result.end(), list.begin(), list.end());
 				}
 			}
 		}
+
 		return result;
 	}
 

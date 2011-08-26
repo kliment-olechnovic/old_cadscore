@@ -14,7 +14,7 @@ struct Sphere
 
 int main()
 {
-	Emmental<Sphere, double, UnorderedMapTypeProxy, VectorTypeProxy> emmental(0.5/1.4);
+	Emmental<Sphere, double, OrderedMapTypeProxy, VectorTypeProxy> emmental(0.5/1.4);
 	std::vector<Sphere> spheres;
 	const int N=10000;
 	spheres.reserve(N);
