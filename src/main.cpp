@@ -14,9 +14,9 @@ struct Sphere
 
 int main()
 {
-	Emmental<Sphere, double, UnorderedMapTypeProxy, ListTypeProxy, UnorderedSetTypeProxy> emmental(0.5);
+	Emmental<Sphere, double, UnorderedMapTypeProxy, VectorTypeProxy> emmental(0.5/1.4);
 	std::vector<Sphere> spheres;
-	const int N=50000;
+	const int N=10000;
 	spheres.reserve(N);
 	for(int i=0;i<N;i++)
 	{
@@ -31,7 +31,7 @@ int main()
 	for(int i=0;i<N*10;i++)
 	{
 		Sphere s=spheres[i%N];
-		s.r*=2;
+		s.r=5;
 		emmental.intersect(s);
 	}
 	return 0;
