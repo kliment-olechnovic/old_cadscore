@@ -2,6 +2,7 @@
 #define EMMENTAL_H_
 
 #include <cmath>
+#include <limits>
 
 template<typename SphereType, typename FloatingPointType, template<typename, typename> class MapTypeProxyType, template<typename> class ListTypeProxyType>
 class Emmental
@@ -10,6 +11,15 @@ public:
 	typedef SphereType Sphere;
 	typedef FloatingPointType FloatingPoint;
 	typedef typename ListTypeProxyType<const Sphere*>::Type List;
+
+	struct Statistics
+	{
+		std::size_t cells_count;
+		std::size_t all_records_count;
+		std::size_t min_records_count;
+		std::size_t max_records_count;
+		Statistics() : cells_count(0), all_records_count(0), min_records_count(std::numeric_limits<std::size_t>::max()), max_records_count(0) {}
+	};
 
 	Emmental(const FloatingPoint scale_factor) : scale_factor_(scale_factor) {}
 
@@ -32,7 +42,6 @@ public:
 	{
 		const Box box=bounding_box(s);
 		List result;
-
 		for(typename MapX::const_iterator iter_x=map_x_.lower_bound(box.x0); iter_x!=map_x_.end() && iter_x->first<=box.x1; ++iter_x)
 		{
 			const MapY& map_y=iter_x->second;
@@ -46,8 +55,29 @@ public:
 				}
 			}
 		}
-
 		return result;
+	}
+
+	Statistics collect_statistics() const
+	{
+		Statistics stat;
+		for(typename MapX::const_iterator iter_x=map_x_.begin(); iter_x!=map_x_.end(); ++iter_x)
+		{
+			const MapY& map_y=iter_x->second;
+			for(typename MapY::const_iterator iter_y=map_y.begin(); iter_y!=map_y.end(); ++iter_y)
+			{
+				const MapZ& map_z=iter_y->second;
+				stat.cells_count+=map_z.size();
+				for(typename MapZ::const_iterator iter_z=map_z.begin(); iter_z!=map_z.end(); ++iter_z)
+				{
+					const List& list=iter_z->second;
+					stat.all_records_count+=list.size();
+					stat.min_records_count=std::min(stat.min_records_count, list.size());
+					stat.max_records_count=std::max(stat.max_records_count, list.size());
+				}
+			}
+		}
+		return stat;
 	}
 
 private:
