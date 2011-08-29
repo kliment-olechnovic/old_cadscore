@@ -14,7 +14,8 @@ struct Sphere
 
 int main()
 {
-	Emmental<Sphere, double, OrderedMapTypeProxy, VectorTypeProxy> emmental(0.5/1.4);
+	typedef Emmental<Sphere, double, OrderedMapTypeProxy, VectorTypeProxy> TheEmmental;
+	TheEmmental emmental(0.05/1.4);
 	std::vector<Sphere> spheres;
 	const int N=10000;
 	spheres.reserve(N);
@@ -28,6 +29,8 @@ int main()
 		spheres.push_back(s);
 		emmental.add(&spheres[i]);
 	}
+	const TheEmmental::Statistics stat=emmental.collect_statistics();
+	std::cout << stat.cells_count << " " << stat.all_records_count << " " << stat.min_records_count << " " << stat.max_records_count << "\n";
 	for(int i=0;i<N*10;i++)
 	{
 		Sphere s=spheres[i%N];
