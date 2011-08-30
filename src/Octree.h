@@ -76,17 +76,11 @@ public:
 
 	void insert(const int id, const Box& box, const double min_allowed_box_size)
 	{
-//		std::cout << "i start\n";
 		std::deque<int> queue;
 		queue.push_back(0);
 		while(!queue.empty())
 		{
 			Node& node=nodes_[queue.back()];
-//			for(int j=0;j<8;j++)
-//			{
-//				std::cout << node.children[j] << "=";
-//			}
-//			std::cout << "\n";
 			queue.pop_back();
 
 			if(node.bounds.size()<min_allowed_box_size)
@@ -114,25 +108,16 @@ public:
 					for(std::size_t i=0;i<clashes.size();i++)
 					{
 						const int num=clashes[i];
-//						std::cout << num << " " << node.children[num] << " " << nodes_.size()  << " bc\n";
-//						for(int j=0;j<8;j++) { std::cout << node.children[j] << " "; } std::cout << "a" << "\n";
 						if(node.children[num]<0)
 						{
 							node.children[num]=nodes_.size();
-//							std::cout << node.children[num] << " ic1\n";
-//							for(int j=0;j<8;j++) { std::cout << node.children[j] << " "; } std::cout << "b" << "\n";
 							nodes_.push_back(Node(node.bounds.subbox(num)));
-//							for(int j=0;j<8;j++) { std::cout << node.children[j] << " "; } std::cout << "c" << "\n";
-//							std::cout << node.children[num] << " ic2\n";
 						}
-//						std::cout << node.children[num] << " ac\n";
-//						for(int j=0;j<8;j++) { std::cout << node.children[j] << " "; } std::cout << "d" << "\n";
 						queue.push_back(node.children[num]);
 					}
 				}
 			}
 		}
-//		std::cout << "i end\n";
 	}
 
 	std::vector<int> intersect(const Box& box) const
