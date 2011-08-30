@@ -30,33 +30,64 @@ int main()
 		spheres.push_back(s);
 	}
 
-//	typedef Emmental<Sphere, double, OrderedMapTypeProxy, VectorTypeProxy> TheEmmental;
-//	TheEmmental emmental(1.0/10.0);
-//	for(int i=0;i<N;i++)
-//	{
-//		emmental.add(spheres[i]);
-//	}
-//	const TheEmmental::Statistics stat=emmental.collect_statistics();
-//	std::cout << stat.cells_count << " " << stat.all_records_count << " " << stat.min_records_count << " " << stat.max_records_count << "\n";
-//	for(int i=0;i<N*10;i++)
-//	{
-//		Sphere s=spheres[i%N];
-//		s.r=5;
-//		emmental.intersect(s);
-//	}
-
-	Octree octree(Octree::Box(-200, 200, -200, 200, -200, 200));
+	typedef Emmental<Sphere, double, OrderedMapTypeProxy, VectorTypeProxy> TheEmmental;
+	TheEmmental emmental(1.0/20.0);
 	for(int i=0;i<N;i++)
 	{
-		octree.insert(i, Octree::Box::from_sphere(spheres[i]), 10);
+		emmental.add(spheres[i]);
 	}
-	for(int i=0;i<N*10;i++)
+//	const TheEmmental::Statistics stat=emmental.collect_statistics();
+//	std::cout << stat.cells_count << " " << stat.all_records_count << " " << stat.min_records_count << " " << stat.max_records_count << "\n";
+
+
+	Octree octree(Octree::Box(-200, -200, -200, 200, 200, 200));
+	for(int i=0;i<N;i++)
+	{
+		octree.insert(i, Octree::Box::from_sphere(spheres[i]), 20);
+	}
+
+	bool good=true;
+	for(int i=0;i<N;i++)
 	{
 		Sphere s=spheres[i%N];
-		s.r=5;
-//		std::cout << octree.intersect(Octree::Box::from_sphere(s)).size() << " ";
-		octree.intersect(Octree::Box::from_sphere(s));
+		s.r+=5;
+
+		int count1=0;
+		{
+			const std::vector<const Sphere*> result=emmental.intersect(s);
+			std::set<const Sphere*> result_set;
+			for(std::size_t j=0;j<result.size();j++)
+			{
+				const Sphere& a=s;
+				const Sphere& b=*result[j];
+				if((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)<(a.r+b.r)*(a.r+b.r))
+				{
+					result_set.insert(result[j]);
+				}
+			}
+			count1=result_set.size();
+		}
+
+		int count2=0;
+		{
+			const std::vector<int> result=octree.intersect(Octree::Box::from_sphere(s));
+			std::set<int> result_set;
+			for(std::size_t j=0;j<result.size();j++)
+			{
+				const Sphere& a=s;
+				const Sphere& b=spheres[result[j]];
+				if((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)<(a.r+b.r)*(a.r+b.r))
+				{
+					result_set.insert(result[j]);
+				}
+			}
+			count2=result_set.size();
+		}
+
+		good=good && (count1==count2);
 	}
+
+	std::cout << "Status = " << good << "\n";
 
 	return 0;
 }
