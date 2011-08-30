@@ -18,7 +18,7 @@ struct Sphere
 int main()
 {
 	std::vector<Sphere> spheres;
-	const int N=10;
+	const int N=10000;
 	spheres.reserve(N);
 	for(int i=0;i<N;i++)
 	{
@@ -50,12 +50,13 @@ int main()
 	{
 		octree.insert(i, Octree::Box::from_sphere(spheres[i]), 10);
 	}
-//	for(int i=0;i<10;i++)
-//	{
-//		Sphere s=spheres[i%N];
-//		s.r=5;
-//		octree.intersect(Octree::Box::from_sphere(s)).size();
-//	}
+	for(int i=0;i<N*10;i++)
+	{
+		Sphere s=spheres[i%N];
+		s.r=5;
+//		std::cout << octree.intersect(Octree::Box::from_sphere(s)).size() << " ";
+		octree.intersect(Octree::Box::from_sphere(s));
+	}
 
 	return 0;
 }
