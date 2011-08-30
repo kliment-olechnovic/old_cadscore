@@ -23,16 +23,16 @@ public:
 
 	Emmental(const FloatingPoint scale_factor) : scale_factor_(scale_factor) {}
 
-	void add(const Sphere* s)
+	void add(const Sphere& s)
 	{
-		const Box box=bounding_box(*s);
+		const Box box=bounding_box(s);
 		for(int xi=box.x0;xi<=box.x1;xi++)
 		{
 			for(int yi=box.y0;yi<=box.y1;yi++)
 			{
 				for(int zi=box.z0;zi<=box.z1;zi++)
 				{
-					map_x_[xi][yi][zi].push_back(s);
+					map_x_[xi][yi][zi].push_back(&s);
 				}
 			}
 		}
