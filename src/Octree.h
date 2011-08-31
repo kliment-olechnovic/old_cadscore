@@ -67,6 +67,28 @@ public:
 		{
 			return Box((s.x-s.r), (s.y-s.r), (s.z-s.r), (s.x+s.r), (s.y+s.r), (s.z+s.r));
 		}
+
+		static inline Box merge(const Box& a, const Box& b)
+		{
+			return Box(
+			std::min(a.x0, b.x0),
+			std::min(a.y0, b.y0),
+			std::min(a.z0, b.z0),
+			std::max(a.x1, b.x1),
+			std::max(a.y1, b.y1),
+			std::max(a.z1, b.z1));
+		}
+
+		template<typename SphereContainerType>
+		static inline Box from_spheres(const SphereContainerType& sc)
+		{
+			Box box=from_sphere(sc.front());
+			for(std::size_t i=1;i<sc.size();i++)
+			{
+				box=merge(box, from_sphere(sc[i]));
+			}
+			return box;
+		}
 	};
 
 	Octree(const Box& bounds)
