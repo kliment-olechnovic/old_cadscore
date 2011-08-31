@@ -19,7 +19,7 @@ public:
 		sort();
 	}
 
-	Tuple(const Tuple<N-1>& shorter, const size_t tail) : v_(N)
+	Tuple(const Tuple<N-1>& shorter, const std::size_t tail) : v_(N)
 	{
 		for(int i=0;i<shorter.size();i++) { unsafe_set(i, shorter.get(i)); }
 		unsafe_set(shorter.size(), tail);
@@ -31,7 +31,7 @@ public:
 		return N;
 	}
 
-	size_t get(int i) const
+	std::size_t get(int i) const
 	{
 		return v_[i];
 	}
@@ -42,15 +42,15 @@ public:
 		return false;
 	}
 
-	bool equals(const Tuple& t) const
+	bool operator==(const Tuple& t) const
 	{
 		for(int i=0;i<N;i++) { if(get(i)!=t.get(i)) return false; }
 		return true;
 	}
 
-	size_t hash() const
+	std::size_t hash_value() const
 	{
-		size_t h=0;
+		std::size_t h=0;
 		for(int i=0;i<N;i++)
 		{
 			h += get(i);
@@ -63,7 +63,7 @@ public:
 		return h;
 	}
 
-	void set(int i, size_t x)
+	void set(int i, std::size_t x)
 	{
 		unsafe_set(i, x);
 		sort();
@@ -94,7 +94,7 @@ public:
 	}
 
 private:
-	void unsafe_set(int i, size_t x)
+	void unsafe_set(int i, std::size_t x)
 	{
 		v_[i]=x;
 	}
@@ -107,9 +107,18 @@ private:
 	std::vector<std::size_t> v_;
 };
 
+template<typename T>
+struct TupleHashOperator
+{
+	std::size_t operator()(const T& t) const
+	{
+		return t.hash_value();
+	}
+};
+
 typedef Tuple<3> Triple;
 
-inline Triple make_triple(const size_t a, const size_t b, const size_t c)
+inline Triple make_triple(const std::size_t a, const std::size_t b, const std::size_t c)
 {
 	std::vector<std::size_t> v(3);
 	v[0]=a;
@@ -120,7 +129,7 @@ inline Triple make_triple(const size_t a, const size_t b, const size_t c)
 
 typedef Tuple<4> Quadruple;
 
-inline Quadruple make_quadruple(const size_t a, const size_t b, const size_t c, const size_t d)
+inline Quadruple make_quadruple(const std::size_t a, const std::size_t b, const std::size_t c, const std::size_t d)
 {
 	std::vector<std::size_t> v(4);
 	v[0]=a;
