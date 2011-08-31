@@ -48,6 +48,16 @@ public:
 		return true;
 	}
 
+	bool operator<(const Tuple& t) const
+	{
+		for(int i=0;i<N;i++)
+		{
+			if(get(i)<t.get(i)) return true;
+			else if(get(i)>t.get(i)) return false;
+		}
+		return false;
+	}
+
 	std::size_t hash_value() const
 	{
 		std::size_t h=0;
