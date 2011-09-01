@@ -64,12 +64,28 @@ int main()
 	std::vector<Sphere> spheres=read_atoms_from_PDB_file_stream(std::cin);
 	std::cout << spheres.size() << " spheres read\n";
 
-	utils::BlockTimer bt("Time");
+	utils::BlockTimer* bt_ptr=new utils::BlockTimer("Preparation time");
 
 	std::vector< std::vector<std::size_t> > graph=construct_graph(spheres, TresholdChecker< DistanceBetweenSpheres<Sphere> >(2.8));
-
 	GraphTraverser gt(graph);
-	std::cout << gt.cluster().size() << "\n";
+
+	delete bt_ptr;
+
+	{
+		utils::BlockTimer bt("All-to-all traverse time");
+
+		for(std::size_t i=0;i<graph.size();i++)
+		{
+			int count=0;
+			gt.start(i);
+			std::size_t id=gt.bfs_next();
+			while(id!=gt.npos)
+			{
+				count++;
+				id=gt.bfs_next();
+			}
+		}
+	}
 
 	return 0;
 }

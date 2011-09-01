@@ -2,7 +2,7 @@
 #define GRAPHTRAVERSER_H_
 
 #include <vector>
-#include <list>
+#include <deque>
 
 class GraphTraverser
 {
@@ -71,7 +71,7 @@ private:
 	const std::vector< std::vector<std::size_t> >& graph_;
 	std::vector<int> colors_;
 	int current_color_;
-	std::list<std::size_t> queue_;
+	std::deque<std::size_t> queue_;
 
 	std::size_t bfs_current_id()
 	{
