@@ -9,17 +9,18 @@ template<int N>
 class Tuple
 {
 public:
-	Tuple() : v_(N, 0)
+	Tuple()
 	{
+		for(int i=0;i<N;i++) { unsafe_set(i, 0); }
 	}
 
-	Tuple(const std::vector<std::size_t>& values) : v_(values)
+	Tuple(const std::vector<std::size_t>& values)
 	{
-		v_.resize(N, 0);
+		for(int i=0;i<N;i++) { unsafe_set(i, (i<static_cast<int>(values.size()) ? values[i] : 0)); }
 		sort();
 	}
 
-	Tuple(const Tuple<N-1>& shorter, const std::size_t tail) : v_(N)
+	Tuple(const Tuple<N-1>& shorter, const std::size_t tail)
 	{
 		for(int i=0;i<shorter.size();i++) { unsafe_set(i, shorter.get(i)); }
 		unsafe_set(shorter.size(), tail);
@@ -123,15 +124,15 @@ public:
 private:
 	void unsafe_set(int i, std::size_t x)
 	{
-		v_[i]=x;
+		if(i<N) { v_[i]=x; }
 	}
 
 	void sort()
 	{
-		std::sort(v_.begin(), v_.end());
+		std::sort(v_, v_+N);
 	}
 
-	std::vector<std::size_t> v_;
+	std::size_t v_[N];
 };
 
 template<typename T>
