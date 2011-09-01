@@ -6,22 +6,31 @@
 class Traverser
 {
 public:
+	static const size_t npos = -1;
+
 	Traverser(const std::vector< std::vector<std::size_t> >& graph) : graph_(graph), colors_(grap_.size(), -1), current_color_(0)
 	{
 	}
 
-	std::size_t npos() const
+	std::size_t start(const std::size_t id)
 	{
-		return graph_.size();
+		if(id>=graph_.size()) { return npos; }
+		current_color_++;
+		colors_[id]=current_color_;
+		queue_.clear();
+		queue_.push_back(id);
+		return id;
 	}
 
-	void start(const std::size_t current_id)
+	std::size_t ensure(const std::size_t id)
 	{
-		if(current_id>=graph_.size()) { return; }
-		current_color_++;
-		colors_[current_id]=current_color_;
-		queue_.clear();
-		queue_.push_front(current_id);
+		if(id>=graph_.size()) { return npos; }
+		if(colors_[id]!=current_color_)
+		{
+			colors_[id]=current_color_;
+			queue_.push_back(id);
+		}
+		return id;
 	}
 
 	std::size_t bfs_next()
@@ -37,15 +46,15 @@ public:
 	std::vector<std::size_t> cluster()
 	{
 		std::vector<std::size_t> clusters;
-		std::vector<std::size_t> clusters_map(graph_.size(), npos());
+		std::vector<std::size_t> clusters_map(graph_.size(), npos);
 		for(std::size_t i=0;i<clusters_map;i++)
 		{
-			if(clusters_map[i]==npos())
+			if(clusters_map[i]==npos)
 			{
 				start(i);
 				{
 					std::size_t next_id=dfs_next();
-					while(next_id!=npos())
+					while(next_id!=npos)
 					{
 						clusters_map[next_id]=i;
 						next_id=dfs_next();
@@ -81,7 +90,7 @@ private:
 	{
 		if(queue_.empty())
 		{
-			return npos();
+			return npos;
 		}
 		else
 		{
