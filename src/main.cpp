@@ -7,6 +7,8 @@
 #include "atoms/atoms.h"
 #include "../../contactus/src/baltymus/utils/BlockTimer.h"
 
+#include "apollo/GraphTraverser.h"
+
 template<typename ContainerType, typename OperatorType>
 std::vector< std::vector<std::size_t> > construct_graph(const ContainerType& objects, const OperatorType& op)
 {
@@ -65,6 +67,9 @@ int main()
 	utils::BlockTimer bt("Time");
 
 	std::vector< std::vector<std::size_t> > graph=construct_graph(spheres, TresholdChecker< DistanceBetweenSpheres<Sphere> >(2.8));
+
+	GraphTraverser gt(graph);
+	std::cout << gt.cluster().size() << "\n";
 
 	return 0;
 }

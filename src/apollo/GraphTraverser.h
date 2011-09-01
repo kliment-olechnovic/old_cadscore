@@ -1,14 +1,15 @@
-#ifndef SURFING_H_
-#define SURFING_H_
+#ifndef GRAPHTRAVERSER_H_
+#define GRAPHTRAVERSER_H_
 
 #include <vector>
+#include <list>
 
-class Traverser
+class GraphTraverser
 {
 public:
 	static const size_t npos = -1;
 
-	Traverser(const std::vector< std::vector<std::size_t> >& graph) : graph_(graph), colors_(grap_.size(), -1), current_color_(0)
+	GraphTraverser(const std::vector< std::vector<std::size_t> >& graph) : graph_(graph), colors_(graph_.size(), -1), current_color_(0)
 	{
 	}
 
@@ -47,7 +48,7 @@ public:
 	{
 		std::vector<std::size_t> clusters;
 		std::vector<std::size_t> clusters_map(graph_.size(), npos);
-		for(std::size_t i=0;i<clusters_map;i++)
+		for(std::size_t i=0;i<clusters_map.size();i++)
 		{
 			if(clusters_map[i]==npos)
 			{
@@ -60,7 +61,7 @@ public:
 						next_id=dfs_next();
 					}
 				}
-				cluster.push_back(i);
+				clusters.push_back(i);
 			}
 		}
 		return clusters;
@@ -110,4 +111,4 @@ private:
 	}
 };
 
-#endif /* SURFING_H_ */
+#endif /* GRAPHTRAVERSER_H_ */
