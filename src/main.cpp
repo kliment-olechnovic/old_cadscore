@@ -79,13 +79,41 @@ int main()
 			int count=0;
 			gt.start(i);
 			std::size_t id=gt.bfs_next();
-			while(id!=gt.npos && gt.level(id)<4)
+			while(id!=gt.npos && gt.level(id)<3)
 			{
 				count++;
 				id=gt.bfs_next();
 			}
-//			std::cout << count << "\n";
 		}
+	}
+
+	{
+		utils::BlockTimer bt("Bucketing time");
+
+		std::vector<int> labels(graph.size(), -1);
+		std::tr1::unordered_map< std::size_t, std::vector<std::size_t> > buckets;
+		std::size_t count=0;
+		for(std::size_t i=0;i<graph.size();i++)
+		{
+			if(labels[i]==-1)
+			{
+				std::vector<std::size_t>& neighbours=buckets[i];
+				gt.start(i);
+				std::size_t id=gt.bfs_next();
+				while(id!=gt.npos && gt.level(id)<=2)
+				{
+					if(gt.level(id)<=1)
+					{
+						neighbours.push_back(id);
+					}
+					labels[id]=gt.level(id);
+					id=gt.bfs_next();
+				}
+				count+=neighbours.size();
+			}
+		}
+		std::cout << count << " buckets contents count\n";
+		std::cout << buckets.size() << " buckets\n";
 	}
 
 	return 0;
