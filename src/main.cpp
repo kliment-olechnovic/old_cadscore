@@ -79,11 +79,12 @@ int main()
 			int count=0;
 			gt.start(i);
 			std::size_t id=gt.bfs_next();
-			while(id!=gt.npos)
+			while(id!=gt.npos && gt.level(id)<4)
 			{
 				count++;
 				id=gt.bfs_next();
 			}
+//			std::cout << count << "\n";
 		}
 	}
 

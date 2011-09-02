@@ -9,7 +9,7 @@ class GraphTraverser
 public:
 	static const size_t npos = -1;
 
-	GraphTraverser(const std::vector< std::vector<std::size_t> >& graph) : graph_(graph), colors_(graph_.size(), -1), current_color_(0)
+	GraphTraverser(const std::vector< std::vector<std::size_t> >& graph) : graph_(graph), colors_(graph_.size(), -1), current_color_(0), levels_(graph_.size(), 0)
 	{
 	}
 
@@ -18,6 +18,7 @@ public:
 		if(id>=graph_.size()) { return npos; }
 		current_color_++;
 		colors_[id]=current_color_;
+		levels_[id]=0;
 		queue_.clear();
 		queue_.push_back(id);
 		return id;
@@ -29,6 +30,7 @@ public:
 		if(colors_[id]!=current_color_)
 		{
 			colors_[id]=current_color_;
+			levels_[id]=0;
 			queue_.push_back(id);
 		}
 		return id;
@@ -42,6 +44,11 @@ public:
 	std::size_t dfs_next()
 	{
 		return next(false);
+	}
+
+	std::size_t level(const std::size_t id) const
+	{
+		return levels_[id];
 	}
 
 	std::vector<std::size_t> cluster()
@@ -68,11 +75,6 @@ public:
 	}
 
 private:
-	const std::vector< std::vector<std::size_t> >& graph_;
-	std::vector<int> colors_;
-	int current_color_;
-	std::deque<std::size_t> queue_;
-
 	std::size_t bfs_current_id()
 	{
 		const std::size_t current_id=queue_.front();
@@ -103,12 +105,19 @@ private:
 				if(colors_[neighbour_id]!=current_color_)
 				{
 					colors_[neighbour_id]=current_color_;
+					levels_[neighbour_id]=levels_[current_id]+1;
 					queue_.push_back(neighbour_id);
 				}
 			}
 			return current_id;
 		}
 	}
+
+	const std::vector< std::vector<std::size_t> >& graph_;
+	std::vector<int> colors_;
+	int current_color_;
+	std::vector<std::size_t> levels_;
+	std::deque<std::size_t> queue_;
 };
 
 #endif /* GRAPHTRAVERSER_H_ */
