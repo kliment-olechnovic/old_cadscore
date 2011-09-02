@@ -72,8 +72,6 @@ int main()
 	delete bt_ptr;
 
 	{
-		utils::BlockTimer bt("All-to-all traverse time");
-
 		for(std::size_t i=0;i<graph.size();i++)
 		{
 			int count=0;
@@ -90,11 +88,24 @@ int main()
 	{
 		utils::BlockTimer bt("Bucketing time");
 
+		std::vector<std::size_t> permutation;
+		{
+			permutation.reserve(graph.size());
+			gt.start(0);
+			std::size_t id=gt.bfs_next();
+			while(id!=gt.npos)
+			{
+				permutation.push_back(id);
+				id=gt.bfs_next();
+			}
+		}
+
 		std::vector<int> labels(graph.size(), -1);
 		std::tr1::unordered_map< std::size_t, std::vector<std::size_t> > buckets;
 		std::size_t count=0;
-		for(std::size_t i=0;i<graph.size();i++)
+		for(std::size_t j=0;j<graph.size();j++)
 		{
+			const std::size_t i=permutation[j];
 			if(labels[i]==-1)
 			{
 				std::vector<std::size_t>& neighbours=buckets[i];
