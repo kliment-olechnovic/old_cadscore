@@ -67,14 +67,14 @@ int main()
 
 	utils::BlockTimer* bt_ptr=new utils::BlockTimer("Preparation time");
 
-	std::vector< std::vector<std::size_t> > graph=construct_graph(spheres, TresholdChecker< DistanceBetweenSpheres<Sphere> >(2.8));
+	Graph graph=construct_graph(spheres, TresholdChecker< DistanceBetweenSpheres<Sphere> >(2.8));
 	GraphTraverser gt(graph);
 
 	delete bt_ptr;
 
 	{
 		utils::BlockTimer bt("Bucketing time");
-		std::vector< std::pair< std::size_t, std::vector<std::size_t> > > buckets=subdivide_graph(graph);
+		GraphSubdivision buckets=subdivide_graph(graph);
 		std::cout << buckets.size() << " buckets\n";
 	}
 
