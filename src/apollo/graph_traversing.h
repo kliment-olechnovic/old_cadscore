@@ -134,16 +134,16 @@ std::vector<std::size_t> cluster_graph(const Graph& graph, const GraphTraverser:
 
 typedef std::vector< std::pair< std::size_t, std::vector<std::size_t> > > GraphSubdivision;
 
-GraphSubdivision subdivide_graph(const Graph& graph)
+GraphSubdivision subdivide_graph_incompletely(const Graph& graph)
 {
 	GraphSubdivision buckets;
 	std::vector<std::size_t> permutation=traverse_graph(graph, 0, GraphTraverser::BFS);
 	GraphTraverser gt(graph);
-	std::vector<int> labels(graph.size(), 0);
+	std::vector<bool> labels(graph.size(), true);
 	for(std::size_t j=0;j<graph.size();j++)
 	{
 		const std::size_t i=permutation[j];
-		if(labels[i]==0)
+		if(labels[i]==true)
 		{
 			std::vector<std::size_t> neighbours;
 			gt.start(i);
@@ -154,7 +154,7 @@ GraphSubdivision subdivide_graph(const Graph& graph)
 				{
 					neighbours.push_back(id);
 				}
-				labels[id]=1;
+				labels[id]=false;
 				id=gt.next(gt.BFS);
 			}
 			buckets.push_back(std::make_pair(i, neighbours));
@@ -162,6 +162,38 @@ GraphSubdivision subdivide_graph(const Graph& graph)
 	}
 
 	return buckets;
+}
+
+GraphSubdivision subdivide_graph_completely(const Graph& graph)
+{
+	GraphSubdivision incomplete_buckets=subdivide_graph_incompletely(graph);
+	GraphSubdivision complete_buckets=incomplete_buckets;
+
+	std::vector<std::size_t> parts_map(graph.size(), GraphTraverser::npos);
+	for(std::size_t i=0;i<incomplete_buckets.size();i++)
+	{
+		for(std::size_t j=0;j<incomplete_buckets[i].second.size();j++)
+		{
+			parts_map[incomplete_buckets[i].second[j]]=incomplete_buckets[i].first;
+		}
+	}
+
+	GraphTraverser gt(graph);
+	for(std::size_t i=0;i<parts_map.size();i++)
+	{
+		if(parts_map[i]==GraphTraverser::npos)
+		{
+			gt.start(i);
+			std::size_t id=gt.next(gt.BFS);
+			while(id!=gt.npos && gt.level(id)<=1)
+			{
+				//TODO complete this
+				id=gt.next(gt.BFS);
+			}
+		}
+	}
+
+	return complete_buckets;
 }
 
 #endif /* GRAPH_TRAVERSING_H_ */
