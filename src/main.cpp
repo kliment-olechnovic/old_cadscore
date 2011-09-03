@@ -74,57 +74,8 @@ int main()
 
 	{
 		utils::BlockTimer bt("Bucketing time");
-
-		std::vector<std::size_t> permutation=traverse_graph(graph, 0, GraphTraverser::BFS);
-
-		std::vector<int> labels(graph.size(), -1);
-		std::vector< std::vector<std::size_t> > parents(graph.size());
-		std::tr1::unordered_map< std::size_t, std::vector<std::size_t> > buckets;
-		std::tr1::unordered_set<std::size_t> included;
-		std::size_t count=0;
-		for(std::size_t j=0;j<graph.size();j++)
-		{
-			const std::size_t i=permutation[j];
-			if(labels[i]==-1)
-			{
-				std::vector<std::size_t>& neighbours=buckets[i];
-				gt.start(i);
-				std::size_t id=gt.next(gt.BFS);
-				while(id!=gt.npos && gt.level(id)<=2)
-				{
-					if(gt.level(id)<=1)
-					{
-						neighbours.push_back(id);
-						included.insert(id);
-					}
-					if(labels[id]!=0 && labels[id]!=1)
-					{
-						labels[id]=gt.level(id);
-					}
-					parents[id].push_back(i);
-					id=gt.next(gt.BFS);
-				}
-				count+=neighbours.size();
-			}
-		}
-		std::cout << included.size() << " " << count << " buckets contents count\n";
+		std::vector< std::pair< std::size_t, std::vector<std::size_t> > > buckets=subdivide_graph(graph);
 		std::cout << buckets.size() << " buckets\n";
-
-		std::vector<std::size_t> deserted;
-		for(std::size_t j=0;j<graph.size();j++)
-		{
-			if(labels[j]==2)
-			{
-				deserted.push_back(j);
-//				std::cout << parents[j].size() << " parents\n";
-//				for(std::size_t k=0;k<parents[j].size();k++)
-//				{
-//					std::cout << " " << DistanceBetweenSpheres<Sphere>()(spheres[j], spheres[parents[j][k]]) << " distance\n";
-//				}
-			}
-		}
-		std::cout << deserted.size() << " deserted\n";
-		std::cout << (included.size()+deserted.size()) << " included+deserted\n";
 	}
 
 	return 0;

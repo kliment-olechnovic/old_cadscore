@@ -130,4 +130,34 @@ std::vector<std::size_t> cluster_graph(const std::vector< std::vector<std::size_
 	return clusters;
 }
 
+std::vector< std::pair< std::size_t, std::vector<std::size_t> > > subdivide_graph(const std::vector< std::vector<std::size_t> >& graph)
+{
+	std::vector< std::pair< std::size_t, std::vector<std::size_t> > > buckets;
+	std::vector<std::size_t> permutation=traverse_graph(graph, 0, GraphTraverser::BFS);
+	GraphTraverser gt(graph);
+	std::vector<int> labels(graph.size(), 0);
+	for(std::size_t j=0;j<graph.size();j++)
+	{
+		const std::size_t i=permutation[j];
+		if(labels[i]==0)
+		{
+			std::vector<std::size_t> neighbours;
+			gt.start(i);
+			std::size_t id=gt.next(gt.BFS);
+			while(id!=gt.npos && gt.level(id)<=2)
+			{
+				if(gt.level(id)<=1)
+				{
+					neighbours.push_back(id);
+				}
+				labels[id]=1;
+				id=gt.next(gt.BFS);
+			}
+			buckets.push_back(std::make_pair(i, neighbours));
+		}
+	}
+
+	return buckets;
+}
+
 #endif /* GRAPH_TRAVERSING_H_ */
