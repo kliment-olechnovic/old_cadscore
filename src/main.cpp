@@ -74,7 +74,7 @@ int main()
 
 	{
 		utils::BlockTimer bt("Bucketing time");
-		GraphSubdivision buckets=subdivide_graph(graph);
+		GraphSubdivision buckets=subdivide_graph_incompletely(graph);
 		std::cout << buckets.size() << " buckets\n";
 	}
 
