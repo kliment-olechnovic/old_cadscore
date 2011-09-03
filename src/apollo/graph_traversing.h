@@ -4,6 +4,8 @@
 #include <vector>
 #include <deque>
 
+typedef std::vector< std::vector<std::size_t> > Graph;
+
 class GraphTraverser
 {
 public:
@@ -13,7 +15,7 @@ public:
 
 	static const size_t npos = -1;
 
-	GraphTraverser(const std::vector< std::vector<std::size_t> >& graph) : graph_(graph), colors_(graph_.size(), -1), current_color_(0), levels_(graph_.size(), 0)
+	GraphTraverser(const Graph& graph) : graph_(graph), colors_(graph_.size(), -1), current_color_(0), levels_(graph_.size(), 0)
 	{
 	}
 
@@ -86,14 +88,14 @@ private:
 		}
 	}
 
-	const std::vector< std::vector<std::size_t> >& graph_;
+	const Graph& graph_;
 	std::vector<int> colors_;
 	int current_color_;
 	std::vector<std::size_t> levels_;
 	std::deque<std::size_t> queue_;
 };
 
-std::vector<std::size_t> traverse_graph(const std::vector< std::vector<std::size_t> >& graph, const std::size_t start_id, const GraphTraverser::TraverseType traverse_type)
+std::vector<std::size_t> traverse_graph(const Graph& graph, const std::size_t start_id, const GraphTraverser::TraverseType traverse_type)
 {
 	GraphTraverser gt(graph);
 	std::vector<std::size_t> result;
@@ -108,7 +110,7 @@ std::vector<std::size_t> traverse_graph(const std::vector< std::vector<std::size
 	return result;
 }
 
-std::vector<std::size_t> cluster_graph(const std::vector< std::vector<std::size_t> >& graph, const GraphTraverser::TraverseType traverse_type)
+std::vector<std::size_t> cluster_graph(const Graph& graph, const GraphTraverser::TraverseType traverse_type)
 {
 	GraphTraverser gt(graph);
 	std::vector<std::size_t> clusters;
@@ -130,9 +132,11 @@ std::vector<std::size_t> cluster_graph(const std::vector< std::vector<std::size_
 	return clusters;
 }
 
-std::vector< std::pair< std::size_t, std::vector<std::size_t> > > subdivide_graph(const std::vector< std::vector<std::size_t> >& graph)
+typedef std::vector< std::pair< std::size_t, std::vector<std::size_t> > > GraphSubdivision;
+
+GraphSubdivision subdivide_graph(const Graph& graph)
 {
-	std::vector< std::pair< std::size_t, std::vector<std::size_t> > > buckets;
+	GraphSubdivision buckets;
 	std::vector<std::size_t> permutation=traverse_graph(graph, 0, GraphTraverser::BFS);
 	GraphTraverser gt(graph);
 	std::vector<int> labels(graph.size(), 0);
