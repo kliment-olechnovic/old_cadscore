@@ -10,60 +10,79 @@ class GraphTraverser
 {
 public:
 	typedef bool TraverseType;
-	static const bool BFS = true;
-	static const bool DFS = false;
+	static const TraverseType BFS = true;
+	static const TraverseType DFS = false;
 
 	static const size_t npos = -1;
 
-	GraphTraverser(const Graph& graph) : graph_(graph), colors_(graph_.size(), -1), current_color_(0), levels_(graph_.size(), 0)
+	GraphTraverser(const Graph& graph) :
+		graph_(graph),
+		queued_colors_(graph_.size(), -1),
+		returned_colors_(graph_.size(), -1),
+		current_color_(0),
+		levels_(graph_.size(), 0)
 	{
 	}
 
-	std::size_t start(const std::size_t id)
+	bool start(const std::size_t id)
 	{
-		if(id>=graph_.size()) { return npos; }
+		if(id>=graph_.size()) { return false; }
+
 		current_color_++;
-		colors_[id]=current_color_;
+		queued_colors_[id]=current_color_;
 		levels_[id]=0;
 		queue_.clear();
 		queue_.push_back(id);
-		return id;
+		return true;
 	}
 
-	std::size_t ensure(const std::size_t id)
+	bool force(const std::size_t id, const TraverseType traverse_type)
 	{
-		if(id>=graph_.size()) { return npos; }
-		if(colors_[id]!=current_color_)
+		if(id>=graph_.size() || returned_colors_[id]==current_color_) { return false; }
+
+		if(queued_colors_[id]!=current_color_)
 		{
-			colors_[id]=current_color_;
+			queued_colors_[id]=current_color_;
 			levels_[id]=0;
+		}
+
+		if(traverse_type==BFS)
+		{
+			queue_.push_front(id);
+		}
+		else
+		{
 			queue_.push_back(id);
 		}
-		return id;
+
+		return true;
 	}
 
 	std::size_t next(const TraverseType traverse_type)
 	{
-		if(queue_.empty())
+		std::size_t current_id=get_current_id(traverse_type);
+		while(current_id!=npos && returned_colors_[current_id]==current_color_)
 		{
-			return npos;
+			current_id=get_current_id(traverse_type);
 		}
-		else
+
+		if(current_id!=npos)
 		{
-			const std::size_t current_id=get_current_id(traverse_type);
 			const std::vector<std::size_t>& neighbours=graph_[current_id];
 			for(std::size_t i=0;i<neighbours.size();i++)
 			{
 				const std::size_t neighbour_id=neighbours[i];
-				if(colors_[neighbour_id]!=current_color_)
+				if(queued_colors_[neighbour_id]!=current_color_)
 				{
-					colors_[neighbour_id]=current_color_;
+					queued_colors_[neighbour_id]=current_color_;
 					levels_[neighbour_id]=levels_[current_id]+1;
 					queue_.push_back(neighbour_id);
 				}
 			}
-			return current_id;
+			returned_colors_[current_id]=current_color_;
 		}
+
+		return current_id;
 	}
 
 	std::size_t level(const std::size_t id) const
@@ -74,7 +93,11 @@ public:
 private:
 	std::size_t get_current_id(const TraverseType traverse_type)
 	{
-		if(traverse_type==BFS)
+		if(queue_.empty())
+		{
+			return npos;
+		}
+		else if(traverse_type==BFS)
 		{
 			const std::size_t current_id=queue_.front();
 			queue_.pop_front();
@@ -89,7 +112,8 @@ private:
 	}
 
 	const Graph& graph_;
-	std::vector<int> colors_;
+	std::vector<int> queued_colors_;
+	std::vector<int> returned_colors_;
 	int current_color_;
 	std::vector<std::size_t> levels_;
 	std::deque<std::size_t> queue_;
