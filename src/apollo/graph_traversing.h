@@ -132,7 +132,7 @@ std::vector<std::size_t> collect_connected_components_from_graph(const Graph& gr
 	return clusters;
 }
 
-std::vector<std::size_t> subdivide_graph(const Graph& graph)
+std::vector<std::size_t> subdivide_graph(const Graph& graph, const std::size_t depth)
 {
 	std::vector<std::size_t> buckets;
 	std::vector<std::size_t> permutation=traverse_graph(graph, 0, GraphTraverser::BFS);
@@ -145,7 +145,7 @@ std::vector<std::size_t> subdivide_graph(const Graph& graph)
 		{
 			gt.start(i);
 			std::size_t id=gt.next(gt.BFS);
-			while(id!=gt.npos && gt.level(id)<=2)
+			while(id!=gt.npos && gt.level(id)<=depth)
 			{
 				labels[id]=false;
 				id=gt.next(gt.BFS);
