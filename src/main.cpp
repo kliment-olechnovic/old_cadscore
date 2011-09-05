@@ -59,11 +59,20 @@ struct TresholdChecker
 	double treshold;
 };
 
+template<typename Iterator>
+void print_spheres(const Iterator first, const Iterator last)
+{
+	for(Iterator it=first;it!=last;++it)
+	{
+		std::cout << "SPHERE " << it->r << " " << it->x << " " << it->y << " " << it->z << "\n";
+	}
+}
+
 int main()
 {
 	typedef Atom Sphere;
 	std::vector<Sphere> spheres=read_atoms_from_PDB_file_stream(std::cin);
-	std::cout << spheres.size() << " spheres read\n";
+	std::clog << spheres.size() << " spheres read\n";
 
 	utils::BlockTimer* bt_ptr=new utils::BlockTimer("Preparation time");
 
@@ -74,8 +83,19 @@ int main()
 
 	{
 		utils::BlockTimer bt("Bucketing time");
-		GraphSubdivision buckets=subdivide_graph_incompletely(graph);
-		std::cout << buckets.size() << " buckets\n";
+		std::vector<std::size_t> buckets=subdivide_graph(graph);
+		std::clog << buckets.size() << " buckets\n";
+
+		std::vector<Sphere> centers;
+		for(std::size_t i=0;i<buckets.size();i++)
+		{
+			Sphere s=spheres[buckets[i]];
+			s.r+=2.8*2;
+			centers.push_back(s);
+		}
+		std::cout << "LIST\n";
+		print_spheres(centers.begin(), centers.end());
+		print_spheres(spheres.begin(), spheres.end());
 	}
 
 	return 0;
