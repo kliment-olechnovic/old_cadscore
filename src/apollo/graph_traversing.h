@@ -110,7 +110,7 @@ std::vector<std::size_t> traverse_graph(const Graph& graph, const std::size_t st
 	return result;
 }
 
-std::vector<std::size_t> cluster_graph(const Graph& graph, const GraphTraverser::TraverseType traverse_type)
+std::vector<std::size_t> collect_connected_components_from_graph(const Graph& graph, const GraphTraverser::TraverseType traverse_type)
 {
 	GraphTraverser gt(graph);
 	std::vector<std::size_t> clusters;
@@ -143,22 +143,16 @@ std::vector<std::size_t> subdivide_graph(const Graph& graph)
 		const std::size_t i=permutation[j];
 		if(labels[i]==true)
 		{
-			std::vector<std::size_t> neighbours;
 			gt.start(i);
 			std::size_t id=gt.next(gt.BFS);
 			while(id!=gt.npos && gt.level(id)<=2)
 			{
-				if(gt.level(id)<=1)
-				{
-					neighbours.push_back(id);
-				}
 				labels[id]=false;
 				id=gt.next(gt.BFS);
 			}
 			buckets.push_back(i);
 		}
 	}
-
 	return buckets;
 }
 
