@@ -3,15 +3,17 @@
 
 #include <vector>
 
-#include "spheres_distances.h"
+#include "distances.h"
 
 template<typename SphereType>
 std::vector<SphereType> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
 {
 	std::vector<SphereType> centers;
 	std::vector<bool> allowed(spheres.size(), true);
-	for(std::size_t i=0;i<spheres.size();i++)
+	const std::vector<std::size_t> global_traversal=sort_objects_by_distances(spheres[0], spheres, std::ptr_fun(maximal_distance_from_point_to_sphere<SphereType, SphereType>));
+	for(std::size_t k=0;k<spheres.size();k++)
 	{
+		const std::size_t i=global_traversal[k];
 		if(allowed[i])
 		{
 			const SphereType& center=spheres[i];

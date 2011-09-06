@@ -2,6 +2,7 @@
 #define SPHERES_H_
 
 #include <vector>
+#include <algorithm>
 
 template<typename PointType>
 double distance_from_point_to_point(const PointType& a, const PointType& b)
@@ -24,22 +25,22 @@ double maximal_distance_from_point_to_sphere(const PointType& a, const SphereTyp
 	return (distance_from_point_to_point(a, b)+b.r);
 }
 
-template<typename SpheresContainerType>
-std::vector< std::vector<std::size_t> > construct_graph_from_spheres_by_distance_threshold(const SpheresContainerType& spheres, const double treshold)
+template<typename FirstType, typename SecondType, typename DistanceFunctor>
+std::vector<std::size_t> sort_objects_by_distances(const FirstType& a, const SecondType& b, const DistanceFunctor& distance_functor)
 {
-	std::vector< std::vector<std::size_t> > graph(spheres.size());
-	for(std::size_t i=0;i<spheres.size();i++)
+	std::vector< std::pair<double, std::size_t> > distances;
+	distances.reserve(b.size());
+	for(std::size_t i=0;i<b.size();i++)
 	{
-		for(std::size_t j=i+1;j<spheres.size();j++)
-		{
-			if(minimal_distance_from_sphere_to_sphere(spheres[i], spheres[j])<=treshold)
-			{
-				graph[i].push_back(j);
-				graph[j].push_back(i);
-			}
-		}
+		distances.push_back(std::make_pair(distance_functor(a, b[i]), i));
 	}
-	return graph;
+	std::vector<std::size_t> result;
+	result.reserve(distances.size());
+	for(std::size_t i=0;i<distances.size();i++)
+	{
+		result.push_back(distances[i].second);
+	}
+	return result;
 }
 
 #endif /* SPHERES_H_ */
