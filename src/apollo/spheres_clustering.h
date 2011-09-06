@@ -5,6 +5,9 @@
 
 #include "distances.h"
 
+namespace apollo
+{
+
 template<typename SphereType>
 std::vector<SphereType> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
 {
@@ -74,6 +77,8 @@ template<typename SphereType>
 std::vector< std::pair<SphereType, std::vector<std::size_t> > > cluster_spheres(const std::vector<SphereType>& spheres, const double r)
 {
 	return form_clusters_from_spheres_using_centers(spheres, find_clusters_centers(spheres, r));
+}
+
 }
 
 #endif /* SPHERES_CLUSTERING_H_ */

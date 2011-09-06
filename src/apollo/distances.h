@@ -4,6 +4,9 @@
 #include <vector>
 #include <algorithm>
 
+namespace apollo
+{
+
 template<typename PointType>
 double distance_from_point_to_point(const PointType& a, const PointType& b)
 {
@@ -41,6 +44,8 @@ std::vector<std::size_t> sort_objects_by_distances(const FirstType& a, const Sec
 		result.push_back(distances[i].second);
 	}
 	return result;
+}
+
 }
 
 #endif /* SPHERES_H_ */
