@@ -28,7 +28,7 @@ int main()
 	{
 		utils::BlockTimer bt("Clustering time");
 
-		std::vector< std::pair<Sphere, std::vector<std::size_t> > > clusters=cluster_spheres(spheres, 1.4*5);
+		std::vector< std::pair<Sphere, std::vector<std::size_t> > > clusters=apollo::cluster_spheres(spheres, 1.4*5);
 		std::clog << clusters.size() << " clusters\n";
 
 		std::vector<Sphere> clusters_spheres;

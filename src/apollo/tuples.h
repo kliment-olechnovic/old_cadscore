@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <sstream>
 
+namespace apollo
+{
+
 template<int N>
 class Tuple
 {
@@ -165,6 +168,8 @@ inline Quadruple make_quadruple(const std::size_t a, const std::size_t b, const 
 	v[2]=c;
 	v[3]=d;
 	return Quadruple(v);
+}
+
 }
 
 #endif /* TUPLES_H_ */
