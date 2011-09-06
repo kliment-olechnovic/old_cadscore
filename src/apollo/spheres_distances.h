@@ -1,6 +1,8 @@
 #ifndef SPHERES_H_
 #define SPHERES_H_
 
+#include <vector>
+
 template<typename PointType>
 double distance_from_point_to_point(const PointType& a, const PointType& b)
 {
@@ -38,45 +40,6 @@ std::vector< std::vector<std::size_t> > construct_graph_from_spheres_by_distance
 		}
 	}
 	return graph;
-}
-
-template<typename SphereType>
-std::vector< std::pair<SphereType, std::vector<std::size_t> > > form_clusters_from_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SphereType>& centers)
-{
-	std::vector< std::pair<SphereType, std::vector<std::size_t> > > clusters;
-	for(std::size_t i=0;i<centers.size();i++)
-	{
-		clusters.push_back(std::make_pair(centers[i], std::vector<std::size_t>()));
-	}
-
-	for(std::size_t i=0;i<spheres.size();i++)
-	{
-		const SphereType& sphere=spheres[i];
-		std::size_t min_dist_id=0;
-		for(std::size_t j=1;j<clusters.size();j++)
-		{
-			if( maximal_distance_from_point_to_sphere(clusters[j].first, sphere) <
-					maximal_distance_from_point_to_sphere(clusters[min_dist_id].first, sphere))
-			{
-				min_dist_id=j;
-			}
-		}
-		std::pair<SphereType, std::vector<std::size_t> >& cluster=clusters[min_dist_id];
-		cluster.first.r=std::max(cluster.first.r, maximal_distance_from_point_to_sphere(cluster.first, sphere));
-		cluster.second.push_back(i);
-	}
-
-	std::vector< std::pair<SphereType, std::vector<std::size_t> > > nonempty_clusters;
-	nonempty_clusters.reserve(clusters.size());
-	for(std::size_t i=0;i<clusters.size();i++)
-	{
-		if(!clusters[i].second.empty())
-		{
-			nonempty_clusters.push_back(clusters[i]);
-		}
-	}
-
-	return nonempty_clusters;
 }
 
 #endif /* SPHERES_H_ */
