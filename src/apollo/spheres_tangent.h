@@ -12,10 +12,10 @@ namespace apollo
 template<typename SphereType>
 bool check_spheres_tangent(const SphereType& s1, const SphereType& s2, const SphereType& s3, const SphereType& s4, const SphereType& tangent)
 {
-	return (equal(minimal_distance_from_sphere_to_sphere(tangent, s1), 0) &&
-			equal(minimal_distance_from_sphere_to_sphere(tangent, s2), 0) &&
-			equal(minimal_distance_from_sphere_to_sphere(tangent, s3), 0) &&
-			equal(minimal_distance_from_sphere_to_sphere(tangent, s4), 0));
+	return (sphere_touches_sphere(tangent, s1) &&
+			sphere_touches_sphere(tangent, s2) &&
+			sphere_touches_sphere(tangent, s3) &&
+			sphere_touches_sphere(tangent, s4));
 }
 
 template<typename SphereType>
