@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "safe_comparison.h"
 #include "distances.h"
 
 namespace apollo
