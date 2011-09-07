@@ -2,6 +2,7 @@
 #define SPHERES_CLUSTERING_H_
 
 #include <vector>
+#include <functional>
 
 #include "distances.h"
 #include "containers_utilities.h"

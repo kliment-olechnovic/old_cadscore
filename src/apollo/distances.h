@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "safe_comparison.h"
+
 namespace apollo
 {
 
@@ -26,6 +28,24 @@ template<typename PointType, typename SphereType>
 double maximal_distance_from_point_to_sphere(const PointType& a, const SphereType& b)
 {
 	return (distance_from_point_to_point(a, b)+b.r);
+}
+
+template<typename SphereType>
+bool sphere_intersects_sphere(const SphereType& a, const SphereType& b)
+{
+	return less(minimal_distance_from_sphere_to_sphere(a,b), 0);
+}
+
+template<typename SphereType>
+bool sphere_touches_sphere(const SphereType& a, const SphereType& b)
+{
+	return equal(minimal_distance_from_sphere_to_sphere(a,b), 0);
+}
+
+template<typename SphereType>
+bool sphere_contains_sphere(const SphereType& a, const SphereType& b)
+{
+	return less(maximal_distance_from_point_to_sphere(a,b), a.r);
 }
 
 template<typename FirstType, typename SecondType, typename DistanceFunctor>
