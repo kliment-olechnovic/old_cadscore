@@ -18,16 +18,22 @@ double distance_from_point_to_point(const PointType& a, const PointType& b)
 	return sqrt(dx*dx+dy*dy+dz*dz);
 }
 
-template<typename SphereType>
-double minimal_distance_from_sphere_to_sphere(const SphereType& a, const SphereType& b)
+template<typename PointType, typename SphereType>
+double minimal_distance_from_point_to_sphere(const PointType& a, const SphereType& b)
 {
-	return (distance_from_point_to_point(a, b)-a.r-b.r);
+	return (distance_from_point_to_point(a, b)-b.r);
 }
 
 template<typename PointType, typename SphereType>
 double maximal_distance_from_point_to_sphere(const PointType& a, const SphereType& b)
 {
 	return (distance_from_point_to_point(a, b)+b.r);
+}
+
+template<typename SphereType>
+double minimal_distance_from_sphere_to_sphere(const SphereType& a, const SphereType& b)
+{
+	return (distance_from_point_to_point(a, b)-a.r-b.r);
 }
 
 template<typename SphereType>
