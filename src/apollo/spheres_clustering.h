@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <deque>
-#include <functional>
+#include <tr1/functional>
 
 #include "distances.h"
 #include "containers_utilities.h"
@@ -24,7 +24,7 @@ public:
 	{
 		std::vector<Sphere> centers;
 		std::vector<bool> allowed(spheres.size(), true);
-		const std::vector<std::size_t> global_traversal=sort_objects_by_distances(spheres[0], spheres, std::ptr_fun(maximal_distance_from_point_to_sphere<Sphere, Sphere>));
+		const std::vector<std::size_t> global_traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<Sphere, Sphere>, spheres[0], std::tr1::placeholders::_1));
 		for(std::size_t k=0;k<spheres.size();k++)
 		{
 			const std::size_t i=global_traversal[k];
