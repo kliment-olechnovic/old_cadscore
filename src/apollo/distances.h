@@ -2,7 +2,6 @@
 #define SPHERES_H_
 
 #include <vector>
-#include <algorithm>
 
 #include "safe_comparison.h"
 
