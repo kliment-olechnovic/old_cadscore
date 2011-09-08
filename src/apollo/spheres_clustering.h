@@ -17,7 +17,6 @@ class spheres_clustering
 public:
 	typedef SphereType Sphere;
 	typedef std::vector< std::pair<Sphere, std::vector<std::size_t> > > ClustersLayer;
-	typedef std::pair< std::vector<Sphere>, std::vector< std::vector<std::size_t> > > ConvenientClustersLayer;
 
 	static const size_t npos = -1;
 
@@ -98,7 +97,7 @@ public:
 		while(need_more)
 		{
 			using_r*=2;
-			const ClustersLayer clusters=cluster_spheres(convenient_clusters_from_clusters(clusters_layers.back()).first, using_r);
+			const ClustersLayer clusters=cluster_spheres(split_pairs(clusters_layers.back()).first, using_r);
 			if(clusters.size()<clusters_layers.back().size() && clusters.size()>low_count)
 			{
 				clusters_layers.push_back(clusters);
@@ -109,22 +108,6 @@ public:
 			}
 		}
 		return clusters_layers;
-	}
-
-	static ConvenientClustersLayer convenient_clusters_from_clusters(const ClustersLayer& clusters)
-	{
-		return split_pairs(clusters);
-	}
-
-	static std::vector<ConvenientClustersLayer> convenient_clusters_layers_from_clusters_layers(const std::vector<ClustersLayer>& clusters_layers)
-	{
-		std::vector<ConvenientClustersLayer> convenient_clusters_layers;
-		convenient_clusters_layers.reserve(clusters_layers.size());
-		for(std::size_t i=0;i<clusters_layers.size();i++)
-		{
-			convenient_clusters_layers.push_back(split_pairs(clusters_layers[i]));
-		}
-		return convenient_clusters_layers;
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
