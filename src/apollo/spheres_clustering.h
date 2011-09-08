@@ -15,7 +15,8 @@ class spheres_clustering
 {
 public:
 	typedef SphereType Sphere;
-	typedef std::vector< std::pair<Sphere, std::vector<std::size_t> > > Clusters;
+	typedef std::vector< std::pair<Sphere, std::vector<std::size_t> > > ClustersLayer;
+	typedef std::pair< std::vector<Sphere>, std::vector< std::vector<std::size_t> > > ConvenientClustersLayer;
 
 	static std::vector<Sphere> find_clusters_centers(const std::vector<Sphere>& spheres, const double r)
 	{
@@ -42,9 +43,9 @@ public:
 		return centers;
 	}
 
-	static Clusters form_clusters_from_spheres_using_centers(const std::vector<Sphere>& spheres, const std::vector<Sphere>& centers)
+	static ClustersLayer form_clusters_from_spheres_using_centers(const std::vector<Sphere>& spheres, const std::vector<Sphere>& centers)
 	{
-		Clusters clusters;
+		ClustersLayer clusters;
 		for(std::size_t i=0;i<centers.size();i++)
 		{
 			clusters.push_back(std::make_pair(centers[i], std::vector<std::size_t>()));
@@ -80,21 +81,21 @@ public:
 		return nonempty_clusters;
 	}
 
-	static Clusters cluster_spheres(const std::vector<Sphere>& spheres, const double r)
+	static ClustersLayer cluster_spheres(const std::vector<Sphere>& spheres, const double r)
 	{
 		return form_clusters_from_spheres_using_centers(spheres, find_clusters_centers(spheres, r));
 	}
 
-	static std::vector<Clusters> cluster_spheres_until_low_count(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count)
+	static std::vector<ClustersLayer> cluster_spheres_until_low_count(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count)
 	{
-		std::vector<Clusters> clusters_layers;
+		std::vector<ClustersLayer> clusters_layers;
 		double using_r=r;
 		clusters_layers.push_back(cluster_spheres(spheres, using_r));
 		bool need_more=clusters_layers.back().size()>low_count;
 		while(need_more)
 		{
 			using_r*=2;
-			const Clusters clusters=cluster_spheres(split_pairs(clusters_layers.back()).first, using_r);
+			const ClustersLayer clusters=cluster_spheres(convenient_clusters_from_clusters(clusters_layers.back()).first, using_r);
 			if(clusters.size()<clusters_layers.back().size() && clusters.size()>low_count)
 			{
 				clusters_layers.push_back(clusters);
@@ -105,6 +106,22 @@ public:
 			}
 		}
 		return clusters_layers;
+	}
+
+	static ConvenientClustersLayer convenient_clusters_from_clusters(const ClustersLayer& clusters)
+	{
+		return split_pairs(clusters);
+	}
+
+	static std::vector<ConvenientClustersLayer> convenient_clusters_layers_from_clusters_layers(const std::vector<ClustersLayer>& clusters_layers)
+	{
+		std::vector<ConvenientClustersLayer> convenient_clusters_layers;
+		convenient_clusters_layers.reserve(clusters_layers.size());
+		for(std::size_t i=0;i<clusters_layers.size();i++)
+		{
+			convenient_clusters_layers.push_back(split_pairs(clusters_layers[i]));
+		}
+		return convenient_clusters_layers;
 	}
 };
 

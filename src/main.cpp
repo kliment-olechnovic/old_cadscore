@@ -28,7 +28,7 @@ int main()
 	{
 		utils::BlockTimer bt("Clustering time");
 
-		std::vector<apollo::spheres_clustering<Sphere>::Clusters> clusters_layers=apollo::spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, 1.4*5, 100);
+		std::vector<apollo::spheres_clustering<Sphere>::ClustersLayer> clusters_layers=apollo::spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, 1.4*5, 100);
 		std::clog << clusters_layers.size() << " clusters layers\n";
 		for(std::size_t i=0;i<clusters_layers.size();i++)
 		{
