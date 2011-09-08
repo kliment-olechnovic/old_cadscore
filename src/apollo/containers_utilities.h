@@ -2,6 +2,7 @@
 #define CONTAINERS_UTILITIES_H_
 
 #include <vector>
+#include <algorithm>
 
 namespace apollo
 {
