@@ -2,6 +2,7 @@
 #define SPHERES_CLUSTERING_H_
 
 #include <vector>
+#include <deque>
 #include <functional>
 
 #include "distances.h"
@@ -17,6 +18,8 @@ public:
 	typedef SphereType Sphere;
 	typedef std::vector< std::pair<Sphere, std::vector<std::size_t> > > ClustersLayer;
 	typedef std::pair< std::vector<Sphere>, std::vector< std::vector<std::size_t> > > ConvenientClustersLayer;
+
+	static const size_t npos = -1;
 
 	static std::vector<Sphere> find_clusters_centers(const std::vector<Sphere>& spheres, const double r)
 	{
@@ -122,6 +125,54 @@ public:
 			convenient_clusters_layers.push_back(split_pairs(clusters_layers[i]));
 		}
 		return convenient_clusters_layers;
+	}
+
+	template<typename NodeChecker, typename LeafChecker>
+	static std::size_t search_in_clusters_layers(const std::vector<ClustersLayer>& clusters_layers, const NodeChecker& node_checker, const LeafChecker& leaf_checker)
+	{
+		if(!clusters_layers.empty())
+		{
+			std::deque< std::pair<std::size_t, std::size_t> > queue;
+
+			const std::size_t top_level=clusters_layers.size()-1;
+			for(std::size_t top_id=0;top_id<clusters_layers[top_level].size();top_id++)
+			{
+				const Sphere& sphere=clusters_layers[top_level][top_id].first;
+				if(node_checker(sphere))
+				{
+					queue.push_back(std::make_pair(top_level, top_id));
+				}
+			}
+
+			while(!queue.empty())
+			{
+				const std::size_t level=queue.back().first;
+				const std::size_t id=queue.back().second;
+				queue.pop_back();
+				const std::vector<std::size_t>& children=clusters_layers[level][id].second;
+				for(std::size_t j=0;j<children.size();j++)
+				{
+					const std::size_t child_id=children[j];
+					if(level>=1)
+					{
+						const std::size_t child_level=level-1;
+						const Sphere& child_sphere=clusters_layers[child_level][child_id].first;
+						if(node_checker(child_sphere))
+						{
+							queue.push_back(std::make_pair(child_level, child_id));
+						}
+					}
+					else
+					{
+						if(leaf_checker(child_id))
+						{
+							return child_id;
+						}
+					}
+				}
+			}
+		}
+		return npos;
 	}
 };
 
