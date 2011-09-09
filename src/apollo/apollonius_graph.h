@@ -18,18 +18,7 @@ class apollonius_graph
 public:
 	typedef SphereType Sphere;
 	typedef std::vector<typename spheres_clustering<Sphere>::ClustersLayer> ClustersLayers;
-	typedef std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> TriplesMap;
-
-//	static TriplesMap construct_full_triples_map(
-//			const std::vector<Sphere>& spheres,
-//			const double clustering_r,
-//			const std::size_t clustering_low_count)
-//	{
-//		const std::vector<std::size_t> search_list=generate_random_permutation(spheres.size());
-//		const ClustersLayers clusters_layers=spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, clustering_r, clustering_low_count);
-//		TriplesMap triples_map=init_triples_map(spheres, clusters_layers);
-//		return triples_map;
-//	}
+	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesMap;
 
 	static std::size_t find_any_antagonist(
 			const std::vector<Sphere>& spheres,
@@ -167,6 +156,41 @@ public:
 		{
 			return std::vector<std::size_t>();
 		}
+	}
+
+	static std::pair< Triple, std::vector<std::size_t> > find_first_triple_with_expositions(
+			const std::vector<Sphere>& spheres,
+			const ClustersLayers& clusters_layers,
+			const std::vector<std::size_t>& search_list)
+	{
+		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<Sphere, Sphere>, spheres[0], std::tr1::placeholders::_1));
+		for(std::size_t a=0;a<traversal.size();a++)
+		{
+			for(std::size_t b=a+1;b<traversal.size();b++)
+			{
+				for(std::size_t c=b+1;c<traversal.size();c++)
+				{
+					const Triple triple=make_triple(a, b, c);
+					const std::vector<std::size_t> expositions=find_all_expositions(spheres, triple, npos(), clusters_layers, search_list);
+					if(!expositions.empty())
+					{
+						return std::make_pair(triple, expositions);
+					}
+				}
+			}
+		}
+		return std::make_pair(make_triple(npos(), npos(), npos()), std::vector<std::size_t>());
+	}
+
+	static TriplesMap construct_full_triples_map(
+			const std::vector<Sphere>& spheres,
+			const double clustering_r,
+			const std::size_t clustering_low_count)
+	{
+		const std::vector<std::size_t> search_list=generate_random_permutation(spheres.size());
+		const ClustersLayers clusters_layers=spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, clustering_r, clustering_low_count);
+		TriplesMap triples_map;
+		return triples_map;
 	}
 };
 
