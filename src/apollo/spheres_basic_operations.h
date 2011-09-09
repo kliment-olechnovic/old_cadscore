@@ -1,20 +1,44 @@
-#ifndef SPHERES_H_
-#define SPHERES_H_
+#ifndef SPHERES_BASIC_OPERATIONS_H_
+#define SPHERES_BASIC_OPERATIONS_H_
 
-#include <vector>
-
-#include "safe_comparison.h"
+#include "points_basic_operations.h"
 
 namespace apollo
 {
 
-template<typename PointType>
-double distance_from_point_to_point(const PointType& a, const PointType& b)
+template<typename SphereType>
+SphereType custom_sphere(const double x, const double y, const double z, const double r)
 {
-	const double dx=(a.x-b.x);
-	const double dy=(a.y-b.y);
-	const double dz=(a.z-b.z);
-	return sqrt(dx*dx+dy*dy+dz*dz);
+	SphereType result;
+	result.x=x;
+	result.y=y;
+	result.z=z;
+	result.r=r;
+	return result;
+}
+
+template<typename SphereType, typename ObjectType>
+SphereType custom_sphere_from_object(const ObjectType& o)
+{
+	return custom_point(o.x, o.y, o.z, o.r);
+}
+
+template<typename PointType, typename SphereType>
+SphereType sphere_from_point_and_radius(const PointType& a, const double r)
+{
+	return custom_sphere(a.x, a.y, a.z, r);
+}
+
+template<typename SphereType>
+bool spheres_equal(const SphereType& a, const SphereType& b)
+{
+	return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z) && equal(a.r, b.r));
+}
+
+template<typename SphereType>
+SphereType zero_sphere()
+{
+	return custom_sphere<SphereType>(0, 0, 0, 0);
 }
 
 template<typename PointType, typename SphereType>
@@ -55,4 +79,4 @@ bool sphere_contains_sphere(const SphereType& a, const SphereType& b)
 
 }
 
-#endif /* SPHERES_H_ */
+#endif /* SPHERES_BASIC_OPERATIONS_H_ */

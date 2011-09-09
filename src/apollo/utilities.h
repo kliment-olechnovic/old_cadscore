@@ -1,5 +1,5 @@
-#ifndef CONTAINERS_UTILITIES_H_
-#define CONTAINERS_UTILITIES_H_
+#ifndef UTILITIES_H_
+#define UTILITIES_H_
 
 #include <vector>
 #include <algorithm>
@@ -58,4 +58,4 @@ std::pair< std::vector<typename T::value_type::first_type>, std::vector<typename
 
 }
 
-#endif /* CONTAINERS_UTILITIES_H_ */
+#endif /* UTILITIES_H_ */
