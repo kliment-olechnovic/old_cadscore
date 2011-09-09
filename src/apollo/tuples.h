@@ -82,33 +82,6 @@ public:
 		return Tuple<N-1>(values);
 	}
 
-	std::string str() const
-	{
-		std::ostringstream output;
-		for(int i=0;i<N;i++)
-		{
-			output << get(i) << (i+1<N ? " " : "");
-		}
-		return output.str();
-	}
-
-	template<typename T>
-	bool intersects(const T& t) const
-	{
-		if(t.size()<size()) { return t.intersects(*this); }
-		else
-		{
-			for(int i=0;i<t.size();i++)
-			{
-				if(!contains(t.get(i)))
-				{
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	std::size_t hash_value() const
 	{
 		std::size_t h=0;
