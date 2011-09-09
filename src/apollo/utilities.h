@@ -62,6 +62,18 @@ std::pair< std::vector<typename T::value_type::first_type>, std::vector<typename
 	return std::make_pair(a, b);
 }
 
+std::vector<std::size_t> generate_random_permutation(const std::size_t n)
+{
+	std::vector<std::size_t> list;
+	list.reserve(n);
+	for(std::size_t i=0;i<n;i++)
+	{
+		list.push_back(i);
+	}
+	std::random_shuffle(list.begin(), list.end());
+	return list;
+}
+
 }
 
 #endif /* UTILITIES_H_ */

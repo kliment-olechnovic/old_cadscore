@@ -1,14 +1,9 @@
 #include <iostream>
-#include <cstdlib>
-#include <tr1/unordered_map>
-#include <tr1/unordered_set>
-#include <map>
-#include <cmath>
 
 #include "atoms/atoms.h"
 #include "../../contactus/src/baltymus/utils/BlockTimer.h"
 
-#include "apollo/spheres_clustering.h"
+#include "apollo/apollonius_graph.h"
 
 template<typename Iterator>
 void print_spheres(const Iterator first, const Iterator last)
@@ -22,8 +17,13 @@ void print_spheres(const Iterator first, const Iterator last)
 int main()
 {
 	typedef Atom Sphere;
-	std::vector<Sphere> spheres=read_atoms_from_PDB_file_stream(std::cin);
-	std::clog << spheres.size() << " spheres read\n";
+	std::vector<Sphere> spheres;
+
+	{
+		utils::BlockTimer bt("Reading time");
+		spheres=read_atoms_from_PDB_file_stream(std::cin);
+		std::clog << spheres.size() << " spheres read\n";
+	}
 
 	{
 		utils::BlockTimer bt("Clustering time");
@@ -41,11 +41,9 @@ int main()
 			clusters_spheres.push_back(clusters_layers.back()[i].first);
 		}
 
-		std::cout << "LIST\n";
-		print_spheres(clusters_spheres.begin(), clusters_spheres.end());
+//		std::cout << "LIST\n";
+//		print_spheres(clusters_spheres.begin(), clusters_spheres.end());
 	}
-
-//	print_spheres(spheres.begin(), spheres.end());
 
 	return 0;
 }

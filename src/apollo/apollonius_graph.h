@@ -15,8 +15,6 @@ class ApolloniusGraph
 {
 public:
 	typedef SphereType Sphere;
-	typedef spheres_clustering<Sphere> clustering;
-	typedef typename clustering::Clusters Clusters;
 
 	ApolloniusGraph(const std::vector<Sphere>& spheres, const double clustering_r, const std::size_t clustering_low_count) :
 		spheres_(spheres),
@@ -25,9 +23,12 @@ public:
 	}
 
 private:
+	typedef spheres_clustering<Sphere> clustering;
+	typedef typename clustering::ClustersLayer ClustersLayer;
+
 	std::vector<Sphere> spheres_;
-	std::vector<Clusters> clusters_layers_;
-	std::tr1::unordered_map<Triple, std::size_t, TupleHashOperator<Triple> > triples_;
+	std::vector<ClustersLayer> clusters_layers_;
+	std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> triples_;
 };
 
 }
