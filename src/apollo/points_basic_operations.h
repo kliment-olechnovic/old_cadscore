@@ -1,0 +1,92 @@
+#ifndef POINTS_BASIC_OPERATIONS_H_
+#define POINTS_BASIC_OPERATIONS_H_
+
+#include <cmath>
+
+#include "safe_comparison.h"
+
+namespace apollo
+{
+
+template<typename PointType>
+PointType custom_point(const double x, const double y, const double z)
+{
+	PointType result;
+	result.x=x;
+	result.y=y;
+	result.z=z;
+	return result;
+}
+
+template<typename PointType, typename ObjectType>
+PointType custom_point_from_object(const ObjectType& o)
+{
+	return custom_point(o.x, o.y, o.z);
+}
+
+template<typename PointType>
+bool points_equal(const PointType& a, const PointType& b)
+{
+	return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z));
+}
+
+template<typename PointType>
+PointType zero_point()
+{
+	return custom_point<PointType>(0, 0, 0);
+}
+
+template<typename PointType>
+PointType inverted_point(const PointType& a)
+{
+	return custom_point(0-a.x, 0-a.y, 0-a.z);
+}
+
+template<typename PointType>
+double distance_from_point_to_point(const PointType& a, const PointType& b)
+{
+	const double dx=(a.x-b.x);
+	const double dy=(a.y-b.y);
+	const double dz=(a.z-b.z);
+	return sqrt(dx*dx+dy*dy+dz*dz);
+}
+
+template<typename PointType>
+double point_module(const PointType& a)
+{
+	return sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+}
+
+template<typename PointType>
+double dot_product(const PointType& a, const PointType& b)
+{
+	return (a.x*b.x+a.y*b.y+a.z*b.z);
+}
+
+template<typename PointType>
+PointType cross_product(const PointType& a, const PointType& b)
+{
+	return custom_point(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
+}
+
+template<typename PointType>
+PointType point_and_number_product(const PointType& a, const double k)
+{
+	return custom_point(a.x*k, a.y*k, a.z*k);
+}
+
+template<typename PointType>
+PointType sum_of_points(const PointType& a, const PointType& b)
+{
+	return custom_point(a.x+b.x, a.y+b.y, a.z*+b.z);
+}
+
+template<typename PointType>
+PointType sub_of_points(const PointType& a, const PointType& b)
+{
+	return custom_point(a.x-b.x, a.y-b.y, a.z-b.z);
+}
+
+}
+
+#endif /* POINTS_BASIC_OPERATIONS_H_ */

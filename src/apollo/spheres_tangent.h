@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "distances.h"
+#include "spheres_basic_operations.h"
 
 namespace apollo
 {
@@ -85,6 +85,7 @@ inline std::vector<SphereType> construct_spheres_tangent(const SphereType& sm, c
 	if(D>0)  {radiuses.push_back((-b+sqrt(D))/(2*a));}
 
 	std::vector<SphereType> results;
+	results.reserve(radiuses.size());
 	for(std::size_t i=0;i<radiuses.size();i++)
 	{
 		const double r=radiuses[i];

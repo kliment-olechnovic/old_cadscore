@@ -5,8 +5,8 @@
 #include <deque>
 #include <tr1/functional>
 
-#include "distances.h"
-#include "containers_utilities.h"
+#include "spheres_basic_operations.h"
+#include "utilities.h"
 
 namespace apollo
 {
