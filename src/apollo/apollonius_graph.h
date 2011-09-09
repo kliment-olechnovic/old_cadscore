@@ -182,16 +182,35 @@ public:
 		return std::make_pair(make_triple(npos(), npos(), npos()), std::vector<std::size_t>());
 	}
 
-	static TriplesMap construct_full_triples_map(
-			const std::vector<Sphere>& spheres,
+	static std::pair< Quadruple, Sphere > find_first_quadruple(const std::vector<Sphere>& spheres,
 			const double clustering_r,
 			const std::size_t clustering_low_count)
 	{
 		const std::vector<std::size_t> search_list=generate_random_permutation(spheres.size());
 		const ClustersLayers clusters_layers=spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, clustering_r, clustering_low_count);
-		TriplesMap triples_map;
-		return triples_map;
+		const std::pair< Triple, std::vector<std::size_t> > first_triple_with_expositions=find_first_triple_with_expositions(spheres, clusters_layers, search_list);
+		const Quadruple q(first_triple_with_expositions.first, first_triple_with_expositions.second.front());
+		const Sphere sphere=construct_spheres_tangent(spheres[q.get(0)], spheres[q.get(1)], spheres[q.get(2)], spheres[q.get(3)]).front();
+		return std::make_pair(q, sphere);
 	}
+
+//	static TriplesMap construct_full_triples_map(
+//			const std::vector<Sphere>& spheres,
+//			const double clustering_r,
+//			const std::size_t clustering_low_count)
+//	{
+//		const std::vector<std::size_t> search_list=generate_random_permutation(spheres.size());
+//		const ClustersLayers clusters_layers=spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, clustering_r, clustering_low_count);
+//		TriplesMap triples_map;
+//		std::deque< std::pair<Triple, std::size_t> > stack;
+//		const std::pair< Triple, std::vector<std::size_t> > first_triple_with_expositions=find_first_triple_with_expositions(spheres, clusters_layers, search_list);
+//		stack.push_back(std::make_pair(first_triple_with_expositions.first, first_triple_with_expositions.second.front()));
+//		while(!stack.empty())
+//		{
+//			//
+//		}
+//		return triples_map;
+//	}
 };
 
 }

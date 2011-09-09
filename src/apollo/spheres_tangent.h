@@ -89,11 +89,7 @@ inline std::vector<SphereType> construct_spheres_tangent(const SphereType& sm, c
 	for(std::size_t i=0;i<radiuses.size();i++)
 	{
 		const double r=radiuses[i];
-		SphereType candidate;
-		candidate.x=(u1*r+v1+sm.x, r-sm.r);
-		candidate.y=(u2*r+v2+sm.y, r-sm.r);
-		candidate.z=(u3*r+v3+sm.z, r-sm.r);
-		candidate.r=(r-sm.r);
+		const SphereType candidate=custom_sphere<SphereType>((u1*r+v1+sm.x), (u2*r+v2+sm.y), (u3*r+v3+sm.z), (r-sm.r));
 		if(check_spheres_tangent(sm, s1, s2, s3, candidate))
 		{
 			results.push_back(candidate);
