@@ -18,8 +18,6 @@ public:
 	typedef SphereType Sphere;
 	typedef std::vector< std::pair<Sphere, std::vector<std::size_t> > > ClustersLayer;
 
-	static const size_t npos = -1;
-
 	static std::vector<Sphere> find_clusters_centers(const std::vector<Sphere>& spheres, const double r)
 	{
 		std::vector<Sphere> centers;
@@ -155,7 +153,7 @@ public:
 				}
 			}
 		}
-		return npos;
+		return npos();
 	}
 };
 

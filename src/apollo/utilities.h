@@ -7,6 +7,12 @@
 namespace apollo
 {
 
+inline size_t npos()
+{
+	const size_t v = -1;
+	return v;
+}
+
 template<typename ListType, typename FunctorType>
 std::vector<std::size_t> sort_objects_by_functor_result(const ListType& list, const FunctorType& functor)
 {
