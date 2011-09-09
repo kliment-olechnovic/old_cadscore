@@ -163,14 +163,14 @@ public:
 			const ClustersLayers& clusters_layers,
 			const std::vector<std::size_t>& search_list)
 	{
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<Sphere, Sphere>, spheres[0], std::tr1::placeholders::_1));
+		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere>, spheres.front(), std::tr1::placeholders::_1));
 		for(std::size_t a=0;a<traversal.size();a++)
 		{
 			for(std::size_t b=a+1;b<traversal.size();b++)
 			{
 				for(std::size_t c=b+1;c<traversal.size();c++)
 				{
-					const Triple triple=make_triple(a, b, c);
+					const Triple triple=make_triple(traversal[a], traversal[b], traversal[c]);
 					const std::vector<std::size_t> expositions=find_all_expositions(spheres, triple, npos(), clusters_layers, search_list);
 					if(!expositions.empty())
 					{
