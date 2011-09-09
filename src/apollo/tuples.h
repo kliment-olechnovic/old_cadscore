@@ -62,21 +62,6 @@ public:
 		return false;
 	}
 
-	std::size_t hash_value() const
-	{
-		std::size_t h=0;
-		for(int i=0;i<N;i++)
-		{
-			h += get(i);
-			h += (h << 10);
-			h ^= (h >> 6);
-		}
-		h += (h << 3);
-		h ^= (h >> 11);
-		h += (h << 15);
-		return h;
-	}
-
 	void set(int i, std::size_t x)
 	{
 		unsafe_set(i, x);
@@ -124,6 +109,29 @@ public:
 		return true;
 	}
 
+	std::size_t hash_value() const
+	{
+		std::size_t h=0;
+		for(int i=0;i<N;i++)
+		{
+			h += get(i);
+			h += (h << 10);
+			h ^= (h >> 6);
+		}
+		h += (h << 3);
+		h ^= (h >> 11);
+		h += (h << 15);
+		return h;
+	}
+
+	struct HashFunctor
+	{
+		std::size_t operator()(const Tuple& t) const
+		{
+			return t.hash_value();
+		}
+	};
+
 private:
 	void unsafe_set(int i, std::size_t x)
 	{
@@ -136,15 +144,6 @@ private:
 	}
 
 	std::size_t v_[N];
-};
-
-template<typename T>
-struct TupleHashOperator
-{
-	std::size_t operator()(const T& t) const
-	{
-		return t.hash_value();
-	}
 };
 
 typedef Tuple<3> Triple;
