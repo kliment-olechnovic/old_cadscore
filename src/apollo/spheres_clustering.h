@@ -110,69 +110,22 @@ public:
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
-	static std::size_t search_in_clusters_layers_deprecated(const std::vector<ClustersLayer>& clusters_layers, const NodeChecker& node_checker, const LeafChecker& leaf_checker)
+	static std::vector<std::size_t> search_in_clusters_layers(const std::vector<ClustersLayer>& clusters_layers, const NodeChecker& node_checker, const LeafChecker& leaf_checker, const std::size_t max_results_count)
 	{
-		if(!clusters_layers.empty())
+		std::vector<std::size_t> results;
+		if(max_results_count>0 && !clusters_layers.empty())
 		{
-			std::deque< std::pair<std::size_t, std::size_t> > queue;
-
+			std::deque<Triple> stack;
 			const std::size_t top_level=clusters_layers.size()-1;
 			for(std::size_t top_id=0;top_id<clusters_layers[top_level].size();top_id++)
 			{
-				const Sphere& sphere=clusters_layers[top_level][top_id].first;
-				if(node_checker(sphere))
-				{
-					queue.push_back(std::make_pair(top_level, top_id));
-				}
+				stack.push_back(make_triple(top_level, top_id, 0));
 			}
 
-			while(!queue.empty())
+			while(!stack.empty())
 			{
-				const std::size_t level=queue.back().first;
-				const std::size_t id=queue.back().second;
-				queue.pop_back();
-				const std::vector<std::size_t>& children=clusters_layers[level][id].second;
-				for(std::size_t j=0;j<children.size();j++)
-				{
-					const std::size_t child_id=children[j];
-					if(level>=1)
-					{
-						const std::size_t child_level=level-1;
-						const Sphere& child_sphere=clusters_layers[child_level][child_id].first;
-						if(node_checker(child_sphere))
-						{
-							queue.push_back(std::make_pair(child_level, child_id));
-						}
-					}
-					else
-					{
-						if(leaf_checker(child_id))
-						{
-							return child_id;
-						}
-					}
-				}
-			}
-		}
-		return npos();
-	}
-
-	template<typename NodeChecker, typename LeafChecker>
-	static std::size_t search_in_clusters_layers(const std::vector<ClustersLayer>& clusters_layers, const NodeChecker& node_checker, const LeafChecker& leaf_checker)
-	{
-		if(!clusters_layers.empty())
-		{
-			std::deque<Triple> queue;
-			const std::size_t top_level=clusters_layers.size()-1;
-			for(std::size_t top_id=0;top_id<clusters_layers[top_level].size();top_id++)
-			{
-				queue.push_back(make_triple(top_level, top_id, 0));
-			}
-
-			while(!queue.empty())
-			{
-				const Triple current_position=queue.back();
-				queue.pop_back();
+				const Triple current_position=stack.back();
+				stack.pop_back();
 
 				const std::size_t current_level=current_position.get(0);
 				const std::size_t current_cluster_id=current_position.get(1);
@@ -193,20 +146,24 @@ public:
 								const std::size_t child=children[i];
 								if(leaf_checker(child))
 								{
-									return child;
+									results.push_back(child);
+									if(results.size()>=max_results_count)
+									{
+										return results;
+									}
 								}
 							}
 						}
 						else
 						{
-							queue.push_back(make_triple(current_level, current_cluster_id, current_child_id+1));
-							queue.push_back(make_triple(current_level-1, children[current_child_id], 0));
+							stack.push_back(make_triple(current_level, current_cluster_id, current_child_id+1));
+							stack.push_back(make_triple(current_level-1, children[current_child_id], 0));
 						}
 					}
 				}
 			}
 		}
-		return npos();
+		return results;
 	}
 };
 
