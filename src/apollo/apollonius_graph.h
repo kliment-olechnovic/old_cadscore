@@ -218,6 +218,10 @@ private:
 
 	bool check_exposition(const Exposition& exposition) const
 	{
+		if(exposition.tangents.empty())
+		{
+			return false;
+		}
 		for(std::size_t j=0;j<exposition.tangents.size();j++)
 		{
 			for(std::size_t i=0;i<spheres_.size();i++)
@@ -228,6 +232,20 @@ private:
 				}
 			}
 		}
+		return true;
+	}
+
+	bool fast_check_exposition(const Exposition& exposition) const
+	{
+		if(exposition.tangents.empty())
+		{
+			return false;
+		}
+		return spheres_clustering<Sphere>::search_in_clusters_layers(
+				clusters_layers_,
+				typename intersection_search_operators::NodeChecker(exposition),
+				typename intersection_search_operators::LeafChecker(exposition, spheres_),
+				1).empty();
 		return true;
 	}
 
@@ -309,7 +327,7 @@ private:
 		for(std::size_t i=0;i<spheres_.size();i++)
 		{
 			const Exposition expo(triple, i, antagonist, spheres_);
-			if(check_exposition(expo))
+			if(fast_check_exposition(expo))
 			{
 				return expo;
 			}
