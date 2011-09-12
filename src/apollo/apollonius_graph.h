@@ -241,12 +241,15 @@ private:
 		{
 			return false;
 		}
-		return spheres_clustering<Sphere>::search_in_clusters_layers(
+//		return spheres_clustering<Sphere>::search_in_clusters_layers(
+//				clusters_layers_,
+//				typename intersection_search_operators::NodeChecker(exposition),
+//				typename intersection_search_operators::LeafChecker(exposition, spheres_),
+//				1).empty();
+		return (spheres_clustering<Sphere>::search_in_clusters_layers_deprecated(
 				clusters_layers_,
 				typename intersection_search_operators::NodeChecker(exposition),
-				typename intersection_search_operators::LeafChecker(exposition, spheres_),
-				1).empty();
-		return true;
+				typename intersection_search_operators::LeafChecker(exposition, spheres_))==npos());
 	}
 
 	Quadruple find_first_quadruple() const
