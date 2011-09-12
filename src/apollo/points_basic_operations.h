@@ -87,6 +87,33 @@ PointType sub_of_points(const PointType& a, const PointType& b)
 	return custom_point(a.x-b.x, a.y-b.y, a.z-b.z);
 }
 
+template<typename PointType>
+double signed_volume(const PointType& a, const PointType& b, const PointType& c, const PointType& d)
+{
+	const PointType sa=sub_of_points(a, d);
+	const PointType sb=sub_of_points(b, d);
+	const PointType sc=sub_of_points(c, d);
+	return (dot_product(sa, cross_product(sb, sc))/6);
+}
+
+template<typename PointType>
+int halfspace(const PointType& a, const PointType& b, const PointType& c, const PointType& d)
+{
+	const double v=signed_volume(a, b, c, d);
+	if(equal(v, 0))
+	{
+		return 0;
+	}
+	else if(v<0)
+	{
+		return -1;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
 }
 
 #endif /* POINTS_BASIC_OPERATIONS_H_ */
