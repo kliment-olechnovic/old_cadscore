@@ -53,14 +53,9 @@ int main()
 
 	{
 		utils::BlockTimer bt("Apollo time");
-		std::pair< apollo::Quadruple, Sphere > first_quadruple=apollo::apollonius_graph<Sphere>::find_first_quadruple(spheres, 1.4*5, 100);
+		std::deque<apollo::Quadruple> quadruple=apollo::apollonius_graph<Sphere>(spheres, 1.4*5, 100).find_quadruples();
+		std::clog << quadruple.size() << " quadruples found\n";
 
-		std::cout << "LIST\n";
-		print_sphere(first_quadruple.second);
-		for(int i=0;i<4;i++)
-		{
-			print_sphere(spheres[first_quadruple.first.get(i)]);
-		}
 	}
 
 	return 0;

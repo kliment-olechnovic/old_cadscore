@@ -1,9 +1,13 @@
 #ifndef APOLLONIUS_GRAPH_H_
 #define APOLLONIUS_GRAPH_H_
 
+#include <vector>
+#include <deque>
+#include <set>
 #include <tr1/unordered_map>
 #include <tr1/unordered_set>
 
+#include "points_basic_operations.h"
 #include "spheres_basic_operations.h"
 #include "spheres_clustering.h"
 #include "spheres_tangent.h"
@@ -19,8 +23,7 @@ class apollonius_graph
 public:
 	typedef SphereType Sphere;
 	typedef std::vector<typename spheres_clustering<Sphere>::ClustersLayer> ClustersLayers;
-	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesMap;
-	typedef std::tr1::unordered_set<Quadruple, Quadruple::HashFunctor> QuadruplesSet;
+	typedef std::tr1::unordered_map<Triple, std::set<std::size_t>, Triple::HashFunctor> TriplesMap;
 
 	apollonius_graph(
 			const std::vector<Sphere>& spheres,
@@ -32,13 +35,61 @@ public:
 	{
 	}
 
+	std::deque<Quadruple> find_quadruples() const
+	{
+		std::deque<Quadruple> quadruples;
+		TriplesMap triples_map;
+		std::deque<Triple> triples_stack;
+
+		{
+			const Quadruple found_quadruple=find_first_quadruple();
+			if(!(found_quadruple==Quadruple()))
+			{
+				quadruples.push_back(found_quadruple);
+				for(int i=0;i<found_quadruple.size();i++)
+				{
+					const Triple found_triple=found_quadruple.exclude(i);
+					const std::size_t found_protagonist=found_quadruple.get(i);
+					triples_map[found_triple].insert(found_protagonist);
+					triples_stack.push_back(found_triple);
+				}
+			}
+		}
+
+		while(!triples_stack.empty())
+		{
+			std::clog << quadruples.size() << "qs\n";
+			const Triple triple=triples_stack.back();
+			triples_stack.pop_back();
+			TriplesMap::const_iterator it=triples_map.find(triple);
+			if(it->second.size()==1)
+			{
+				const std::size_t antagonist=*(it->second.begin());
+				const Exposition exposition=find_perfect_exposition(triple, antagonist);
+				if(!exposition.tangents.empty())
+				{
+					const Quadruple found_quadruple(triple, exposition.protagonist);
+					quadruples.push_back(found_quadruple);
+					for(int i=0;i<found_quadruple.size();i++)
+					{
+						const Triple found_triple=found_quadruple.exclude(i);
+						const std::size_t found_protagonist=found_quadruple.get(i);
+						triples_map[found_triple].insert(found_protagonist);
+						triples_stack.push_back(found_triple);
+					}
+				}
+			}
+		}
+		return quadruples;
+	}
+
 private:
 	struct Exposition
 	{
-		const Triple triple;
-		const std::size_t protagonist;
-		const std::size_t antagonist;
-		const std::vector<Sphere> tangents;
+		Triple triple;
+		std::size_t protagonist;
+		std::size_t antagonist;
+		std::vector<Sphere> tangents;
 
 		Exposition() : protagonist(npos()), antagonist(npos())
 		{
@@ -55,7 +106,7 @@ private:
 				const std::vector<Sphere>& spheres) :
 					triple(triple),
 					protagonist(protagonist),
-					protagonist(antagonist),
+					antagonist(antagonist),
 					tangents(construct_tangents(triple, protagonist, antagonist, spheres))
 		{
 		}
@@ -77,7 +128,7 @@ private:
 			}
 			else
 			{
-				const Sphere& protagonist_sphere=spheres[protagonist_sphere];
+				const Sphere& protagonist_sphere=spheres[protagonist];
 				const std::vector<Sphere> all_tangents=construct_spheres_tangent(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
 				if(antagonist>=spheres.size())
 				{
@@ -174,7 +225,7 @@ private:
 				for(std::size_t d=c+1;d<traversal.size();d++)
 				{
 					const Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-					Exposition exposition=Exposition::exposition_from_quadruple(quadruple, spheres_);
+					const Exposition exposition=Exposition::exposition_from_quadruple(quadruple, spheres_);
 					if(exposition.tangents.size()==1)
 					{
 						const Sphere& tangent=exposition.tangents.front();
@@ -214,96 +265,35 @@ private:
 	Exposition find_any_better_protagonistic_exposition(const Exposition& old_protagonistic_exposition) const
 	{
 		const std::vector<std::size_t> result=spheres_clustering<Sphere>::search_in_clusters_layers(
-				clusters_layers,
-				intersection_search_operators::NodeChecker(old_protagonistic_exposition),
-				intersection_search_operators::LeafChecker(old_protagonistic_exposition, spheres),
+				clusters_layers_,
+				typename intersection_search_operators::NodeChecker(old_protagonistic_exposition),
+				typename intersection_search_operators::LeafChecker(old_protagonistic_exposition, spheres_),
 				1);
 		if(!result.empty())
 		{
-			return Exposition::construct_from_other_exposition(old_protagonistic_exposition.triple, result.front(), old_protagonistic_exposition.antagonist, spheres_, false);
+			return Exposition(old_protagonistic_exposition.triple, result.front(), old_protagonistic_exposition.antagonist, spheres_);
 		}
 		return Exposition();
 	}
 
-	static std::vector<std::size_t> find_all_expositions(
-			const std::vector<Sphere>& spheres,
-			const Triple& triple,
-			const std::size_t old,
-			const ClustersLayers& clusters_layers,
-			const std::vector<std::size_t>& search_list)
+	Exposition find_perfect_exposition(const Triple& triple, const std::size_t antagonist) const
 	{
-		std::size_t current=find_any_antagonist(spheres, triple, old, search_list);
-		std::size_t last=current;
-		while(current<spheres.size())
+		Exposition current=find_any_protagonistic_exposition(triple, antagonist);
+		Exposition last=current;
+		while(!current.tangents.empty())
 		{
+//			for(int i=0;i<3;i++)
+//			{
+//				std::cout << "SPHERE " << spheres_[current.triple.get(i)].r << " " << spheres_[current.triple.get(i)].x << " " << spheres_[current.triple.get(i)].y << " " << spheres_[current.triple.get(i)].z << "\n";
+//			}
+//			std::cout << "SPHERE " << spheres_[current.protagonist].r << " " << spheres_[current.protagonist].x << " " << spheres_[current.protagonist].y << " " << spheres_[current.protagonist].z << "\n";
+//			std::cout << "SPHERE " << current.tangents.front().r << " " << current.tangents.front().x << " " << current.tangents.front().y << " " << current.tangents.front().z << "\n\n";
 			last=current;
-			current=find_any_replacement(spheres, triple, current, clusters_layers);
+			current=find_any_better_protagonistic_exposition(current);
 		}
-		if(last<spheres.size())
-		{
-			return find_all_equivalents(spheres, triple, last, clusters_layers);
-		}
-		else
-		{
-			return std::vector<std::size_t>();
-		}
+		return last;
 	}
 
-	static std::pair< Triple, std::vector<std::size_t> > find_first_triple_with_expositions(
-			const std::vector<Sphere>& spheres,
-			const ClustersLayers& clusters_layers,
-			const std::vector<std::size_t>& search_list)
-	{
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere>, spheres.front(), std::tr1::placeholders::_1));
-		for(std::size_t a=0;a<traversal.size();a++)
-		{
-			for(std::size_t b=a+1;b<traversal.size();b++)
-			{
-				for(std::size_t c=b+1;c<traversal.size();c++)
-				{
-					const Triple triple=make_triple(traversal[a], traversal[b], traversal[c]);
-					const std::vector<std::size_t> expositions=find_all_expositions(spheres, triple, npos(), clusters_layers, search_list);
-					if(!expositions.empty())
-					{
-						return std::make_pair(triple, expositions);
-					}
-				}
-			}
-		}
-		return std::make_pair(make_triple(npos(), npos(), npos()), std::vector<std::size_t>());
-	}
-
-	static std::pair< Quadruple, Sphere > find_first_quadruple(const std::vector<Sphere>& spheres,
-			const double clustering_r,
-			const std::size_t clustering_low_count)
-	{
-		const std::vector<std::size_t> search_list=generate_random_permutation(spheres.size());
-		const ClustersLayers clusters_layers=spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, clustering_r, clustering_low_count);
-		const std::pair< Triple, std::vector<std::size_t> > first_triple_with_expositions=find_first_triple_with_expositions(spheres, clusters_layers, search_list);
-		const Quadruple q(first_triple_with_expositions.first, first_triple_with_expositions.second.front());
-		const Sphere sphere=construct_spheres_tangent(spheres[q.get(0)], spheres[q.get(1)], spheres[q.get(2)], spheres[q.get(3)]).front();
-		return std::make_pair(q, sphere);
-	}
-
-//	static TriplesMap construct_full_triples_map(
-//			const std::vector<Sphere>& spheres,
-//			const double clustering_r,
-//			const std::size_t clustering_low_count)
-//	{
-//		const std::vector<std::size_t> search_list=generate_random_permutation(spheres.size());
-//		const ClustersLayers clusters_layers=spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, clustering_r, clustering_low_count);
-//		TriplesMap triples_map;
-//		std::deque< std::pair<Triple, std::size_t> > stack;
-//		const std::pair< Triple, std::vector<std::size_t> > first_triple_with_expositions=find_first_triple_with_expositions(spheres, clusters_layers, search_list);
-//		stack.push_back(std::make_pair(first_triple_with_expositions.first, first_triple_with_expositions.second.front()));
-//		while(!stack.empty())
-//		{
-//			//
-//		}
-//		return triples_map;
-//	}
-
-private:
 	const std::vector<Sphere>& spheres_;
 	const std::vector<std::size_t> randomized_search_list_;
 	const ClustersLayers clusters_layers_;

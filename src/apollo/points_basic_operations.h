@@ -21,7 +21,7 @@ PointType custom_point(const double x, const double y, const double z)
 template<typename PointType, typename ObjectType>
 PointType custom_point_from_object(const ObjectType& o)
 {
-	return custom_point(o.x, o.y, o.z);
+	return custom_point<PointType>(o.x, o.y, o.z);
 }
 
 template<typename PointType>
@@ -39,7 +39,7 @@ PointType zero_point()
 template<typename PointType>
 PointType inverted_point(const PointType& a)
 {
-	return custom_point(0-a.x, 0-a.y, 0-a.z);
+	return custom_point<PointType>(0-a.x, 0-a.y, 0-a.z);
 }
 
 template<typename PointType>
@@ -66,25 +66,25 @@ double dot_product(const PointType& a, const PointType& b)
 template<typename PointType>
 PointType cross_product(const PointType& a, const PointType& b)
 {
-	return custom_point(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
+	return custom_point<PointType>(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
 }
 
 template<typename PointType>
 PointType point_and_number_product(const PointType& a, const double k)
 {
-	return custom_point(a.x*k, a.y*k, a.z*k);
+	return custom_point<PointType>(a.x*k, a.y*k, a.z*k);
 }
 
 template<typename PointType>
 PointType sum_of_points(const PointType& a, const PointType& b)
 {
-	return custom_point(a.x+b.x, a.y+b.y, a.z*+b.z);
+	return custom_point<PointType>(a.x+b.x, a.y+b.y, a.z*+b.z);
 }
 
 template<typename PointType>
 PointType sub_of_points(const PointType& a, const PointType& b)
 {
-	return custom_point(a.x-b.x, a.y-b.y, a.z-b.z);
+	return custom_point<PointType>(a.x-b.x, a.y-b.y, a.z-b.z);
 }
 
 template<typename PointType>
