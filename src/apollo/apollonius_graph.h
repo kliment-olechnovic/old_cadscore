@@ -190,15 +190,12 @@ private:
 		{
 			const Exposition exposition;
 			const std::vector<Sphere>& spheres;
-			const std::set<std::size_t>& forbidden;
 
 			LeafChecker(
 					const Exposition& exposition,
-					const std::vector<Sphere>& spheres,
-					const std::set<std::size_t>& forbidden) :
+					const std::vector<Sphere>& spheres) :
 						exposition(exposition),
-						spheres(spheres),
-						forbidden(forbidden)
+						spheres(spheres)
 			{
 			}
 
@@ -208,7 +205,7 @@ private:
 				{
 					for(std::size_t j=0;j<exposition.tangents.size();j++)
 					{
-						if(sphere_intersects_sphere(exposition.tangents[j], spheres[id]) && forbidden.find(id)==forbidden.end())
+						if(sphere_intersects_sphere(exposition.tangents[j], spheres[id]))
 						{
 							return true;
 						}
@@ -273,12 +270,12 @@ private:
 		return Exposition();
 	}
 
-	Exposition find_any_better_protagonistic_exposition(const Exposition& old_protagonistic_exposition, const std::set<std::size_t>& forbidden) const
+	Exposition find_any_better_protagonistic_exposition(const Exposition& old_protagonistic_exposition) const
 	{
 		const std::vector<std::size_t> result=spheres_clustering<Sphere>::search_in_clusters_layers(
 				clusters_layers_,
 				typename intersection_search_operators::NodeChecker(old_protagonistic_exposition),
-				typename intersection_search_operators::LeafChecker(old_protagonistic_exposition, spheres_, forbidden),
+				typename intersection_search_operators::LeafChecker(old_protagonistic_exposition, spheres_),
 				1);
 		if(!result.empty())
 		{
@@ -289,7 +286,6 @@ private:
 
 	Exposition find_perfect_exposition(const Triple& triple, const std::size_t antagonist) const
 	{
-		std::set<std::size_t> forbidden;
 		Exposition current=find_any_protagonistic_exposition(triple, antagonist);
 		Exposition last=current;
 		while(!current.tangents.empty())
@@ -301,8 +297,7 @@ private:
 //			std::cout << "SPHERE " << spheres_[current.protagonist].r << " " << spheres_[current.protagonist].x << " " << spheres_[current.protagonist].y << " " << spheres_[current.protagonist].z << "\n";
 //			std::cout << "SPHERE " << current.tangents.front().r << " " << current.tangents.front().x << " " << current.tangents.front().y << " " << current.tangents.front().z << "\n\n";
 			last=current;
-			forbidden.insert(last.protagonist);
-			current=find_any_better_protagonistic_exposition(current, forbidden);
+			current=find_any_better_protagonistic_exposition(current);
 		}
 		return last;
 	}
