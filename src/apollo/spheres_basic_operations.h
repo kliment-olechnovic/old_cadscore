@@ -74,7 +74,7 @@ bool sphere_touches_sphere(const SphereType& a, const SphereType& b)
 template<typename SphereType>
 bool sphere_contains_sphere(const SphereType& a, const SphereType& b)
 {
-	return (less(maximal_distance_from_point_to_sphere(a,b), a.r) || equal(maximal_distance_from_point_to_sphere(a,b), a.r));
+	return less_or_equal(maximal_distance_from_point_to_sphere(a,b), a.r);
 }
 
 }
