@@ -68,7 +68,7 @@ public:
 				const Exposition exposition=find_perfect_exposition(triple, antagonist);
 				if(!exposition.tangents.empty())
 				{
-//					std::clog << "         " << check_exposition(exposition) << " ch e\n";
+					if(!check_exposition(exposition)) std::clog << " !!!!!!!\n";
 					const Quadruple found_quadruple(triple, exposition.protagonist);
 					quadruples.push_back(found_quadruple);
 					for(int i=0;i<found_quadruple.size();i++)
@@ -284,14 +284,24 @@ private:
 
 	Exposition find_perfect_exposition(const Triple& triple, const std::size_t antagonist) const
 	{
+		std::set<std::size_t> forbidden;
 		Exposition current=find_any_protagonistic_exposition(triple, antagonist);
 		Exposition last=current;
 		while(!current.tangents.empty())
 		{
 			last=current;
 			current=find_any_better_protagonistic_exposition(current);
+			if(forbidden.find(current.protagonist)!=forbidden.end()) { break; }
+			forbidden.insert(current.protagonist);
 		}
-		return last;
+		if(current.protagonist==npos())
+		{
+			return last;
+		}
+		else
+		{
+			return Exposition();
+		}
 	}
 
 //	bool slow_check_exposition(const Exposition& exposition) const

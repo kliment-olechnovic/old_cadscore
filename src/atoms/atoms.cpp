@@ -51,7 +51,7 @@ struct Implementation
 			a.x=ad.coordinates.x;
 			a.y=ad.coordinates.y;
 			a.z=ad.coordinates.z;
-			a.r=0;//ad.radius_VDW;
+			a.r=ad.radius_VDW;
 			atoms.push_back(a);
 		}
 		return atoms;
