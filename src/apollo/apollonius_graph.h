@@ -58,17 +58,15 @@ public:
 
 		while(!triples_stack.empty())
 		{
-//			std::clog << quadruples.size() << " qs\n";
 			const Triple triple=triples_stack.back();
 			triples_stack.pop_back();
 			TriplesMap::const_iterator it=triples_map.find(triple);
 			if(it->second.size()==1)
 			{
 				const std::size_t antagonist=*(it->second.begin());
-				const Exposition exposition=find_perfect_exposition(triple, antagonist);
+				const Exposition exposition=find_valid_protagonistic_exposition(triple, antagonist);
 				if(!exposition.tangents.empty())
 				{
-					if(!check_exposition(exposition)) std::clog << " !!!!!!!\n";
 					const Quadruple found_quadruple(triple, exposition.protagonist);
 					quadruples.push_back(found_quadruple);
 					for(int i=0;i<found_quadruple.size();i++)
@@ -189,16 +187,19 @@ private:
 		{
 			const Exposition exposition;
 			const std::vector<Sphere>& spheres;
+			const std::tr1::unordered_set<std::size_t>& visited;
 
 			LeafChecker(
 					const Exposition& exposition,
-					const std::vector<Sphere>& spheres) :
+					const std::vector<Sphere>& spheres,
+					const std::tr1::unordered_set<std::size_t>& visited) :
 						exposition(exposition),
-						spheres(spheres)
+						spheres(spheres),
+						visited(visited)
 			{
 			}
 
-			bool operator()(const std::size_t id) const
+			std::pair<bool, bool> operator()(const std::size_t id) const
 			{
 				if(id<spheres.size() && id!=exposition.protagonist && !exposition.triple.contains(id))
 				{
@@ -206,11 +207,11 @@ private:
 					{
 						if(sphere_intersects_sphere(exposition.tangents[j], spheres[id]))
 						{
-							return true;
+							return std::make_pair(true, visited.find(id)==visited.end());
 						}
 					}
 				}
-				return false;
+				return std::make_pair(false, false);
 			}
 		};
 	};
@@ -224,8 +225,7 @@ private:
 		return spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
 				clusters_layers_,
 				typename intersection_search_operators::NodeChecker(exposition),
-				typename intersection_search_operators::LeafChecker(exposition, spheres_),
-				1).empty();
+				typename intersection_search_operators::LeafChecker(exposition, spheres_, std::tr1::unordered_set<std::size_t>())).empty();
 	}
 
 	Quadruple find_first_quadruple() const
@@ -267,87 +267,37 @@ private:
 		return Exposition();
 	}
 
-	Exposition find_any_better_protagonistic_exposition(const Exposition& old_protagonistic_exposition) const
+	Exposition find_valid_protagonistic_exposition(const Triple& triple, const std::size_t antagonist) const
 	{
-		const std::vector<std::size_t> result=spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
-				clusters_layers_,
-				typename intersection_search_operators::NodeChecker(old_protagonistic_exposition),
-				typename intersection_search_operators::LeafChecker(old_protagonistic_exposition, spheres_),
-				1);
-		if(!result.empty())
+		Exposition exposition=find_any_protagonistic_exposition(triple, antagonist);
+		std::tr1::unordered_set<std::size_t> visited;
+		while(!exposition.tangents.empty())
 		{
-			return Exposition(old_protagonistic_exposition.triple, result.front(), old_protagonistic_exposition.antagonist, spheres_);
+			const std::vector<std::size_t> result=spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
+					clusters_layers_,
+					typename intersection_search_operators::NodeChecker(exposition),
+					typename intersection_search_operators::LeafChecker(exposition, spheres_, visited));
+
+			if(result.empty())
+			{
+				return exposition;
+			}
+			else
+			{
+				const std::size_t last_id=result.back();
+				if(visited.find(last_id)==visited.end())
+				{
+					visited.insert(last_id);
+					exposition=Exposition(triple, last_id, antagonist, spheres_);
+				}
+				else
+				{
+					return Exposition();
+				}
+			}
 		}
-//		std::clog << "  perf\n";
 		return Exposition();
 	}
-
-	Exposition find_perfect_exposition(const Triple& triple, const std::size_t antagonist) const
-	{
-		std::set<std::size_t> forbidden;
-		Exposition current=find_any_protagonistic_exposition(triple, antagonist);
-		Exposition last=current;
-		while(!current.tangents.empty())
-		{
-			last=current;
-			current=find_any_better_protagonistic_exposition(current);
-			if(forbidden.find(current.protagonist)!=forbidden.end()) { break; }
-			forbidden.insert(current.protagonist);
-		}
-		if(current.protagonist==npos())
-		{
-			return last;
-		}
-		else
-		{
-			return Exposition();
-		}
-	}
-
-//	bool slow_check_exposition(const Exposition& exposition) const
-//	{
-//		if(exposition.tangents.empty())
-//		{
-//			return false;
-//		}
-//		for(std::size_t j=0;j<exposition.tangents.size();j++)
-//		{
-//			for(std::size_t i=0;i<spheres_.size();i++)
-//			{
-//				if(sphere_intersects_sphere(exposition.tangents[j], spheres_[i]))
-//				{
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-//
-//	bool fast_check_exposition(const Exposition& exposition) const
-//	{
-//		if(exposition.tangents.empty())
-//		{
-//			return false;
-//		}
-//		return spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
-//				clusters_layers_,
-//				typename intersection_search_operators::NodeChecker(exposition),
-//				typename intersection_search_operators::LeafChecker(exposition, spheres_),
-//				1).empty();
-//	}
-//
-//	Exposition find_perfect_exposition(const Triple& triple, const std::size_t antagonist) const
-//	{
-//		for(std::size_t i=0;i<spheres_.size();i++)
-//		{
-//			const Exposition expo(triple, i, antagonist, spheres_);
-//			if(fast_check_exposition(expo))
-//			{
-//				return expo;
-//			}
-//		}
-//		return Exposition();
-//	}
 
 	const std::vector<Sphere>& spheres_;
 	const std::vector<std::size_t> randomized_search_list_;

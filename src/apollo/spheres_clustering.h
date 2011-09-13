@@ -114,13 +114,12 @@ public:
 	static std::vector<std::size_t> search_in_clusters_layers_narrow(
 			const std::vector<ClustersLayer>& clusters_layers,
 			const NodeChecker& node_checker,
-			const LeafChecker& leaf_checker,
-			const std::size_t max_results_count)
+			const LeafChecker& leaf_checker)
 	{
 		typedef std::tr1::tuple<std::size_t, std::size_t, std::size_t> NodeCoordinates;
 
 		std::vector<std::size_t> results;
-		if(max_results_count>0 && !clusters_layers.empty())
+		if(!clusters_layers.empty())
 		{
 			std::deque< NodeCoordinates > stack;
 			const std::size_t top_level=clusters_layers.size()-1;
@@ -151,10 +150,11 @@ public:
 							for(std::size_t i=0;i<children.size();i++)
 							{
 								const std::size_t child=children[i];
-								if(leaf_checker(child))
+								const std::pair<bool, bool> status=leaf_checker(child);
+								if(status.first)
 								{
 									results.push_back(child);
-									if(results.size()>=max_results_count)
+									if(status.second)
 									{
 										return results;
 									}
@@ -177,8 +177,7 @@ public:
 	static std::vector<std::size_t> search_in_clusters_layers_wide(
 			const std::vector<ClustersLayer>& clusters_layers,
 			const NodeChecker& node_checker,
-			const LeafChecker& leaf_checker,
-			const std::size_t max_results_count)
+			const LeafChecker& leaf_checker)
 	{
 		std::vector<std::size_t> results;
 		if(!clusters_layers.empty())
@@ -215,10 +214,11 @@ public:
 					}
 					else
 					{
-						if(leaf_checker(child_id))
+						const std::pair<bool, bool> status=leaf_checker(child_id);
+						if(status.first)
 						{
 							results.push_back(child_id);
-							if(results.size()>=max_results_count)
+							if(status.second)
 							{
 								return results;
 							}
