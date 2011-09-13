@@ -24,6 +24,16 @@ inline bool greater(const double a, const double b)
 	return ((a-epsilon())>b);
 }
 
+inline bool less_or_equal(const double a, const double b)
+{
+	return (less(a, b) || equal(a, b));
+}
+
+inline bool greater_or_equal(const double a, const double b)
+{
+	return (greater(a, b) || equal(a, b));
+}
+
 }
 
 #endif /* SAFE_COMPARISON_H_ */
