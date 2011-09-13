@@ -229,6 +229,32 @@ public:
 		}
 		return results;
 	}
+
+	static bool check_clusters_layers(const std::vector<ClustersLayer>& clusters_layers, const std::vector<Sphere>& spheres)
+	{
+		for(std::size_t i=0;i<clusters_layers.size();i++)
+		{
+			for(std::size_t j=0;j<clusters_layers[i].size();j++)
+			{
+				for(std::size_t k=0;k<clusters_layers[i][j].second.size();k++)
+				if(i==0)
+				{
+					if(!sphere_contains_sphere(clusters_layers[i][j].first, spheres[clusters_layers[i][j].second[k]]))
+					{
+						return false;
+					}
+				}
+				else
+				{
+					if(!sphere_contains_sphere(clusters_layers[i][j].first, clusters_layers[i-1][clusters_layers[i][j].second[k]].first))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 };
 
 }

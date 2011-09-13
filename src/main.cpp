@@ -49,6 +49,8 @@ int main()
 
 //		std::cout << "LIST\n";
 //		print_spheres(clusters_spheres.begin(), clusters_spheres.end());
+
+		std::clog << apollo::spheres_clustering<Sphere>::check_clusters_layers(clusters_layers, spheres) << " cl check\n";
 	}
 
 	{
