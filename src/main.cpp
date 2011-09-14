@@ -34,7 +34,7 @@ int main()
 	{
 		utils::BlockTimer bt("Clustering time");
 
-		std::vector<apollo::spheres_clustering<Sphere>::ClustersLayer> clusters_layers=apollo::spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, 1.4*5, 100);
+		std::vector<apollo::spheres_clustering<Sphere>::ClustersLayer> clusters_layers=apollo::spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, 1.4*3, 50);
 		std::clog << clusters_layers.size() << " clusters layers\n";
 		for(std::size_t i=0;i<clusters_layers.size();i++)
 		{
@@ -55,7 +55,7 @@ int main()
 
 	{
 		utils::BlockTimer bt("Apollo time");
-		std::deque<apollo::Quadruple> quadruple=apollo::apollonius_graph<Sphere>(spheres, 1.4*5, 100).find_quadruples();
+		std::deque<apollo::Quadruple> quadruple=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
 		std::clog << quadruple.size() << " quadruples found\n";
 
 	}

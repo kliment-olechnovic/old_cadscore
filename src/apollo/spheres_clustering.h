@@ -113,8 +113,8 @@ public:
 	template<typename NodeChecker, typename LeafChecker>
 	static std::vector<std::size_t> search_in_clusters_layers_narrow(
 			const std::vector<ClustersLayer>& clusters_layers,
-			const NodeChecker& node_checker,
-			const LeafChecker& leaf_checker)
+			NodeChecker& node_checker,
+			LeafChecker& leaf_checker)
 	{
 		typedef std::tr1::tuple<std::size_t, std::size_t, std::size_t> NodeCoordinates;
 
@@ -176,8 +176,8 @@ public:
 	template<typename NodeChecker, typename LeafChecker>
 	static std::vector<std::size_t> search_in_clusters_layers_wide(
 			const std::vector<ClustersLayer>& clusters_layers,
-			const NodeChecker& node_checker,
-			const LeafChecker& leaf_checker)
+			NodeChecker& node_checker,
+			LeafChecker& leaf_checker)
 	{
 		std::vector<std::size_t> results;
 		if(!clusters_layers.empty())
