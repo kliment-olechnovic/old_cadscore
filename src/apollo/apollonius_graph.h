@@ -63,8 +63,7 @@ public:
 			TriplesMap::const_iterator it=triples_map.find(triple);
 			if(it->second.size()==1)
 			{
-				const std::size_t antagonist=*(it->second.begin());
-				const Exposition exposition=find_valid_protagonistic_exposition(triple, antagonist);
+				const Exposition exposition=find_valid_protagonistic_exposition(triple, it->second);
 				if(!exposition.tangents.empty())
 				{
 					const Quadruple found_quadruple(triple, exposition.protagonist);
@@ -87,41 +86,41 @@ private:
 	{
 		Triple triple;
 		std::size_t protagonist;
-		std::size_t antagonist;
+		std::set<std::size_t> antagonists;
 		std::vector<Sphere> tangents;
 
-		Exposition() : protagonist(npos()), antagonist(npos())
+		Exposition() : protagonist(npos()), antagonists(std::set<std::size_t>())
 		{
 		}
 
-		Exposition(const Triple& triple) : triple(triple), protagonist(npos()), antagonist(npos())
+		Exposition(const Triple& triple) : triple(triple), protagonist(npos()), antagonists(std::set<std::size_t>())
 		{
 		}
 
 		Exposition(
 				const Triple& triple,
 				const std::size_t protagonist,
-				const std::size_t antagonist,
+				const std::set<std::size_t>& antagonists,
 				const std::vector<Sphere>& spheres) :
 					triple(triple),
 					protagonist(protagonist),
-					antagonist(antagonist),
-					tangents(construct_tangents(triple, protagonist, antagonist, spheres))
+					antagonists(antagonists),
+					tangents(construct_tangents(triple, protagonist, antagonists, spheres))
 		{
 		}
 
 		static Exposition exposition_from_quadruple(const Quadruple& qudruple, const std::vector<Sphere>& spheres)
 		{
-			return Exposition(qudruple.exclude(3), qudruple.get(3), npos(), spheres);
+			return Exposition(qudruple.exclude(3), qudruple.get(3), std::set<std::size_t>(), spheres);
 		}
 
 		static std::vector<Sphere> construct_tangents(
 				const Triple& triple,
 				const std::size_t protagonist,
-				const std::size_t antagonist,
+				const std::set<std::size_t>& antagonists,
 				const std::vector<Sphere>& spheres)
 		{
-			if(protagonist==antagonist || protagonist>=spheres.size() || triple.contains(protagonist))
+			if(protagonist>=spheres.size() || antagonists.find(protagonist)!=antagonists.end() || triple.contains(protagonist))
 			{
 				return std::vector<Sphere>();
 			}
@@ -129,31 +128,34 @@ private:
 			{
 				const Sphere& protagonist_sphere=spheres[protagonist];
 				const std::vector<Sphere> all_tangents=construct_spheres_tangent(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
-				if(antagonist>=spheres.size())
+				if(antagonists.empty())
 				{
 					return all_tangents;
 				}
 				else
 				{
-					const Sphere& antagonist_sphere=spheres[antagonist];
 					std::vector<Sphere> checked_tangents;
 					for(std::size_t j=0;j<all_tangents.size();j++)
 					{
 						const Sphere& tangent=all_tangents[j];
-						if(!sphere_intersects_sphere(tangent, antagonist_sphere))
+						for(std::set<std::size_t>::const_iterator antagonist_it=antagonists.begin();antagonist_it!=antagonists.end();antagonist_it++)
 						{
-							if(sphere_touches_sphere(tangent, antagonist_sphere))
+							const Sphere& antagonist_sphere=spheres[*antagonist_it];
+							if(!sphere_intersects_sphere(tangent, antagonist_sphere))
 							{
-								const int protagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
-								const int antagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], antagonist_sphere);
-								if(protagonist_halfspace*antagonist_halfspace!=1)
+								if(sphere_touches_sphere(tangent, antagonist_sphere))
+								{
+									const int protagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
+									const int antagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], antagonist_sphere);
+									if(protagonist_halfspace*antagonist_halfspace!=1)
+									{
+										checked_tangents.push_back(tangent);
+									}
+								}
+								else
 								{
 									checked_tangents.push_back(tangent);
 								}
-							}
-							else
-							{
-								checked_tangents.push_back(tangent);
 							}
 						}
 					}
@@ -276,14 +278,14 @@ private:
 		return Quadruple();
 	}
 
-	Exposition find_any_protagonistic_exposition(const Triple& triple, const std::size_t antagonist) const
+	Exposition find_any_protagonistic_exposition(const Triple& triple, const std::set<std::size_t>& antagonists) const
 	{
 		for(std::size_t i=0;i<randomized_search_list_.size();i++)
 		{
 			const std::size_t protagonist=randomized_search_list_[i];
-			if(protagonist!=antagonist && !triple.contains(protagonist))
+			if(antagonists.find(protagonist)==antagonists.end() && !triple.contains(protagonist))
 			{
-				const Exposition protagonistic_exposition(triple, protagonist, antagonist, spheres_);
+				const Exposition protagonistic_exposition(triple, protagonist, antagonists, spheres_);
 				if(!protagonistic_exposition.tangents.empty())
 				{
 					return protagonistic_exposition;
@@ -293,9 +295,9 @@ private:
 		return Exposition();
 	}
 
-	Exposition find_valid_protagonistic_exposition(const Triple& triple, const std::size_t antagonist) const
+	Exposition find_valid_protagonistic_exposition(const Triple& triple, const std::set<std::size_t>& antagonists) const
 	{
-		Exposition exposition=find_any_protagonistic_exposition(triple, antagonist);
+		Exposition exposition=find_any_protagonistic_exposition(triple, antagonists);
 		std::tr1::unordered_set<std::size_t> visited;
 		while(!exposition.tangents.empty())
 		{
@@ -318,7 +320,7 @@ private:
 				if(visited.find(last_id)==visited.end())
 				{
 					visited.insert(last_id);
-					exposition=Exposition(triple, last_id, antagonist, spheres_);
+					exposition=Exposition(triple, last_id, antagonists, spheres_);
 				}
 				else
 				{
