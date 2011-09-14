@@ -136,26 +136,45 @@ private:
 				else
 				{
 					const Sphere& antagonist_sphere=spheres[antagonist];
-					const int protagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
-					const int antagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], antagonist_sphere);
-					if(protagonist_halfspace*antagonist_halfspace==1)
+					std::vector<Sphere> checked_tangents;
+					for(std::size_t j=0;j<all_tangents.size();j++)
 					{
-						return std::vector<Sphere>();
-					}
-					else
-					{
-						std::vector<Sphere> checked_tangents;
-						for(std::size_t j=0;j<all_tangents.size();j++)
+						const Sphere& tangent=all_tangents[j];
+						if(!sphere_intersects_sphere(tangent, antagonist_sphere))
 						{
-							const Sphere& tangent=all_tangents[j];
-							if(!sphere_intersects_sphere(tangent, antagonist_sphere))
+							if(sphere_touches_sphere(tangent, antagonist_sphere))
+							{
+								const int protagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
+								const int antagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], antagonist_sphere);
+								if(protagonist_halfspace*antagonist_halfspace!=1)
+								{
+									checked_tangents.push_back(tangent);
+								}
+							}
+							else
 							{
 								checked_tangents.push_back(tangent);
 							}
 						}
-						return checked_tangents;
+					}
+					return checked_tangents;
+				}
+			}
+		}
+
+		void remove_tangents(const std::set<std::size_t>& ids_to_remove)
+		{
+			if(!ids_to_remove.empty())
+			{
+				std::vector<Sphere> refined_tangents;
+				for(std::size_t i=0;i<tangents.size();i++)
+				{
+					if(ids_to_remove.find(i)==ids_to_remove.end())
+					{
+						refined_tangents.push_back(tangents[i]);
 					}
 				}
+				tangents=refined_tangents;
 			}
 		}
 	};
@@ -188,6 +207,7 @@ private:
 			const Exposition exposition;
 			const std::vector<Sphere>& spheres;
 			const std::tr1::unordered_set<std::size_t>& visited;
+			std::set<std::size_t> failed_tangents;
 
 			LeafChecker(
 					const Exposition& exposition,
@@ -199,7 +219,7 @@ private:
 			{
 			}
 
-			std::pair<bool, bool> operator()(const std::size_t id) const
+			std::pair<bool, bool> operator()(const std::size_t id)
 			{
 				if(id<spheres.size() && id!=exposition.protagonist && !exposition.triple.contains(id))
 				{
@@ -207,8 +227,12 @@ private:
 					{
 						if(sphere_intersects_sphere(exposition.tangents[j], spheres[id]))
 						{
-							return std::make_pair(true, visited.find(id)==visited.end());
+							failed_tangents.insert(j);
 						}
+					}
+					if(failed_tangents.size()==exposition.tangents.size())
+					{
+						return std::make_pair(true, visited.find(id)==visited.end());
 					}
 				}
 				return std::make_pair(false, false);
@@ -222,10 +246,12 @@ private:
 		{
 			return false;
 		}
+		typename intersection_search_operators::NodeChecker node_checker(exposition);
+		typename intersection_search_operators::LeafChecker leaf_checker(exposition, spheres_, std::tr1::unordered_set<std::size_t>());
 		return spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
 				clusters_layers_,
-				typename intersection_search_operators::NodeChecker(exposition),
-				typename intersection_search_operators::LeafChecker(exposition, spheres_, std::tr1::unordered_set<std::size_t>())).empty();
+				node_checker,
+				leaf_checker).empty();
 	}
 
 	Quadruple find_first_quadruple() const
@@ -273,13 +299,17 @@ private:
 		std::tr1::unordered_set<std::size_t> visited;
 		while(!exposition.tangents.empty())
 		{
+			typename intersection_search_operators::NodeChecker node_checker(exposition);
+			typename intersection_search_operators::LeafChecker leaf_checker(exposition, spheres_, visited);
+
 			const std::vector<std::size_t> result=spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
 					clusters_layers_,
-					typename intersection_search_operators::NodeChecker(exposition),
-					typename intersection_search_operators::LeafChecker(exposition, spheres_, visited));
+					node_checker,
+					leaf_checker);
 
 			if(result.empty())
 			{
+				exposition.remove_tangents(leaf_checker.failed_tangents);
 				return exposition;
 			}
 			else
