@@ -93,10 +93,6 @@ private:
 		{
 		}
 
-		Exposition(const Triple& triple) : triple(triple), protagonist(npos()), antagonists(std::set<std::size_t>())
-		{
-		}
-
 		Exposition(
 				const Triple& triple,
 				const std::size_t protagonist,
