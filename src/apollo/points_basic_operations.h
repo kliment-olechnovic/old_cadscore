@@ -76,6 +76,12 @@ PointType point_and_number_product(const PointType& a, const double k)
 }
 
 template<typename PointType>
+PointType unit_point(const PointType& a)
+{
+	return point_and_number_product(point_module(a), 1/point_module(a));
+}
+
+template<typename PointType>
 PointType sum_of_points(const PointType& a, const PointType& b)
 {
 	return custom_point<PointType>(a.x+b.x, a.y+b.y, a.z*+b.z);
@@ -85,6 +91,12 @@ template<typename PointType>
 PointType sub_of_points(const PointType& a, const PointType& b)
 {
 	return custom_point<PointType>(a.x-b.x, a.y-b.y, a.z-b.z);
+}
+
+template<typename PointType>
+PointType plane_normal_from_three_points(const PointType& a, const PointType& b, const PointType& c)
+{
+	return unit_point(cross_product(sub_of_points(b, a), sub_of_points(c, a)));
 }
 
 template<typename PointType>
