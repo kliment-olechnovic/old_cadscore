@@ -88,7 +88,15 @@ public:
 		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
 			const Quadruple q=it->first;
+			if(q==Quadruple())
+			{
+				return false;
+			}
 			const std::vector<Sphere> ts=it->second;
+			if(ts.empty())
+			{
+				return false;
+			}
 			for(std::size_t i=0;i<ts.size();i++)
 			{
 				const Sphere& t=ts[i];
