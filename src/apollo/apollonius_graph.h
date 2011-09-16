@@ -35,9 +35,9 @@ public:
 	{
 	}
 
-	std::deque<Quadruple> find_quadruples() const
+	std::tr1::unordered_set<Quadruple, Quadruple::HashFunctor> find_quadruples() const
 	{
-		std::deque<Quadruple> quadruples;
+		std::tr1::unordered_set<Quadruple, Quadruple::HashFunctor> quadruples;
 		TriplesMap triples_map;
 		std::deque<Triple> triples_stack;
 
@@ -45,7 +45,7 @@ public:
 			const Quadruple found_quadruple=find_first_quadruple();
 			if(!(found_quadruple==Quadruple()))
 			{
-				quadruples.push_back(found_quadruple);
+				quadruples.insert(found_quadruple);
 				for(int i=0;i<found_quadruple.size();i++)
 				{
 					const Triple found_triple=found_quadruple.exclude(i);
@@ -67,7 +67,7 @@ public:
 				if(!exposition.tangents.empty())
 				{
 					const Quadruple found_quadruple(triple, exposition.protagonist);
-					quadruples.push_back(found_quadruple);
+					quadruples.insert(found_quadruple);
 					for(int i=0;i<found_quadruple.size();i++)
 					{
 						const Triple found_triple=found_quadruple.exclude(i);
