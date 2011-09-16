@@ -136,6 +136,12 @@ struct SimplePoint
 
 	SimplePoint(const double x, const double y, const double z) : x(x), y(y), z(z) {}
 
+	template<typename PointType>
+	static SimplePoint create(const PointType& a)
+	{
+		return custom_point_from_object<SimplePoint>(a);
+	}
+
 	SimplePoint operator+(const SimplePoint& b) const
 	{
 		return sum_of_points(*this, b);

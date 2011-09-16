@@ -1,6 +1,8 @@
 #ifndef SPHERES_BASIC_OPERATIONS_H_
 #define SPHERES_BASIC_OPERATIONS_H_
 
+#include <utility>
+
 #include "points_basic_operations.h"
 
 namespace apollo
@@ -83,6 +85,17 @@ SimplePoint spheres_touching_point(const SphereType& a, const SphereType& b)
 	const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
 	const SimplePoint bp=custom_point_from_object<SimplePoint>(b);
 	return (ap+((bp-ap).unit()*a.r));
+}
+
+template<typename PointType, typename SphereType>
+std::pair<int, int> halfspace_of_sphere(const PointType& a, const PointType& b, const PointType& c, const SphereType& d)
+{
+	const SimplePoint normal=SimplePoint::create(plane_normal_from_three_points(a, b, c));
+	const SimplePoint d1=SimplePoint::create(d)+(normal*d.r);
+	const SimplePoint d2=SimplePoint::create(d)-(normal*d.r);
+	return std::make_pair(
+			halfspace(SimplePoint::create(a), SimplePoint::create(b), SimplePoint::create(c), d1),
+			halfspace(SimplePoint::create(a), SimplePoint::create(b), SimplePoint::create(c), d2));
 }
 
 }
