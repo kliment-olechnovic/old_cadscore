@@ -38,7 +38,7 @@ public:
 
 	QuadruplesMap find_quadruples() const
 	{
-		QuadruplesMap quadruples;
+		QuadruplesMap quadruples_map;
 		TriplesMap triples_map;
 		std::deque<Triple> triples_stack;
 
@@ -47,7 +47,7 @@ public:
 			if(!exposition.tangents.empty())
 			{
 				const Quadruple found_quadruple(exposition.triple, exposition.protagonist);
-				quadruples.insert(std::make_pair(found_quadruple, exposition.tangents));
+				quadruples_map.insert(std::make_pair(found_quadruple, exposition.tangents));
 				for(int i=0;i<found_quadruple.size();i++)
 				{
 					const Triple found_triple=found_quadruple.exclude(i);
@@ -69,7 +69,7 @@ public:
 				if(!exposition.tangents.empty())
 				{
 					const Quadruple found_quadruple(triple, exposition.protagonist);
-					quadruples.insert(std::make_pair(found_quadruple, exposition.tangents));
+					quadruples_map.insert(std::make_pair(found_quadruple, exposition.tangents));
 					for(int i=0;i<found_quadruple.size();i++)
 					{
 						const Triple found_triple=found_quadruple.exclude(i);
@@ -80,7 +80,7 @@ public:
 				}
 			}
 		}
-		return quadruples;
+		return quadruples_map;
 	}
 
 private:
