@@ -55,9 +55,9 @@ int main()
 
 	{
 		utils::BlockTimer bt("Apollo time");
-//		std::deque<apollo::Quadruple> quadruples=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
-		std::clog << apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples().size() << " quadruples found\n";
-
+		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
+		std::clog << quadruples_map.size() << " quadruples found\n";
+		std::clog << apollo::apollonius_graph<Sphere>::check_quadruples_map(quadruples_map, spheres) << " quadruples check\n";
 	}
 
 	return 0;

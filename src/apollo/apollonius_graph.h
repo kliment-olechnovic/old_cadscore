@@ -83,6 +83,34 @@ public:
 		return quadruples_map;
 	}
 
+	static bool check_quadruples_map(const QuadruplesMap& quadruples_map, const std::vector<Sphere>& spheres)
+	{
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const Quadruple q=it->first;
+			const std::vector<Sphere> ts=it->second;
+			for(std::size_t i=0;i<ts.size();i++)
+			{
+				const Sphere& t=ts[i];
+				for(std::size_t j=0;j<spheres.size();j++)
+				{
+					if(sphere_intersects_sphere(t, spheres[j]))
+					{
+						return false;
+					}
+				}
+				for(int j=0;j<4;j++)
+				{
+					if(!sphere_touches_sphere(t, spheres[q.get(j)]))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 private:
 	struct Exposition
 	{
