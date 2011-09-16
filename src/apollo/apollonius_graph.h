@@ -147,6 +147,25 @@ public:
 		return graph;
 	}
 
+	static void print_quadruples(const QuadruplesMap& quadruples_map)
+	{
+		typedef std::set<Quadruple> QuadruplesSet;
+		QuadruplesSet qs;
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			qs.insert(it->first);
+		}
+		for(typename QuadruplesSet::const_iterator it=qs.begin();it!=qs.end();++it)
+		{
+			const Quadruple q=*it;
+			for(int i=0;i<4;i++)
+			{
+				std::cout << q.get(i) << " ";
+			}
+			std::cout << "\n";
+		}
+	}
+
 private:
 	struct Exposition
 	{
