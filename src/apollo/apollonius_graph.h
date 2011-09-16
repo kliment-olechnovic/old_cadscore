@@ -25,6 +25,7 @@ public:
 	typedef std::vector<typename spheres_clustering<Sphere>::ClustersLayer> ClustersLayers;
 	typedef std::tr1::unordered_map<Triple, std::set<std::size_t>, Triple::HashFunctor> TriplesMap;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<Sphere>, Quadruple::HashFunctor> QuadruplesMap;
+	typedef std::vector< std::vector<std::size_t> > Graph;
 
 	apollonius_graph(
 			const std::vector<Sphere>& spheres,
@@ -117,6 +118,33 @@ public:
 			}
 		}
 		return true;
+	}
+
+	static Graph graph_from_quadruples(const QuadruplesMap& quadruples_map, const std::vector<Sphere>& spheres)
+	{
+		typedef std::tr1::unordered_map<std::size_t, std::tr1::unordered_set<std::size_t> > GraphMap;
+		GraphMap graph_map;
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const Quadruple q=it->first;
+			for(int i=0;i<4;i++)
+			{
+				for(int j=i+1;j<4;j++)
+				{
+					graph_map[q.get(i)].insert(q.get(j));
+					graph_map[q.get(j)].insert(q.get(i));
+				}
+			}
+		}
+		Graph graph(spheres.size(), std::vector<std::size_t>());
+		for(GraphMap::const_iterator it=graph_map.begin();it!=graph_map.end();++it)
+		{
+			for(GraphMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+			{
+				graph[it->first].push_back(*jt);
+			}
+		}
+		return graph;
 	}
 
 private:
