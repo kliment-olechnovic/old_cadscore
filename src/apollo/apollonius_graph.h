@@ -144,15 +144,12 @@ private:
 							}
 							else if(sphere_touches_sphere(tangent, antagonist_sphere))
 							{
-								const int protagonist_halfspace=halfspace(
-										spheres_touching_point(tangent, spheres[triple.get(0)]),
-										spheres_touching_point(tangent, spheres[triple.get(1)]),
-										spheres_touching_point(tangent, spheres[triple.get(2)]),
+								const SimplePoint tp0=spheres_touching_point(tangent, spheres[triple.get(0)]);
+								const SimplePoint tp1=spheres_touching_point(tangent, spheres[triple.get(1)]);
+								const SimplePoint tp2=spheres_touching_point(tangent, spheres[triple.get(2)]);
+								const int protagonist_halfspace=halfspace(tp0, tp1, tp2,
 										spheres_touching_point(tangent, protagonist_sphere));
-								const int antagonist_halfspace=halfspace(
-										spheres_touching_point(tangent, spheres[triple.get(0)]),
-										spheres_touching_point(tangent, spheres[triple.get(1)]),
-										spheres_touching_point(tangent, spheres[triple.get(2)]),
+								const int antagonist_halfspace=halfspace(tp0, tp1, tp2,
 										spheres_touching_point(tangent, antagonist_sphere));
 								if(protagonist_halfspace==antagonist_halfspace)
 								{
