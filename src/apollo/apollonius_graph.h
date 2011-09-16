@@ -24,6 +24,7 @@ public:
 	typedef SphereType Sphere;
 	typedef std::vector<typename spheres_clustering<Sphere>::ClustersLayer> ClustersLayers;
 	typedef std::tr1::unordered_map<Triple, std::set<std::size_t>, Triple::HashFunctor> TriplesMap;
+	typedef std::tr1::unordered_map<Quadruple, std::vector<Sphere>, Quadruple::HashFunctor> QuadruplesMap;
 
 	apollonius_graph(
 			const std::vector<Sphere>& spheres,
@@ -35,17 +36,18 @@ public:
 	{
 	}
 
-	std::tr1::unordered_set<Quadruple, Quadruple::HashFunctor> find_quadruples() const
+	QuadruplesMap find_quadruples() const
 	{
-		std::tr1::unordered_set<Quadruple, Quadruple::HashFunctor> quadruples;
+		QuadruplesMap quadruples;
 		TriplesMap triples_map;
 		std::deque<Triple> triples_stack;
 
 		{
-			const Quadruple found_quadruple=find_first_quadruple();
-			if(!(found_quadruple==Quadruple()))
+			const Exposition exposition=find_first_exposition();
+			if(!exposition.tangents.empty())
 			{
-				quadruples.insert(found_quadruple);
+				const Quadruple found_quadruple(exposition.triple, exposition.protagonist);
+				quadruples.insert(std::make_pair(found_quadruple, exposition.tangents));
 				for(int i=0;i<found_quadruple.size();i++)
 				{
 					const Triple found_triple=found_quadruple.exclude(i);
@@ -67,7 +69,7 @@ public:
 				if(!exposition.tangents.empty())
 				{
 					const Quadruple found_quadruple(triple, exposition.protagonist);
-					quadruples.insert(found_quadruple);
+					quadruples.insert(std::make_pair(found_quadruple, exposition.tangents));
 					for(int i=0;i<found_quadruple.size();i++)
 					{
 						const Triple found_triple=found_quadruple.exclude(i);
@@ -103,11 +105,6 @@ private:
 					antagonists(antagonists),
 					tangents(construct_tangents(triple, protagonist, antagonists, spheres))
 		{
-		}
-
-		static Exposition exposition_from_quadruple(const Quadruple& qudruple, const std::vector<Sphere>& spheres)
-		{
-			return Exposition(qudruple.exclude(3), qudruple.get(3), std::set<std::size_t>(), spheres);
 		}
 
 		static std::vector<Sphere> construct_tangents(
@@ -259,7 +256,7 @@ private:
 				leaf_checker).empty();
 	}
 
-	Quadruple find_first_quadruple() const
+	Exposition find_first_exposition() const
 	{
 		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres_, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere>, spheres_.front(), std::tr1::placeholders::_1));
 		const std::size_t a=0;
@@ -269,16 +266,19 @@ private:
 			{
 				for(std::size_t d=c+1;d<traversal.size();d++)
 				{
-					const Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-					const Exposition exposition=Exposition::exposition_from_quadruple(quadruple, spheres_);
+					const Exposition exposition=Exposition(
+							make_triple(traversal[a], traversal[b], traversal[c]),
+							traversal[d],
+							std::set<std::size_t>(),
+							spheres_);
 					if(exposition.tangents.size()==1 && check_exposition(exposition))
 					{
-						return quadruple;
+						return exposition;
 					}
 				}
 			}
 		}
-		return Quadruple();
+		return Exposition();
 	}
 
 	Exposition find_any_protagonistic_exposition(const Triple& triple, const std::set<std::size_t>& antagonists) const
