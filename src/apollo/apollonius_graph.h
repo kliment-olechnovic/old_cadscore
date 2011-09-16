@@ -134,25 +134,35 @@ private:
 					for(std::size_t j=0;j<all_tangents.size();j++)
 					{
 						const Sphere& tangent=all_tangents[j];
-						for(std::set<std::size_t>::const_iterator antagonist_it=antagonists.begin();antagonist_it!=antagonists.end();antagonist_it++)
+						bool tangent_valid=true;
+						for(std::set<std::size_t>::const_iterator antagonist_it=antagonists.begin();antagonist_it!=antagonists.end() && tangent_valid;antagonist_it++)
 						{
 							const Sphere& antagonist_sphere=spheres[*antagonist_it];
-							if(!sphere_intersects_sphere(tangent, antagonist_sphere))
+							if(sphere_intersects_sphere(tangent, antagonist_sphere))
 							{
-								if(sphere_touches_sphere(tangent, antagonist_sphere))
+								tangent_valid=false;
+							}
+							else if(sphere_touches_sphere(tangent, antagonist_sphere))
+							{
+								const int protagonist_halfspace=halfspace(
+										spheres_touching_point(tangent, spheres[triple.get(0)]),
+										spheres_touching_point(tangent, spheres[triple.get(1)]),
+										spheres_touching_point(tangent, spheres[triple.get(2)]),
+										spheres_touching_point(tangent, protagonist_sphere));
+								const int antagonist_halfspace=halfspace(
+										spheres_touching_point(tangent, spheres[triple.get(0)]),
+										spheres_touching_point(tangent, spheres[triple.get(1)]),
+										spheres_touching_point(tangent, spheres[triple.get(2)]),
+										spheres_touching_point(tangent, antagonist_sphere));
+								if(protagonist_halfspace==antagonist_halfspace)
 								{
-									const int protagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
-									const int antagonist_halfspace=halfspace(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], antagonist_sphere);
-									if(protagonist_halfspace*antagonist_halfspace!=1)
-									{
-										checked_tangents.push_back(tangent);
-									}
-								}
-								else
-								{
-									checked_tangents.push_back(tangent);
+									tangent_valid=false;
 								}
 							}
+						}
+						if(tangent_valid)
+						{
+							checked_tangents.push_back(tangent);
 						}
 					}
 					return checked_tangents;

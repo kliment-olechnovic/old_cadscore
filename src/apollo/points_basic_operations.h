@@ -78,13 +78,13 @@ PointType point_and_number_product(const PointType& a, const double k)
 template<typename PointType>
 PointType unit_point(const PointType& a)
 {
-	return point_and_number_product(point_module(a), 1/point_module(a));
+	return point_and_number_product(a, 1/point_module(a));
 }
 
 template<typename PointType>
 PointType sum_of_points(const PointType& a, const PointType& b)
 {
-	return custom_point<PointType>(a.x+b.x, a.y+b.y, a.z*+b.z);
+	return custom_point<PointType>(a.x+b.x, a.y+b.y, a.z+b.z);
 }
 
 template<typename PointType>
@@ -125,6 +125,57 @@ int halfspace(const PointType& a, const PointType& b, const PointType& c, const 
 		return 1;
 	}
 }
+
+struct SimplePoint
+{
+	double x;
+	double y;
+	double z;
+
+	SimplePoint() : x(0), y(0), z(0) {}
+
+	SimplePoint(const double x, const double y, const double z) : x(x), y(y), z(z) {}
+
+	SimplePoint operator+(const SimplePoint& b) const
+	{
+		return sum_of_points(*this, b);
+	}
+
+	SimplePoint operator-(const SimplePoint& b) const
+	{
+		return sub_of_points(*this, b);
+	}
+
+	double operator*(const SimplePoint& b) const
+	{
+		return dot_product(*this, b);
+	}
+
+	SimplePoint operator*(const double k) const
+	{
+		return point_and_number_product(*this, k);
+	}
+
+	SimplePoint operator/(const double k) const
+	{
+		return point_and_number_product(*this, 1/k);
+	}
+
+	SimplePoint operator&(const SimplePoint& b) const
+	{
+		return cross_product(*this, b);
+	}
+
+	double module() const
+	{
+		return point_module(*this);
+	}
+
+	SimplePoint unit() const
+	{
+		return unit_point(*this);
+	}
+};
 
 }
 

@@ -77,6 +77,14 @@ bool sphere_contains_sphere(const SphereType& a, const SphereType& b)
 	return less_or_equal(maximal_distance_from_point_to_sphere(a,b), a.r);
 }
 
+template<typename SphereType>
+SimplePoint spheres_touching_point(const SphereType& a, const SphereType& b)
+{
+	const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
+	const SimplePoint bp=custom_point_from_object<SimplePoint>(b);
+	return (ap+((bp-ap).unit()*a.r));
+}
+
 }
 
 #endif /* SPHERES_BASIC_OPERATIONS_H_ */
