@@ -184,98 +184,6 @@ private:
 		}
 	};
 
-	struct plane_search_operators
-	{
-		struct NodeChecker
-		{
-			typedef std::tr1::tuple<SimplePoint, SimplePoint, SimplePoint> Plane;
-
-			const std::vector< std::pair< Plane, int > > halfspaces;
-
-			NodeChecker(
-					const Triple& triple,
-					const std::set<std::size_t>& antagonists,
-					const std::vector<Sphere>& spheres) : halfspaces(create_halfspaces(triple, antagonists, spheres))
-			{
-			}
-
-			static std::vector< std::pair< Plane, int > > create_halfspaces(
-					const Triple& triple,
-					const std::set<std::size_t>& antagonists,
-					const std::vector<Sphere>& spheres)
-			{
-				std::vector< std::pair< Plane, int > > halfspaces;
-				for(std::set<std::size_t>::const_iterator antagonist_it=antagonists.begin();antagonist_it!=antagonists.end();antagonist_it++)
-				{
-					const std::size_t antagonist=*antagonist_it;
-					const Exposition exposition(triple, antagonist, std::set<std::size_t>(), spheres);
-					if(exposition.tangents.size()==1)
-					{
-						const Sphere& tangent=exposition.tangents.front();
-						const SimplePoint tp0=spheres_touching_point(tangent, spheres[triple.get(0)]);
-						const SimplePoint tp1=spheres_touching_point(tangent, spheres[triple.get(1)]);
-						const SimplePoint tp2=spheres_touching_point(tangent, spheres[triple.get(2)]);
-						halfspaces.push_back(
-								std::make_pair(
-										Plane(tp0, tp1, tp2),
-										halfspace(tp0, tp1, tp2, custom_point_from_object<SimplePoint>(spheres[antagonist]))));
-					}
-				}
-				return halfspaces;
-			}
-
-			bool operator()(const Sphere& sphere) const
-			{
-				for(std::size_t j=0;j<halfspaces.size();j++)
-				{
-					const Plane& plane=halfspaces[j].first;
-					const int halfspace_of_antagonist=halfspaces[j].second;
-					std::pair<int, int> halfspace_of_candidate=halfspace_of_sphere(std::tr1::get<0>(plane), std::tr1::get<1>(plane), std::tr1::get<2>(plane), sphere);
-					if(halfspace_of_candidate.first==halfspace_of_antagonist && halfspace_of_candidate.second==halfspace_of_antagonist)
-					{
-						return false;
-					}
-				}
-				return true;
-			}
-		};
-
-		struct LeafChecker
-		{
-			const NodeChecker node_checker;
-			const Triple triple;
-			const std::set<std::size_t> antagonists;
-			const std::vector<Sphere>& spheres;
-
-			LeafChecker(
-					const Triple& triple,
-					const std::set<std::size_t>& antagonists,
-					const std::vector<Sphere>& spheres) :
-						node_checker(triple, antagonists, spheres),
-						triple(triple),
-						antagonists(antagonists),
-						spheres(spheres)
-			{
-			}
-
-			std::pair<bool, bool> operator()(const std::size_t id)
-			{
-				if(id<spheres.size() && antagonists.find(id)==antagonists.end() && !triple.contains(id))
-				{
-					if(node_checker(spheres[id]))
-					{
-						const Exposition exposition(triple, id, antagonists, spheres);
-						if(!exposition.tangents.empty())
-						{
-							return std::make_pair(true, true);
-						}
-					}
-				}
-				return std::make_pair(false, false);
-			}
-		};
-	};
-
 	struct intersection_search_operators
 	{
 		struct NodeChecker
@@ -388,26 +296,6 @@ private:
 			}
 		}
 		return Exposition();
-	}
-
-	Exposition find_any_protagonistic_exposition_using_planes(const Triple& triple, const std::set<std::size_t>& antagonists) const
-	{
-		typename plane_search_operators::NodeChecker node_checker(triple, antagonists, spheres_);
-		typename plane_search_operators::LeafChecker leaf_checker(triple, antagonists, spheres_);
-
-		const std::vector<std::size_t> result=spheres_clustering<Sphere>::search_in_clusters_layers_narrow(
-				clusters_layers_,
-				node_checker,
-				leaf_checker);
-
-		if(result.empty())
-		{
-			return Exposition();
-		}
-		else
-		{
-			return Exposition(triple, result.front(), antagonists, spheres_);
-		}
 	}
 
 	Exposition find_valid_protagonistic_exposition(const Triple& triple, const std::set<std::size_t>& antagonists) const
