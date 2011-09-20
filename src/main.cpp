@@ -58,8 +58,8 @@ int main()
 		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
 		std::clog << quadruples_map.size() << " quadruples found\n";
 //		std::clog << apollo::apollonius_graph<Sphere>::check_quadruples_map(quadruples_map, spheres) << " quadruples check\n";
-		apollo::apollonius_graph<Sphere>::graph_from_quadruples(quadruples_map, spheres);
-		apollo::apollonius_graph<Sphere>::print_quadruples(quadruples_map);
+//		apollo::apollonius_graph<Sphere>::graph_from_quadruples(quadruples_map, spheres);
+//		apollo::apollonius_graph<Sphere>::print_quadruples(quadruples_map);
 	}
 
 	return 0;
