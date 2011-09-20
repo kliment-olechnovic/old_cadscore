@@ -75,11 +75,6 @@ inline std::vector<PointType> construct_spheres_tangent_plane(const SphereType& 
 		}
 	}
 
-	if(results.size()!=2)
-	{
-		std::clog << results.size() << " rs\n";
-	}
-
 	return results;
 }
 
