@@ -81,6 +81,18 @@ OutputPointType spheres_touching_point(const InputSphereTypeA& a, const InputSph
 	return custom_point_from_object<OutputPointType>(ap+((bp-ap).unit()*a.r));
 }
 
+template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
+bool cone_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c, const bool fully)
+{
+	if(a.r>b.r)
+	{
+		return sphere_intersects_touching_cone(b, a, c);
+	}
+	const double distance_one=project_point_on_vector(a, b, c);
+	const double distance_two=distance_from_point_to_line(a, b, c)-a.r+(fully ? c.r : 0-c.r);
+	return less(distance_two/distance_one, (b.r-a.r)/distance_from_point_to_point(a, b));
+}
+
 }
 
 #endif /* SPHERES_BASIC_OPERATIONS_H_ */
