@@ -25,7 +25,7 @@ OutputSphereType custom_sphere_from_object(const InputObjectType& o)
 	return custom_point(o.x, o.y, o.z, o.r);
 }
 
-template<typename InputSphereTypeA,typename InputSphereTypeB>
+template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool spheres_equal(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z) && equal(a.r, b.r));
@@ -55,25 +55,25 @@ double minimal_distance_from_sphere_to_sphere(const InputSphereTypeA& a, const I
 	return (distance_from_point_to_point(a, b)-a.r-b.r);
 }
 
-template<typename InputSphereTypeA,typename InputSphereTypeB>
+template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return less(minimal_distance_from_sphere_to_sphere(a,b), 0);
 }
 
-template<typename InputSphereTypeA,typename InputSphereTypeB>
+template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_touches_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return equal(minimal_distance_from_sphere_to_sphere(a,b), 0);
 }
 
-template<typename InputSphereTypeA,typename InputSphereTypeB>
+template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return less_or_equal(maximal_distance_from_point_to_sphere(a,b), a.r);
 }
 
-template<typename InputSphereTypeA,typename InputSphereTypeB>
+template<typename InputSphereTypeA, typename InputSphereTypeB>
 SimplePoint spheres_touching_point(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
