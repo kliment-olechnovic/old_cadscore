@@ -8,8 +8,8 @@
 namespace apollo
 {
 
-template<typename SphereType, typename PointType>
-bool check_spheres_tangent_plane(const SphereType& s1, const SphereType& s2, const SphereType& s3, const PointType& tangent_plane_normal)
+template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC, typename InputPointType>
+bool check_spheres_tangent_plane(const InputSphereTypeA& s1, const InputSphereTypeB& s2, const InputSphereTypeC& s3, const InputPointType& tangent_plane_normal)
 {
 	const SimplePoint sp1=custom_point_from_object<SimplePoint>(s1);
 	const SimplePoint sp2=custom_point_from_object<SimplePoint>(s2);
@@ -20,15 +20,15 @@ bool check_spheres_tangent_plane(const SphereType& s1, const SphereType& s2, con
 }
 
 
-template<typename SphereType, typename PointType>
-inline std::vector<PointType> construct_spheres_tangent_plane(const SphereType& sm, const SphereType& s1, const SphereType& s2)
+template<typename OutputPointType, typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
+inline std::vector<OutputPointType> construct_spheres_tangent_plane(const InputSphereTypeA& sm, const InputSphereTypeB& s1, const InputSphereTypeC& s2)
 {
 	{
 		const double min_r=std::min(sm.r, std::min(s1.r, s2.r));
 		if(sm.r!=min_r)
 		{
-			if(s1.r==min_r) return construct_spheres_tangent_plane<SphereType, PointType>(s1, sm, s2);
-			if(s2.r==min_r) return construct_spheres_tangent_plane<SphereType, PointType>(s2, sm, s1);
+			if(s1.r==min_r) return construct_spheres_tangent_plane<OutputPointType>(s1, sm, s2);
+			if(s2.r==min_r) return construct_spheres_tangent_plane<OutputPointType>(s2, sm, s1);
 		}
 	}
 
@@ -63,12 +63,12 @@ inline std::vector<PointType> construct_spheres_tangent_plane(const SphereType& 
 	if(greater_or_equal(D,0)) {zs.push_back((-b-sqrt(D))/(2*a));}
 	if(greater(D,0))  {zs.push_back((-b+sqrt(D))/(2*a));}
 
-	std::vector<PointType> results;
+	std::vector<OutputPointType> results;
 	results.reserve(zs.size());
 	for(std::size_t i=0;i<zs.size();i++)
 	{
 		const double z=zs[i];
-		const PointType candidate=custom_point<PointType>(c0+z*cz, b0+z*bz, z);
+		const OutputPointType candidate=custom_point<OutputPointType>(c0+z*cz, b0+z*bz, z);
 		if(check_spheres_tangent_plane(sm, s1, s2, candidate))
 		{
 			results.push_back(candidate);
