@@ -10,7 +10,7 @@
 #include "points_basic_operations.h"
 #include "spheres_basic_operations.h"
 #include "spheres_clustering.h"
-#include "spheres_tangent.h"
+#include "spheres_tangent_sphere.h"
 #include "tuples.h"
 #include "utilities.h"
 
