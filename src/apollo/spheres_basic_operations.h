@@ -8,10 +8,10 @@
 namespace apollo
 {
 
-template<typename SphereType>
-SphereType custom_sphere(const double x, const double y, const double z, const double r)
+template<typename OutputSphereType>
+OutputSphereType custom_sphere(const double x, const double y, const double z, const double r)
 {
-	SphereType result;
+	OutputSphereType result;
 	result.x=x;
 	result.y=y;
 	result.z=z;
@@ -19,83 +19,66 @@ SphereType custom_sphere(const double x, const double y, const double z, const d
 	return result;
 }
 
-template<typename SphereType, typename ObjectType>
-SphereType custom_sphere_from_object(const ObjectType& o)
+template<typename OutputSphereType, typename InputObjectType>
+OutputSphereType custom_sphere_from_object(const InputObjectType& o)
 {
 	return custom_point(o.x, o.y, o.z, o.r);
 }
 
-template<typename PointType, typename SphereType>
-SphereType sphere_from_point_and_radius(const PointType& a, const double r)
-{
-	return custom_sphere(a.x, a.y, a.z, r);
-}
-
-template<typename SphereType>
-bool spheres_equal(const SphereType& a, const SphereType& b)
+template<typename InputSphereTypeA,typename InputSphereTypeB>
+bool spheres_equal(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z) && equal(a.r, b.r));
 }
 
-template<typename SphereType>
-SphereType zero_sphere()
+template<typename OutputSphereType>
+OutputSphereType zero_sphere()
 {
-	return custom_sphere<SphereType>(0, 0, 0, 0);
+	return custom_sphere<OutputSphereType>(0, 0, 0, 0);
 }
 
-template<typename PointType, typename SphereType>
-double minimal_distance_from_point_to_sphere(const PointType& a, const SphereType& b)
+template<typename InputPointType, typename InputSphereType>
+double minimal_distance_from_point_to_sphere(const InputPointType& a, const InputSphereType& b)
 {
 	return (distance_from_point_to_point(a, b)-b.r);
 }
 
-template<typename PointType, typename SphereType>
-double maximal_distance_from_point_to_sphere(const PointType& a, const SphereType& b)
+template<typename InputPointType, typename InputSphereType>
+double maximal_distance_from_point_to_sphere(const InputPointType& a, const InputSphereType& b)
 {
 	return (distance_from_point_to_point(a, b)+b.r);
 }
 
-template<typename SphereType>
-double minimal_distance_from_sphere_to_sphere(const SphereType& a, const SphereType& b)
+template<typename InputSphereTypeA,typename InputSphereTypeB>
+double minimal_distance_from_sphere_to_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return (distance_from_point_to_point(a, b)-a.r-b.r);
 }
 
-template<typename SphereType>
-bool sphere_intersects_sphere(const SphereType& a, const SphereType& b)
+template<typename InputSphereTypeA,typename InputSphereTypeB>
+bool sphere_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return less(minimal_distance_from_sphere_to_sphere(a,b), 0);
 }
 
-template<typename SphereType>
-bool sphere_touches_sphere(const SphereType& a, const SphereType& b)
+template<typename InputSphereTypeA,typename InputSphereTypeB>
+bool sphere_touches_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return equal(minimal_distance_from_sphere_to_sphere(a,b), 0);
 }
 
-template<typename SphereType>
-bool sphere_contains_sphere(const SphereType& a, const SphereType& b)
+template<typename InputSphereTypeA,typename InputSphereTypeB>
+bool sphere_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	return less_or_equal(maximal_distance_from_point_to_sphere(a,b), a.r);
 }
 
-template<typename SphereType>
-SimplePoint spheres_touching_point(const SphereType& a, const SphereType& b)
+template<typename InputSphereTypeA,typename InputSphereTypeB>
+SimplePoint spheres_touching_point(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
 	const SimplePoint bp=custom_point_from_object<SimplePoint>(b);
 	return (ap+((bp-ap).unit()*a.r));
-}
-
-template<typename PointType, typename SphereType>
-std::pair<int, int> halfspace_of_sphere(const PointType& a, const PointType& b, const PointType& c, const SphereType& d)
-{
-	const SimplePoint normal=SimplePoint::create(plane_normal_from_three_points(a, b, c));
-	const SimplePoint d1=SimplePoint::create(d)+(normal*d.r);
-	const SimplePoint d2=SimplePoint::create(d)-(normal*d.r);
-	return std::make_pair(
-			halfspace(SimplePoint::create(a), SimplePoint::create(b), SimplePoint::create(c), d1),
-			halfspace(SimplePoint::create(a), SimplePoint::create(b), SimplePoint::create(c), d2));
 }
 
 }
