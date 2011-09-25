@@ -73,12 +73,12 @@ bool sphere_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b
 	return less_or_equal(maximal_distance_from_point_to_sphere(a,b), a.r);
 }
 
-template<typename InputSphereTypeA, typename InputSphereTypeB>
-SimplePoint spheres_touching_point(const InputSphereTypeA& a, const InputSphereTypeB& b)
+template<typename OutputPointType, typename InputSphereTypeA, typename InputSphereTypeB>
+OutputPointType spheres_touching_point(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
 	const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
 	const SimplePoint bp=custom_point_from_object<SimplePoint>(b);
-	return (ap+((bp-ap).unit()*a.r));
+	return custom_point_from_object<OutputPointType>(ap+((bp-ap).unit()*a.r));
 }
 
 }

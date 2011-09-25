@@ -103,18 +103,6 @@ struct SimplePoint
 
 	SimplePoint(const double x, const double y, const double z) : x(x), y(y), z(z) {}
 
-	template<typename InputPointType>
-	static SimplePoint create(const InputPointType& a)
-	{
-		return custom_point_from_object<SimplePoint>(a);
-	}
-
-	template<typename OutputPointType>
-	OutputPointType convert() const
-	{
-		return custom_point_from_object<OutputPointType>(*this);
-	}
-
 	SimplePoint operator+(const SimplePoint& b) const
 	{
 		return sum_of_points<SimplePoint>(*this, b);
@@ -176,7 +164,7 @@ OutputPointType plane_normal_from_three_points(const InputPointTypeA& a, const I
 {
 	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
 	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
-	return (ab&ac).unit().convert<OutputPointType>();
+	return custom_point_from_object<OutputPointType>((ab&ac).unit());
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
