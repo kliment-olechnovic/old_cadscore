@@ -341,7 +341,7 @@ private:
 
 	Exposition find_first_exposition() const
 	{
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres_, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere>, spheres_.front(), std::tr1::placeholders::_1));
+		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres_, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres_.front(), std::tr1::placeholders::_1));
 		const std::size_t a=0;
 		for(std::size_t b=a+1;b<traversal.size();b++)
 		{
