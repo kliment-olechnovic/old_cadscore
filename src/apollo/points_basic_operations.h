@@ -8,42 +8,42 @@
 namespace apollo
 {
 
-template<typename PointType>
-PointType custom_point(const double x, const double y, const double z)
+template<typename OutputPointType>
+OutputPointType custom_point(const double x, const double y, const double z)
 {
-	PointType result;
+	OutputPointType result;
 	result.x=x;
 	result.y=y;
 	result.z=z;
 	return result;
 }
 
-template<typename PointType, typename ObjectType>
-PointType custom_point_from_object(const ObjectType& o)
+template<typename OutputPointType, typename InputObjectType>
+OutputPointType custom_point_from_object(const InputObjectType& o)
 {
-	return custom_point<PointType>(o.x, o.y, o.z);
+	return custom_point<OutputPointType>(o.x, o.y, o.z);
 }
 
-template<typename PointType>
-bool points_equal(const PointType& a, const PointType& b)
+template<typename InputPointTypeA, typename InputPointTypeB>
+bool points_equal(const InputPointTypeA& a, const InputPointTypeB& b)
 {
 	return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z));
 }
 
-template<typename PointType>
-PointType zero_point()
+template<typename OutputPointType>
+OutputPointType zero_point()
 {
-	return custom_point<PointType>(0, 0, 0);
+	return custom_point<OutputPointType>(0, 0, 0);
 }
 
-template<typename PointType>
-PointType inverted_point(const PointType& a)
+template<typename OutputPointType, typename InputPointType>
+OutputPointType inverted_point(const InputPointType& a)
 {
-	return custom_point<PointType>(0-a.x, 0-a.y, 0-a.z);
+	return custom_point<OutputPointType>(0-a.x, 0-a.y, 0-a.z);
 }
 
-template<typename PointType>
-double distance_from_point_to_point(const PointType& a, const PointType& b)
+template<typename InputPointTypeA, typename InputPointTypeB>
+double distance_from_point_to_point(const InputPointTypeA& a, const InputPointTypeB& b)
 {
 	const double dx=(a.x-b.x);
 	const double dy=(a.y-b.y);
@@ -51,79 +51,46 @@ double distance_from_point_to_point(const PointType& a, const PointType& b)
 	return sqrt(dx*dx+dy*dy+dz*dz);
 }
 
-template<typename PointType>
-double point_module(const PointType& a)
+template<typename InputPointType>
+double point_module(const InputPointType& a)
 {
 	return sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
 }
 
-template<typename PointType>
-double dot_product(const PointType& a, const PointType& b)
+template<typename InputPointTypeA, typename InputPointTypeB>
+double dot_product(const InputPointTypeA& a, const InputPointTypeB& b)
 {
 	return (a.x*b.x+a.y*b.y+a.z*b.z);
 }
 
-template<typename PointType>
-PointType cross_product(const PointType& a, const PointType& b)
+template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB>
+OutputPointType cross_product(const InputPointTypeA& a, const InputPointTypeB& b)
 {
-	return custom_point<PointType>(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
+	return custom_point<OutputPointType>(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
 }
 
-template<typename PointType>
-PointType point_and_number_product(const PointType& a, const double k)
+template<typename OutputPointType, typename InputPointType>
+OutputPointType point_and_number_product(const InputPointType& a, const double k)
 {
-	return custom_point<PointType>(a.x*k, a.y*k, a.z*k);
+	return custom_point<OutputPointType>(a.x*k, a.y*k, a.z*k);
 }
 
-template<typename PointType>
-PointType unit_point(const PointType& a)
+template<typename OutputPointType, typename InputPointType>
+OutputPointType unit_point(const InputPointType& a)
 {
-	return point_and_number_product(a, 1/point_module(a));
+	return point_and_number_product<OutputPointType>(a, 1/point_module(a));
 }
 
-template<typename PointType>
-PointType sum_of_points(const PointType& a, const PointType& b)
+template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB>
+OutputPointType sum_of_points(const InputPointTypeA& a, const InputPointTypeB& b)
 {
-	return custom_point<PointType>(a.x+b.x, a.y+b.y, a.z+b.z);
+	return custom_point<OutputPointType>(a.x+b.x, a.y+b.y, a.z+b.z);
 }
 
-template<typename PointType>
-PointType sub_of_points(const PointType& a, const PointType& b)
+template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB>
+OutputPointType sub_of_points(const InputPointTypeA& a, const InputPointTypeB& b)
 {
-	return custom_point<PointType>(a.x-b.x, a.y-b.y, a.z-b.z);
-}
-
-template<typename PointType>
-PointType plane_normal_from_three_points(const PointType& a, const PointType& b, const PointType& c)
-{
-	return unit_point(cross_product(sub_of_points(b, a), sub_of_points(c, a)));
-}
-
-template<typename PointType>
-double signed_volume(const PointType& a, const PointType& b, const PointType& c, const PointType& d)
-{
-	const PointType sa=sub_of_points(a, d);
-	const PointType sb=sub_of_points(b, d);
-	const PointType sc=sub_of_points(c, d);
-	return (dot_product(sa, cross_product(sb, sc))/6);
-}
-
-template<typename PointType>
-int halfspace(const PointType& a, const PointType& b, const PointType& c, const PointType& d)
-{
-	const double v=signed_volume(a, b, c, d);
-	if(equal(v, 0))
-	{
-		return 0;
-	}
-	else if(v<0)
-	{
-		return -1;
-	}
-	else
-	{
-		return 1;
-	}
+	return custom_point<OutputPointType>(a.x-b.x, a.y-b.y, a.z-b.z);
 }
 
 struct SimplePoint
@@ -136,20 +103,26 @@ struct SimplePoint
 
 	SimplePoint(const double x, const double y, const double z) : x(x), y(y), z(z) {}
 
-	template<typename PointType>
-	static SimplePoint create(const PointType& a)
+	template<typename InputPointType>
+	static SimplePoint create(const InputPointType& a)
 	{
 		return custom_point_from_object<SimplePoint>(a);
 	}
 
+	template<typename OutputPointType>
+	OutputPointType convert() const
+	{
+		return custom_point_from_object<OutputPointType>(*this);
+	}
+
 	SimplePoint operator+(const SimplePoint& b) const
 	{
-		return sum_of_points(*this, b);
+		return sum_of_points<SimplePoint>(*this, b);
 	}
 
 	SimplePoint operator-(const SimplePoint& b) const
 	{
-		return sub_of_points(*this, b);
+		return sub_of_points<SimplePoint>(*this, b);
 	}
 
 	double operator*(const SimplePoint& b) const
@@ -159,17 +132,17 @@ struct SimplePoint
 
 	SimplePoint operator*(const double k) const
 	{
-		return point_and_number_product(*this, k);
+		return point_and_number_product<SimplePoint>(*this, k);
 	}
 
 	SimplePoint operator/(const double k) const
 	{
-		return point_and_number_product(*this, 1/k);
+		return point_and_number_product<SimplePoint>(*this, 1/k);
 	}
 
 	SimplePoint operator&(const SimplePoint& b) const
 	{
-		return cross_product(*this, b);
+		return cross_product<SimplePoint>(*this, b);
 	}
 
 	double module() const
@@ -179,9 +152,80 @@ struct SimplePoint
 
 	SimplePoint unit() const
 	{
-		return unit_point(*this);
+		return unit_point<SimplePoint>(*this);
 	}
 };
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC, typename InputPointTypeD>
+double signed_tetrahedron_volume(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c, const InputPointTypeD& d)
+{
+	const SimplePoint da=sub_of_points<SimplePoint>(a, d);
+	const SimplePoint db=sub_of_points<SimplePoint>(b, d);
+	const SimplePoint dc=sub_of_points<SimplePoint>(c, d);
+	return ((da*(db&dc))/6);
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC, typename InputPointTypeD>
+double tetrahedron_volume(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c, const InputPointTypeD& d)
+{
+	return fabs(signed_tetrahedron_volume(a, b, c, d));
+}
+
+template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+OutputPointType plane_normal_from_three_points(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+{
+	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
+	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
+	return (ab&ac).unit().convert<OutputPointType>();
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double signed_distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
+{
+	const SimplePoint n=unit_point<SimplePoint>(plane_normal);
+	const SimplePoint v=sub_of_points<SimplePoint>(x, plane_point);
+	return (n*v);
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
+{
+	return signed_distance_from_point_to_plane(plane_point, plane_normal, x);
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+int halfspace(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
+{
+	const double sd=signed_distance_from_point_to_plane(plane_point, plane_normal, x);
+	if(equal(sd, 0))
+	{
+		return 0;
+	}
+	else if(sd<0)
+	{
+		return -1;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC, typename InputPointTypeD>
+int halfspace(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c, const InputPointTypeD& d)
+{
+	return halfspace(a, plane_normal_from_three_points<SimplePoint>(a, b, c), d);
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double distance_from_point_to_line(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+{
+	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
+	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
+	const double vl=ac.module();
+	const double pl=ab.unit()*ac;
+	return sqrt(vl*vl-pl*pl);
+}
 
 }
 
