@@ -206,12 +206,18 @@ int halfspace(const InputPointTypeA& a, const InputPointTypeB& b, const InputPoi
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
-double distance_from_point_to_line(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+double project_point_on_vector(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
 {
 	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
 	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
-	const double vl=ac.module();
-	const double pl=ab.unit()*ac;
+	return ab.unit()*ac;
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double distance_from_point_to_line(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+{
+	const double vl=distance_from_point_to_point(a, c);
+	const double pl=project_point_on_vector(a, b, c);
 	return sqrt(vl*vl-pl*pl);
 }
 
