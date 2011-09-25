@@ -203,7 +203,7 @@ private:
 			else
 			{
 				const Sphere& protagonist_sphere=spheres[protagonist];
-				const std::vector<Sphere> all_tangents=construct_spheres_tangent(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
+				const std::vector<Sphere> all_tangents=construct_spheres_tangent<Sphere>(spheres[triple.get(0)], spheres[triple.get(1)], spheres[triple.get(2)], protagonist_sphere);
 				if(antagonists.empty())
 				{
 					return all_tangents;
