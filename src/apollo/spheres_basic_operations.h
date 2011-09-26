@@ -126,6 +126,18 @@ bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& 
 	}
 }
 
+struct SimpleSphere
+{
+	double x;
+	double y;
+	double z;
+	double r;
+
+	SimpleSphere() : x(0), y(0), z(0), r(0) {}
+
+	SimpleSphere(const double x, const double y, const double z, const double r) : x(x), y(y), z(z), r(r) {}
+};
+
 }
 
 #endif /* SPHERES_BASIC_OPERATIONS_H_ */
