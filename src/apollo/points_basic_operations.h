@@ -182,7 +182,7 @@ double distance_from_point_to_plane(const InputPointTypeA& plane_point, const In
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
-int halfspace(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
+int halfspace_of_point(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
 {
 	const double sd=signed_distance_from_point_to_plane(plane_point, plane_normal, x);
 	if(equal(sd, 0))
@@ -197,12 +197,6 @@ int halfspace(const InputPointTypeA& plane_point, const InputPointTypeB& plane_n
 	{
 		return 1;
 	}
-}
-
-template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC, typename InputPointTypeD>
-int halfspace(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c, const InputPointTypeD& d)
-{
-	return halfspace(a, plane_normal_from_three_points<SimplePoint>(a, b, c), d);
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>

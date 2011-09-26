@@ -81,16 +81,49 @@ OutputPointType spheres_touching_point(const InputSphereTypeA& a, const InputSph
 	return custom_point_from_object<OutputPointType>(ap+((bp-ap).unit()*a.r));
 }
 
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputSphereTypeC>
+int halfspace_of_sphere(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputSphereTypeC& x)
+{
+	const SimplePoint sx=custom_point_from_object<SimplePoint>(x);
+	const SimplePoint sn=custom_point_from_object<SimplePoint>(plane_normal).unit();
+	const int halfspace_one=halfspace_of_point(plane_point, plane_normal, sx+(sn*x.r));
+	const int halfspace_two=halfspace_of_point(plane_point, plane_normal, sx-(sn*x.r));
+	if(halfspace_one!=halfspace_two)
+	{
+		return 0;
+	}
+	else
+	{
+		return halfspace_one;
+	}
+}
+
 template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
-bool cone_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c, const bool fully)
+bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
 {
 	if(a.r>b.r)
 	{
 		return sphere_intersects_touching_cone(b, a, c);
 	}
-	const double distance_one=project_point_on_vector(a, b, c);
-	const double distance_two=distance_from_point_to_line(a, b, c)-a.r+(fully ? c.r : 0-c.r);
-	return less(distance_two/distance_one, (b.r-a.r)/distance_from_point_to_point(a, b));
+
+	if(sphere_intersects_sphere(a, c) || sphere_intersects_sphere(b, c))
+	{
+		return true;
+	}
+	else
+	{
+		const double stick_length=distance_from_point_to_point(a, b);
+		const double distance_one=project_point_on_vector(a, b, c);
+		if(greater(distance_one, 0) && less(distance_one, stick_length))
+		{
+			const double distance_two=distance_from_point_to_line(a, b, c)-c.r-a.r;
+			return less(distance_two/distance_one, (b.r-a.r)/stick_length);
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
 
 }

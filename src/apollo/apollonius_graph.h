@@ -227,9 +227,9 @@ private:
 								const SimplePoint tp0=spheres_touching_point<SimplePoint>(tangent, spheres[triple.get(0)]);
 								const SimplePoint tp1=spheres_touching_point<SimplePoint>(tangent, spheres[triple.get(1)]);
 								const SimplePoint tp2=spheres_touching_point<SimplePoint>(tangent, spheres[triple.get(2)]);
-								const int protagonist_halfspace=halfspace(tp0, tp1, tp2,
+								const int protagonist_halfspace=halfspace_of_point(tp0, plane_normal_from_three_points<SimplePoint>(tp0, tp1, tp2),
 										spheres_touching_point<SimplePoint>(tangent, protagonist_sphere));
-								const int antagonist_halfspace=halfspace(tp0, tp1, tp2,
+								const int antagonist_halfspace=halfspace_of_point(tp0, plane_normal_from_three_points<SimplePoint>(tp0, tp1, tp2),
 										spheres_touching_point<SimplePoint>(tangent, antagonist_sphere));
 								if(protagonist_halfspace==antagonist_halfspace)
 								{
