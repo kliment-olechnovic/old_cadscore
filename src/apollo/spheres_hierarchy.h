@@ -30,7 +30,7 @@ public:
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
-	std::vector<std::size_t> search_in_clusters_layers_narrow(
+	std::vector<std::size_t> search(
 			NodeChecker& node_checker,
 			LeafChecker& leaf_checker) const
 	{
@@ -83,62 +83,6 @@ public:
 						{
 							stack.push_back(NodeCoordinates(current_level, current_cluster_id, current_child_id+1));
 							stack.push_back(NodeCoordinates(current_level-1, children[current_child_id], 0));
-						}
-					}
-				}
-			}
-		}
-		return results;
-	}
-
-	template<typename NodeChecker, typename LeafChecker>
-	std::vector<std::size_t> search_in_clusters_layers_wide(
-			NodeChecker& node_checker,
-			LeafChecker& leaf_checker) const
-	{
-		std::vector<std::size_t> results;
-		if(!clusters_layers_.empty())
-		{
-			std::deque< std::pair<std::size_t, std::size_t> > queue;
-
-			const std::size_t top_level=clusters_layers_.size()-1;
-			for(std::size_t top_id=0;top_id<clusters_layers_[top_level].size();top_id++)
-			{
-				const Sphere& sphere=clusters_layers_[top_level][top_id].first;
-				if(node_checker(sphere))
-				{
-					queue.push_back(std::make_pair(top_level, top_id));
-				}
-			}
-
-			while(!queue.empty())
-			{
-				const std::size_t level=queue.back().first;
-				const std::size_t id=queue.back().second;
-				queue.pop_back();
-				const std::vector<std::size_t>& children=clusters_layers_[level][id].second;
-				for(std::size_t j=0;j<children.size();j++)
-				{
-					const std::size_t child_id=children[j];
-					if(level>=1)
-					{
-						const std::size_t child_level=level-1;
-						const Sphere& child_sphere=clusters_layers_[child_level][child_id].first;
-						if(node_checker(child_sphere))
-						{
-							queue.push_back(std::make_pair(child_level, child_id));
-						}
-					}
-					else
-					{
-						const std::pair<bool, bool> status=leaf_checker(child_id);
-						if(status.first)
-						{
-							results.push_back(child_id);
-							if(status.second)
-							{
-								return results;
-							}
 						}
 					}
 				}
