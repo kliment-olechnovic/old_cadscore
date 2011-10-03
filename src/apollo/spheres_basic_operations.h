@@ -103,7 +103,7 @@ bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& 
 {
 	if(a.r>b.r)
 	{
-		return sphere_intersects_touching_cone(b, a, c);
+		return stick_intersects_sphere(b, a, c);
 	}
 
 	if(sphere_intersects_sphere(a, c) || sphere_intersects_sphere(b, c))
