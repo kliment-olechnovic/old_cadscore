@@ -178,7 +178,7 @@ double signed_distance_from_point_to_plane(const InputPointTypeA& plane_point, c
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
 double distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
 {
-	return signed_distance_from_point_to_plane(plane_point, plane_normal, x);
+	return fabs(signed_distance_from_point_to_plane(plane_point, plane_normal, x));
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
