@@ -49,7 +49,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_is_inner_sphere(const InputSphereType& x) const
 	{
-		if(sphere_contains_sphere(bounding_sphere_, x))
+		if(sphere_intersects_sphere(bounding_sphere_, x))
 		{
 			if(!tangent_planes_.empty())
 			{
