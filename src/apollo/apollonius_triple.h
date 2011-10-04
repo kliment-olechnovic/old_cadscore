@@ -17,57 +17,48 @@ public:
 	ApolloniusTriple(const SimpleSphere& a, const SimpleSphere& b, const SimpleSphere& c) :
 		spheres_(make_sorted_spheres_vector(a, b, c)),
 		tangent_planes_(construct_tangent_planes(a, b, c)),
-		bounding_sphere_(construct_bounding_sphere(spheres_)),
 		cone_end_(tangent_planes_.empty() ? find_cone_end(spheres_) : 0)
 	{
 	}
 
 	template<typename InputSphereType>
-	bool sphere_may_contain_inner_doubling_sphere(const InputSphereType& x) const
+	bool sphere_may_contain_inner_sphere(const InputSphereType& x) const
 	{
-		if(sphere_intersects_sphere(x, bounding_sphere_))
+		if(!tangent_planes_.empty())
 		{
-			if(!tangent_planes_.empty())
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
 			{
-				for(std::size_t i=0;i<tangent_planes_.size();i++)
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)==1)
 				{
-					if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)==1)
-					{
-						return false;
-					}
+					return false;
 				}
-				return true;
 			}
-			else
-			{
-				return stick_intersects_sphere(spheres_[0], spheres_[cone_end_], x);
-			}
+			return true;
 		}
-		return false;
+		else
+		{
+			return stick_intersects_sphere(spheres_[0], spheres_[cone_end_], x);
+		}
 	}
 
 	template<typename InputSphereType>
 	bool sphere_is_inner_sphere(const InputSphereType& x) const
 	{
-		if(sphere_intersects_sphere(bounding_sphere_, x))
+		if(!tangent_planes_.empty())
 		{
-			if(!tangent_planes_.empty())
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
 			{
-				for(std::size_t i=0;i<tangent_planes_.size();i++)
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)!=-1)
 				{
-					if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)!=-1)
-					{
-						return false;
-					}
+					return false;
 				}
-				return true;
 			}
-			else
-			{
-				return stick_contains_sphere(spheres_[0], spheres_[cone_end_], x);
-			}
+			return true;
 		}
-		return false;
+		else
+		{
+			return stick_contains_sphere(spheres_[0], spheres_[cone_end_], x);
+		}
 	}
 
 	template<typename OutputSphereType, typename InputSphereType>
@@ -79,7 +70,6 @@ public:
 private:
 	std::vector<SimpleSphere> spheres_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
-	SimpleSphere bounding_sphere_;
 	std::size_t cone_end_;
 
 	struct SpheresSortingOperator
@@ -110,22 +100,6 @@ private:
 			planes.push_back(std::make_pair((custom_point_from_object<SimplePoint>(a)+(normals[i]*a.r)), normals[i]));
 		}
 		return planes;
-	}
-
-	static SimpleSphere construct_bounding_sphere(const std::vector<SimpleSphere>& spheres)
-	{
-		SimplePoint mass_center;
-		for(std::size_t i=0;i<spheres.size();i++)
-		{
-			mass_center=mass_center+custom_point_from_object<SimplePoint>(spheres[i]);
-		}
-		mass_center=mass_center/3;
-		double r=0;
-		for(std::size_t i=0;i<spheres.size();i++)
-		{
-			r=std::max(r, maximal_distance_from_point_to_sphere(mass_center, spheres[i]));
-		}
-		return SimpleSphere(mass_center.x, mass_center.y, mass_center.z, r);
 	}
 
 	static std::size_t find_cone_end(const std::vector<SimpleSphere>& sorted_spheres)
