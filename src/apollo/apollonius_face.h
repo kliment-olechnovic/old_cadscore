@@ -42,6 +42,31 @@ public:
 		die_if_invalid();
 	}
 
+	Triple abc_ids() const
+	{
+		return abc_ids_;
+	}
+
+	std::size_t d1_id() const
+	{
+		return d1_id_;
+	}
+
+	SimpleSphere d1_tangent_sphere() const
+	{
+		return d1_tangent_sphere_;
+	}
+
+	std::size_t d2_id() const
+	{
+		return d2_id_;
+	}
+
+	SimpleSphere d2_tangent_sphere() const
+	{
+		return d2_tangent_sphere_;
+	}
+
 	void die_if_invalid() const
 	{
 		if(abc_ids_.contains(d1_id_))
