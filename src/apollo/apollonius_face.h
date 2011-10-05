@@ -93,6 +93,11 @@ public:
 
 	void set_d2(const std::size_t d2_id, const SimpleSphere& d2_tangent_sphere)
 	{
+		if(d2_id==d1_id_ || abc_ids_.contains(d2_id))
+		{
+			throw std::logic_error("Invalid d2 id");
+		}
+
 		const Sphere& d2=spheres_[d2_id];
 
 		if(!sphere_intersects_sphere(d2_tangent_sphere, d1_) && check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere))
