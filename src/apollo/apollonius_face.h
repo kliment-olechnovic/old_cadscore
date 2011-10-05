@@ -133,8 +133,43 @@ public:
 		die_if_invalid();
 	}
 
+	Triple get_abc_ids_for_d2(const std::size_t num) const
+	{
+		if(d2_id_==npos || num>2)
+		{
+			throw std::logic_error("Invalid face triple request");
+		}
+
+		if(num==0)
+		{
+			return make_triple(d2_id_, abc_ids_.get(1), abc_ids_.get(2));
+		}
+		else if(num==1)
+		{
+			return make_triple(d2_id_, abc_ids_.get(0), abc_ids_.get(2));
+		}
+		else
+		{
+			return make_triple(d2_id_, abc_ids_.get(0), abc_ids_.get(1));
+		}
+	}
+
+	ApolloniusFace get_face_for_d2(const std::size_t num) const
+	{
+		return ApolloniusFace(spheres_,
+				get_abc_ids_for_d2(num),
+				abc_ids_.get(0),
+				d2_tangent_sphere_);
+	}
+
 private:
-	static std::size_t select_free_tangent_plane_id(const Sphere& a, const Sphere& b, const Sphere& c, const std::vector< std::pair<SimplePoint, SimplePoint> >& tangent_planes, const Sphere& d1, const SimpleSphere& d1_tangent_sphere)
+	static std::size_t select_free_tangent_plane_id(
+			const Sphere& a,
+			const Sphere& b,
+			const Sphere& c,
+			const std::vector< std::pair<SimplePoint, SimplePoint> >& tangent_planes,
+			const Sphere& d1,
+			const SimpleSphere& d1_tangent_sphere)
 	{
 		if(tangent_planes.empty())
 		{
@@ -205,16 +240,17 @@ private:
 	}
 
 	const std::vector<Sphere>& spheres_;
-	const Triple abc_ids_;
+	Triple abc_ids_;
 	const Sphere& a_;
 	const Sphere& b_;
 	const Sphere& c_;
-	const std::size_t d1_id_;
+	std::size_t d1_id_;
 	const Sphere& d1_;
-	const SimpleSphere d1_tangent_sphere_;
-	const std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
-	const std::pair<const Sphere*, const Sphere*> tangent_stick_;
-	const std::size_t free_tangent_plane_id_;
+	SimpleSphere d1_tangent_sphere_;
+	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
+	std::pair<const Sphere*, const Sphere*> tangent_stick_;
+	std::size_t free_tangent_plane_id_;
+
 	std::size_t d2_id_;
 	SimpleSphere d2_tangent_sphere_;
 };
