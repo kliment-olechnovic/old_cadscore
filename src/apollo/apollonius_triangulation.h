@@ -18,7 +18,7 @@ class ApolloniusTriangulation
 public:
 	typedef SpheresHierarchyType Hierarchy;
 	typedef typename Hierarchy::Sphere Sphere;
-	typedef std::tr1::unordered_map<Quadruple, std::vector<Sphere>, Quadruple::HashFunctor> QuadruplesMap;
+	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
 	ApolloniusTriangulation(const Hierarchy& spheres_hierarchy) :
 		spheres_hierarchy_(spheres_hierarchy),
@@ -33,7 +33,7 @@ public:
 		std::deque<Face> stack=find_first_faces();
 		if(!stack.empty())
 		{
-			quadruples_map[Quadruple(stack.front().abc_ids(), stack.front().d1())].push_back(stack.front().d1_tangent_sphere());
+			quadruples_map[Quadruple(stack.front().abc_ids(), stack.front().d1_id())].push_back(stack.front().d1_tangent_sphere());
 
 			TriplesSet triples_set;
 			for(std::size_t i=0;i<stack.size();i++)
@@ -45,9 +45,9 @@ public:
 			{
 				Face face=search_for_valid_d2(stack.back());
 				stack.pop_back();
-				if(face.d2()!=Face::npos)
+				if(face.d2_id()!=Face::npos)
 				{
-					quadruples_map[Quadruple(face.abc_ids(), face.d1())].push_back(face.d1_tangent_sphere());
+					quadruples_map[Quadruple(face.abc_ids(), face.d1_id())].push_back(face.d1_tangent_sphere());
 					for(std::size_t i=0;i<3;i++)
 					{
 						if(triples_set.find(face.get_abc_ids_for_d2(i))==triples_set.end())
@@ -116,7 +116,7 @@ private:
 		{
 			Face& face;
 
-			LeafChecker(const Face& target) : face(target) {}
+			LeafChecker(Face& target) : face(target) {}
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
 			{
@@ -199,7 +199,7 @@ private:
 				for(std::size_t d=c+1;d<traversal.size();d++)
 				{
 					Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-					std::vector<SimpleSphere> tangents=construct_spheres_tangent(spheres_[quadruple.get(0)], spheres_[quadruple.get(1)], spheres_[quadruple.get(2)], spheres_[quadruple.get(3)]);
+					std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres_[quadruple.get(0)], spheres_[quadruple.get(1)], spheres_[quadruple.get(2)], spheres_[quadruple.get(3)]);
 					if(tangents.size()==1 && simple_intersection_check(tangents.front()))
 					{
 						for(int i=0;i<4;i++)
@@ -228,7 +228,7 @@ private:
 	{
 		Face face=search_for_any_d2(candidate_face);
 		std::tr1::unordered_set<std::size_t> visited;
-		while(face.d2()!=Face::npos)
+		while(face.d2_id()!=Face::npos)
 		{
 			typename conflict_d2_checkers::NodeChecker node_checker(face);
 			typename conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
@@ -239,7 +239,7 @@ private:
 			}
 			else
 			{
-				if(face.d2()==results.back())
+				if(face.d2_id()==results.back())
 				{
 					visited.insert(results.back());
 				}

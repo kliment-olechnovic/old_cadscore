@@ -41,7 +41,12 @@ int main()
 
 	{
 		utils::BlockTimer bt("Second Apollo time");
-		const apollo::SpheresHierarchy<Sphere> hierarchy(spheres, 1.4*3, 50);
+		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
+		const Hierarchy hierarchy(spheres, 1.4*3, 50);
+		typedef apollo::ApolloniusTriangulation< apollo::SpheresHierarchy<Sphere> > Apollo;
+		const Apollo apollo(hierarchy);
+		Apollo::QuadruplesMap quadruples_map=apollo.find_quadruples();
+		std::clog << quadruples_map.size() << " quadruples found\n";
 	}
 
 	return 0;

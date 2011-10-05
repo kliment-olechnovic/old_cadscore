@@ -59,7 +59,7 @@ public:
 						&& current_cluster_id<clusters_layers_[current_level].size()
 						&& current_child_id<clusters_layers_[current_level][current_cluster_id].second.size())
 				{
-					const Sphere& sphere=clusters_layers_[current_level][current_cluster_id].first;
+					const SimpleSphere& sphere=clusters_layers_[current_level][current_cluster_id].first;
 					if(node_checker(sphere))
 					{
 						const std::vector<std::size_t>& children=clusters_layers_[current_level][current_cluster_id].second;

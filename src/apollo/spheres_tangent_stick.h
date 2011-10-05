@@ -81,7 +81,7 @@ std::pair<const InputSphereType*, const InputSphereType*> select_tangent_stick(c
 	}
 	else
 	{
-		return std::make_pair(NULL, NULL);
+		return std::pair<const InputSphereType*, const InputSphereType*>(NULL, NULL);
 	}
 }
 

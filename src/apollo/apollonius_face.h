@@ -9,6 +9,7 @@
 #include "spheres_basic_operations.h"
 #include "spheres_tangent_plane.h"
 #include "spheres_tangent_sphere.h"
+#include "spheres_tangent_stick.h"
 
 namespace apollo
 {
@@ -34,7 +35,7 @@ public:
 				d1_(spheres_[d1_id_]),
 				d1_tangent_sphere_(d1_tangent_sphere),
 				tangent_planes_(construct_spheres_tangent_planes(a_, b_, c_)),
-				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(a_, b_, c_) : std::make_pair(NULL, NULL)),
+				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(a_, b_, c_) : std::pair<const Sphere*, const Sphere*>(NULL, NULL)),
 				free_tangent_plane_id_(select_free_tangent_plane_id(a_, b_, c_, tangent_planes_, d1_, d1_tangent_sphere_)),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
@@ -128,7 +129,7 @@ public:
 			const Sphere& d2=spheres_[d2_id];
 			if(sphere_may_contain_candidate_for_d2(d2))
 			{
-				const std::vector<SimpleSphere> tangents=construct_spheres_tangent(a_, b_, c_, d2);
+				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(a_, b_, c_, d2);
 				for(std::size_t i=0;i<tangents.size();i++)
 				{
 					if(!sphere_intersects_sphere(tangents[i], d1_))
