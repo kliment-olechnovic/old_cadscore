@@ -9,7 +9,7 @@ namespace apollo
 {
 
 template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC, typename InputPointType>
-bool check_spheres_tangent_plane(const InputSphereTypeA& s1, const InputSphereTypeB& s2, const InputSphereTypeC& s3, const InputPointType& tangent_plane_normal)
+inline bool check_spheres_tangent_plane(const InputSphereTypeA& s1, const InputSphereTypeB& s2, const InputSphereTypeC& s3, const InputPointType& tangent_plane_normal)
 {
 	const SimplePoint sp1=custom_point_from_object<SimplePoint>(s1);
 	const SimplePoint sp2=custom_point_from_object<SimplePoint>(s2);
@@ -21,14 +21,14 @@ bool check_spheres_tangent_plane(const InputSphereTypeA& s1, const InputSphereTy
 
 
 template<typename OutputPointType, typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
-inline std::vector<OutputPointType> construct_spheres_tangent_plane(const InputSphereTypeA& sm, const InputSphereTypeB& s1, const InputSphereTypeC& s2)
+inline std::vector<OutputPointType> construct_spheres_tangent_planes_normals(const InputSphereTypeA& sm, const InputSphereTypeB& s1, const InputSphereTypeC& s2)
 {
 	{
 		const double min_r=std::min(sm.r, std::min(s1.r, s2.r));
 		if(sm.r!=min_r)
 		{
-			if(s1.r==min_r) return construct_spheres_tangent_plane<OutputPointType>(s1, sm, s2);
-			if(s2.r==min_r) return construct_spheres_tangent_plane<OutputPointType>(s2, sm, s1);
+			if(s1.r==min_r) return construct_spheres_tangent_planes_normals<OutputPointType>(s1, sm, s2);
+			if(s2.r==min_r) return construct_spheres_tangent_planes_normals<OutputPointType>(s2, sm, s1);
 		}
 	}
 
@@ -76,6 +76,18 @@ inline std::vector<OutputPointType> construct_spheres_tangent_plane(const InputS
 	}
 
 	return results;
+}
+
+template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
+inline std::vector< std::pair<SimplePoint, SimplePoint> > construct_spheres_tangent_planes(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
+{
+	const std::vector<SimplePoint> normals=construct_spheres_tangent_planes_normals<SimplePoint>(a, b, c);
+	std::vector< std::pair<SimplePoint, SimplePoint> > planes;
+	for(std::size_t i=0;i<normals.size();i++)
+	{
+		planes.push_back(std::make_pair((custom_point_from_object<SimplePoint>(a)+(normals[i]*a.r)), normals[i]));
+	}
+	return planes;
 }
 
 }
