@@ -67,7 +67,7 @@ public:
 				throw std::logic_error("Invalid d2 id");
 			}
 
-			const Sphere& d2=spheres_[d2_id];
+			const Sphere& d2=spheres_[d2_id_];
 
 			if(check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_) || sphere_intersects_sphere(d2_tangent_sphere_, d1_))
 			{
@@ -81,14 +81,14 @@ public:
 	{
 		if(free_tangent_plane_id_!=npos)
 		{
-			if(!sphere_is_on_free_plane(d2))
+			if(!sphere_is_on_free_plane(x))
 			{
 				return false;
 			}
 		}
 		else
 		{
-			if(!sphere_is_inner(d2))
+			if(!sphere_is_inner(x))
 			{
 				return false;
 			}
@@ -216,7 +216,7 @@ private:
 	template<typename InputSphereType>
 	bool sphere_is_on_free_plane(const InputSphereType& x) const
 	{
-		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes[free_tangent_plane_id_].first, tangent_planes[free_tangent_plane_id_].second, x));
+		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes_[free_tangent_plane_id_].first, tangent_planes_[free_tangent_plane_id_].second, x));
 	}
 
 	template<typename InputSphereType>
