@@ -73,20 +73,21 @@ public:
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
 	{
-		const Sphere& d2=spheres_[d2_id];
-
-		if(sphere_may_contain_candidate_for_d2(d2))
+		if(d2_id!=d1_id && !abc_ids_.contains(d2_id))
 		{
-			const std::vector<SimpleSphere> tangents=construct_spheres_tangent(a_, b_, c_, d2);
-			for(std::size_t i=0;i<tangents.size();i++)
+			const Sphere& d2=spheres_[d2_id];
+			if(sphere_may_contain_candidate_for_d2(d2))
 			{
-				if(!sphere_intersects_sphere(tangents[i], d1_))
+				const std::vector<SimpleSphere> tangents=construct_spheres_tangent(a_, b_, c_, d2);
+				for(std::size_t i=0;i<tangents.size();i++)
 				{
-					return std::make_pair(true, tangents[i]);
+					if(!sphere_intersects_sphere(tangents[i], d1_))
+					{
+						return std::make_pair(true, tangents[i]);
+					}
 				}
 			}
 		}
-
 		return std::make_pair(false, SimpleSphere());
 	}
 
