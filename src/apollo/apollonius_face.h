@@ -158,6 +158,12 @@ public:
 		die_if_invalid();
 	}
 
+	void unset_d2()
+	{
+		d2_id_=npos;
+		d2_tangent_sphere_=SimpleSphere();
+	}
+
 	Triple get_abc_ids_for_d2(const std::size_t num) const
 	{
 		if(d2_id_==npos || num>2)
