@@ -75,7 +75,7 @@ public:
 			throw std::logic_error("Invalid d1 id");
 		}
 
-		if(check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
+		if(!check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
 		{
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
@@ -95,7 +95,7 @@ public:
 
 			const Sphere& d2=spheres_[d2_id_];
 
-			if(check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_) || sphere_intersects_sphere(d2_tangent_sphere_, d1_))
+			if(!check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_) || sphere_intersects_sphere(d2_tangent_sphere_, d1_))
 			{
 				throw std::logic_error("Invalid d2 tangent sphere");
 			}
@@ -190,7 +190,7 @@ public:
 	{
 		return ApolloniusFace(spheres_,
 				get_abc_ids_for_d2(num),
-				abc_ids_.get(0),
+				abc_ids_.get(num),
 				d2_tangent_sphere_);
 	}
 
