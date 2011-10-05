@@ -34,34 +34,14 @@ int main()
 	}
 
 	{
-		utils::BlockTimer bt("Clustering time");
-
-		std::vector<apollo::spheres_clustering<Sphere>::ClustersLayer> clusters_layers=apollo::spheres_clustering<Sphere>::cluster_spheres_until_low_count(spheres, 1.4*3, 50);
-		std::clog << clusters_layers.size() << " clusters layers\n";
-		for(std::size_t i=0;i<clusters_layers.size();i++)
-		{
-			std::clog << clusters_layers[i].size() << " clusters in layer " << i << "\n";
-		}
-
-		std::vector<Sphere> clusters_spheres;
-		for(std::size_t i=0;i<clusters_layers.back().size();i++)
-		{
-			clusters_spheres.push_back(clusters_layers.back()[i].first);
-		}
-
-//		std::cout << "LIST\n";
-//		print_spheres(clusters_spheres.begin(), clusters_spheres.end());
-
-		std::clog << apollo::spheres_clustering<Sphere>::check_clusters_layers(clusters_layers, spheres) << " cl check\n";
+		utils::BlockTimer bt("First Apollo time");
+		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
+		std::clog << quadruples_map.size() << " quadruples found\n";
 	}
 
 	{
-		utils::BlockTimer bt("Apollo time");
-		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
-		std::clog << quadruples_map.size() << " quadruples found\n";
-//		std::clog << apollo::apollonius_graph<Sphere>::check_quadruples_map(quadruples_map, spheres) << " quadruples check\n";
-//		apollo::apollonius_graph<Sphere>::graph_from_quadruples(quadruples_map, spheres);
-//		apollo::apollonius_graph<Sphere>::print_quadruples(quadruples_map);
+		utils::BlockTimer bt("Second Apollo time");
+		const apollo::SpheresHierarchy<Sphere> hierarchy(spheres, 1.4*3, 50);
 	}
 
 	return 0;

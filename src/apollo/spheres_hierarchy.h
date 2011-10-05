@@ -12,11 +12,11 @@
 namespace apollo
 {
 
-template<typename SphereType>
+template<typename PrimarySphereType>
 class SpheresHierarchy
 {
 public:
-	typedef SphereType Sphere;
+	typedef PrimarySphereType Sphere;
 
 	SpheresHierarchy(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count) :
 		spheres_(spheres),
@@ -94,11 +94,12 @@ public:
 private:
 	typedef std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > ClustersLayer;
 
-	static std::vector<SimpleSphere> find_clusters_centers(const std::vector<Sphere>& spheres, const double r)
+	template<typename SphereType>
+	static std::vector<SimpleSphere> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
 	{
 		std::vector<SimpleSphere> centers;
 		std::vector<bool> allowed(spheres.size(), true);
-		const std::vector<std::size_t> global_traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<Sphere, Sphere>, spheres[0], std::tr1::placeholders::_1));
+		const std::vector<std::size_t> global_traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<SphereType, SphereType>, spheres[0], std::tr1::placeholders::_1));
 		for(std::size_t k=0;k<spheres.size();k++)
 		{
 			const std::size_t i=global_traversal[k];
@@ -119,7 +120,8 @@ private:
 		return centers;
 	}
 
-	static ClustersLayer form_clusters_from_spheres_using_centers(const std::vector<Sphere>& spheres, const std::vector<SimpleSphere>& centers)
+	template<typename SphereType>
+	static ClustersLayer form_clusters_from_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
 	{
 		ClustersLayer clusters;
 		for(std::size_t i=0;i<centers.size();i++)
@@ -129,7 +131,7 @@ private:
 
 		for(std::size_t i=0;i<spheres.size();i++)
 		{
-			const Sphere& sphere=spheres[i];
+			const SphereType& sphere=spheres[i];
 			std::size_t min_dist_id=0;
 			for(std::size_t j=1;j<clusters.size();j++)
 			{
@@ -157,7 +159,8 @@ private:
 		return nonempty_clusters;
 	}
 
-	static ClustersLayer cluster_spheres(const std::vector<Sphere>& spheres, const double r)
+	template<typename SphereType>
+	static ClustersLayer cluster_spheres(const std::vector<SphereType>& spheres, const double r)
 	{
 		return form_clusters_from_spheres_using_centers(spheres, find_clusters_centers(spheres, r));
 	}
