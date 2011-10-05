@@ -20,7 +20,7 @@ public:
 
 	SpheresHierarchy(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count) :
 		spheres_(spheres),
-		clusters_layers_(cluster_spheres_until_low_count(spheres, r, low_count))
+		clusters_layers_(cluster_spheres_until_low_count(spheres_, r, low_count))
 	{
 	}
 
@@ -68,7 +68,7 @@ public:
 							for(std::size_t i=0;i<children.size();i++)
 							{
 								const std::size_t child=children[i];
-								const std::pair<bool, bool> status=leaf_checker(child);
+								const std::pair<bool, bool> status=leaf_checker(child, spheres_[child]);
 								if(status.first)
 								{
 									results.push_back(child);
