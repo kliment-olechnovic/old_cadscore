@@ -37,7 +37,7 @@ public:
 				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(a_, b_, c_) : std::make_pair(NULL, NULL)),
 				free_tangent_plane_id_(select_free_tangent_plane_id(a_, b_, c_, tangent_planes_, d1_, d1_tangent_sphere_)),
 				d2_id_(npos),
-				d2_tangent_sphere_(SimpleSphere(0,0,0,0))
+				d2_tangent_sphere_(SimpleSphere())
 	{
 		if(check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
 		{
@@ -87,7 +87,7 @@ public:
 			}
 		}
 
-		return std::make_pair(false, SimpleSphere(0,0,0,0));
+		return std::make_pair(false, SimpleSphere());
 	}
 
 	void set_d2(const std::size_t d2_id, const SimpleSphere& d2_tangent_sphere)
