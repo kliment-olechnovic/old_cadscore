@@ -33,17 +33,13 @@ public:
 				d1_id_(d1_id),
 				d1_(spheres_[d1_id_]),
 				d1_tangent_sphere_(d1_tangent_sphere),
-				d2_id_(npos),
-				d2_(NULL),
-				d2_tangent_sphere_(SimpleSphere(0,0,0,0)),
 				tangent_planes_(construct_spheres_tangent_planes(a_, b_, c_)),
 				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(a_, b_, c_) : std::make_pair(NULL, NULL)),
-				free_tangent_plane_id_(select_free_tangent_plane_id(a_, b_, c_, tangent_planes_, d1_, d1_tangent_sphere_))
+				free_tangent_plane_id_(select_free_tangent_plane_id(a_, b_, c_, tangent_planes_, d1_, d1_tangent_sphere_)),
+				d2_id_(npos),
+				d2_tangent_sphere_(SimpleSphere(0,0,0,0))
 	{
-		if(!(sphere_touches_sphere(d1_tangent_sphere_, a_) &&
-				sphere_touches_sphere(d1_tangent_sphere_, b_) &&
-				sphere_touches_sphere(d1_tangent_sphere_, c_) &&
-				sphere_touches_sphere(d1_tangent_sphere_, d1_)))
+		if(check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
 		{
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
@@ -53,6 +49,76 @@ public:
 		{
 			throw std::logic_error("Invalid tangency information");
 		}
+	}
+
+	template<typename InputSphereType>
+	bool sphere_is_on_free_plane(const InputSphereType& x) const
+	{
+		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes[free_tangent_plane_id_].first, tangent_planes[free_tangent_plane_id_].second, x));
+	}
+
+	template<typename InputSphereType>
+	bool sphere_is_inner(const InputSphereType& x) const
+	{
+		if(!tangent_planes_.empty())
+		{
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
+			{
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)!=-1)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		else
+		{
+			return stick_contains_sphere(*tangent_stick_.first, *tangent_stick_.second, x);
+		}
+	}
+
+	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
+	{
+		const Sphere& d2=spheres_[d2_id];
+
+		if(free_tangent_plane_id_!=npos)
+		{
+			if(!sphere_is_on_free_plane(d2))
+			{
+				return std::make_pair(false, SimpleSphere(0,0,0,0));
+			}
+		}
+		else
+		{
+			if(!sphere_is_inner(d2))
+			{
+				return std::make_pair(false, SimpleSphere(0,0,0,0));
+			}
+		}
+
+		const std::vector<SimpleSphere> tangents=construct_spheres_tangent(a_, b_, c_, d2);
+		for(std::size_t i=0;i<tangents.size();i++)
+		{
+			if(!sphere_intersects_sphere(tangents[i], d1_))
+			{
+				return std::make_pair(true, tangents[i]);
+			}
+		}
+
+		return std::make_pair(false, SimpleSphere(0,0,0,0));
+	}
+
+	void set_d2(const std::size_t d2_id, const SimpleSphere& d2_tangent_sphere)
+	{
+		const Sphere& d2=spheres_[d2_id];
+
+		if(!sphere_intersects_sphere(d2_tangent_sphere, d1_) && check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere))
+		{
+			throw std::logic_error("Invalid d2 tangent sphere");
+		}
+
+		d2_id_=d2_id;
+		d2_tangent_sphere_=d2_tangent_sphere;
 	}
 
 private:
@@ -108,12 +174,11 @@ private:
 	const std::size_t d1_id_;
 	const Sphere& d1_;
 	const SimpleSphere d1_tangent_sphere_;
-	std::size_t d2_id_;
-	const Sphere* d2_;
-	SimpleSphere d2_tangent_sphere_;
 	const std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	const std::pair<const Sphere*, const Sphere*> tangent_stick_;
 	const std::size_t free_tangent_plane_id_;
+	std::size_t d2_id_;
+	SimpleSphere d2_tangent_sphere_;
 };
 
 }
