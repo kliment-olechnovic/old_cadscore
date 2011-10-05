@@ -52,32 +52,6 @@ public:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_is_on_free_plane(const InputSphereType& x) const
-	{
-		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes[free_tangent_plane_id_].first, tangent_planes[free_tangent_plane_id_].second, x));
-	}
-
-	template<typename InputSphereType>
-	bool sphere_is_inner(const InputSphereType& x) const
-	{
-		if(!tangent_planes_.empty())
-		{
-			for(std::size_t i=0;i<tangent_planes_.size();i++)
-			{
-				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)!=-1)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-		else
-		{
-			return stick_contains_sphere(*tangent_stick_.first, *tangent_stick_.second, x);
-		}
-	}
-
-	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d2(const InputSphereType& x) const
 	{
 		if(free_tangent_plane_id_!=npos)
@@ -171,6 +145,32 @@ private:
 					return npos;
 				}
 			}
+		}
+	}
+
+	template<typename InputSphereType>
+	bool sphere_is_on_free_plane(const InputSphereType& x) const
+	{
+		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes[free_tangent_plane_id_].first, tangent_planes[free_tangent_plane_id_].second, x));
+	}
+
+	template<typename InputSphereType>
+	bool sphere_is_inner(const InputSphereType& x) const
+	{
+		if(!tangent_planes_.empty())
+		{
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
+			{
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)!=-1)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		else
+		{
+			return stick_contains_sphere(*tangent_stick_.first, *tangent_stick_.second, x);
 		}
 	}
 
