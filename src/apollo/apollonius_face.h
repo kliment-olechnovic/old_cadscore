@@ -130,8 +130,8 @@ private:
 			{
 				const SimplePoint normal=plane_normal_from_three_points<SimplePoint>(a, b, c);
 				const int th=halfspace_of_point(a, normal, d1_tangent_sphere);
-				const int th0=halfspace_of_point(a, normal, tangent_planes[0].first);
-				const int th1=halfspace_of_point(a, normal, tangent_planes[1].first);
+				const int th0=halfspace_of_point(a, normal, tangent_planes[0].first+tangent_planes[0].second);
+				const int th1=halfspace_of_point(a, normal, tangent_planes[1].first+tangent_planes[1].second);
 				if(th0==th && th1!=th)
 				{
 					return 1;
