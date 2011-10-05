@@ -182,8 +182,8 @@ private:
 
 	bool simple_intersection_check(const SimpleSphere& target) const
 	{
-		simple_intersection_checkers::NodeChecker node_checker(target);
-		simple_intersection_checkers::LeafChecker leaf_checker(target);
+		typename simple_intersection_checkers::NodeChecker node_checker(target);
+		typename simple_intersection_checkers::LeafChecker leaf_checker(target);
 		return spheres_hierarchy_.search(node_checker, leaf_checker).empty();
 	}
 
@@ -199,7 +199,7 @@ private:
 				for(std::size_t d=c+1;d<traversal.size();d++)
 				{
 					Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-					std::vector<SimpleSphere> tangents=construct_spheres_tangent(spheres_[quadruple.get(0)], spheres_[quadruple.get(1)], spheres_[tquadruple.get(2)], spheres_[quadruple.get(3)]);
+					std::vector<SimpleSphere> tangents=construct_spheres_tangent(spheres_[quadruple.get(0)], spheres_[quadruple.get(1)], spheres_[quadruple.get(2)], spheres_[quadruple.get(3)]);
 					if(tangents.size()==1 && simple_intersection_check(tangents.front()))
 					{
 						for(int i=0;i<4;i++)
@@ -218,8 +218,8 @@ private:
 	{
 		Face face=candidate_face;
 		face.unset_d2();
-		simple_d2_checkers::NodeChecker node_checker(face);
-		simple_d2_checkers::LeafChecker leaf_checker(face);
+		typename simple_d2_checkers::NodeChecker node_checker(face);
+		typename simple_d2_checkers::LeafChecker leaf_checker(face);
 		spheres_hierarchy_.search(node_checker, leaf_checker);
 		return face;
 	}
@@ -230,8 +230,8 @@ private:
 		std::tr1::unordered_set<std::size_t> visited;
 		while(face.d2()!=Face::npos)
 		{
-			conflict_d2_checkers::NodeChecker node_checker(face);
-			conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
+			typename conflict_d2_checkers::NodeChecker node_checker(face);
+			typename conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
 			const std::vector<std::size_t> results=spheres_hierarchy_.search(node_checker, leaf_checker);
 			if(results.empty())
 			{

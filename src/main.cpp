@@ -5,6 +5,8 @@
 
 #include "apollo/apollonius_graph.h"
 
+#include "apollo/apollonius_triangulation.h"
+
 template<typename SphereType>
 void print_sphere(const SphereType& sphere)
 {
