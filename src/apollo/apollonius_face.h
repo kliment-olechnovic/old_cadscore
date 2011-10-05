@@ -39,6 +39,16 @@ public:
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
 	{
+		die_if_invalid();
+	}
+
+	void die_if_invalid() const
+	{
+		if(abc_ids_.contains(d1_id_))
+		{
+			throw std::logic_error("Invalid d1 id");
+		}
+
 		if(check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
 		{
 			throw std::logic_error("Invalid d1 tangent sphere");
@@ -48,6 +58,21 @@ public:
 				(tangent_planes_.empty() && tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)))
 		{
 			throw std::logic_error("Invalid tangency information");
+		}
+
+		if(d2_id_!=npos)
+		{
+			if(abc_ids_.contains(d2_id_))
+			{
+				throw std::logic_error("Invalid d2 id");
+			}
+
+			const Sphere& d2=spheres_[d2_id];
+
+			if(check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_) || sphere_intersects_sphere(d2_tangent_sphere_, d1_))
+			{
+				throw std::logic_error("Invalid d2 tangent sphere");
+			}
 		}
 	}
 
@@ -73,7 +98,7 @@ public:
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
 	{
-		if(d2_id!=d1_id_ && !abc_ids_.contains(d2_id))
+		if(!abc_ids_.contains(d2_id))
 		{
 			const Sphere& d2=spheres_[d2_id];
 			if(sphere_may_contain_candidate_for_d2(d2))
@@ -83,7 +108,17 @@ public:
 				{
 					if(!sphere_intersects_sphere(tangents[i], d1_))
 					{
-						return std::make_pair(true, tangents[i]);
+						if(d2_id==d1_id_)
+						{
+							if(!spheres_equal(tangents[i], d1_tangent_sphere_))
+							{
+								return std::make_pair(true, tangents[i]);
+							}
+						}
+						else
+						{
+							return std::make_pair(true, tangents[i]);
+						}
 					}
 				}
 			}
@@ -93,20 +128,9 @@ public:
 
 	void set_d2(const std::size_t d2_id, const SimpleSphere& d2_tangent_sphere)
 	{
-		if(d2_id==d1_id_ || abc_ids_.contains(d2_id))
-		{
-			throw std::logic_error("Invalid d2 id");
-		}
-
-		const Sphere& d2=spheres_[d2_id];
-
-		if(!sphere_intersects_sphere(d2_tangent_sphere, d1_) && check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere))
-		{
-			throw std::logic_error("Invalid d2 tangent sphere");
-		}
-
 		d2_id_=d2_id;
 		d2_tangent_sphere_=d2_tangent_sphere;
+		die_if_invalid();
 	}
 
 private:
