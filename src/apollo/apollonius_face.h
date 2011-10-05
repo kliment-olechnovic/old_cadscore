@@ -73,7 +73,7 @@ public:
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
 	{
-		if(d2_id!=d1_id && !abc_ids_.contains(d2_id))
+		if(d2_id!=d1_id_ && !abc_ids_.contains(d2_id))
 		{
 			const Sphere& d2=spheres_[d2_id];
 			if(sphere_may_contain_candidate_for_d2(d2))
