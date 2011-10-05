@@ -20,7 +20,7 @@ OutputSphereType custom_sphere(const double x, const double y, const double z, c
 template<typename OutputSphereType, typename InputObjectType>
 OutputSphereType custom_sphere_from_object(const InputObjectType& o)
 {
-	return custom_point(o.x, o.y, o.z, o.r);
+	return custom_sphere<OutputSphereType>(o.x, o.y, o.z, o.r);
 }
 
 template<typename InputSphereTypeA, typename InputSphereTypeB>
