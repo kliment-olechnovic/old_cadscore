@@ -1,8 +1,6 @@
 #ifndef SPHERES_BASIC_OPERATIONS_H_
 #define SPHERES_BASIC_OPERATIONS_H_
 
-#include <utility>
-
 #include "points_basic_operations.h"
 
 namespace apollo
@@ -95,62 +93,6 @@ int halfspace_of_sphere(const InputPointTypeA& plane_point, const InputPointType
 	else
 	{
 		return halfspace_one;
-	}
-}
-
-template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
-bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
-{
-	if(a.r>b.r)
-	{
-		return stick_intersects_sphere(b, a, c);
-	}
-
-	if(sphere_intersects_sphere(a, c) || sphere_intersects_sphere(b, c))
-	{
-		return true;
-	}
-	else
-	{
-		const double stick_length=distance_from_point_to_point(a, b);
-		const double distance_one=project_point_on_vector(a, b, c);
-		if(greater(distance_one, 0) && less(distance_one, stick_length))
-		{
-			const double distance_two=distance_from_point_to_line(a, b, c)-c.r-a.r;
-			return less(distance_two/distance_one, (b.r-a.r)/stick_length);
-		}
-		else
-		{
-			return false;
-		}
-	}
-}
-
-template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
-bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
-{
-	if(a.r>b.r)
-	{
-		return stick_contains_sphere(b, a, c);
-	}
-
-	if(sphere_contains_sphere(a, c) || sphere_contains_sphere(b, c))
-	{
-		return true;
-	}
-	else
-	{
-		const double stick_length=distance_from_point_to_point(a, b);
-		const double distance_one=project_point_on_vector(a, b, c);
-		if(greater(distance_one, 0) && less(distance_one, stick_length))
-		{
-			const double distance_two=distance_from_point_to_line(a, b, c)+c.r-a.r;
-			return less(distance_two/distance_one, (b.r-a.r)/stick_length);
-		}
-		else
-		{
-			return false;
-		}
 	}
 }
 
