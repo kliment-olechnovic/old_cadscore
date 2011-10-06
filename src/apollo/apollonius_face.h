@@ -83,6 +83,10 @@ public:
 		if(!((tangent_planes_.size()==2) ||
 				(tangent_planes_.empty() && tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)))
 		{
+//			std::cout << "LIST\n";
+//			std::cout << "SPHERE " << a_.r << " " << a_.x << " " << a_.y << " " << a_.z << "\n";
+//			std::cout << "SPHERE " << b_.r << " " << b_.x << " " << b_.y << " " << b_.z << "\n";
+//			std::cout << "SPHERE " << c_.r << " " << c_.x << " " << c_.y << " " << c_.z << "\n";
 			throw std::logic_error("Invalid tangency information");
 		}
 
