@@ -176,18 +176,7 @@ public:
 			throw std::logic_error("Invalid face triple request");
 		}
 
-		if(num==0)
-		{
-			return make_triple(d2_id_, abc_ids_.get(1), abc_ids_.get(2));
-		}
-		else if(num==1)
-		{
-			return make_triple(d2_id_, abc_ids_.get(0), abc_ids_.get(2));
-		}
-		else
-		{
-			return make_triple(d2_id_, abc_ids_.get(0), abc_ids_.get(1));
-		}
+		return Triple(abc_ids_.exclude(num), d2_id_);
 	}
 
 	ApolloniusFace get_face_for_d2(const std::size_t num) const
