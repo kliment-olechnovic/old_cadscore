@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <deque>
-#include <tr1/unordered_set>
 #include <tr1/unordered_map>
 
 #include "spheres_hierarchy.h"
@@ -35,25 +34,27 @@ public:
 		{
 			quadruples_map[Quadruple(stack.front().abc_ids(), stack.front().d1_id())].push_back(stack.front().d1_tangent_sphere());
 
-			TriplesSet triples_set;
+			TriplesMap triples_map;
 			for(std::size_t i=0;i<stack.size();i++)
 			{
-				triples_set.insert(stack[i].abc_ids());
+				triples_map[stack[i].abc_ids()].push_back(stack[i].d1_id());
 			}
 
 			while(!stack.empty())
 			{
-				Face face=search_for_valid_d2(stack.back());
+				const Face pre_face=stack.back();
 				stack.pop_back();
-				if(face.d2_id()!=Face::npos)
+				if(triples_map.find(pre_face.abc_ids())->second.size()==1)
 				{
-					quadruples_map[Quadruple(face.abc_ids(), face.d1_id())].push_back(face.d1_tangent_sphere());
-					for(std::size_t i=0;i<3;i++)
+					Face face=search_for_valid_d2(pre_face);
+					if(face.d2_id()!=Face::npos)
 					{
-						if(triples_set.find(face.get_abc_ids_for_d2(i))==triples_set.end())
+						triples_map[face.abc_ids()].push_back(face.d2_id());
+						quadruples_map[Quadruple(face.abc_ids(), face.d2_id())].push_back(face.d2_tangent_sphere());
+						for(std::size_t i=0;i<3;i++)
 						{
 							stack.push_back(face.get_face_for_d2(i));
-							triples_set.insert(stack.back().abc_ids());
+							triples_map[stack.back().abc_ids()].push_back(face.abc_ids().get(i));
 						}
 					}
 				}
@@ -65,7 +66,7 @@ public:
 
 private:
 	typedef ApolloniusFace<Sphere> Face;
-	typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
+	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesMap;
 
 	struct simple_intersection_checkers
 	{
