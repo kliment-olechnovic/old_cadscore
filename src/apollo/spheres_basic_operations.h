@@ -23,6 +23,12 @@ OutputSphereType custom_sphere_from_object(const InputObjectType& o)
 	return custom_sphere<OutputSphereType>(o.x, o.y, o.z, o.r);
 }
 
+template<typename OutputSphereType, typename InputPointType>
+OutputSphereType custom_sphere_from_point(const InputPointType& p, const double r)
+{
+	return custom_sphere<OutputSphereType>(p.x, p.y, p.z, r);
+}
+
 template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool spheres_equal(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
