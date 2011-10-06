@@ -248,7 +248,7 @@ private:
 	template<typename InputSphereType>
 	bool sphere_is_on_free_plane(const InputSphereType& x) const
 	{
-		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes_[free_tangent_plane_id_].first, tangent_planes_[free_tangent_plane_id_].second, x));
+		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes_[free_tangent_plane_id_].first, tangent_planes_[free_tangent_plane_id_].second, x)>-1);
 	}
 
 	template<typename InputSphereType>
