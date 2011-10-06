@@ -60,21 +60,32 @@ public:
 							stack.push_back(face.get_face_for_d2(i));
 						}
 					}
-//					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
-//					for(std::size_t i=0;i<candidates_for_d3.size();i++)
-//					{
-//						std::cout << candidates_for_d3[i] << " ";
-//						for(int j=0;j<3;j++)
-//						{
-//							std::cout << face.abc_ids().get(j) << " ";
-//						}
-//						std::cout << "\n";
-//					}
+
+					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
+					if(!candidates_for_d3.empty())
+					{
+						for(int j=0;j<3;j++)
+						{
+							std::cout << face.abc_ids().get(j) << " ";
+						}
+						std::cout << "\n";
+						for(std::size_t i=0;i<candidates_for_d3.size();i++)
+						{
+							std::cout << candidates_for_d3[i] << "\n";
+						}
+					}
 				}
 			}
 		}
 
 		return quadruples_map;
+	}
+
+	bool simple_intersection_check(const SimpleSphere& target) const
+	{
+		typename simple_intersection_checkers::NodeChecker node_checker(target);
+		typename simple_intersection_checkers::LeafChecker leaf_checker(target);
+		return spheres_hierarchy_.search(node_checker, leaf_checker).empty();
 	}
 
 private:
@@ -211,27 +222,32 @@ private:
 		struct LeafChecker
 		{
 			const Face& face;
+			const ApolloniusTriangulation& apollo;
 
-			LeafChecker(const Face& target) : face(target) {}
+			LeafChecker(const Face& target, const ApolloniusTriangulation& apollo) : face(target), apollo(apollo) {}
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere) const
 			{
 				std::pair<bool, std::vector<SimpleSphere> > check_result=face.check_candidate_for_d3(id);
 				if(check_result.first)
 				{
-					return std::make_pair(true, false);
+					std::vector<SimpleSphere> valid_tangents;
+					for(std::size_t i=0;i<check_result.second.size();i++)
+					{
+						if(apollo.simple_intersection_check(check_result.second[i]))
+						{
+							valid_tangents.push_back(check_result.second[i]);
+						}
+					}
+					if(!valid_tangents.empty())
+					{
+						return std::make_pair(true, false);
+					}
 				}
 				return std::make_pair(false, false);
 			}
 		};
 	};
-
-	bool simple_intersection_check(const SimpleSphere& target) const
-	{
-		typename simple_intersection_checkers::NodeChecker node_checker(target);
-		typename simple_intersection_checkers::LeafChecker leaf_checker(target);
-		return spheres_hierarchy_.search(node_checker, leaf_checker).empty();
-	}
 
 	std::deque<Face> find_first_faces() const
 	{
@@ -301,7 +317,7 @@ private:
 	std::vector<std::size_t> search_for_candidates_for_d3(const Face& face) const
 	{
 		typename simple_d3_checkers::NodeChecker node_checker(face);
-		typename simple_d3_checkers::LeafChecker leaf_checker(face);
+		typename simple_d3_checkers::LeafChecker leaf_checker(face, *this);
 		return spheres_hierarchy_.search(node_checker, leaf_checker);
 	}
 
