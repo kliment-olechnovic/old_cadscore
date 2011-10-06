@@ -49,12 +49,15 @@ public:
 					Face face=search_for_valid_d2(pre_face);
 					if(face.d2_id()!=Face::npos)
 					{
-						triples_map[face.abc_ids()].push_back(face.d2_id());
-						quadruples_map[Quadruple(face.abc_ids(), face.d2_id())].push_back(face.d2_tangent_sphere());
+						const Quadruple quadruple(face.abc_ids(), face.d2_id());
+						quadruples_map[quadruple].push_back(face.d2_tangent_sphere());
+						for(int i=0;i<quadruple.size();i++)
+						{
+							triples_map[quadruple.exclude(i)].push_back(quadruple.get(i));
+						}
 						for(std::size_t i=0;i<3;i++)
 						{
 							stack.push_back(face.get_face_for_d2(i));
-							triples_map[stack.back().abc_ids()].push_back(face.abc_ids().get(i));
 						}
 					}
 				}
