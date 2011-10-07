@@ -8,6 +8,34 @@
 namespace apollo
 {
 
+template<typename InputSphereTypeA, typename InputSphereTypeB>
+std::pair<bool, SimplePoint> construct_spheres_circles_tangent_line_normal(const InputSphereTypeA& a, const InputSphereTypeB& b)
+{
+	if(a.r>b.r)
+	{
+		return construct_spheres_circles_tangent_line_normal(b, a);
+	}
+
+	if(sphere_contains_sphere(b, a))
+	{
+		return std::make_pair(false, SimplePoint());
+	}
+
+	const double r=b.r-a.r;
+	if(greater(r, 0))
+	{
+		const double l=distance_from_point_to_point(a, b);
+		const double m=sqrt(l*l-r*r);
+		const double sin_a=r/l;
+		const double cos_a=sqrt(1-sin_a*sin_a);
+		return std::make_pair(true, SimplePoint(m*cos_a-l, m*sin_a, 0).unit());
+	}
+	else
+	{
+		return std::make_pair(true, SimplePoint(0, 1, 0));
+	}
+}
+
 template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
 bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
 {
@@ -20,34 +48,26 @@ bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b,
 	{
 		return sphere_contains_sphere(b, c);
 	}
-	else if(sphere_contains_sphere(a, c) || sphere_contains_sphere(b, c))
+	else if(sphere_contains_sphere(b, c) || sphere_contains_sphere(a, c))
 	{
 		return true;
 	}
 	else
 	{
-		const double length=distance_from_point_to_point(a, b);
-		const double distance_x=project_point_on_vector(a, b, c);
-		if(greater(distance_x, 0) && less(distance_x, length))
+		std::pair<bool, SimplePoint> normal_result=construct_spheres_circles_tangent_line_normal(a, b);
+		if(normal_result.first)
 		{
-			const double distance_y=distance_from_point_to_line(a, b, c);
-			const double r=b.r-a.r;
-			if(!greater(((distance_y-a.r)/distance_x), (r/length)))
+			const SimplePoint& normal=normal_result.second;
+			const SimplePoint c_location(project_point_on_vector(a, b, c), distance_from_point_to_line(a, b, c), 0);
+			const SimplePoint a_touch=normal*a.r;
+			const SimplePoint b_touch=SimplePoint(distance_from_point_to_point(a, b), 0, 0)+(normal*b.r);
+			if(less_or_equal(project_point_on_vector(a_touch, a_touch+normal, c_location), 0)
+					&& greater_or_equal(distance_from_point_to_line(a_touch, b_touch, c_location), c.r))
 			{
-				if(greater(r, 0))
+				if(greater_or_equal(project_point_on_vector(b_touch, a_touch, c_location), 0)
+						&& greater_or_equal(project_point_on_vector(a_touch, b_touch, c_location), 0))
 				{
-					const double m=sqrt(length*length-r*r);
-					const double sin_a=r/length;
-					const double ry=m*sin_a;
-					const double cos_a=sqrt(1-sin_a*sin_a);
-					const double rx=m*cos_a-length;
-					const SimplePoint normal=SimplePoint(rx, ry, 0).unit();
-					return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), SimplePoint(distance_x, distance_y, 0)), c.r);
-				}
-				else
-				{
-					const SimplePoint normal(0, 1, 0);
-					return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), SimplePoint(distance_x, distance_y, 0)), c.r);
+					return true;
 				}
 			}
 		}
