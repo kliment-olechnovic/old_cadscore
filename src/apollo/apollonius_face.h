@@ -134,21 +134,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d2(const InputSphereType& x) const
 	{
-		if(free_tangent_plane_id_!=npos)
-		{
-			if(!sphere_is_on_free_plane(x))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			if(sphere_is_inner(x))
-			{
-				return false;
-			}
-		}
-		return true;
+		return (free_tangent_plane_id_!=npos ? sphere_is_on_free_plane(x) : !sphere_is_inner(x));
 	}
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
