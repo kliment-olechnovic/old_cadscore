@@ -119,7 +119,7 @@ public:
 		}
 		else
 		{
-			if(!sphere_is_inner(x))
+			if(sphere_is_inner(x))
 			{
 				return false;
 			}
