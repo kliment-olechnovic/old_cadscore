@@ -73,7 +73,7 @@ public:
 	{
 		if(abc_ids_.contains(d1_id_))
 		{
-			throw std::logic_error("Invalid d1 id");
+			throw std::logic_error("Invalid d1 ID");
 		}
 
 		if(!check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
@@ -81,28 +81,43 @@ public:
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
 
-		if(!((tangent_planes_.size()==2) ||
-				(tangent_planes_.empty() && tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)))
+		if(tangent_planes_.size()!=2)
 		{
-//			std::cout << "LIST\n";
-//			std::cout << "SPHERE " << a_.r << " " << a_.x << " " << a_.y << " " << a_.z << "\n";
-//			std::cout << "SPHERE " << b_.r << " " << b_.x << " " << b_.y << " " << b_.z << "\n";
-//			std::cout << "SPHERE " << c_.r << " " << c_.x << " " << c_.y << " " << c_.z << "\n";
-			throw std::logic_error("Invalid tangency information");
+			if(!tangent_planes_.empty())
+			{
+				throw std::logic_error("Invalid tangent planes");
+			}
+			else
+			{
+				if(tangent_stick_.first==NULL || tangent_stick_.second==NULL)
+				{
+					throw std::logic_error("Invalid tangent stick");
+				}
+			}
 		}
 
 		if(d2_id_!=npos)
 		{
 			if(abc_ids_.contains(d2_id_))
 			{
-				throw std::logic_error("Invalid d2 id");
+				throw std::logic_error("Invalid d2 ID");
 			}
 
 			const Sphere& d2=spheres_[d2_id_];
 
-			if(!check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_) || sphere_intersects_sphere(d2_tangent_sphere_, d1_))
+			if(!check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_))
 			{
 				throw std::logic_error("Invalid d2 tangent sphere");
+			}
+
+			if(sphere_intersects_sphere(d2_tangent_sphere_, d1_))
+			{
+				throw std::logic_error("The d2 tangent sphere intersects d1");
+			}
+
+			if(sphere_intersects_sphere(d1_tangent_sphere_, d2))
+			{
+				throw std::logic_error("The d1 tangent sphere intersects d2");
 			}
 		}
 	}
