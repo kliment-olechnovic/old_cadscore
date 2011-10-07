@@ -119,6 +119,11 @@ public:
 			{
 				throw std::logic_error("The d1 tangent sphere intersects d2");
 			}
+
+			if(d1_id_==d2_id_ && spheres_equal(d1_tangent_sphere_,d2_tangent_sphere_))
+			{
+				throw std::logic_error("The d1 and d2 are equal and have the same tangent sphere");
+			}
 		}
 	}
 
