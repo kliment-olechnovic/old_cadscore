@@ -37,42 +37,83 @@ std::pair<bool, SimplePoint> construct_spheres_circles_tangent_line_normal(const
 }
 
 template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
-bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
+bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c, const bool fully)
 {
 	if(a.r>b.r)
 	{
-		return stick_contains_sphere(b, a, c);
+		return stick_intersects_sphere(b, a, c, fully);
 	}
 
 	if(sphere_contains_sphere(b, a))
 	{
-		return sphere_contains_sphere(b, c);
+		if(fully)
+		{
+			return sphere_contains_sphere(b, c);
+		}
+		else
+		{
+			return sphere_intersects_sphere(b, c);
+		}
 	}
-	else if(sphere_contains_sphere(b, c) || sphere_contains_sphere(a, c))
+
+	if(fully)
 	{
-		return true;
+		if(sphere_contains_sphere(b, c) || sphere_contains_sphere(a, c))
+		{
+			return true;
+		}
 	}
 	else
 	{
-		std::pair<bool, SimplePoint> normal_result=construct_spheres_circles_tangent_line_normal(a, b);
-		if(normal_result.first)
+		if(sphere_intersects_sphere(b, c) || sphere_intersects_sphere(a, c))
 		{
-			const SimplePoint& normal=normal_result.second;
-			const SimplePoint c_location(project_point_on_vector(a, b, c), distance_from_point_to_line(a, b, c), 0);
-			const SimplePoint a_touch=normal*a.r;
-			const SimplePoint b_touch=SimplePoint(distance_from_point_to_point(a, b), 0, 0)+(normal*b.r);
-			if(less_or_equal(project_point_on_vector(a_touch, a_touch+normal, c_location), 0)
-					&& greater_or_equal(distance_from_point_to_line(a_touch, b_touch, c_location), c.r))
+			return true;
+		}
+	}
+
+	std::pair<bool, SimplePoint> normal_result=construct_spheres_circles_tangent_line_normal(a, b);
+	if(normal_result.first)
+	{
+		const SimplePoint& normal=normal_result.second;
+		const SimplePoint c_location(project_point_on_vector(a, b, c), distance_from_point_to_line(a, b, c), 0);
+		const SimplePoint a_touch=normal*a.r;
+		const SimplePoint b_touch=SimplePoint(distance_from_point_to_point(a, b), 0, 0)+(normal*b.r);
+
+		if(greater_or_equal(project_point_on_vector(b_touch, a_touch, c_location), 0)
+				&& greater_or_equal(project_point_on_vector(a_touch, b_touch, c_location), 0))
+		{
+			if(fully)
 			{
-				if(greater_or_equal(project_point_on_vector(b_touch, a_touch, c_location), 0)
-						&& greater_or_equal(project_point_on_vector(a_touch, b_touch, c_location), 0))
+				if(less_or_equal(project_point_on_vector(a_touch, a_touch+normal, c_location), 0)
+						&& greater_or_equal(distance_from_point_to_line(a_touch, b_touch, c_location), c.r))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if(less_or_equal(project_point_on_vector(a_touch, a_touch+normal, c_location), 0)
+						&& greater_or_equal(distance_from_point_to_line(a_touch, b_touch, c_location), c.r))
 				{
 					return true;
 				}
 			}
 		}
-		return false;
 	}
+
+	return false;
+}
+
+template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
+bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
+{
+	return stick_intersects_sphere(b, a, c, true);
+}
+
+template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
+bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
+{
+	return stick_intersects_sphere(b, a, c, false);
 }
 
 template<typename InputSphereType>
