@@ -61,19 +61,19 @@ public:
 						}
 					}
 
-					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
-					if(!candidates_for_d3.empty())
-					{
-						for(int j=0;j<3;j++)
-						{
-							std::cout << face.abc_ids().get(j) << " ";
-						}
-						std::cout << "\n";
-						for(std::size_t i=0;i<candidates_for_d3.size();i++)
-						{
-							std::cout << candidates_for_d3[i] << "\n";
-						}
-					}
+//					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
+//					if(!candidates_for_d3.empty())
+//					{
+//						for(int j=0;j<3;j++)
+//						{
+//							std::cout << face.abc_ids().get(j) << " ";
+//						}
+//						std::cout << "\n";
+//						for(std::size_t i=0;i<candidates_for_d3.size();i++)
+//						{
+//							std::cout << candidates_for_d3[i] << "\n";
+//						}
+//					}
 				}
 			}
 		}
