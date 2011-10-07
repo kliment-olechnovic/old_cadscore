@@ -170,44 +170,15 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d3(const InputSphereType& x) const
 	{
-		if(!tangent_planes_.empty())
-		{
-			for(std::size_t i=0;i<tangent_planes_.size();i++)
-			{
-				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)==1)
-				{
-					return false;
-				}
-			}
-		}
-		else
-		{
-			if(!stick_intersects_sphere(*tangent_stick_.first, *tangent_stick_.second, x))
-			{
-				return false;
-			}
-		}
-
-		if(d2_id_!=npos)
-		{
-			const SimpleSphere allowed_volume=custom_sphere_from_point<SimpleSphere>(centroid_,
-					std::max(maximal_distance_from_point_to_sphere(centroid_, d1_tangent_sphere_),
-							maximal_distance_from_point_to_sphere(centroid_, d2_tangent_sphere_)));
-			if(!sphere_intersects_sphere(allowed_volume, x))
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return (sphere_may_contain_inner_sphere(x) && !sphere_cannot_have_tangents_together_with_d1_and_d2(x));
 	}
 
 	std::pair<bool, std::vector<SimpleSphere> > check_candidate_for_d3(const std::size_t d3_id) const
 	{
-		if(!abc_ids_.contains(d3_id) && d3_id!=d1_id_ && d3_id!=d2_id_)
+		if(d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
 			const Sphere& d3=spheres_[d3_id];
-			if(sphere_is_inner(d3) && sphere_may_contain_candidate_for_d3(d3))
+			if(sphere_is_inner(d3) && !sphere_cannot_have_tangents_together_with_d1_and_d2(d3))
 			{
 				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(a_, b_, c_, d3);
 				std::vector<SimpleSphere> valid_tangents;
@@ -309,10 +280,38 @@ private:
 		}
 	}
 
+	static SimplePoint calculate_centroid(const Sphere& a, const Sphere& b, const Sphere& c)
+	{
+		return ((custom_point_from_object<SimplePoint>(a)+custom_point_from_object<SimplePoint>(b)+custom_point_from_object<SimplePoint>(c))/3);
+	}
+
 	template<typename InputSphereType>
 	bool sphere_is_on_free_plane(const InputSphereType& x) const
 	{
 		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes_[free_tangent_plane_id_].first, tangent_planes_[free_tangent_plane_id_].second, x)>-1);
+	}
+
+	template<typename InputSphereType>
+	bool sphere_may_contain_inner_sphere(const InputSphereType& x) const
+	{
+		if(!tangent_planes_.empty())
+		{
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
+			{
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, x)==1)
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+			if(!stick_intersects_sphere(*tangent_stick_.first, *tangent_stick_.second, x))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	template<typename InputSphereType>
@@ -335,9 +334,20 @@ private:
 		}
 	}
 
-	static SimplePoint calculate_centroid(const Sphere& a, const Sphere& b, const Sphere& c)
+	template<typename InputSphereType>
+	bool sphere_cannot_have_tangents_together_with_d1_and_d2(const InputSphereType& x) const
 	{
-		return ((custom_point_from_object<SimplePoint>(a)+custom_point_from_object<SimplePoint>(b)+custom_point_from_object<SimplePoint>(c))/3);
+		if(d2_id_!=npos)
+		{
+			const SimpleSphere allowed_volume=custom_sphere_from_point<SimpleSphere>(centroid_,
+					std::max(maximal_distance_from_point_to_sphere(centroid_, d1_tangent_sphere_),
+							maximal_distance_from_point_to_sphere(centroid_, d2_tangent_sphere_)));
+			if(!sphere_intersects_sphere(allowed_volume, x))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	const std::vector<Sphere>& spheres_;
