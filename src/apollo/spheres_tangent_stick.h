@@ -31,28 +31,27 @@ bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b,
 		if(greater(distance_x, 0) && less(distance_x, length))
 		{
 			const double distance_y=distance_from_point_to_line(a, b, c);
-			const SimplePoint c_location(distance_x, distance_y, 0);
 			const double r=b.r-a.r;
-			if(greater(r, 0))
+			if(!greater(((distance_y-a.r)/distance_x), (r/length)))
 			{
-				const double m=sqrt(length*length-r*r);
-				const double sin_a=r/length;
-				const double ry=m*sin_a;
-				const double cos_a=sqrt(1-sin_a*sin_a);
-				const double rx=m*cos_a-length;
-				const SimplePoint normal=SimplePoint(rx, ry, 0).unit();
-				return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), c_location), c.r);
-			}
-			else
-			{
-				const SimplePoint normal(0, 1, 0);
-				return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), c_location), c.r);
+				if(greater(r, 0))
+				{
+					const double m=sqrt(length*length-r*r);
+					const double sin_a=r/length;
+					const double ry=m*sin_a;
+					const double cos_a=sqrt(1-sin_a*sin_a);
+					const double rx=m*cos_a-length;
+					const SimplePoint normal=SimplePoint(rx, ry, 0).unit();
+					return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), SimplePoint(distance_x, distance_y, 0)), c.r);
+				}
+				else
+				{
+					const SimplePoint normal(0, 1, 0);
+					return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), SimplePoint(distance_x, distance_y, 0)), c.r);
+				}
 			}
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 }
 
