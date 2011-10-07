@@ -9,34 +9,6 @@ namespace apollo
 {
 
 template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
-bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
-{
-	if(a.r>b.r)
-	{
-		return stick_intersects_sphere(b, a, c);
-	}
-
-	if(sphere_intersects_sphere(a, c) || sphere_intersects_sphere(b, c))
-	{
-		return true;
-	}
-	else
-	{
-		const double stick_length=distance_from_point_to_point(a, b);
-		const double distance_one=project_point_on_vector(a, b, c);
-		if(greater(distance_one, 0) && less(distance_one, stick_length))
-		{
-			const double distance_two=distance_from_point_to_line(a, b, c)-c.r-a.r;
-			return less(distance_two/distance_one, (b.r-a.r)/stick_length);
-		}
-		else
-		{
-			return false;
-		}
-	}
-}
-
-template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
 bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b, const InputSphereTypeC& c)
 {
 	if(a.r>b.r)
@@ -44,18 +16,38 @@ bool stick_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b,
 		return stick_contains_sphere(b, a, c);
 	}
 
-	if(sphere_contains_sphere(a, c) || sphere_contains_sphere(b, c))
+	if(sphere_contains_sphere(b, a))
+	{
+		return sphere_contains_sphere(b, c);
+	}
+	else if(sphere_contains_sphere(a, c) || sphere_contains_sphere(b, c))
 	{
 		return true;
 	}
 	else
 	{
-		const double stick_length=distance_from_point_to_point(a, b);
-		const double distance_one=project_point_on_vector(a, b, c);
-		if(greater(distance_one, 0) && less(distance_one, stick_length))
+		const double length=distance_from_point_to_point(a, b);
+		const double distance_x=project_point_on_vector(a, b, c);
+		if(greater(distance_x, 0) && less(distance_x, length))
 		{
-			const double distance_two=distance_from_point_to_line(a, b, c)+c.r-a.r;
-			return less(distance_two/distance_one, (b.r-a.r)/stick_length);
+			const double distance_y=distance_from_point_to_line(a, b, c);
+			const SimplePoint c_location(distance_x, distance_y, 0);
+			const double r=b.r-a.r;
+			if(greater(r, 0))
+			{
+				const double m=sqrt(length*length-r*r);
+				const double sin_a=r/length;
+				const double ry=m*sin_a;
+				const double cos_a=sqrt(1-sin_a*sin_a);
+				const double rx=m*cos_a-length;
+				const SimplePoint normal=SimplePoint(rx, ry, 0).unit();
+				return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), c_location), c.r);
+			}
+			else
+			{
+				const SimplePoint normal(0, 1, 0);
+				return greater_or_equal(distance_from_point_to_line(normal*a.r, SimplePoint(length, 0, 0)+(normal*b.r), c_location), c.r);
+			}
 		}
 		else
 		{
