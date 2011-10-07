@@ -61,7 +61,7 @@ public:
 						}
 					}
 
-//					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
+					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
 //					if(!candidates_for_d3.empty())
 //					{
 //						for(int j=0;j<3;j++)
