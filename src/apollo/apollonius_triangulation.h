@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <deque>
+#include <tr1/unordered_set>
 #include <tr1/unordered_map>
 
 #include "spheres_hierarchy.h"
@@ -42,12 +43,11 @@ public:
 
 			while(!stack.empty())
 			{
-				const Face pre_face=stack.back();
+				Face face=stack.back();
 				stack.pop_back();
-				if(triples_map.find(pre_face.abc_ids())->second==1)
+				if(triples_map.find(face.abc_ids())->second==1)
 				{
-					Face face=search_for_valid_d2(pre_face);
-					if(face.d2_id()!=Face::npos)
+					if(search_for_valid_d2(face))
 					{
 						const Quadruple quadruple(face.abc_ids(), face.d2_id());
 						quadruples_map[quadruple].push_back(face.d2_tangent_sphere());
@@ -236,32 +236,45 @@ private:
 		return face;
 	}
 
-	Face search_for_valid_d2(const Face& candidate_face) const
+	bool search_for_any_d2(Face& face) const
 	{
-		Face face=search_for_any_d2(candidate_face);
-		std::tr1::unordered_set<std::size_t> visited;
-		while(face.d2_id()!=Face::npos)
+		if(face.d2_id()==Face::npos)
 		{
-			typename conflict_d2_checkers::NodeChecker node_checker(face);
-			typename conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
-			const std::vector<std::size_t> results=hierarchy_.search(node_checker, leaf_checker);
-			if(results.empty())
+			typename simple_d2_checkers::NodeChecker node_checker(face);
+			typename simple_d2_checkers::LeafChecker leaf_checker(face);
+			hierarchy_.search(node_checker, leaf_checker);
+		}
+		return (face.d2_id()!=Face::npos);
+	}
+
+	bool search_for_valid_d2(Face& face) const
+	{
+		if(search_for_any_d2(face))
+		{
+			std::tr1::unordered_set<std::size_t> visited;
+			while(face.d2_id()!=Face::npos)
 			{
-				return face;
-			}
-			else
-			{
-				if(face.d2_id()==results.back())
+				typename conflict_d2_checkers::NodeChecker node_checker(face);
+				typename conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
+				const std::vector<std::size_t> results=hierarchy_.search(node_checker, leaf_checker);
+				if(results.empty())
 				{
-					visited.insert(results.back());
+					return true;
 				}
 				else
 				{
-					face.unset_d2_and_d3();
+					if(face.d2_id()==results.back())
+					{
+						visited.insert(results.back());
+					}
+					else
+					{
+						face.unset_d2_and_d3();
+					}
 				}
 			}
 		}
-		return face;
+		return false;
 	}
 
 	bool search_for_candidates_for_d3(Face& face) const
