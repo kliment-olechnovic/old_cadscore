@@ -170,7 +170,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d3(const InputSphereType& x) const
 	{
-		return (sphere_may_contain_inner_sphere(x) && !sphere_cannot_have_tangents_together_with_d1_and_d2(x));
+		return (sphere_may_contain_inner_sphere(x) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(x));
 	}
 
 	std::pair<bool, std::vector<SimpleSphere> > check_candidate_for_d3(const std::size_t d3_id) const
@@ -178,7 +178,7 @@ public:
 		if(d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
 			const Sphere& d3=spheres_[d3_id];
-			if(sphere_is_inner(d3) && !sphere_cannot_have_tangents_together_with_d1_and_d2(d3))
+			if(sphere_is_inner(d3) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(d3))
 			{
 				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(a_, b_, c_, d3);
 				std::vector<SimpleSphere> valid_tangents;
@@ -335,7 +335,7 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_cannot_have_tangents_together_with_d1_and_d2(const InputSphereType& x) const
+	bool sphere_is_outside_the_bounding_sphere_of_d1_and_d2(const InputSphereType& x) const
 	{
 		if(d2_id_!=npos)
 		{
