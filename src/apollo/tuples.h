@@ -105,6 +105,18 @@ public:
 		}
 	};
 
+	bool has_repetetions() const
+	{
+		for(int i=0;i+1<N;i++)
+		{
+			if(v_[i]==v_[i+1])
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 private:
 	void unsafe_set(int i, std::size_t x)
 	{
