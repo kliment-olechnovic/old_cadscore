@@ -110,7 +110,7 @@ private:
 				std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d2(id);
 				if(check_result.first)
 				{
-					face.set_d2(id, check_result.second);
+					face.set_d2_and_unset_d3(id, check_result.second);
 					return std::make_pair(true, true);
 				}
 				return std::make_pair(false, false);
@@ -153,7 +153,7 @@ private:
 						std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d2(id);
 						if(check_result.first)
 						{
-							face.set_d2(id, check_result.second);
+							face.set_d2_and_unset_d3(id, check_result.second);
 							return std::make_pair(true, true);
 						}
 						else
@@ -241,7 +241,7 @@ private:
 	Face search_for_any_d2(const Face& candidate_face) const
 	{
 		Face face=candidate_face;
-		face.unset_d2();
+		face.unset_d2_and_d3();
 		typename simple_d2_checkers::NodeChecker node_checker(face);
 		typename simple_d2_checkers::LeafChecker leaf_checker(face);
 		hierarchy_.search(node_checker, leaf_checker);
@@ -269,7 +269,7 @@ private:
 				}
 				else
 				{
-					face.unset_d2();
+					face.unset_d2_and_d3();
 				}
 			}
 		}
