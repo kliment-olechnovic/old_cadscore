@@ -19,9 +19,9 @@ public:
 	typedef typename Hierarchy::Sphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
-	ApolloniusTriangulation(const Hierarchy& spheres_hierarchy) :
-		spheres_hierarchy_(spheres_hierarchy),
-		spheres_(spheres_hierarchy_.spheres())
+	ApolloniusTriangulation(const Hierarchy& hierarchy) :
+		hierarchy_(hierarchy),
+		spheres_(hierarchy_.spheres())
 	{
 	}
 
@@ -81,47 +81,9 @@ public:
 		return quadruples_map;
 	}
 
-	bool simple_intersection_check(const SimpleSphere& target) const
-	{
-		typename simple_intersection_checkers::NodeChecker node_checker(target);
-		typename simple_intersection_checkers::LeafChecker leaf_checker(target);
-		return spheres_hierarchy_.search(node_checker, leaf_checker).empty();
-	}
-
 private:
 	typedef ApolloniusFace<Sphere> Face;
 	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesMap;
-
-	struct simple_intersection_checkers
-	{
-		struct NodeChecker
-		{
-			const SimpleSphere& target;
-
-			NodeChecker(const SimpleSphere& target) : target(target) {}
-
-			bool operator()(const SimpleSphere& sphere) const
-			{
-				return sphere_intersects_sphere(sphere, target);
-			}
-		};
-
-		struct LeafChecker
-		{
-			const SimpleSphere& target;
-
-			LeafChecker(const SimpleSphere& target) : target(target) {}
-
-			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere) const
-			{
-				if(sphere_intersects_sphere(sphere, target))
-				{
-					return std::make_pair(true, true);
-				}
-				return std::make_pair(false, false);
-			}
-		};
-	};
 
 	struct simple_d2_checkers
 	{
@@ -222,9 +184,9 @@ private:
 		struct LeafChecker
 		{
 			const Face& face;
-			const ApolloniusTriangulation& apollo;
+			const Hierarchy& hierarchy;
 
-			LeafChecker(const Face& target, const ApolloniusTriangulation& apollo) : face(target), apollo(apollo) {}
+			LeafChecker(const Face& target, const Hierarchy& hierarchy) : face(target), hierarchy(hierarchy) {}
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere) const
 			{
@@ -234,7 +196,7 @@ private:
 					std::vector<SimpleSphere> valid_tangents;
 					for(std::size_t i=0;i<check_result.second.size();i++)
 					{
-						if(apollo.simple_intersection_check(check_result.second[i]))
+						if(hierarchy.find_any_collision(check_result.second[i]).empty())
 						{
 							valid_tangents.push_back(check_result.second[i]);
 						}
@@ -262,7 +224,7 @@ private:
 				{
 					Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 					std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres_[quadruple.get(0)], spheres_[quadruple.get(1)], spheres_[quadruple.get(2)], spheres_[quadruple.get(3)]);
-					if(tangents.size()==1 && simple_intersection_check(tangents.front()))
+					if(tangents.size()==1 && hierarchy_.find_any_collision(tangents.front()).empty())
 					{
 						for(int i=0;i<4;i++)
 						{
@@ -282,7 +244,7 @@ private:
 		face.unset_d2();
 		typename simple_d2_checkers::NodeChecker node_checker(face);
 		typename simple_d2_checkers::LeafChecker leaf_checker(face);
-		spheres_hierarchy_.search(node_checker, leaf_checker);
+		hierarchy_.search(node_checker, leaf_checker);
 		return face;
 	}
 
@@ -294,7 +256,7 @@ private:
 		{
 			typename conflict_d2_checkers::NodeChecker node_checker(face);
 			typename conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
-			const std::vector<std::size_t> results=spheres_hierarchy_.search(node_checker, leaf_checker);
+			const std::vector<std::size_t> results=hierarchy_.search(node_checker, leaf_checker);
 			if(results.empty())
 			{
 				return face;
@@ -317,11 +279,11 @@ private:
 	std::vector<std::size_t> search_for_candidates_for_d3(const Face& face) const
 	{
 		typename simple_d3_checkers::NodeChecker node_checker(face);
-		typename simple_d3_checkers::LeafChecker leaf_checker(face, *this);
-		return spheres_hierarchy_.search(node_checker, leaf_checker);
+		typename simple_d3_checkers::LeafChecker leaf_checker(face, hierarchy_);
+		return hierarchy_.search(node_checker, leaf_checker);
 	}
 
-	const Hierarchy& spheres_hierarchy_;
+	const Hierarchy& hierarchy_;
 	const std::vector<Sphere>& spheres_;
 };
 
