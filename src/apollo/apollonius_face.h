@@ -269,6 +269,12 @@ public:
 		die_if_invalid();
 	}
 
+	void add_d3(const std::size_t d3_id, const std::vector<SimpleSphere>& d3_tangent_spheres)
+	{
+		d3_ids_and_tangent_spheres_[d3_id]=d3_tangent_spheres;
+		die_if_invalid();
+	}
+
 	void unset_d2_and_d3()
 	{
 		d2_id_=npos;
