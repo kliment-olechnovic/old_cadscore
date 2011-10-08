@@ -38,6 +38,7 @@ public:
 				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(a_, b_, c_) : std::pair<const Sphere*, const Sphere*>(NULL, NULL)),
 				free_tangent_plane_id_(select_free_tangent_plane_id(a_, b_, c_, tangent_planes_, d1_, d1_tangent_sphere_)),
 				centroid_(calculate_centroid(a_, b_, c_)),
+				can_have_d3_(!equal(a_.r, 0) || !equal(b_.r, 0) || !equal(c_.r, 0)),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
 	{
@@ -67,6 +68,11 @@ public:
 	SimpleSphere d2_tangent_sphere() const
 	{
 		return d2_tangent_sphere_;
+	}
+
+	bool can_have_d3() const
+	{
+		return can_have_d3_;
 	}
 
 	void die_if_invalid() const
@@ -170,12 +176,12 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d3(const InputSphereType& x) const
 	{
-		return (sphere_may_contain_inner_sphere(x) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(x));
+		return (can_have_d3_ && sphere_may_contain_inner_sphere(x) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(x));
 	}
 
 	std::pair<bool, std::vector<SimpleSphere> > check_candidate_for_d3(const std::size_t d3_id) const
 	{
-		if(d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
+		if(can_have_d3_ && d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
 			const Sphere& d3=spheres_[d3_id];
 			if(sphere_is_inner(d3) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(d3))
@@ -362,6 +368,7 @@ private:
 	std::pair<const Sphere*, const Sphere*> tangent_stick_;
 	std::size_t free_tangent_plane_id_;
 	SimplePoint centroid_;
+	bool can_have_d3_;
 
 	std::size_t d2_id_;
 	SimpleSphere d2_tangent_sphere_;
