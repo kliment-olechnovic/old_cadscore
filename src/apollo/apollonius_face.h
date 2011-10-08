@@ -46,7 +46,7 @@ public:
 		die_if_invalid();
 	}
 
-	Triple abc_ids() const
+	const Triple& abc_ids() const
 	{
 		return abc_ids_;
 	}
