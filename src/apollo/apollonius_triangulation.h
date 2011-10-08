@@ -47,7 +47,7 @@ public:
 				stack.pop_back();
 				if(triples_map.find(face.abc_ids())->second==1)
 				{
-					if(search_for_valid_d2(face))
+					if(find_valid_d2(face))
 					{
 						const Quadruple quadruple(face.abc_ids(), face.d2_id());
 						quadruples_map[quadruple].push_back(face.d2_tangent_sphere());
@@ -61,7 +61,7 @@ public:
 						}
 					}
 
-					search_for_candidates_for_d3(face);
+					find_valid_d3(face);
 				}
 			}
 		}
@@ -228,17 +228,7 @@ private:
 		return result;
 	}
 
-	Face search_for_any_d2(const Face& candidate_face) const
-	{
-		Face face=candidate_face;
-		face.unset_d2_and_d3();
-		typename simple_d2_checkers::NodeChecker node_checker(face);
-		typename simple_d2_checkers::LeafChecker leaf_checker(face);
-		hierarchy_.search(node_checker, leaf_checker);
-		return face;
-	}
-
-	bool search_for_any_d2(Face& face) const
+	bool find_any_d2(Face& face) const
 	{
 		if(face.d2_id()==Face::npos)
 		{
@@ -249,9 +239,9 @@ private:
 		return (face.d2_id()!=Face::npos);
 	}
 
-	bool search_for_valid_d2(Face& face) const
+	bool find_valid_d2(Face& face) const
 	{
-		if(search_for_any_d2(face))
+		if(find_any_d2(face))
 		{
 			typename conflict_d2_checkers::NodeChecker node_checker(face);
 			typename conflict_d2_checkers::LeafChecker leaf_checker(face);
@@ -274,7 +264,7 @@ private:
 		return false;
 	}
 
-	bool search_for_candidates_for_d3(Face& face) const
+	bool find_valid_d3(Face& face) const
 	{
 		typename simple_d3_checkers::NodeChecker node_checker(face);
 		typename simple_d3_checkers::LeafChecker leaf_checker(face, hierarchy_);
