@@ -158,6 +158,11 @@ public:
 				throw std::logic_error("Invalid d3 ID");
 			}
 
+			if(d3_tangent_spheres.empty())
+			{
+				throw std::logic_error("No d3 tangent spheres");
+			}
+
 			const Sphere& d3=spheres_[d3_id];
 
 			for(std::size_t i=0;i<d3_tangent_spheres.size();i++)
