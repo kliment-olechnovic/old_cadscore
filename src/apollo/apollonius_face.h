@@ -83,6 +83,11 @@ public:
 
 	void die_if_invalid() const
 	{
+		if(abc_ids_.has_repetetions())
+		{
+			throw std::logic_error("Invalid abc IDs");
+		}
+
 		if(abc_ids_.contains(d1_id_))
 		{
 			throw std::logic_error("Invalid d1 ID");
