@@ -34,17 +34,17 @@ public:
 		{
 			quadruples_map[Quadruple(stack.front().abc_ids(), stack.front().d1_id())].push_back(stack.front().d1_tangent_sphere());
 
-			TriplesMap triples_map;
+			std::tr1::unordered_map<Triple, int, Triple::HashFunctor> triples_map;
 			for(std::size_t i=0;i<stack.size();i++)
 			{
-				triples_map[stack[i].abc_ids()].push_back(stack[i].d1_id());
+				triples_map[stack[i].abc_ids()]++;
 			}
 
 			while(!stack.empty())
 			{
 				const Face pre_face=stack.back();
 				stack.pop_back();
-				if(triples_map.find(pre_face.abc_ids())->second.size()==1)
+				if(triples_map.find(pre_face.abc_ids())->second==1)
 				{
 					Face face=search_for_valid_d2(pre_face);
 					if(face.d2_id()!=Face::npos)
@@ -53,7 +53,7 @@ public:
 						quadruples_map[quadruple].push_back(face.d2_tangent_sphere());
 						for(int i=0;i<quadruple.size();i++)
 						{
-							triples_map[quadruple.exclude(i)].push_back(quadruple.get(i));
+							triples_map[quadruple.exclude(i)]++;
 						}
 						for(std::size_t i=0;i<3;i++)
 						{
@@ -71,7 +71,6 @@ public:
 
 private:
 	typedef ApolloniusFace<Sphere> Face;
-	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesMap;
 
 	struct simple_d2_checkers
 	{
