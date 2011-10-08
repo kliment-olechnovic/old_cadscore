@@ -93,7 +93,7 @@ bool stick_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& 
 			else
 			{
 				if(less_or_equal(project_point_on_vector(a_touch, a_touch+normal, c_location), 0)
-						&& greater_or_equal(distance_from_point_to_line(a_touch, b_touch, c_location), c.r))
+						|| less_or_equal(distance_from_point_to_line(a_touch, b_touch, c_location), c.r))
 				{
 					return true;
 				}
