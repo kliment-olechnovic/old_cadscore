@@ -123,9 +123,9 @@ private:
 		{
 			Face& face;
 
-			const std::tr1::unordered_set<std::size_t>& visited;
+			std::tr1::unordered_set<std::size_t> visited;
 
-			LeafChecker(Face& target, const std::tr1::unordered_set<std::size_t>& visited) : face(target), visited(visited) {}
+			LeafChecker(Face& target) : face(target) {}
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
 			{
@@ -137,6 +137,8 @@ private:
 					}
 					else
 					{
+						visited.insert(id);
+
 						std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d2(id);
 						if(check_result.first)
 						{
@@ -251,11 +253,10 @@ private:
 	{
 		if(search_for_any_d2(face))
 		{
-			std::tr1::unordered_set<std::size_t> visited;
+			typename conflict_d2_checkers::NodeChecker node_checker(face);
+			typename conflict_d2_checkers::LeafChecker leaf_checker(face);
 			while(face.d2_id()!=Face::npos)
 			{
-				typename conflict_d2_checkers::NodeChecker node_checker(face);
-				typename conflict_d2_checkers::LeafChecker leaf_checker(face, visited);
 				const std::vector<std::size_t> results=hierarchy_.search(node_checker, leaf_checker);
 				if(results.empty())
 				{
@@ -263,11 +264,7 @@ private:
 				}
 				else
 				{
-					if(face.d2_id()==results.back())
-					{
-						visited.insert(results.back());
-					}
-					else
+					if(face.d2_id()!=results.back())
 					{
 						face.unset_d2_and_d3();
 					}
