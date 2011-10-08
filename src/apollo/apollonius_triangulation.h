@@ -61,19 +61,7 @@ public:
 						}
 					}
 
-					const std::vector<std::size_t> candidates_for_d3=search_for_candidates_for_d3(face);
-//					if(!candidates_for_d3.empty())
-//					{
-//						for(int j=0;j<3;j++)
-//						{
-//							std::cout << face.abc_ids().get(j) << " ";
-//						}
-//						std::cout << "\n";
-//						for(std::size_t i=0;i<candidates_for_d3.size();i++)
-//						{
-//							std::cout << candidates_for_d3[i] << "\n";
-//						}
-//					}
+					search_for_candidates_for_d3(face);
 				}
 			}
 		}
@@ -183,12 +171,12 @@ private:
 
 		struct LeafChecker
 		{
-			const Face& face;
+			Face& face;
 			const Hierarchy& hierarchy;
 
-			LeafChecker(const Face& target, const Hierarchy& hierarchy) : face(target), hierarchy(hierarchy) {}
+			LeafChecker(Face& target, const Hierarchy& hierarchy) : face(target), hierarchy(hierarchy) {}
 
-			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere) const
+			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
 			{
 				std::pair<bool, std::vector<SimpleSphere> > check_result=face.check_candidate_for_d3(id);
 				if(check_result.first)
@@ -203,6 +191,7 @@ private:
 					}
 					if(!valid_tangents.empty())
 					{
+						face.add_d3(id, valid_tangents);
 						return std::make_pair(true, false);
 					}
 				}
@@ -276,11 +265,11 @@ private:
 		return face;
 	}
 
-	std::vector<std::size_t> search_for_candidates_for_d3(const Face& face) const
+	bool search_for_candidates_for_d3(Face& face) const
 	{
 		typename simple_d3_checkers::NodeChecker node_checker(face);
 		typename simple_d3_checkers::LeafChecker leaf_checker(face, hierarchy_);
-		return hierarchy_.search(node_checker, leaf_checker);
+		return !hierarchy_.search(node_checker, leaf_checker).empty();
 	}
 
 	const Hierarchy& hierarchy_;
