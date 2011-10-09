@@ -44,7 +44,35 @@ public:
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
 	{
-		die_if_badly_constructed();
+		if(abc_ids_.has_repetetions())
+		{
+			throw std::logic_error("Invalid abc IDs");
+		}
+
+		if(abc_ids_.contains(d1_id_))
+		{
+			throw std::logic_error("Invalid d1 ID");
+		}
+
+		if(!check_spheres_tangent(*a_, *b_, *c_, *d1_, d1_tangent_sphere_))
+		{
+			throw std::logic_error("Invalid d1 tangent sphere");
+		}
+
+		if(tangent_planes_.size()!=2)
+		{
+			if(!tangent_planes_.empty())
+			{
+				throw std::logic_error("Invalid tangent planes");
+			}
+			else
+			{
+				if(tangent_stick_.first==NULL || tangent_stick_.second==NULL)
+				{
+					throw std::logic_error("Invalid tangent stick");
+				}
+			}
+		}
 	}
 
 	const Triple& abc_ids() const
@@ -370,39 +398,6 @@ private:
 		return false;
 	}
 
-	void die_if_badly_constructed() const
-	{
-		if(abc_ids_.has_repetetions())
-		{
-			throw std::logic_error("Invalid abc IDs");
-		}
-
-		if(abc_ids_.contains(d1_id_))
-		{
-			throw std::logic_error("Invalid d1 ID");
-		}
-
-		if(!check_spheres_tangent(*a_, *b_, *c_, *d1_, d1_tangent_sphere_))
-		{
-			throw std::logic_error("Invalid d1 tangent sphere");
-		}
-
-		if(tangent_planes_.size()!=2)
-		{
-			if(!tangent_planes_.empty())
-			{
-				throw std::logic_error("Invalid tangent planes");
-			}
-			else
-			{
-				if(tangent_stick_.first==NULL || tangent_stick_.second==NULL)
-				{
-					throw std::logic_error("Invalid tangent stick");
-				}
-			}
-		}
-	}
-
 	void die_if_invalid_d2()
 	{
 		if(d2_id_!=npos)
@@ -414,6 +409,11 @@ private:
 
 			const Sphere& d2=spheres_->at(d2_id_);
 
+			if(sphere_intersects_sphere(d1_tangent_sphere_, d2))
+			{
+				throw std::logic_error("The d1 tangent sphere intersects d2");
+			}
+
 			if(!check_spheres_tangent(*a_, *b_, *c_, d2, d2_tangent_sphere_))
 			{
 				throw std::logic_error("Invalid d2 tangent sphere");
@@ -422,11 +422,6 @@ private:
 			if(sphere_intersects_sphere(d2_tangent_sphere_, *d1_))
 			{
 				throw std::logic_error("The d2 tangent sphere intersects d1");
-			}
-
-			if(sphere_intersects_sphere(d1_tangent_sphere_, d2))
-			{
-				throw std::logic_error("The d1 tangent sphere intersects d2");
 			}
 
 			if(d1_id_==d2_id_ && spheres_equal(d1_tangent_sphere_, d2_tangent_sphere_))
@@ -460,6 +455,33 @@ private:
 
 			const Sphere& d3=spheres_->at(d3_id);
 
+			if(sphere_intersects_sphere(d1_tangent_sphere_, d3))
+			{
+				throw std::logic_error("The d1 tangent sphere intersects d3");
+			}
+
+			if(d2_id_!=npos)
+			{
+				if(sphere_intersects_sphere(d2_tangent_sphere_, d3))
+				{
+					throw std::logic_error("The d2 tangent sphere intersects d3");
+				}
+			}
+
+			for(ContainerForD3::const_iterator jt=d3_ids_and_tangent_spheres_.begin();jt!=d3_ids_and_tangent_spheres_.end();jt++)
+			{
+				if(jt->first!=d3_id)
+				{
+					for(std::size_t i=0;i<jt->second.size();i++)
+					{
+						if(sphere_intersects_sphere(jt->second[i], d3))
+						{
+							throw std::logic_error("One of the other d3 tangent sphere intersects d3");
+						}
+					}
+				}
+			}
+
 			for(std::size_t i=0;i<d3_tangent_spheres.size();i++)
 			{
 				const SimpleSphere& d3_tangent_sphere=d3_tangent_spheres[i];
@@ -482,18 +504,16 @@ private:
 						throw std::logic_error("The d3 tangent sphere intersects d2");
 					}
 				}
-			}
 
-			if(sphere_intersects_sphere(d1_tangent_sphere_, d3))
-			{
-				throw std::logic_error("The d1 tangent sphere intersects d3");
-			}
-
-			if(d2_id_!=npos)
-			{
-				if(sphere_intersects_sphere(d2_tangent_sphere_, d3))
+				for(ContainerForD3::const_iterator jt=d3_ids_and_tangent_spheres_.begin();jt!=d3_ids_and_tangent_spheres_.end();jt++)
 				{
-					throw std::logic_error("The d2 tangent sphere intersects d3");
+					if(jt->first!=d3_id)
+					{
+						if(sphere_intersects_sphere(d3_tangent_sphere, spheres_->at(jt->first)))
+						{
+							throw std::logic_error("The d3 tangent sphere intersects other d3");
+						}
+					}
 				}
 			}
 		}
