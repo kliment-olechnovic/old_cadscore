@@ -90,10 +90,10 @@ public:
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
 	{
-		if(!abc_ids_.contains(d2_id))
+		if(d2_id!=npos && !abc_ids_.contains(d2_id))
 		{
 			const Sphere& d2=spheres_->at(d2_id);
-			if(sphere_may_contain_candidate_for_d2(d2))
+			if(sphere_may_contain_candidate_for_d2(d2) && !sphere_intersects_sphere(d1_tangent_sphere_, d2))
 			{
 				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d2);
 				for(std::size_t i=0;i<tangents.size();i++)
@@ -126,31 +126,46 @@ public:
 
 	std::pair<bool, std::vector<SimpleSphere> > check_candidate_for_d3(const std::size_t d3_id) const
 	{
-		if(can_have_d3_ && d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
+		if(can_have_d3_ && d3_id!=npos && d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
 			const Sphere& d3=spheres_->at(d3_id);
-			if(sphere_is_inner(d3) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(d3))
+			if(sphere_is_inner(d3)
+					&& !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(d3)
+					&& !sphere_intersects_sphere(d1_tangent_sphere_, d3)
+					&& (d2_id_==npos || !sphere_intersects_sphere(d2_tangent_sphere_, d3)))
 			{
-				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d3);
-				std::vector<SimpleSphere> valid_tangents;
-				for(std::size_t i=0;i<tangents.size();i++)
+
+				bool no_conflict_with_other_d3_tangents=true;
+				for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end() && no_conflict_with_other_d3_tangents;it++)
 				{
-					if(!sphere_intersects_sphere(tangents[i], *d1_) && (d2_id_==npos || !sphere_intersects_sphere(tangents[i], spheres_->at(d2_id_))))
+					for(std::size_t i=0;i<it->second.size();i++)
 					{
-						bool no_conflict_with_other_d3=true;
-						for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end() && no_conflict_with_other_d3;it++)
-						{
-							no_conflict_with_other_d3=no_conflict_with_other_d3 && !sphere_intersects_sphere(tangents[i], spheres_->at(it->first));
-						}
-						if(no_conflict_with_other_d3)
-						{
-							valid_tangents.push_back(tangents[i]);
-						}
+						no_conflict_with_other_d3_tangents=no_conflict_with_other_d3_tangents && !sphere_intersects_sphere(it->second[i], d3);
 					}
 				}
-				if(!valid_tangents.empty())
+				if(no_conflict_with_other_d3_tangents)
 				{
-					return std::make_pair(true, valid_tangents);
+					const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d3);
+					std::vector<SimpleSphere> valid_tangents;
+					for(std::size_t i=0;i<tangents.size();i++)
+					{
+						if(!sphere_intersects_sphere(tangents[i], *d1_) && (d2_id_==npos || !sphere_intersects_sphere(tangents[i], spheres_->at(d2_id_))))
+						{
+							bool no_conflict_with_other_d3=true;
+							for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end() && no_conflict_with_other_d3;it++)
+							{
+								no_conflict_with_other_d3=no_conflict_with_other_d3 && !sphere_intersects_sphere(tangents[i], spheres_->at(it->first));
+							}
+							if(no_conflict_with_other_d3)
+							{
+								valid_tangents.push_back(tangents[i]);
+							}
+						}
+					}
+					if(!valid_tangents.empty())
+					{
+						return std::make_pair(true, valid_tangents);
+					}
 				}
 			}
 		}
