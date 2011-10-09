@@ -50,7 +50,9 @@ public:
 				stack.pop_back();
 				if(triples_map.find(face.abc_ids())->second==1)
 				{
-					if(find_valid_d2(face))
+					const bool found_d2=find_valid_d2(face);
+					const bool found_d3=find_valid_d3(face);
+					if(found_d2 || found_d3)
 					{
 						const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples();
 						for(std::size_t i=0;i<produced_quadruples.size();i++)
@@ -65,8 +67,6 @@ public:
 						const std::vector<Face> produced_faces=face.produce_faces();
 						stack.insert(stack.end(), produced_faces.begin(), produced_faces.end());
 					}
-
-//					find_valid_d3(face);
 				}
 			}
 		}
