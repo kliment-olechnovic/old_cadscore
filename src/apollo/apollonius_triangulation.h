@@ -270,6 +270,10 @@ private:
 		typename checkers_for_valid_d3::LeafChecker leaf_checker(face, hierarchy);
 		return !hierarchy.search(node_checker, leaf_checker).empty();
 	}
+
+	ApolloniusTriangulation()
+	{
+	}
 };
 
 }
