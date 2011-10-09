@@ -49,5 +49,12 @@ int main()
 //		std::clog << Apollo::check_quadruples(quadruples_map, spheres) << " quadruples status\n";
 	}
 
+	{
+		utils::BlockTimer bt("Hidden spheres check");
+		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
+		const Hierarchy hierarchy(spheres, 1.4*3, 50);
+		std::clog << hierarchy.find_all_hidden_spheres().size() << " hidden spheres found\n";
+	}
+
 	return 0;
 }
