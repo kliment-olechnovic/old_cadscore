@@ -27,19 +27,19 @@ public:
 			const Triple& abc_ids,
 			const std::size_t d1_id,
 			const SimpleSphere& d1_tangent_sphere) :
-				spheres_(spheres),
+				spheres_(&spheres),
 				abc_ids_(abc_ids),
-				a_(spheres_[abc_ids_.get(0)]),
-				b_(spheres_[abc_ids_.get(1)]),
-				c_(spheres_[abc_ids_.get(2)]),
+				a_(&(spheres_->at(abc_ids_.get(0)))),
+				b_(&(spheres_->at(abc_ids_.get(1)))),
+				c_(&(spheres_->at(abc_ids_.get(2)))),
 				d1_id_(d1_id),
-				d1_(spheres_[d1_id_]),
+				d1_(&(spheres_->at(d1_id_))),
 				d1_tangent_sphere_(d1_tangent_sphere),
-				tangent_planes_(construct_spheres_tangent_planes(a_, b_, c_)),
-				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(a_, b_, c_) : std::pair<const Sphere*, const Sphere*>(NULL, NULL)),
-				free_tangent_plane_id_(select_free_tangent_plane_id(a_, b_, c_, tangent_planes_, d1_, d1_tangent_sphere_)),
-				centroid_(calculate_centroid(a_, b_, c_)),
-				can_have_d3_(!equal(a_.r, 0) || !equal(b_.r, 0) || !equal(c_.r, 0)),
+				tangent_planes_(construct_spheres_tangent_planes(*a_, *b_, *c_)),
+				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(*a_, *b_, *c_) : std::pair<const Sphere*, const Sphere*>(NULL, NULL)),
+				free_tangent_plane_id_(select_free_tangent_plane_id(*a_, *b_, *c_, tangent_planes_, *d1_, d1_tangent_sphere_)),
+				centroid_(calculate_centroid(*a_, *b_, *c_)),
+				can_have_d3_(!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0)),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
 	{
@@ -93,7 +93,7 @@ public:
 			throw std::logic_error("Invalid d1 ID");
 		}
 
-		if(!check_spheres_tangent(a_, b_, c_, d1_, d1_tangent_sphere_))
+		if(!check_spheres_tangent(*a_, *b_, *c_, *d1_, d1_tangent_sphere_))
 		{
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
@@ -120,14 +120,14 @@ public:
 				throw std::logic_error("Invalid d2 ID");
 			}
 
-			const Sphere& d2=spheres_[d2_id_];
+			const Sphere& d2=spheres_->at(d2_id_);
 
-			if(!check_spheres_tangent(a_, b_, c_, d2, d2_tangent_sphere_))
+			if(!check_spheres_tangent(*a_, *b_, *c_, d2, d2_tangent_sphere_))
 			{
 				throw std::logic_error("Invalid d2 tangent sphere");
 			}
 
-			if(sphere_intersects_sphere(d2_tangent_sphere_, d1_))
+			if(sphere_intersects_sphere(d2_tangent_sphere_, *d1_))
 			{
 				throw std::logic_error("The d2 tangent sphere intersects d1");
 			}
@@ -137,7 +137,7 @@ public:
 				throw std::logic_error("The d1 tangent sphere intersects d2");
 			}
 
-			if(d1_id_==d2_id_ && spheres_equal(d1_tangent_sphere_,d2_tangent_sphere_))
+			if(d1_id_==d2_id_ && spheres_equal(d1_tangent_sphere_, d2_tangent_sphere_))
 			{
 				throw std::logic_error("The d1 and d2 are equal and have the same tangent sphere");
 			}
@@ -163,25 +163,25 @@ public:
 				throw std::logic_error("No d3 tangent spheres");
 			}
 
-			const Sphere& d3=spheres_[d3_id];
+			const Sphere& d3=spheres_->at(d3_id);
 
 			for(std::size_t i=0;i<d3_tangent_spheres.size();i++)
 			{
 				const SimpleSphere& d3_tangent_sphere=d3_tangent_spheres[i];
 
-				if(!check_spheres_tangent(a_, b_, c_, d3, d3_tangent_sphere))
+				if(!check_spheres_tangent(*a_, *b_, *c_, d3, d3_tangent_sphere))
 				{
 					throw std::logic_error("Invalid d3 tangent sphere");
 				}
 
-				if(sphere_intersects_sphere(d3_tangent_sphere, d1_))
+				if(sphere_intersects_sphere(d3_tangent_sphere, *d1_))
 				{
 					throw std::logic_error("The d3 tangent sphere intersects d1");
 				}
 
 				if(d2_id_!=npos)
 				{
-					const Sphere& d2=spheres_[d2_id_];
+					const Sphere& d2=spheres_->at(d2_id_);
 					if(sphere_intersects_sphere(d3_tangent_sphere, d2))
 					{
 						throw std::logic_error("The d3 tangent sphere intersects d2");
@@ -214,13 +214,13 @@ public:
 	{
 		if(!abc_ids_.contains(d2_id))
 		{
-			const Sphere& d2=spheres_[d2_id];
+			const Sphere& d2=spheres_->at(d2_id);
 			if(sphere_may_contain_candidate_for_d2(d2))
 			{
-				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(a_, b_, c_, d2);
+				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d2);
 				for(std::size_t i=0;i<tangents.size();i++)
 				{
-					if(!sphere_intersects_sphere(tangents[i], d1_))
+					if(!sphere_intersects_sphere(tangents[i], *d1_))
 					{
 						if(d2_id==d1_id_)
 						{
@@ -250,14 +250,14 @@ public:
 	{
 		if(can_have_d3_ && d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
-			const Sphere& d3=spheres_[d3_id];
+			const Sphere& d3=spheres_->at(d3_id);
 			if(sphere_is_inner(d3) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(d3))
 			{
-				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(a_, b_, c_, d3);
+				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d3);
 				std::vector<SimpleSphere> valid_tangents;
 				for(std::size_t i=0;i<tangents.size();i++)
 				{
-					if(!sphere_intersects_sphere(tangents[i], d1_) && (d2_id_==npos || !sphere_intersects_sphere(tangents[i], spheres_[d2_id_])))
+					if(!sphere_intersects_sphere(tangents[i], *d1_) && (d2_id_==npos || !sphere_intersects_sphere(tangents[i], spheres_->at(d2_id_))))
 					{
 						valid_tangents.push_back(tangents[i]);
 					}
@@ -297,22 +297,55 @@ public:
 		d3_ids_and_tangent_spheres_.clear();
 	}
 
-	Triple get_abc_ids_for_d2(const std::size_t num) const
+	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples() const
 	{
-		if(d2_id_==npos || num>2)
+		std::vector< std::pair<Quadruple, SimpleSphere> > children;
+		if(d2_id_!=npos)
 		{
-			throw std::logic_error("Invalid face triple request");
+			children.push_back(std::make_pair(Quadruple(abc_ids_, d2_id_), d2_tangent_sphere_));
 		}
-
-		return Triple(abc_ids_.exclude(num), d2_id_);
+		for(std::map< std::size_t, std::vector<SimpleSphere> >::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
+		{
+			const std::size_t d3_id=it->first;
+			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
+			for(std::size_t i=0;i<d3_tangent_spheres.size();i++)
+			{
+				children.push_back(std::make_pair(Quadruple(abc_ids_, d3_id), d3_tangent_spheres[i]));
+			}
+		}
+		return children;
 	}
 
-	ApolloniusFace get_face_for_d2(const std::size_t num) const
+	std::vector<ApolloniusFace> produce_faces() const
 	{
-		return ApolloniusFace(spheres_,
-				get_abc_ids_for_d2(num),
-				abc_ids_.get(num),
-				d2_tangent_sphere_);
+		std::vector<ApolloniusFace> children;
+		if(d2_id_!=npos)
+		{
+			for(int i=0;i<3;i++)
+			{
+				children.push_back(ApolloniusFace(*spheres_,
+						Triple(abc_ids_.exclude(i), d2_id_),
+						abc_ids_.get(i),
+						d2_tangent_sphere_));
+			}
+		}
+		for(std::map< std::size_t, std::vector<SimpleSphere> >::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
+		{
+			const std::size_t d3_id=it->first;
+			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
+			for(int i=0;i<3;i++)
+			{
+				children.push_back(ApolloniusFace(*spheres_,
+						Triple(abc_ids_.exclude(i), d3_id),
+						abc_ids_.get(i),
+						d3_tangent_spheres.front()));
+				if(d3_tangent_spheres.size()>1)
+				{
+					children.back().set_d2_and_unset_d3(abc_ids_.get(i), d3_tangent_spheres.back());
+				}
+			}
+		}
+		return children;
 	}
 
 private:
@@ -436,13 +469,13 @@ private:
 		return false;
 	}
 
-	const std::vector<Sphere>& spheres_;
+	const std::vector<Sphere>* spheres_;
 	Triple abc_ids_;
-	const Sphere& a_;
-	const Sphere& b_;
-	const Sphere& c_;
+	const Sphere* a_;
+	const Sphere* b_;
+	const Sphere* c_;
 	std::size_t d1_id_;
-	const Sphere& d1_;
+	const Sphere* d1_;
 	SimpleSphere d1_tangent_sphere_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	std::pair<const Sphere*, const Sphere*> tangent_stick_;

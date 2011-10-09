@@ -33,12 +33,15 @@ public:
 		std::deque<Face> stack=find_first_faces();
 		if(!stack.empty())
 		{
-			quadruples_map[Quadruple(stack.front().abc_ids(), stack.front().d1_id())].push_back(stack.front().d1_tangent_sphere());
-
 			std::tr1::unordered_map<Triple, int, Triple::HashFunctor> triples_map;
-			for(std::size_t i=0;i<stack.size();i++)
+
 			{
-				triples_map[stack[i].abc_ids()]++;
+				const Quadruple quadruple(Quadruple(stack.front().abc_ids(), stack.front().d1_id()));
+				quadruples_map[quadruple].push_back(stack.front().d1_tangent_sphere());
+				for(int j=0;j<quadruple.size();j++)
+				{
+					triples_map[quadruple.exclude(j)]++;
+				}
 			}
 
 			while(!stack.empty())
@@ -49,19 +52,21 @@ public:
 				{
 					if(find_valid_d2(face))
 					{
-						const Quadruple quadruple(face.abc_ids(), face.d2_id());
-						quadruples_map[quadruple].push_back(face.d2_tangent_sphere());
-						for(int i=0;i<quadruple.size();i++)
+						const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples();
+						for(std::size_t i=0;i<produced_quadruples.size();i++)
 						{
-							triples_map[quadruple.exclude(i)]++;
+							const Quadruple& quadruple=produced_quadruples[i].first;
+							quadruples_map[quadruple].push_back(produced_quadruples[i].second);
+							for(int j=0;j<quadruple.size();j++)
+							{
+								triples_map[quadruple.exclude(j)]++;
+							}
 						}
-						for(std::size_t i=0;i<3;i++)
-						{
-							stack.push_back(face.get_face_for_d2(i));
-						}
+						const std::vector<Face> produced_faces=face.produce_faces();
+						stack.insert(stack.end(), produced_faces.begin(), produced_faces.end());
 					}
 
-					find_valid_d3(face);
+//					find_valid_d3(face);
 				}
 			}
 		}
