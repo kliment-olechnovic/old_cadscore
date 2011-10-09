@@ -110,6 +110,11 @@ public:
 		return d3_ids_and_tangent_spheres_;
 	}
 
+	const Quadruple quadruple_with_d1() const
+	{
+		return Quadruple(abc_ids_, d1_id_);
+	}
+
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d2(const InputSphereType& x) const
 	{

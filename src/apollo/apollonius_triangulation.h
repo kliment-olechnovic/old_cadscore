@@ -30,7 +30,7 @@ public:
 			std::tr1::unordered_map<Triple, int, Triple::HashFunctor> triples_map;
 
 			{
-				const Quadruple quadruple(Quadruple(stack.front().abc_ids(), stack.front().d1_id()));
+				const Quadruple quadruple=stack.front().quadruple_with_d1();
 				quadruples_map[quadruple].push_back(stack.front().d1_tangent_sphere());
 				for(int j=0;j<quadruple.size();j++)
 				{
