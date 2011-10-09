@@ -33,11 +33,11 @@ int main()
 		std::clog << spheres.size() << " spheres read\n";
 	}
 
-	{
-		utils::BlockTimer bt("First Apollo time");
-		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
-		std::clog << quadruples_map.size() << " quadruples found\n";
-	}
+//	{
+//		utils::BlockTimer bt("First Apollo time");
+//		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
+//		std::clog << quadruples_map.size() << " quadruples found\n";
+//	}
 
 	{
 		utils::BlockTimer bt("Second Apollo time");
@@ -47,12 +47,8 @@ int main()
 		Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy);
 		std::clog << quadruples_map.size() << " quadruples found\n";
 //		std::clog << Apollo::check_quadruples(quadruples_map, spheres) << " quadruples status\n";
-	}
 
-	{
-		utils::BlockTimer bt("Hidden spheres check");
-		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
-		const Hierarchy hierarchy(spheres, 1.4*3, 50);
+		utils::BlockTimer bth("Hidden spheres check");
 		std::clog << hierarchy.find_all_hidden_spheres().size() << " hidden spheres found\n";
 	}
 
