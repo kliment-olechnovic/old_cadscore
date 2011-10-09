@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <deque>
+#include <set>
 #include <tr1/functional>
 #include <tr1/tuple>
 
@@ -99,6 +100,33 @@ public:
 	std::vector<std::size_t> find_any_collision(const SimpleSphere& target) const
 	{
 		return find_collisions(target, true);
+	}
+
+	std::set<std::size_t> find_all_hidden_spheres() const
+	{
+		std::set<std::size_t> result;
+		if(!clusters_layers_.empty())
+		{
+			for(std::size_t i=0;i<clusters_layers_[0].size();i++)
+			{
+				const std::vector<std::size_t>& ids=clusters_layers_[0][i].second;
+				for(std::size_t j=0;j<ids.size();j++)
+				{
+					for(std::size_t k=j+1;k<ids.size();k++)
+					{
+						if(sphere_contains_sphere(spheres_[ids[j]], spheres_[ids[k]]))
+						{
+							result.insert(ids[k]);
+						}
+						else if(sphere_contains_sphere(spheres_[ids[k]], spheres_[ids[j]]))
+						{
+							result.insert(ids[j]);
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 private:
