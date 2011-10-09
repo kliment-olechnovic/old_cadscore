@@ -78,7 +78,11 @@ public:
 				return false;
 			}
 			const std::vector<SimpleSphere>& ts=it->second;
-			if(ts.empty())
+			if(ts.empty() || ts.size()>2)
+			{
+				return false;
+			}
+			if(ts.size()==2 && spheres_equal(ts.front(), ts.back()))
 			{
 				return false;
 			}
