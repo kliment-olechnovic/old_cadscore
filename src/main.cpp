@@ -46,6 +46,7 @@ int main()
 		typedef apollo::ApolloniusTriangulation< apollo::SpheresHierarchy<Sphere> > Apollo;
 		Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy);
 		std::clog << quadruples_map.size() << " quadruples found\n";
+//		std::clog << Apollo::check_quadruples(quadruples_map, spheres) << " quadruples status\n";
 	}
 
 	return 0;
