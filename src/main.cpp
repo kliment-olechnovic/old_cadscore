@@ -44,8 +44,7 @@ int main()
 		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
 		const Hierarchy hierarchy(spheres, 1.4*3, 50);
 		typedef apollo::ApolloniusTriangulation< apollo::SpheresHierarchy<Sphere> > Apollo;
-		const Apollo apollo(hierarchy);
-		Apollo::QuadruplesMap quadruples_map=apollo.find_quadruples();
+		Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy);
 		std::clog << quadruples_map.size() << " quadruples found\n";
 	}
 

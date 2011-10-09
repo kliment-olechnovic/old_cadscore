@@ -20,17 +20,11 @@ public:
 	typedef typename Hierarchy::Sphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
-	ApolloniusTriangulation(const Hierarchy& hierarchy) :
-		hierarchy_(hierarchy),
-		spheres_(hierarchy_.spheres())
-	{
-	}
-
-	QuadruplesMap find_quadruples() const
+	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy)
 	{
 		QuadruplesMap quadruples_map;
 
-		std::deque<Face> stack=find_first_faces();
+		std::deque<Face> stack=find_first_faces(hierarchy);
 		if(!stack.empty())
 		{
 			std::tr1::unordered_map<Triple, int, Triple::HashFunctor> triples_map;
@@ -50,8 +44,8 @@ public:
 				stack.pop_back();
 				if(triples_map.find(face.abc_ids())->second==1)
 				{
-					const bool found_d2=find_valid_d2(face);
-					const bool found_d3=find_valid_d3(face);
+					const bool found_d2=find_valid_d2(hierarchy, face);
+					const bool found_d3=find_valid_d3(hierarchy, face);
 					if(found_d2 || found_d3)
 					{
 						const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples();
@@ -206,10 +200,11 @@ private:
 		};
 	};
 
-	std::deque<Face> find_first_faces() const
+	static std::deque<Face> find_first_faces(const Hierarchy& hierarchy)
 	{
+		const std::vector<Sphere>& spheres=hierarchy.spheres();
 		std::deque<Face> result;
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres_, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres_.front(), std::tr1::placeholders::_1));
+		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
 		const std::size_t a=0;
 		for(std::size_t b=a+1;b<traversal.size();b++)
 		{
@@ -218,12 +213,12 @@ private:
 				for(std::size_t d=c+1;d<traversal.size();d++)
 				{
 					Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-					std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres_[quadruple.get(0)], spheres_[quadruple.get(1)], spheres_[quadruple.get(2)], spheres_[quadruple.get(3)]);
-					if(tangents.size()==1 && hierarchy_.find_any_collision(tangents.front()).empty())
+					std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+					if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
 					{
 						for(int i=0;i<4;i++)
 						{
-							result.push_back(Face(spheres_, quadruple.exclude(i), quadruple.get(i), tangents.front()));
+							result.push_back(Face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front()));
 						}
 						return result;
 					}
@@ -233,26 +228,26 @@ private:
 		return result;
 	}
 
-	bool find_any_d2(Face& face) const
+	static bool find_any_d2(const Hierarchy& hierarchy, Face& face)
 	{
 		if(face.d2_id()==Face::npos)
 		{
 			typename simple_d2_checkers::NodeChecker node_checker(face);
 			typename simple_d2_checkers::LeafChecker leaf_checker(face);
-			hierarchy_.search(node_checker, leaf_checker);
+			hierarchy.search(node_checker, leaf_checker);
 		}
 		return (face.d2_id()!=Face::npos);
 	}
 
-	bool find_valid_d2(Face& face) const
+	static bool find_valid_d2(const Hierarchy& hierarchy, Face& face)
 	{
-		if(find_any_d2(face))
+		if(find_any_d2(hierarchy, face))
 		{
 			typename conflict_d2_checkers::NodeChecker node_checker(face);
 			typename conflict_d2_checkers::LeafChecker leaf_checker(face);
 			while(face.d2_id()!=Face::npos)
 			{
-				const std::vector<std::size_t> results=hierarchy_.search(node_checker, leaf_checker);
+				const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
 				if(results.empty())
 				{
 					return true;
@@ -269,15 +264,12 @@ private:
 		return false;
 	}
 
-	bool find_valid_d3(Face& face) const
+	static bool find_valid_d3(const Hierarchy& hierarchy, Face& face)
 	{
 		typename simple_d3_checkers::NodeChecker node_checker(face);
-		typename simple_d3_checkers::LeafChecker leaf_checker(face, hierarchy_);
-		return !hierarchy_.search(node_checker, leaf_checker).empty();
+		typename simple_d3_checkers::LeafChecker leaf_checker(face, hierarchy);
+		return !hierarchy.search(node_checker, leaf_checker).empty();
 	}
-
-	const Hierarchy& hierarchy_;
-	const std::vector<Sphere>& spheres_;
 };
 
 }
