@@ -71,7 +71,7 @@ public:
 private:
 	typedef ApolloniusFace<Sphere> Face;
 
-	struct simple_d2_checkers
+	struct checkers_for_any_d2
 	{
 		struct NodeChecker
 		{
@@ -104,7 +104,7 @@ private:
 		};
 	};
 
-	struct conflict_d2_checkers
+	struct checkers_for_valid_d2
 	{
 		struct NodeChecker
 		{
@@ -155,7 +155,7 @@ private:
 		};
 	};
 
-	struct simple_d3_checkers
+	struct checkers_for_valid_d3
 	{
 		struct NodeChecker
 		{
@@ -232,8 +232,8 @@ private:
 	{
 		if(face.d2_id()==Face::npos)
 		{
-			typename simple_d2_checkers::NodeChecker node_checker(face);
-			typename simple_d2_checkers::LeafChecker leaf_checker(face);
+			typename checkers_for_any_d2::NodeChecker node_checker(face);
+			typename checkers_for_any_d2::LeafChecker leaf_checker(face);
 			hierarchy.search(node_checker, leaf_checker);
 		}
 		return (face.d2_id()!=Face::npos);
@@ -243,8 +243,8 @@ private:
 	{
 		if(find_any_d2(hierarchy, face))
 		{
-			typename conflict_d2_checkers::NodeChecker node_checker(face);
-			typename conflict_d2_checkers::LeafChecker leaf_checker(face);
+			typename checkers_for_valid_d2::NodeChecker node_checker(face);
+			typename checkers_for_valid_d2::LeafChecker leaf_checker(face);
 			while(face.d2_id()!=Face::npos)
 			{
 				const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
@@ -266,8 +266,8 @@ private:
 
 	static bool find_valid_d3(const Hierarchy& hierarchy, Face& face)
 	{
-		typename simple_d3_checkers::NodeChecker node_checker(face);
-		typename simple_d3_checkers::LeafChecker leaf_checker(face, hierarchy);
+		typename checkers_for_valid_d3::NodeChecker node_checker(face);
+		typename checkers_for_valid_d3::LeafChecker leaf_checker(face, hierarchy);
 		return !hierarchy.search(node_checker, leaf_checker).empty();
 	}
 };
