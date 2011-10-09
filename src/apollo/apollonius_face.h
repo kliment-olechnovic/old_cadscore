@@ -20,6 +20,7 @@ class ApolloniusFace
 {
 public:
 	typedef SphereType Sphere;
+	typedef std::map< std::size_t, std::vector<SimpleSphere> > ContainerForD3;
 	static const std::size_t npos=-1;
 
 	ApolloniusFace(
@@ -76,7 +77,7 @@ public:
 		return can_have_d3_;
 	}
 
-	const std::map< std::size_t, std::vector<SimpleSphere> >& d3_ids_and_tangent_spheres() const
+	const ContainerForD3& d3_ids_and_tangent_spheres() const
 	{
 		return d3_ids_and_tangent_spheres_;
 	}
@@ -136,7 +137,15 @@ public:
 				{
 					if(!sphere_intersects_sphere(tangents[i], *d1_) && (d2_id_==npos || !sphere_intersects_sphere(tangents[i], spheres_->at(d2_id_))))
 					{
-						valid_tangents.push_back(tangents[i]);
+						bool no_conflict_with_other_d3=true;
+						for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end() && no_conflict_with_other_d3;it++)
+						{
+							no_conflict_with_other_d3=no_conflict_with_other_d3 && !sphere_intersects_sphere(tangents[i], spheres_->at(it->first));
+						}
+						if(no_conflict_with_other_d3)
+						{
+							valid_tangents.push_back(tangents[i]);
+						}
 					}
 				}
 				if(!valid_tangents.empty())
@@ -181,7 +190,7 @@ public:
 		{
 			children.push_back(std::make_pair(Quadruple(abc_ids_, d2_id_), d2_tangent_sphere_));
 		}
-		for(std::map< std::size_t, std::vector<SimpleSphere> >::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
+		for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
 		{
 			const std::size_t d3_id=it->first;
 			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
@@ -206,7 +215,7 @@ public:
 						d2_tangent_sphere_));
 			}
 		}
-		for(std::map< std::size_t, std::vector<SimpleSphere> >::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
+		for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
 		{
 			const std::size_t d3_id=it->first;
 			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
@@ -419,7 +428,7 @@ private:
 			throw std::logic_error("Forbidden d3 are present");
 		}
 
-		for(std::map< std::size_t, std::vector<SimpleSphere> >::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
+		for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
 		{
 			const std::size_t d3_id=it->first;
 			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
