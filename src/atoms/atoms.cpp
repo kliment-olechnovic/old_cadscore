@@ -73,13 +73,13 @@ struct Implementation
 	}
 };
 
-std::vector<Atom> read_atoms_from_PDB_file_stream(std::istream& pdb_file_stream)
+std::vector<Atom> read_atoms_from_PDB_file_stream(std::istream& pdb_file_stream, const bool include_heteroatoms, const bool include_water)
 {
 	std::ifstream vdwr_classes_stream("resources/vdwr_classes.txt", std::ios::in);
 	std::ifstream vdwr_members_stream("resources/vdwr_members.txt", std::ios::in);
 	return Implementation::collect_atoms_from_PDB_atom_records(
 			PDBParsing::read_PDB_atom_records_from_PDB_file_stream(pdb_file_stream),
-			false,
-			false,
+			include_heteroatoms,
+			include_water,
 			VanDerWaalsRadiusAssigner(vdwr_classes_stream, vdwr_members_stream));
 }
