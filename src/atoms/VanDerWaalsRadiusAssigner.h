@@ -1,6 +1,9 @@
 #ifndef VANDERWAALSRADIUSASSIGNER_H_
 #define VANDERWAALSRADIUSASSIGNER_H_
 
+#include <string>
+#include <vector>
+#include <map>
 #include <iostream>
 #include <stdexcept>
 
@@ -21,7 +24,7 @@ public:
 		}
 	}
 
-	double get_radius(const std::string& residue, const std::string& atom) const
+	double radius(const std::string& residue, const std::string& atom) const
 	{
 		const std::string sep="_";
 		const std::string any="*";
@@ -32,7 +35,7 @@ public:
 
 		std::vector<std::string> atom_patterns;
 		atom_patterns.push_back(atom);
-		for(std::size_t i=1;i<atom.size();i++)
+		for(std::size_t i=0;i<atom.size();i++)//TODO decide if i should start from 1
 		{
 			atom_patterns.push_back(atom.substr(0, atom.size()-i)+any);
 		}
@@ -73,7 +76,7 @@ private:
 		while(input.good())
 		{
 			A key;
-			B value=0;
+			B value;
 			input >> key;
 			if(!input.fail())
 			{
