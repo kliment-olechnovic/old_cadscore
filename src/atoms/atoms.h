@@ -29,6 +29,6 @@
 
 #include "Atom.h"
 
-std::vector<Atom> read_atoms_from_PDB_file_stream(std::istream& pdb_file);
+std::vector<Atom> read_atoms_from_PDB_file_stream(std::istream& pdb_file, const bool include_heteroatoms, const bool include_water);
 
 #endif /* ATOMS_H_ */

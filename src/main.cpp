@@ -29,7 +29,7 @@ int main()
 
 	{
 		utils::BlockTimer bt("Reading time");
-		spheres=read_atoms_from_PDB_file_stream(std::cin);
+		spheres=read_atoms_from_PDB_file_stream(std::cin, false, false);
 		std::clog << spheres.size() << " spheres read\n";
 	}
 
