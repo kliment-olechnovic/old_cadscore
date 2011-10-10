@@ -45,7 +45,7 @@ public:
 				if(triples_map.find(face.abc_ids())->second==1)
 				{
 					const bool found_d2=find_valid_d2(hierarchy, face);
-					const bool found_d3=find_valid_d3(hierarchy, face);
+					const bool found_d3=face.can_have_d3() && find_valid_d3(hierarchy, face);
 					if(found_d2 || found_d3)
 					{
 						const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples();
