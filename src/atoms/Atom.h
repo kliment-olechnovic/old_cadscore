@@ -31,6 +31,7 @@
 struct Atom
 {
 	std::string chain_id;
+	int atom_number;
 	int residue_number;
 	std::string residue_name;
 	std::string atom_name;
@@ -39,20 +40,20 @@ struct Atom
 	double z;
 	double r;
 
-	Atom() : x(0), y(0), z(0), r(0) {}
+	Atom() : atom_number(0), residue_number(0), x(0), y(0), z(0), r(0) {}
 
 	bool operator==(const Atom& a) const
 	{
 		return (this==&a ||
-				(residue_number==a.residue_number &&
+				(atom_number==a.atom_number &&
+				residue_number==a.residue_number &&
 				chain_id==a.chain_id &&
 				residue_name==a.residue_name &&
 				atom_name==a.atom_name &&
 				x==a.x &&
 				y==a.y &&
 				z==a.z &&
-				r==a.r)
-				);
+				r==a.r));
 	}
 };
 
@@ -62,6 +63,7 @@ struct SerializationFunctor<Atom>
 	void operator()(const Atom& atom, std::ostream& output) const
 	{
 		output << atom.chain_id << " ";
+		output << atom.atom_number << " ";
 		output << atom.residue_number << " ";
 		output << atom.residue_name << " ";
 		output << atom.atom_name << " ";
@@ -79,6 +81,7 @@ struct UnserializationFunctor<Atom>
 	{
 		Atom atom;
 		input >> atom.chain_id;
+		input >> atom.atom_number;
 		input >> atom.residue_number;
 		input >> atom.residue_name;
 		input >> atom.atom_name;
