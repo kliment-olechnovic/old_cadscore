@@ -68,11 +68,37 @@ public:
 		return quadruples_map;
 	}
 
+	static std::vector< std::vector<std::size_t> > construct_graph_from_quadruples(const QuadruplesMap& quadruples_map)
+	{
+		typedef std::tr1::unordered_map<std::size_t, std::tr1::unordered_set<std::size_t> > GraphMap;
+		GraphMap graph_map;
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const Quadruple& quadruple=it->first;
+			for(int i=0;i<4;i++)
+			{
+				for(int j=0;j<4;j++)
+				{
+					if(i!=j)
+					{
+						graph_map[quadruple.get(i)].insert(quadruple.get(j));
+					}
+				}
+			}
+		}
+		std::vector< std::vector<std::size_t> > graph(graph_map.size());
+		for(GraphMap::const_iterator it=graph_map.begin();it!=graph_map.end();it++)
+		{
+			graph[it->first].insert(graph[it->first].end(), it->second.begin(), it->second.end());
+		}
+		return graph;
+	}
+
 	static bool check_quadruples(const QuadruplesMap& quadruples_map, const std::vector<Sphere>& spheres)
 	{
 		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
-			const Quadruple q=it->first;
+			const Quadruple& q=it->first;
 			if(q.has_repetetions())
 			{
 				return false;
