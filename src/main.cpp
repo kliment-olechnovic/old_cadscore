@@ -54,6 +54,11 @@ int main()
 			utils::BlockTimer bth("Pairs neighbours construction time");
 			Apollo::PairsNeighboursMap pairs_neighbours=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
 		}
+
+		{
+			utils::BlockTimer bth("Triples neighbours construction time");
+			Apollo::TriplesNeighboursMap triples_neighbours=Apollo::collect_triples_neighbours_from_quadruples(quadruples_map);
+		}
 	}
 
 	return 0;
