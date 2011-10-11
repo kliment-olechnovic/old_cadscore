@@ -21,6 +21,7 @@ public:
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 	typedef std::vector< std::vector<std::size_t> > Graph;
 	typedef std::tr1::unordered_map<Pair, std::vector<std::size_t>, Pair::HashFunctor> PairsNeighboursMap;
+	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesNeighboursMap;
 
 	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy)
 	{
@@ -103,24 +104,44 @@ public:
 		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
 			const Quadruple& quadruple=it->first;
+			for(int i=0;i<4;i++)
 			{
-				for(int i=0;i<4;i++)
+				for(int j=i+1;j<4;j++)
 				{
-					for(int j=i+1;j<4;j++)
+					const Pair pair=make_pair(quadruple.get(i), quadruple.get(j));
+					for(int k=0;k<4;k++)
 					{
-						const Pair pair=make_pair(quadruple.get(i), quadruple.get(j));
-						for(int k=0;k<4;k++)
+						if(k!=i && k!=j)
 						{
-							if(k!=i && k!=j)
-							{
-								sets_map[pair];
-							}
+							sets_map[pair].insert(quadruple.get(k));
 						}
 					}
 				}
 			}
 		}
 		PairsNeighboursMap lists_map;
+		for(SetsMap::const_iterator it=sets_map.begin();it!=sets_map.end();it++)
+		{
+			std::vector<std::size_t>& list=lists_map[it->first];
+			list.insert(list.end(), it->second.begin(), it->second.end());
+		}
+		return lists_map;
+	}
+
+	static TriplesNeighboursMap collect_triples_neighbours_from_quadruples(const QuadruplesMap& quadruples_map)
+	{
+		typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> SetsMap;
+		SetsMap sets_map;
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const Quadruple& quadruple=it->first;
+			for(int i=0;i<4;i++)
+			{
+				const Triple triple=quadruple.exclude(i);
+				sets_map[triple].insert(quadruple.get(i));
+			}
+		}
+		TriplesNeighboursMap lists_map;
 		for(SetsMap::const_iterator it=sets_map.begin();it!=sets_map.end();it++)
 		{
 			std::vector<std::size_t>& list=lists_map[it->first];
