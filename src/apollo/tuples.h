@@ -131,6 +131,16 @@ private:
 	std::size_t v_[N];
 };
 
+typedef Tuple<2> Pair;
+
+inline Pair make_pair(const std::size_t a, const std::size_t b)
+{
+	std::vector<std::size_t> v(3);
+	v[0]=a;
+	v[1]=b;
+	return Pair(v);
+}
+
 typedef Tuple<3> Triple;
 
 inline Triple make_triple(const std::size_t a, const std::size_t b, const std::size_t c)
