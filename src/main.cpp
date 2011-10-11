@@ -40,8 +40,15 @@ int main()
 		std::clog << quadruples_map.size() << " quadruples found\n";
 //		std::clog << Apollo::check_quadruples(quadruples_map, spheres) << " quadruples status\n";
 
-		utils::BlockTimer bth("Hidden spheres check");
-		std::clog << hierarchy.find_all_hidden_spheres().size() << " hidden spheres found\n";
+		{
+			utils::BlockTimer bth("Hidden spheres check time");
+			std::clog << hierarchy.find_all_hidden_spheres().size() << " hidden spheres found\n";
+		}
+
+		{
+			utils::BlockTimer bth("Graph construction time");
+			std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(quadruples_map);
+		}
 	}
 
 	return 0;
