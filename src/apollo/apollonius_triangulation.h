@@ -19,6 +19,8 @@ public:
 	typedef SpheresHierarchyType Hierarchy;
 	typedef typename Hierarchy::Sphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
+	typedef std::vector< std::vector<std::size_t> > Graph;
+	typedef std::tr1::unordered_map<Pair, std::vector<std::size_t>, Pair::HashFunctor> PairsNeighboursMap;
 
 	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy)
 	{
@@ -68,7 +70,7 @@ public:
 		return quadruples_map;
 	}
 
-	static std::vector< std::vector<std::size_t> > construct_graph_from_quadruples(const QuadruplesMap& quadruples_map)
+	static Graph construct_graph_from_quadruples(const QuadruplesMap& quadruples_map)
 	{
 		typedef std::tr1::unordered_map<std::size_t, std::tr1::unordered_set<std::size_t> > GraphMap;
 		GraphMap graph_map;
@@ -86,12 +88,45 @@ public:
 				}
 			}
 		}
-		std::vector< std::vector<std::size_t> > graph(graph_map.size());
+		Graph graph(graph_map.size());
 		for(GraphMap::const_iterator it=graph_map.begin();it!=graph_map.end();it++)
 		{
 			graph[it->first].insert(graph[it->first].end(), it->second.begin(), it->second.end());
 		}
 		return graph;
+	}
+
+	static PairsNeighboursMap collect_pairs_neighbours_from_quadruples(const QuadruplesMap& quadruples_map)
+	{
+		typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> SetsMap;
+		SetsMap sets_map;
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const Quadruple& quadruple=it->first;
+			{
+				for(int i=0;i<4;i++)
+				{
+					for(int j=i+1;j<4;j++)
+					{
+						const Pair pair=make_pair(quadruple.get(i), quadruple.get(j));
+						for(int k=0;k<4;k++)
+						{
+							if(k!=i && k!=j)
+							{
+								sets_map[pair];
+							}
+						}
+					}
+				}
+			}
+		}
+		PairsNeighboursMap lists_map;
+		for(SetsMap::const_iterator it=sets_map.begin();it!=sets_map.end();it++)
+		{
+			std::vector<std::size_t>& list=lists_map[it->first];
+			list.insert(list.end(), it->second.begin(), it->second.end());
+		}
+		return lists_map;
 	}
 
 	static bool check_quadruples(const QuadruplesMap& quadruples_map, const std::vector<Sphere>& spheres)

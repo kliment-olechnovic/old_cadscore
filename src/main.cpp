@@ -47,7 +47,12 @@ int main()
 
 		{
 			utils::BlockTimer bth("Graph construction time");
-			std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(quadruples_map);
+			Apollo::Graph graph=Apollo::construct_graph_from_quadruples(quadruples_map);
+		}
+
+		{
+			utils::BlockTimer bth("Pairs neighbours construction time");
+			Apollo::PairsNeighboursMap pairs_neighbours=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
 		}
 	}
 
