@@ -3,8 +3,6 @@
 #include "atoms/atoms.h"
 #include "../../contactus/src/baltymus/utils/BlockTimer.h"
 
-#include "apollo/apollonius_graph.h"
-
 #include "apollo/apollonius_triangulation.h"
 
 template<typename SphereType>
@@ -33,14 +31,8 @@ int main()
 		std::clog << spheres.size() << " spheres read\n";
 	}
 
-//	{
-//		utils::BlockTimer bt("First Apollo time");
-//		apollo::apollonius_graph<Sphere>::QuadruplesMap quadruples_map=apollo::apollonius_graph<Sphere>(spheres, 1.4*3, 50).find_quadruples();
-//		std::clog << quadruples_map.size() << " quadruples found\n";
-//	}
-
 	{
-		utils::BlockTimer bt("Second Apollo time");
+		utils::BlockTimer bt("Apollo time");
 		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
 		const Hierarchy hierarchy(spheres, 1.4*3, 50);
 		typedef apollo::ApolloniusTriangulation< apollo::SpheresHierarchy<Sphere> > Apollo;
