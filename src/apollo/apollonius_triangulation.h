@@ -20,8 +20,8 @@ public:
 	typedef typename Hierarchy::Sphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 	typedef std::vector< std::vector<std::size_t> > Graph;
-	typedef std::tr1::unordered_map<Pair, std::vector<std::size_t>, Pair::HashFunctor> PairsNeighboursMap;
-	typedef std::tr1::unordered_map<Triple, std::vector<std::size_t>, Triple::HashFunctor> TriplesNeighboursMap;
+	typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> PairsNeighboursMap;
+	typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> TriplesNeighboursMap;
 
 	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy)
 	{
@@ -99,8 +99,7 @@ public:
 
 	static PairsNeighboursMap collect_pairs_neighbours_from_quadruples(const QuadruplesMap& quadruples_map)
 	{
-		typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> SetsMap;
-		SetsMap sets_map;
+		PairsNeighboursMap sets_map;
 		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
 			const Quadruple& quadruple=it->first;
@@ -119,19 +118,12 @@ public:
 				}
 			}
 		}
-		PairsNeighboursMap lists_map;
-		for(SetsMap::const_iterator it=sets_map.begin();it!=sets_map.end();it++)
-		{
-			std::vector<std::size_t>& list=lists_map[it->first];
-			list.insert(list.end(), it->second.begin(), it->second.end());
-		}
-		return lists_map;
+		return sets_map;
 	}
 
 	static TriplesNeighboursMap collect_triples_neighbours_from_quadruples(const QuadruplesMap& quadruples_map)
 	{
-		typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> SetsMap;
-		SetsMap sets_map;
+		TriplesNeighboursMap sets_map;
 		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
 			const Quadruple& quadruple=it->first;
@@ -141,13 +133,7 @@ public:
 				sets_map[triple].insert(quadruple.get(i));
 			}
 		}
-		TriplesNeighboursMap lists_map;
-		for(SetsMap::const_iterator it=sets_map.begin();it!=sets_map.end();it++)
-		{
-			std::vector<std::size_t>& list=lists_map[it->first];
-			list.insert(list.end(), it->second.begin(), it->second.end());
-		}
-		return lists_map;
+		return sets_map;
 	}
 
 	static bool check_quadruples(const QuadruplesMap& quadruples_map, const std::vector<Sphere>& spheres)
