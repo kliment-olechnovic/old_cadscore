@@ -21,29 +21,43 @@
  **
 ****************************************************************************/
 
-#ifndef SERIALIZATIONFUNCTOR_H_
-#define SERIALIZATIONFUNCTOR_H_
+#ifndef ATOM_H_
+#define ATOM_H_
 
-#include <iostream>
+#include <string>
 
-template<typename T>
-struct SerializationFunctor
+namespace protein
 {
-	void operator()(const T& v, std::ostream& output) const
+
+struct Atom
+{
+	std::string chain_id;
+	int atom_number;
+	int residue_number;
+	std::string residue_name;
+	std::string atom_name;
+	double x;
+	double y;
+	double z;
+	double r;
+
+	Atom() : atom_number(0), residue_number(0), x(0), y(0), z(0), r(0) {}
+
+	bool operator==(const Atom& a) const
 	{
-		output << v;
+		return (this==&a ||
+				(atom_number==a.atom_number &&
+				residue_number==a.residue_number &&
+				chain_id==a.chain_id &&
+				residue_name==a.residue_name &&
+				atom_name==a.atom_name &&
+				x==a.x &&
+				y==a.y &&
+				z==a.z &&
+				r==a.r));
 	}
 };
 
-template<typename T>
-struct UnserializationFunctor
-{
-	T operator()(std::istream& input) const
-	{
-		T v;
-		input >> v;
-		return v;
-	}
-};
+}
 
-#endif /* SERIALIZATIONFUNCTOR_H_ */
+#endif /* ATOM_H_ */

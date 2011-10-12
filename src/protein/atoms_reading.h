@@ -21,18 +21,41 @@
  **
 ****************************************************************************/
 
+#ifndef ATOMS_H_
+#define ATOMS_H_
+
 #include <string>
 #include <vector>
 #include <iostream>
-#include <fstream>
 
-#include "atoms.h"
+#include "atom.h"
+#include "pdb_parsing.h"
+#include "van_der_waals_radius_assigner.h"
 
-#include "PDBParsing.h"
-#include "VanDerWaalsRadiusAssigner.h"
-
-struct Implementation
+namespace protein
 {
+
+class AtomsReading
+{
+public:
+	static std::vector<Atom> read_atoms_from_PDB_file_stream(
+			std::istream& pdb_file_stream,
+			const VanDerWaalsRadiusAssigner& vdwr_assigner,
+			const bool include_heteroatoms,
+			const bool include_water)
+	{
+		return collect_atoms_from_PDB_atom_records(
+				PDBParsing::read_PDB_atom_records_from_PDB_file_stream(pdb_file_stream),
+				include_heteroatoms,
+				include_water,
+				vdwr_assigner);
+	}
+
+private:
+	AtomsReading()
+	{
+	}
+
 	static Atom atom_from_PDB_atom_record(const PDBParsing::AtomRecord& record, const VanDerWaalsRadiusAssigner& vdwr_assigner)
 	{
 		Atom atom;
@@ -73,13 +96,6 @@ struct Implementation
 	}
 };
 
-std::vector<Atom> read_atoms_from_PDB_file_stream(std::istream& pdb_file_stream, const bool include_heteroatoms, const bool include_water)
-{
-	std::ifstream vdwr_classes_stream("resources/vdwr_classes.txt", std::ios::in);
-	std::ifstream vdwr_members_stream("resources/vdwr_members.txt", std::ios::in);
-	return Implementation::collect_atoms_from_PDB_atom_records(
-			PDBParsing::read_PDB_atom_records_from_PDB_file_stream(pdb_file_stream),
-			include_heteroatoms,
-			include_water,
-			VanDerWaalsRadiusAssigner(vdwr_classes_stream, vdwr_members_stream));
 }
+
+#endif /* ATOMS_H_ */

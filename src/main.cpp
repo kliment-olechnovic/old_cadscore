@@ -1,33 +1,22 @@
 #include <iostream>
+#include <fstream>
 
-#include "atoms/atoms.h"
 #include "../../contactus/src/baltymus/utils/BlockTimer.h"
 
+#include "protein/atoms_reading.h"
 #include "apollo/apollonius_triangulation.h"
-
-template<typename SphereType>
-void print_sphere(const SphereType& sphere)
-{
-	std::cout << "SPHERE " << sphere.r << " " << sphere.x << " " << sphere.y << " " << sphere.z << "\n";
-}
-
-template<typename Iterator>
-void print_spheres(const Iterator first, const Iterator last)
-{
-	for(Iterator it=first;it!=last;++it)
-	{
-		print_sphere(*it);
-	}
-}
 
 int main()
 {
-	typedef Atom Sphere;
+	typedef protein::Atom Sphere;
 	std::vector<Sphere> spheres;
 
 	{
-		utils::BlockTimer bt("Reading time");
-		spheres=read_atoms_from_PDB_file_stream(std::cin, false, false);
+		utils::BlockTimer bt("Atoms reading time");
+		std::ifstream radius_classes_stream("resources/vdwr_classes.txt");
+		std::ifstream radius_members_stream("resources/vdwr_members.txt");
+		const protein::VanDerWaalsRadiusAssigner radius_assigner(radius_classes_stream, radius_members_stream);
+		spheres=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, false, false);
 		std::clog << spheres.size() << " spheres read\n";
 	}
 

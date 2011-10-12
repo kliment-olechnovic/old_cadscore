@@ -7,6 +7,9 @@
 #include <iostream>
 #include <stdexcept>
 
+namespace protein
+{
+
 class VanDerWaalsRadiusAssigner
 {
 public:
@@ -93,5 +96,7 @@ private:
 	std::map<std::string, double> classes_;
 	std::map<std::string, std::string> members_;
 };
+
+}
 
 #endif /* VANDERWAALSRADIUSASSIGNER_H_ */
