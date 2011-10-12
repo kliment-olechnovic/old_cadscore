@@ -52,6 +52,12 @@ double distance_from_point_to_point(const InputPointTypeA& a, const InputPointTy
 }
 
 template<typename InputPointType>
+double point_squared_module(const InputPointType& a)
+{
+	return (a.x*a.x+a.y*a.y+a.z*a.z);
+}
+
+template<typename InputPointType>
 double point_module(const InputPointType& a)
 {
 	return sqrt(a.x*a.x+a.y*a.y+a.z*a.z);

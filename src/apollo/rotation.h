@@ -38,7 +38,8 @@ struct Rotation
 		if(!equal(am*bm, 0))
 		{
 			angle=(180/PI)*asin(axis.module()/(am*bm));
-			if(sub_of_points<SimplePoint>(b, a).module()>(am+bm))
+			const double abm=sub_of_points<SimplePoint>(b, a).module();
+			if(point_squared_module(sub_of_points<SimplePoint>(b, a))>(am*am+bm*bm))
 			{
 				angle=180-angle;
 			}
