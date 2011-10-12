@@ -4,9 +4,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
-#include "utilities.h"
+namespace protein
+{
 
 class PDBParsing
 {
@@ -79,6 +81,16 @@ private:
 	{
 	}
 
+	template<typename T>
+	static T convert_string(const std::string& str)
+	{
+		std::istringstream input(str);
+		input.exceptions(std::istringstream::failbit | std::istringstream::badbit);
+		T value;
+		input >> value;
+		return value;
+	}
+
 	static std::string substring_of_PDB_file_line(const std::string& line, int start, int end)
 	{
 		std::string extraction;
@@ -90,5 +102,7 @@ private:
 		return extraction;
 	}
 };
+
+}
 
 #endif /* PDBPARSING_H_ */
