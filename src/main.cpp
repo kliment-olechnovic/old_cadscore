@@ -1,10 +1,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "../../contactus/src/baltymus/utils/BlockTimer.h"
-
 #include "protein/atoms_reading.h"
 #include "apollo/apollonius_triangulation.h"
+#include "monitor/BlockTimer.h"
 
 int main()
 {
@@ -12,7 +11,7 @@ int main()
 	std::vector<Sphere> spheres;
 
 	{
-		utils::BlockTimer bt("Atoms reading time");
+		monitor::BlockTimer bt("Atoms reading time");
 		std::ifstream radius_classes_stream("resources/vdwr_classes.txt");
 		std::ifstream radius_members_stream("resources/vdwr_members.txt");
 		const protein::VanDerWaalsRadiusAssigner radius_assigner(radius_classes_stream, radius_members_stream);
@@ -21,7 +20,7 @@ int main()
 	}
 
 	{
-		utils::BlockTimer bt("Apollo time");
+		monitor::BlockTimer bt("Apollo time");
 		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
 		const Hierarchy hierarchy(spheres, 1.4*3, 50);
 		typedef apollo::ApolloniusTriangulation< apollo::SpheresHierarchy<Sphere> > Apollo;
@@ -30,22 +29,22 @@ int main()
 //		std::clog << Apollo::check_quadruples(quadruples_map, spheres) << " quadruples status\n";
 
 		{
-			utils::BlockTimer bth("Hidden spheres check time");
+			monitor::BlockTimer bth("Hidden spheres check time");
 			std::clog << hierarchy.find_all_hidden_spheres().size() << " hidden spheres found\n";
 		}
 
 		{
-			utils::BlockTimer bth("Graph construction time");
+			monitor::BlockTimer bth("Graph construction time");
 			Apollo::Graph graph=Apollo::construct_graph_from_quadruples(quadruples_map);
 		}
 
 		{
-			utils::BlockTimer bth("Pairs neighbours construction time");
+			monitor::BlockTimer bth("Pairs neighbours construction time");
 			Apollo::PairsNeighboursMap pairs_neighbours=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
 		}
 
 		{
-			utils::BlockTimer bth("Triples neighbours construction time");
+			monitor::BlockTimer bth("Triples neighbours construction time");
 			Apollo::TriplesNeighboursMap triples_neighbours=Apollo::collect_triples_neighbours_from_quadruples(quadruples_map);
 		}
 	}
