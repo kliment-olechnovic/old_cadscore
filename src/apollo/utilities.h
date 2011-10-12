@@ -7,12 +7,6 @@
 namespace apollo
 {
 
-inline size_t npos()
-{
-	const size_t v = -1;
-	return v;
-}
-
 template<typename ListType, typename FunctorType>
 std::vector<std::size_t> sort_objects_by_functor_result(const ListType& list, const FunctorType& functor)
 {
@@ -60,18 +54,6 @@ std::pair< std::vector<typename T::value_type::first_type>, std::vector<typename
 		b.push_back(it->second);
 	}
 	return std::make_pair(a, b);
-}
-
-std::vector<std::size_t> generate_random_permutation(const std::size_t n)
-{
-	std::vector<std::size_t> list;
-	list.reserve(n);
-	for(std::size_t i=0;i<n;i++)
-	{
-		list.push_back(i);
-	}
-	std::random_shuffle(list.begin(), list.end());
-	return list;
 }
 
 }
