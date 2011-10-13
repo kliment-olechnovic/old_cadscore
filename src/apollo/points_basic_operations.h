@@ -221,6 +221,14 @@ double distance_from_point_to_line(const InputPointTypeA& a, const InputPointTyp
 	return sqrt(vl*vl-pl*pl);
 }
 
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double trangle_area(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+{
+	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
+	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
+	return ((ab&ac).module()/2);
+}
+
 }
 
 #endif /* POINTS_BASIC_OPERATIONS_H_ */
