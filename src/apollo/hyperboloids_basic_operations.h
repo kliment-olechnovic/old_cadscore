@@ -51,7 +51,7 @@ inline double intersect_vector_with_simple_hyperboloid(const SimplePoint& a, con
 }
 
 template<typename SphereType>
-SimplePoint intersect_vector_with_hyperboloid(const SimplePoint& a, const SimplePoint& b, const SphereType& s1, const SphereType& s2)
+double intersect_vector_with_hyperboloid(const SimplePoint& a, const SimplePoint& b, const SphereType& s1, const SphereType& s2)
 {
 	if(s1.r>s2.r)
 	{
@@ -60,7 +60,6 @@ SimplePoint intersect_vector_with_hyperboloid(const SimplePoint& a, const Simple
 	else
 	{
 		const SimplePoint dv=(custom_point_from_object<SimplePoint>(s1)-custom_point_from_object<SimplePoint>(s2))/2;
-		const double d=dv.module();
 		const SimplePoint c=custom_point_from_object<SimplePoint>(s2)+dv;
 
 		const SimplePoint ca=a-c;
@@ -68,17 +67,13 @@ SimplePoint intersect_vector_with_hyperboloid(const SimplePoint& a, const Simple
 		const SimplePoint cax=(a-(dv.unit()*maz))-c;
 		const double max=cax.unit()*ca;
 		const double may=0;
-		const SimplePoint ma(max, may, maz);
 
 		const SimplePoint cb=b-c;
 		const double mbz=dv.unit()*cb;
 		const double mbx=cax.unit()*cb;
 		const double mby=sqrt(point_squared_module(cb)-mbz*mbz-mbx*mbx);
-		const SimplePoint mb(mbx, mby, mbz);
 
-		const double t=intersect_vector_with_simple_hyperboloid(ma, mb, d, s1.r, s2.r);
-
-		return (a+((b-a).unit()*t));
+		return intersect_vector_with_simple_hyperboloid(SimplePoint(max, may, maz), SimplePoint(mbx, mby, mbz), dv.module(), s1.r, s2.r);
 	}
 }
 
