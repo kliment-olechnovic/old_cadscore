@@ -77,6 +77,68 @@ double intersect_vector_with_hyperboloid(const SimplePoint& a, const SimplePoint
 	}
 }
 
+template<typename SphereType>
+std::vector<SimplePoint> intersect_triangle_with_hyperboloid(const SimplePoint& a, const SimplePoint& b, const SimplePoint& c, const SphereType& s1, const SphereType& s2)
+{
+	const bool halfspaces[3]={false, false, false};
+	halfspaces[0]=less(minimal_distance_from_point_to_sphere(a, s1), minimal_distance_from_point_to_sphere(a, s2));
+	halfspaces[1]=less(minimal_distance_from_point_to_sphere(b, s1), minimal_distance_from_point_to_sphere(b, s2));
+	halfspaces[2]=less(minimal_distance_from_point_to_sphere(c, s1), minimal_distance_from_point_to_sphere(c, s2));
+
+	if(halfspaces[0] || halfspaces[1] || halfspaces[2])
+	{
+		if(halfspaces[0] && halfspaces[1] && halfspaces[2])
+		{
+			std::vector<SimplePoint> container(3);
+			container[0]=(a);
+			container[1]=(b);
+			container[2]=(c);
+			return container;
+		}
+		else
+		{
+			const SimplePoint* points[3]={&a, &b, &c};
+			for(int i=0;i<3;i++)
+			{
+				const int j = (i==0 ? 1 : 0);
+				const int k = (i==2 ? 1 : 2);
+				const bool tff=(halfspaces[i] && !halfspaces[j] && !halfspaces[k]);
+				const bool ftt=(!halfspaces[i] && halfspaces[j] && halfspaces[k]);
+				if(tff || ftt)
+				{
+					const SimplePoint& p0=*(points[i]);
+					const SimplePoint& p1=*(points[j]);
+					const SimplePoint& p2=*(points[k]);
+					const double t01=intersect_vector_with_hyperboloid(p0, p1, s1, s2);
+					const double t02=intersect_vector_with_hyperboloid(p0, p2, s1, s2);
+					if(greater(t01, 0) && greater(t02, 0))
+					{
+						if(tff)
+						{
+							std::vector<SimplePoint> container(3);
+							container[0]=(p0);
+							container[1]=(p0+((p1-p0).unit()*t01));
+							container[2]=(p0+((p2-p0).unit()*t02));
+							return container;
+						}
+						else if(ftt)
+						{
+							std::vector<SimplePoint> container(4);
+							container[0]=(p1);
+							container[1]=(p0+((p1-p0).unit()*t01));
+							container[2]=(p0+((p2-p0).unit()*t02));
+							container[3]=(p2);
+							return container;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return std::vector<SimplePoint>();
+}
+
 }
 
 #endif /* HYPERBOLOIDS_BASIC_OPERATIONS_H_ */
