@@ -7,6 +7,7 @@
 #include "spheres_basic_operations.h"
 #include "subdivided_icosahedron.h"
 #include "hyperboloids_basic_operations.h"
+#include "tuples.h"
 
 namespace apollo
 {

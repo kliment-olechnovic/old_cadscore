@@ -1,5 +1,5 @@
-#ifndef TUPLES_H_
-#define TUPLES_H_
+#ifndef APOLLO_TUPLES_H_
+#define APOLLO_TUPLES_H_
 
 #include <vector>
 #include <algorithm>
@@ -165,4 +165,4 @@ inline Quadruple make_quadruple(const std::size_t a, const std::size_t b, const 
 
 }
 
-#endif /* TUPLES_H_ */
+#endif /* APOLLO_TUPLES_H_ */
