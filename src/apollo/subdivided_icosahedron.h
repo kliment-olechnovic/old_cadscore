@@ -13,7 +13,7 @@ namespace apollo
 class SubdividedIcosahedron
 {
 public:
-	SubdividedIcosahedron(const std::size_t depth)
+	SubdividedIcosahedron(const std::size_t depth) : center_(0, 0, 0)
 	{
 		const double t=(1+sqrt(5.0))/2.0;
 
@@ -62,9 +62,24 @@ public:
 		return vertices_;
 	}
 
-	const std::vector<Triple> triples() const
+	const std::vector<Triple>& triples() const
 	{
 		return triples_;
+	}
+
+	template<typename SphereType>
+	void fit_into_sphere(const SphereType& sphere)
+	{
+		center_=custom_point_from_object<SimplePoint>(sphere);
+		for(std::size_t i=0;i<vertices_.size();i++)
+		{
+			vertices_[i]=center_+((vertices_[i]-center_).unit()*sphere.r);
+		}
+	}
+
+	double edge_length_estimate() const
+	{
+		return distance_from_point_to_point(vertices_.at(triples_.front().get(0)), vertices_.at(triples_.front().get(1)));
 	}
 
 private:
@@ -101,6 +116,7 @@ private:
 		triples_=new_triples;
 	}
 
+	SimplePoint center_;
 	std::vector<SimplePoint> vertices_;
 	std::vector<Triple> triples_;
 };

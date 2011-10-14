@@ -222,7 +222,7 @@ double distance_from_point_to_line(const InputPointTypeA& a, const InputPointTyp
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
-double trangle_area(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+double triangle_area(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
 {
 	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
 	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
