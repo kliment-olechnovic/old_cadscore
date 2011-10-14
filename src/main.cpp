@@ -3,6 +3,7 @@
 
 #include "protein/atoms_reading.h"
 #include "apollo/apollonius_triangulation.h"
+#include "apollo/contact_surface.h"
 #include "monitor/BlockTimer.h"
 
 int main()
@@ -33,9 +34,10 @@ int main()
 			std::clog << hierarchy.find_all_hidden_spheres().size() << " hidden spheres found\n";
 		}
 
+		Apollo::Graph graph;
 		{
 			monitor::BlockTimer bth("Graph construction time");
-			Apollo::Graph graph=Apollo::construct_graph_from_quadruples(quadruples_map);
+			graph=Apollo::construct_graph_from_quadruples(quadruples_map);
 		}
 
 		{
@@ -46,6 +48,11 @@ int main()
 		{
 			monitor::BlockTimer bth("Triples neighbours construction time");
 			Apollo::TriplesNeighboursMap triples_neighbours=Apollo::collect_triples_neighbours_from_quadruples(quadruples_map);
+		}
+
+		{
+			monitor::BlockTimer bth("Contact surfaces construction time");
+			std::vector<apollo::ContactSurface::Surface> surfaces=apollo::ContactSurface::construct_surfaces(spheres, graph);
 		}
 	}
 

@@ -2,6 +2,7 @@
 #define HYPERBOLOIDS_BASIC_OPERATIONS_H_
 
 #include <cmath>
+#include <vector>
 
 #include "points_basic_operations.h"
 
@@ -80,7 +81,7 @@ double intersect_vector_with_hyperboloid(const SimplePoint& a, const SimplePoint
 template<typename SphereType>
 std::vector<SimplePoint> intersect_triangle_with_hyperboloid(const SimplePoint& a, const SimplePoint& b, const SimplePoint& c, const SphereType& s1, const SphereType& s2)
 {
-	const bool halfspaces[3]={false, false, false};
+	bool halfspaces[3]={false, false, false};
 	halfspaces[0]=less(minimal_distance_from_point_to_sphere(a, s1), minimal_distance_from_point_to_sphere(a, s2));
 	halfspaces[1]=less(minimal_distance_from_point_to_sphere(b, s1), minimal_distance_from_point_to_sphere(b, s2));
 	halfspaces[2]=less(minimal_distance_from_point_to_sphere(c, s1), minimal_distance_from_point_to_sphere(c, s2));
