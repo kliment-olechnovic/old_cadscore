@@ -52,7 +52,7 @@ int main()
 
 		{
 			monitor::BlockTimer bth("Contact surfaces construction time");
-			std::vector<apollo::ContactSurface::Surface> surfaces=apollo::ContactSurface::construct_surfaces(spheres, graph);
+			std::vector<apollo::ContactSurface::Surface> surfaces=apollo::ContactSurface::construct_surfaces(spheres, graph, 1.4);
 		}
 	}
 
