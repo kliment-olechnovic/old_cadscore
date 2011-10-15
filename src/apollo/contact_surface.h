@@ -62,7 +62,7 @@ private:
 			const bool use_treshold)
 	{
 		std::vector< std::vector<std::size_t> > influences(sih.vertices().size());
-		const double treshold=(use_treshold ? sih.edge_length_estimate() : 0);
+		const double treshold=(use_treshold ? sih.edge_length_estimate()/2 : 0);
 		for(std::size_t i=0;i<influences.size();i++)
 		{
 			double min_distance=minimal_distance_from_point_to_sphere(sih.vertices().at(i), spheres.at(neighbours.at(0)));
