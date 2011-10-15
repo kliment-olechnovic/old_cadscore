@@ -33,7 +33,8 @@ public:
 			const std::vector<SphereType>& spheres,
 			const std::vector< std::vector<std::size_t> >& graph,
 			const std::size_t subdivision_depth,
-			const double probe_radius)
+			const double probe_radius,
+			const bool use_treshold)
 	{
 		std::vector<Surface> surfaces;
 		SubdividedIcosahedron sih(subdivision_depth);
@@ -43,7 +44,7 @@ public:
 			std::vector<std::size_t> neighbours=graph[i];
 			neighbours.push_back(i);
 			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
-			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, neighbours)));
+			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, neighbours, use_treshold)));
 		}
 		return surfaces;
 	}
@@ -57,10 +58,11 @@ private:
 	static std::vector< std::vector<std::size_t> > collect_influences(
 			const SubdividedIcosahedron& sih,
 			const std::vector<SphereType>& spheres,
-			const std::vector<size_t>& neighbours)
+			const std::vector<size_t>& neighbours,
+			const bool use_treshold)
 	{
 		std::vector< std::vector<std::size_t> > influences(sih.vertices().size());
-		const double treshold=sih.edge_length_estimate();
+		const double treshold=(use_treshold ? sih.edge_length_estimate() : 0);
 		for(std::size_t i=0;i<influences.size();i++)
 		{
 			double min_distance=minimal_distance_from_point_to_sphere(sih.vertices().at(i), spheres.at(neighbours.at(0)));
@@ -68,11 +70,11 @@ private:
 			for(std::size_t j=1;j<neighbours.size();j++)
 			{
 				double distance=minimal_distance_from_point_to_sphere(sih.vertices().at(i), spheres.at(neighbours[j]));
-				if(less(distance-treshold, min_distance))
+				if(less_or_equal(distance-treshold, min_distance))
 				{
 					if(less(distance, min_distance))
 					{
-						if(!less(min_distance-treshold, distance))
+						if(!less_or_equal(min_distance-treshold, distance))
 						{
 							influences[i].clear();
 						}
