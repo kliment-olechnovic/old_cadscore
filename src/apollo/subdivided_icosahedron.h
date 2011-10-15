@@ -57,6 +57,11 @@ public:
 		}
 	}
 
+	const SimplePoint center() const
+	{
+		return center_;
+	}
+
 	const std::vector<SimplePoint>& vertices() const
 	{
 		return vertices_;
@@ -70,11 +75,12 @@ public:
 	template<typename SphereType>
 	void fit_into_sphere(const SphereType& sphere)
 	{
-		center_=custom_point_from_object<SimplePoint>(sphere);
+		const SimplePoint new_center=custom_point_from_object<SimplePoint>(sphere);
 		for(std::size_t i=0;i<vertices_.size();i++)
 		{
-			vertices_[i]=center_+((vertices_[i]-center_).unit()*sphere.r);
+			vertices_[i]=new_center+((vertices_[i]-center_).unit()*sphere.r);
 		}
+		center_=new_center;
 	}
 
 	double edge_length_estimate() const
