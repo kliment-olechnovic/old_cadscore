@@ -72,13 +72,13 @@ public:
 		return triples_;
 	}
 
-	template<typename SphereType>
-	void fit_into_sphere(const SphereType& sphere)
+	template<typename PointType>
+	void fit_into_sphere(const PointType& center, const double radius)
 	{
-		const SimplePoint new_center=custom_point_from_object<SimplePoint>(sphere);
+		const SimplePoint new_center=custom_point_from_object<SimplePoint>(center);
 		for(std::size_t i=0;i<vertices_.size();i++)
 		{
-			vertices_[i]=new_center+((vertices_[i]-center_).unit()*sphere.r);
+			vertices_[i]=new_center+((vertices_[i]-center_).unit()*radius);
 		}
 		center_=new_center;
 	}

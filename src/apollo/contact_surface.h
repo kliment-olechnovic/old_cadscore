@@ -31,7 +31,8 @@ public:
 	template<typename SphereType>
 	static std::vector<Surface> construct_surfaces(
 			const std::vector<SphereType>& spheres,
-			const std::vector< std::vector<std::size_t> >& graph)
+			const std::vector< std::vector<std::size_t> >& graph,
+			const double probe_radius)
 	{
 		std::vector<Surface> surfaces;
 		SubdividedIcosahedron sih(3);
@@ -40,7 +41,7 @@ public:
 		{
 			std::vector<std::size_t> neighbours=graph[i];
 			neighbours.push_back(i);
-			sih.fit_into_sphere(spheres[i]);
+			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
 			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, neighbours)));
 		}
 		return surfaces;
