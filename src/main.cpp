@@ -21,13 +21,16 @@ int main()
 	}
 
 	{
-		monitor::BlockTimer bt("Apollo time");
 		typedef apollo::SpheresHierarchy<Sphere> Hierarchy;
 		const Hierarchy hierarchy(spheres, 1.4*3, 50);
 		typedef apollo::ApolloniusTriangulation< apollo::SpheresHierarchy<Sphere> > Apollo;
-		Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy);
-		std::clog << quadruples_map.size() << " quadruples found\n";
-//		std::clog << Apollo::check_quadruples(quadruples_map, spheres) << " quadruples status\n";
+
+		Apollo::QuadruplesMap quadruples_map;
+		{
+			monitor::BlockTimer bt("Apollo time");
+			quadruples_map=Apollo::find_quadruples(hierarchy);
+			std::clog << quadruples_map.size() << " quadruples found\n";
+		}
 
 		{
 			monitor::BlockTimer bth("Hidden spheres check time");
@@ -53,6 +56,11 @@ int main()
 		{
 			monitor::BlockTimer bth("Contact surfaces construction time");
 			std::vector<apollo::ContactSurface::Surface> surfaces=apollo::ContactSurface::construct_surfaces(spheres, graph, 3, 1.4, true);
+		}
+
+		{
+			monitor::BlockTimer bth("Contact surface areas construction time");
+			std::vector<apollo::ContactSurface::SurfaceArea> surface_areas=apollo::ContactSurface::calculate_surface_areas(spheres, graph, 3, 1.4, true);
 		}
 	}
 
