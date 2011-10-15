@@ -32,10 +32,11 @@ public:
 	static std::vector<Surface> construct_surfaces(
 			const std::vector<SphereType>& spheres,
 			const std::vector< std::vector<std::size_t> >& graph,
+			const std::size_t subdivision_depth,
 			const double probe_radius)
 	{
 		std::vector<Surface> surfaces;
-		SubdividedIcosahedron sih(3);
+		SubdividedIcosahedron sih(subdivision_depth);
 		surfaces.reserve(graph.size());
 		for(std::size_t i=0;i<graph.size();i++)
 		{
