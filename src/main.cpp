@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "protein/atoms_reading.h"
+#include "protein_input.h"
+
 #include "apollo/apollonius_triangulation.h"
 #include "apollo/contact_surface.h"
 #include "monitor/BlockTimer.h"
@@ -13,10 +14,7 @@ int main()
 
 	{
 		monitor::BlockTimer bt("Atoms reading time");
-		std::ifstream radius_classes_stream("resources/vdwr_classes.txt");
-		std::ifstream radius_members_stream("resources/vdwr_members.txt");
-		const protein::VanDerWaalsRadiusAssigner radius_assigner(radius_classes_stream, radius_members_stream);
-		spheres=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, false, false);
+		spheres=read_protein_atoms(false, false);
 		std::clog << spheres.size() << " spheres read\n";
 	}
 
