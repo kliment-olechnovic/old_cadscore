@@ -26,11 +26,6 @@ public:
 		Triangle(const SimplePoint& a, const SimplePoint& b, const SimplePoint& c) : a(a), b(b), c(c)
 		{
 		}
-
-		double area() const
-		{
-			return triangle_area(a, b, c);
-		}
 	};
 
 	typedef std::vector< std::pair<std::size_t, Triangle> > Surface;
@@ -55,6 +50,26 @@ public:
 			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, i, neighbours)));
 		}
 		return surfaces;
+	}
+
+	template<typename SphereType>
+	static std::vector<SurfaceArea> calculate_surface_areas(
+			const std::vector<SphereType>& spheres,
+			const std::vector< std::vector<std::size_t> >& graph,
+			const std::size_t subdivision_depth,
+			const double probe_radius)
+	{
+		std::vector<SurfaceArea> surface_areas;
+		SubdividedIcosahedron sih(subdivision_depth);
+		surface_areas.reserve(graph.size());
+		for(std::size_t i=0;i<graph.size();i++)
+		{
+			std::vector<std::size_t> neighbours=graph[i];
+			neighbours.push_back(i);
+			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
+			surface_areas.push_back(calculate_surface_area(sih, spheres, collect_influences(sih, spheres, i, neighbours)));
+		}
+		return surface_areas;
 	}
 
 private:
@@ -156,6 +171,77 @@ private:
 			}
 		}
 		return colored_triangles;
+	}
+
+	template<typename SphereType>
+	static SurfaceArea calculate_surface_area(
+			const SubdividedIcosahedron& sih,
+			const std::vector<SphereType>& spheres,
+			const std::vector<std::size_t>& influences)
+	{
+		SurfaceArea surface_area;
+		for(std::size_t e=0;e<sih.triples().size();e++)
+		{
+			const Triple& triple=sih.triples()[e];
+			const std::size_t a=triple.get(0);
+			const std::size_t b=triple.get(1);
+			const std::size_t c=triple.get(2);
+			if(influences[a]==influences[b] && influences[a]==influences[c])
+			{
+				surface_area[influences[a]]+=triangle_area(sih.vertices()[a], sih.vertices()[b], sih.vertices()[c]);
+			}
+			else if(influences[a]!=influences[b] && influences[a]!=influences[c] && influences[b]!=influences[c])
+			{
+				const SimplePoint& pa=sih.vertices()[a];
+				const SimplePoint& pb=sih.vertices()[b];
+				const SimplePoint& pc=sih.vertices()[c];
+
+				const SimplePoint a_b_border=pa+((pb-pa).unit()*intersect_vector_with_hyperboloid(pa, pb, spheres[influences[a]], spheres[influences[b]]));
+				const SimplePoint a_c_border=pa+((pc-pa).unit()*intersect_vector_with_hyperboloid(pa, pc, spheres[influences[a]], spheres[influences[c]]));
+				const SimplePoint b_c_border=pb+((pc-pb).unit()*intersect_vector_with_hyperboloid(pb, pc, spheres[influences[b]], spheres[influences[c]]));
+
+				const SimplePoint middle=(a_b_border+a_c_border+b_c_border)/3;
+
+				surface_area[influences[a]]+=triangle_area(pa, a_b_border, a_c_border);
+				surface_area[influences[a]]+=triangle_area(middle, a_b_border, a_c_border);
+
+				surface_area[influences[b]]+=triangle_area(pb, a_b_border, b_c_border);
+				surface_area[influences[b]]+=triangle_area(middle, a_b_border, b_c_border);
+
+				surface_area[influences[c]]+=triangle_area(pc, a_c_border, b_c_border);
+				surface_area[influences[c]]+=triangle_area(middle, a_c_border, b_c_border);
+			}
+			else
+			{
+				std::size_t s=a;
+				std::size_t d1=b;
+				std::size_t d2=c;
+				if(influences[b]!=influences[a] && influences[b]!=influences[c])
+				{
+					s=b;
+					d1=a;
+					d2=c;
+				}
+				else if(influences[c]!=influences[a] && influences[c]!=influences[b])
+				{
+					s=c;
+					d1=a;
+					d2=b;
+				}
+
+				const SimplePoint& ps=sih.vertices()[s];
+				const SimplePoint& pd1=sih.vertices()[d1];
+				const SimplePoint& pd2=sih.vertices()[d2];
+
+				const SimplePoint s_d1_border=ps+((pd1-ps).unit()*intersect_vector_with_hyperboloid(ps, pd1, spheres[influences[s]], spheres[influences[d1]]));
+				const SimplePoint s_d2_border=ps+((pd2-ps).unit()*intersect_vector_with_hyperboloid(ps, pd2, spheres[influences[s]], spheres[influences[d2]]));
+
+				surface_area[influences[s]]+=triangle_area(ps, s_d1_border, s_d2_border);
+				surface_area[influences[d1]]+=triangle_area(pd1, s_d1_border, s_d2_border);
+				surface_area[influences[d2]]+=triangle_area(pd2, pd1, s_d2_border);
+			}
+		}
+		return surface_area;
 	}
 };
 

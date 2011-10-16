@@ -53,9 +53,14 @@ int main()
 			Apollo::TriplesNeighboursMap triples_neighbours=Apollo::collect_triples_neighbours_from_quadruples(quadruples_map);
 		}
 
+//		{
+//			monitor::BlockTimer bth("Contact surfaces construction time");
+//			std::vector<apollo::ContactSurface::Surface> surfaces=apollo::ContactSurface::construct_surfaces(spheres, graph, 3, 1.4);
+//		}
+
 		{
 			monitor::BlockTimer bth("Contact surfaces construction time");
-			std::vector<apollo::ContactSurface::Surface> surfaces=apollo::ContactSurface::construct_surfaces(spheres, graph, 3, 1.4);
+			std::vector<apollo::ContactSurface::SurfaceArea> surface_areas=apollo::ContactSurface::calculate_surface_areas(spheres, graph, 3, 1.4);
 		}
 	}
 
