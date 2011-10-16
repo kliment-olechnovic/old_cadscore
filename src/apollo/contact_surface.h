@@ -27,7 +27,7 @@ public:
 		{
 		}
 
-		const double area() const
+		double area() const
 		{
 			return triangle_area(a, b, c);
 		}
@@ -42,8 +42,7 @@ public:
 			const std::vector<SphereType>& spheres,
 			const std::vector< std::vector<std::size_t> >& graph,
 			const std::size_t subdivision_depth,
-			const double probe_radius,
-			const bool use_treshold)
+			const double probe_radius)
 	{
 		std::vector<Surface> surfaces;
 		SubdividedIcosahedron sih(subdivision_depth);
@@ -53,30 +52,9 @@ public:
 			std::vector<std::size_t> neighbours=graph[i];
 			neighbours.push_back(i);
 			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
-			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, neighbours, use_treshold)));
+			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, i, neighbours)));
 		}
 		return surfaces;
-	}
-
-	template<typename SphereType>
-	static std::vector<SurfaceArea> calculate_surface_areas(
-			const std::vector<SphereType>& spheres,
-			const std::vector< std::vector<std::size_t> >& graph,
-			const std::size_t subdivision_depth,
-			const double probe_radius,
-			const bool use_treshold)
-	{
-		std::vector<SurfaceArea> surface_areas;
-		SubdividedIcosahedron sih(subdivision_depth);
-		surface_areas.reserve(graph.size());
-		for(std::size_t i=0;i<graph.size();i++)
-		{
-			std::vector<std::size_t> neighbours=graph[i];
-			neighbours.push_back(i);
-			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
-			surface_areas.push_back(calculate_surface_area(sih, spheres, collect_influences(sih, spheres, neighbours, use_treshold)));
-		}
-		return surface_areas;
 	}
 
 private:
@@ -85,32 +63,24 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector< std::vector<std::size_t> > collect_influences(
+	static std::vector<std::size_t> collect_influences(
 			const SubdividedIcosahedron& sih,
 			const std::vector<SphereType>& spheres,
-			const std::vector<size_t>& neighbours,
-			const bool use_treshold)
+			const std::size_t self_id,
+			const std::vector<size_t>& neighbours)
 	{
-		std::vector< std::vector<std::size_t> > influences(sih.vertices().size());
-		const double treshold=(use_treshold ? sih.edge_length_estimate()/2 : 0);
+		std::vector<std::size_t> influences(sih.vertices().size());
 		for(std::size_t i=0;i<influences.size();i++)
 		{
-			double min_distance=minimal_distance_from_point_to_sphere(sih.vertices().at(i), spheres.at(neighbours.at(0)));
-			influences[i].push_back(neighbours.at(0));
-			for(std::size_t j=1;j<neighbours.size();j++)
+			double min_distance=minimal_distance_from_point_to_sphere(sih.vertices().at(i), spheres.at(self_id));
+			influences[i]=self_id;
+			for(std::size_t j=0;j<neighbours.size();j++)
 			{
 				double distance=minimal_distance_from_point_to_sphere(sih.vertices().at(i), spheres.at(neighbours[j]));
-				if(less_or_equal(distance-treshold, min_distance))
+				if(distance<min_distance)
 				{
-					if(less(distance, min_distance))
-					{
-						if(!less_or_equal(min_distance-treshold, distance))
-						{
-							influences[i].clear();
-						}
-						min_distance=distance;
-					}
-					influences[i].push_back(neighbours[j]);
+					min_distance=distance;
+					influences[i]=neighbours[j];
 				}
 			}
 		}
@@ -121,7 +91,7 @@ private:
 	static Surface construct_surface(
 			const SubdividedIcosahedron& sih,
 			const std::vector<SphereType>& spheres,
-			const std::vector< std::vector<std::size_t> >& influences)
+			const std::vector<std::size_t>& influences)
 	{
 		Surface colored_triangles;
 		for(std::size_t e=0;e<sih.triples().size();e++)
@@ -130,125 +100,62 @@ private:
 			const std::size_t a=triple.get(0);
 			const std::size_t b=triple.get(1);
 			const std::size_t c=triple.get(2);
-			const Triangle big_triangle(sih.vertices()[a], sih.vertices()[b], sih.vertices()[c]);
-			if(influences[a].size()==1 && influences[b].size()==1 && influences[c].size()==1
-					&& influences[a][0]==influences[b][0] && influences[a][0]==influences[c][0])
+			if(influences[a]==influences[b] && influences[a]==influences[c])
 			{
-				colored_triangles.push_back(std::make_pair(influences[a][0], big_triangle));
+				colored_triangles.push_back(std::make_pair(influences[a], Triangle(sih.vertices()[a], sih.vertices()[b], sih.vertices()[c])));
+			}
+			else if(influences[a]!=influences[b] && influences[a]!=influences[c] && influences[b]!=influences[c])
+			{
+				const SimplePoint& pa=sih.vertices()[a];
+				const SimplePoint& pb=sih.vertices()[b];
+				const SimplePoint& pc=sih.vertices()[c];
+
+				const SimplePoint a_b_border=pa+((pb-pa).unit()*intersect_vector_with_hyperboloid(pa, pb, spheres[influences[a]], spheres[influences[b]]));
+				const SimplePoint a_c_border=pa+((pc-pa).unit()*intersect_vector_with_hyperboloid(pa, pc, spheres[influences[a]], spheres[influences[c]]));
+				const SimplePoint b_c_border=pb+((pc-pb).unit()*intersect_vector_with_hyperboloid(pb, pc, spheres[influences[b]], spheres[influences[c]]));
+
+				const SimplePoint middle=(a_b_border+a_c_border+b_c_border)/3;
+
+				colored_triangles.push_back(std::make_pair(influences[a], Triangle(pa, a_b_border, a_c_border)));
+				colored_triangles.push_back(std::make_pair(influences[a], Triangle(middle, a_b_border, a_c_border)));
+
+				colored_triangles.push_back(std::make_pair(influences[b], Triangle(pb, a_b_border, b_c_border)));
+				colored_triangles.push_back(std::make_pair(influences[b], Triangle(middle, a_b_border, b_c_border)));
+
+				colored_triangles.push_back(std::make_pair(influences[c], Triangle(pc, a_c_border, b_c_border)));
+				colored_triangles.push_back(std::make_pair(influences[c], Triangle(middle, a_c_border, b_c_border)));
 			}
 			else
 			{
-				std::set<std::size_t> ids;
-				for(int i=0;i<3;i++)
+				std::size_t s=a;
+				std::size_t d1=b;
+				std::size_t d2=c;
+				if(influences[b]!=influences[a] && influences[b]!=influences[c])
 				{
-					const std::size_t n=triple.get(i);
-					for(std::size_t j=0;j<influences[n].size();j++)
-					{
-						ids.insert(influences[n][j]);
-					}
+					s=b;
+					d1=a;
+					d2=c;
+				}
+				else if(influences[c]!=influences[a] && influences[c]!=influences[b])
+				{
+					s=c;
+					d1=a;
+					d2=b;
 				}
 
-				for(std::set<std::size_t>::const_iterator it=ids.begin();it!=ids.end();++it)
-				{
-					std::vector<Triangle> triangles;
-					triangles.push_back(big_triangle);
-					for(std::set<std::size_t>::const_iterator jt=ids.begin();jt!=ids.end() && !triangles.empty();++jt)
-					{
-						if((*it)!=(*jt))
-						{
-							std::vector<Triangle> new_triangles;
-							for(std::size_t i=0;i<triangles.size();i++)
-							{
-								const std::vector<SimplePoint> control_points=intersect_triangle_with_hyperboloid(triangles[i].a, triangles[i].b, triangles[i].c, spheres[(*it)], spheres[(*jt)]);
-								if(control_points.size()>=3)
-								{
-									new_triangles.push_back(Triangle(control_points[0], control_points[1], control_points[2]));
-								}
-								if(control_points.size()>=4)
-								{
-									new_triangles.push_back(Triangle(control_points[0], control_points[2], control_points[3]));
-								}
-							}
-							triangles=new_triangles;
-						}
-					}
-					for(std::size_t i=0;i<triangles.size();i++)
-					{
-						colored_triangles.push_back(std::make_pair((*it), triangles[i]));
-					}
-				}
+				const SimplePoint& ps=sih.vertices()[s];
+				const SimplePoint& pd1=sih.vertices()[d1];
+				const SimplePoint& pd2=sih.vertices()[d2];
+
+				const SimplePoint s_d1_border=ps+((pd1-ps).unit()*intersect_vector_with_hyperboloid(ps, pd1, spheres[influences[s]], spheres[influences[d1]]));
+				const SimplePoint s_d2_border=ps+((pd2-ps).unit()*intersect_vector_with_hyperboloid(ps, pd2, spheres[influences[s]], spheres[influences[d2]]));
+
+				colored_triangles.push_back(std::make_pair(influences[s], Triangle(ps, s_d1_border, s_d2_border)));
+				colored_triangles.push_back(std::make_pair(influences[d1], Triangle(pd1, s_d1_border, s_d2_border)));
+				colored_triangles.push_back(std::make_pair(influences[d2], Triangle(pd2, pd1, s_d2_border)));
 			}
 		}
 		return colored_triangles;
-	}
-
-	template<typename SphereType>
-	static SurfaceArea calculate_surface_area(
-			const SubdividedIcosahedron& sih,
-			const std::vector<SphereType>& spheres,
-			const std::vector< std::vector<std::size_t> >& influences)
-	{
-		SurfaceArea surface_area;
-		for(std::size_t e=0;e<sih.triples().size();e++)
-		{
-			const Triple& triple=sih.triples()[e];
-			const std::size_t a=triple.get(0);
-			const std::size_t b=triple.get(1);
-			const std::size_t c=triple.get(2);
-			const Triangle big_triangle(sih.vertices()[a], sih.vertices()[b], sih.vertices()[c]);
-			if(influences[a].size()==1 && influences[b].size()==1 && influences[c].size()==1
-					&& influences[a][0]==influences[b][0] && influences[a][0]==influences[c][0])
-			{
-				surface_area[influences[a][0]]+=big_triangle.area();
-			}
-			else
-			{
-				std::set<std::size_t> ids;
-				for(int i=0;i<3;i++)
-				{
-					const std::size_t n=triple.get(i);
-					for(std::size_t j=0;j<influences[n].size();j++)
-					{
-						ids.insert(influences[n][j]);
-					}
-				}
-
-				for(std::set<std::size_t>::const_iterator it=ids.begin();it!=ids.end();++it)
-				{
-					std::vector<Triangle> triangles;
-					triangles.push_back(big_triangle);
-					for(std::set<std::size_t>::const_iterator jt=ids.begin();jt!=ids.end() && !triangles.empty();++jt)
-					{
-						if((*it)!=(*jt))
-						{
-							std::vector<Triangle> new_triangles;
-							for(std::size_t i=0;i<triangles.size();i++)
-							{
-								const std::vector<SimplePoint> control_points=intersect_triangle_with_hyperboloid(triangles[i].a, triangles[i].b, triangles[i].c, spheres[(*it)], spheres[(*jt)]);
-								if(control_points.size()>=3)
-								{
-									new_triangles.push_back(Triangle(control_points[0], control_points[1], control_points[2]));
-								}
-								if(control_points.size()>=4)
-								{
-									new_triangles.push_back(Triangle(control_points[0], control_points[2], control_points[3]));
-								}
-							}
-							triangles=new_triangles;
-						}
-					}
-					if(!triangles.empty())
-					{
-						double& area=surface_area[(*it)];
-						for(std::size_t i=0;i<triangles.size();i++)
-						{
-							area+=triangles[i].area();
-						}
-					}
-				}
-			}
-		}
-		return surface_area;
 	}
 };
 
