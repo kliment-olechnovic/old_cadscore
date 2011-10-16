@@ -44,10 +44,8 @@ public:
 		surfaces.reserve(graph.size());
 		for(std::size_t i=0;i<graph.size();i++)
 		{
-			std::vector<std::size_t> neighbours=graph[i];
-			neighbours.push_back(i);
 			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
-			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, i, neighbours)));
+			surfaces.push_back(construct_surface(sih, spheres, collect_influences(sih, spheres, i, graph[i])));
 		}
 		return surfaces;
 	}
@@ -64,10 +62,8 @@ public:
 		surface_areas.reserve(graph.size());
 		for(std::size_t i=0;i<graph.size();i++)
 		{
-			std::vector<std::size_t> neighbours=graph[i];
-			neighbours.push_back(i);
 			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
-			surface_areas.push_back(calculate_surface_area(sih, spheres, collect_influences(sih, spheres, i, neighbours)));
+			surface_areas.push_back(calculate_surface_area(sih, spheres, collect_influences(sih, spheres, i, graph[i])));
 		}
 		return surface_areas;
 	}
