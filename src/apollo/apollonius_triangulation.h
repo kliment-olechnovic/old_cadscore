@@ -5,8 +5,8 @@
 #include <deque>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
+#include <tr1/functional>
 
-#include "spheres_hierarchy.h"
 #include "apollonius_face.h"
 
 namespace apollo
