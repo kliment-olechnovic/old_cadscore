@@ -69,10 +69,10 @@ public:
 	}
 
 	template<typename SphereType>
-	static double check_surface_area(const SphereType& sphere, const SurfaceArea& surface_area)
+	static double check_surface_area(const SphereType& sphere, const double probe_radius, const SurfaceArea& surface_area)
 	{
 		const double PI=3.14159265;
-		const double theoretical_surface_area=4*PI*sphere.r*sphere.r;
+		const double theoretical_surface_area=4*PI*(sphere.r+probe_radius)*(sphere.r+probe_radius);
 		double sum=0.0;
 		for(SurfaceArea::const_iterator it=surface_area.begin();it!=surface_area.end();++it)
 		{
