@@ -5,9 +5,6 @@
 #include "protein_graph.h"
 #include "protein_contacts.h"
 
-#include "monitor/BlockTimer.h"
-
-
 int main()
 {
 	const std::vector<protein::Atom> unrefined_atoms=read_protein_atoms(false, false);
