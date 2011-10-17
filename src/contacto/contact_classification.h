@@ -5,9 +5,6 @@
 #include <set>
 #include <vector>
 
-#include "../protein/atom.h"
-#include "../protein/residue_id.h"
-
 namespace protein
 {
 
@@ -80,10 +77,11 @@ inline std::vector<std::string> classify_atoms_contact_by_names(const std::strin
 	return classes;
 }
 
-std::vector<std::string> classify_atoms_contact(const Atom& a, const Atom& b)
+template<typename AtomType, typename ResidueIDType>
+std::vector<std::string> classify_atoms_contact(const AtomType& a, const AtomType& b)
 {
 	const bool same_object=(a==b);
-	const bool same_residue=same_object || ResidueID(a.chain_id, a.residue_number)==ResidueID(b.chain_id, b.residue_number);
+	const bool same_residue=same_object || ResidueIDType::from_atom(a)==ResidueIDType::from_atom(b);
 
 	if(same_object)
 	{

@@ -19,6 +19,12 @@ struct ResidueID
 	{
 	}
 
+	template<typename AtomType>
+	static ResidueID from_atom(const AtomType& atom)
+	{
+		return ResidueID(atom.chain_id, atom.residue_number);
+	}
+
 	bool operator==(const ResidueID& rid) const
 	{
 		return (residue_number==rid.residue_number && chain_id==rid.chain_id);
