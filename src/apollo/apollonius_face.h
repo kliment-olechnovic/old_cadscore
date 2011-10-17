@@ -69,6 +69,10 @@ public:
 			{
 				if(tangent_stick_.first==NULL || tangent_stick_.second==NULL)
 				{
+					std::clog << "LIST\n";
+					std::clog << "SPHERE " << a_->r << " " << a_->x << " " << a_->y << " " << a_->z << "\n";
+					std::clog << "SPHERE " << b_->r << " " << b_->x << " " << b_->y << " " << b_->z << "\n";
+					std::clog << "SPHERE " << c_->r << " " << c_->x << " " << c_->y << " " << c_->z << "\n";
 					throw std::logic_error("Invalid tangent stick");
 				}
 			}

@@ -78,7 +78,7 @@ inline std::vector<OutputPointType> construct_spheres_tangent_planes_normals(con
 		const double z=zs[i];
 		const double permuted_candidate[3]={c0+z*cz, b0+z*bz, z};
 		const OutputPointType candidate=custom_point<OutputPointType>(permuted_candidate[reverse_permutation[0]], permuted_candidate[reverse_permutation[1]], permuted_candidate[reverse_permutation[2]]);
-		if(check_spheres_tangent_plane(sm, s1, s2, candidate))
+//		if(check_spheres_tangent_plane(sm, s1, s2, candidate))
 		{
 			results.push_back(candidate);
 		}
