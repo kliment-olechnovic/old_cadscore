@@ -16,5 +16,8 @@ int main()
 
 	std::clog << contacts_between_residues.size() << "\n";
 
+	std::cout << atoms.front() << "\n";
+	std::cout << inter_atom_contacts.front() << "\n";
+
 	return 0;
 }
