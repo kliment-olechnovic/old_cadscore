@@ -58,13 +58,16 @@ private:
 		for(std::size_t i=0;i<PDB_atom_records.size();i++)
 		{
 			const PDBParsing::AtomRecord& record=PDB_atom_records[i];
-			if(record.alternate_location_indicator.empty() || record.alternate_location_indicator=="A")
+			if(!(record.name.empty() || record.name[0]!='H'))
 			{
-				if(record.label=="ATOM" || (include_heteroatoms && record.label=="HETATM"))
+				if(record.alternate_location_indicator.empty() || record.alternate_location_indicator=="A")
 				{
-					if(include_water || record.residue_name!="HOH")
+					if(record.label=="ATOM" || (include_heteroatoms && record.label=="HETATM"))
 					{
-						atoms.push_back(atom_from_PDB_atom_record(record, vdwr_assigner));
+						if(include_water || record.residue_name!="HOH")
+						{
+							atoms.push_back(atom_from_PDB_atom_record(record, vdwr_assigner));
+						}
 					}
 				}
 			}
