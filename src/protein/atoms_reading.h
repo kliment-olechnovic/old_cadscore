@@ -58,7 +58,12 @@ private:
 		for(std::size_t i=0;i<PDB_atom_records.size();i++)
 		{
 			const PDBParsing::AtomRecord& record=PDB_atom_records[i];
-			if(!(record.name.empty() || record.name[0]!='H'))
+			if(!record.name.empty() &&
+					record.name.find("H")!=0 &&
+					record.name.find("1H")!=0 &&
+					record.name.find("2H")!=0 &&
+					record.name.find("3H")!=0 &&
+					record.name.find("4H")!=0)
 			{
 				if(record.alternate_location_indicator.empty() || record.alternate_location_indicator=="A")
 				{
