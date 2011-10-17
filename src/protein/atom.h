@@ -2,6 +2,7 @@
 #define ATOM_H_
 
 #include <string>
+#include <iostream>
 
 namespace protein
 {
@@ -32,6 +33,34 @@ struct Atom
 				y==a.y &&
 				z==a.z &&
 				r==a.r));
+	}
+
+	friend std::ostream& operator<<(std::ostream &output, const Atom &atom)
+	{
+		output << atom.chain_id << " ";
+		output << atom.atom_number << " ";
+		output << atom.residue_number << " ";
+		output << atom.residue_name << " ";
+		output << atom.atom_name << " ";
+		output << atom.x << " ";
+		output << atom.y << " ";
+		output << atom.z << " ";
+		output << atom.r;
+		return output;
+	}
+
+	friend std::istream& operator>>(std::istream &input, Atom &atom)
+	{
+		input >> atom.chain_id;
+		input >> atom.atom_number;
+		input >> atom.residue_number;
+		input >> atom.residue_name;
+		input >> atom.atom_name;
+		input >> atom.x;
+		input >> atom.y;
+		input >> atom.z;
+		input >> atom.r;
+		return input;
 	}
 };
 
