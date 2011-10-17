@@ -19,7 +19,7 @@ std::map< std::pair<ResidueID, ResidueID>, std::map<std::string, double> > colle
 		const InterAtomContact& contact=contacts[i];
 		const Atom& a1=atoms[contact.a];
 		const Atom& a2=atoms[contact.b];
-		const std::vector<std::string> contact_classes=classify_atoms_contact<Atom, ResidueID>(a1, a2);
+		const std::vector<std::string> contact_classes=ContactClassification::classify_atoms_contact<Atom, ResidueID>(a1, a2);
 		if(!contact_classes.empty())
 		{
 			std::map<std::string, double>& map_by_classes=contacts_between_residues[std::make_pair(ResidueID::from_atom(a1), ResidueID::from_atom(a2))];
