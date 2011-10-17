@@ -3,19 +3,12 @@
 
 #include <sys/time.h>
 
-namespace monitor
+namespace auxiliaries
 {
 
 class BlockTimer
 {
 public:
-	static unsigned long get_tick_count()
-	{
-		timeval ts;
-		gettimeofday(&ts,0);
-		return ((unsigned long)(ts.tv_sec * 1000 + (ts.tv_usec / 1000)));
-	}
-
 	BlockTimer(const std::string& description) : description_(description), start_time_(get_tick_count())
 	{
 	}
@@ -23,6 +16,13 @@ public:
 	~BlockTimer()
 	{
 		std::clog << description_ << ": " << (get_tick_count()-start_time_) << "\n";
+	}
+
+	static unsigned long get_tick_count()
+	{
+		timeval ts;
+		gettimeofday(&ts,0);
+		return ((unsigned long)(ts.tv_sec * 1000 + (ts.tv_usec / 1000)));
 	}
 
 private:
