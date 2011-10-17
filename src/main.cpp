@@ -9,8 +9,8 @@
 
 int main()
 {
-	std::cin.exceptions(std::istream::failbit | std::istream::badbit);
-	std::cout.exceptions(std::ostream::failbit | std::ostream::badbit);
+	std::cin.exceptions(std::istream::badbit);
+	std::cout.exceptions(std::ostream::badbit);
 
 	try
 	{
