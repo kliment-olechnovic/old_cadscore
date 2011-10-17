@@ -5,7 +5,7 @@
 #include <set>
 #include <vector>
 
-namespace protein
+namespace contacto
 {
 
 inline std::set<std::string> construct_main_chain_atom_names_set()
