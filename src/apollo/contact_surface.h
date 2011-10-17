@@ -52,27 +52,6 @@ public:
 		return construct_surfaces<SurfaceAreaOutputFunctor>(spheres, graph, subdivision_depth, probe_radius);
 	}
 
-	template<typename BinaryContactAreaType>
-	static std::vector<BinaryContactAreaType> binary_contact_areas_from_surface_areas(const std::vector<SurfaceArea>& surface_areas)
-	{
-		std::vector<BinaryContactAreaType> binary_contact_areas;
-		std::size_t contacts_count=0;
-		for(std::size_t i=0;i<surface_areas.size();i++)
-		{
-			contacts_count+=surface_areas[i].size();
-		}
-		binary_contact_areas.reserve(contacts_count);
-		for(std::size_t i=0;i<surface_areas.size();i++)
-		{
-			const SurfaceArea& surface_area=surface_areas[i];
-			for(SurfaceArea::const_iterator it=surface_area.begin();it!=surface_area.end();it++)
-			{
-				binary_contact_areas.push_back(BinaryContactAreaType(i, it->first, it->second));
-			}
-		}
-		return binary_contact_areas;
-	}
-
 	template<typename SphereType>
 	static double check_surface_area(const SphereType& sphere, const double probe_radius, const SurfaceArea& surface_area)
 	{
