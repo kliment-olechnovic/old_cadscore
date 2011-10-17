@@ -2,6 +2,7 @@
 #define RESIDUE_ID_H_
 
 #include <string>
+#include <iostream>
 
 namespace protein
 {
@@ -33,6 +34,20 @@ struct ResidueID
 	bool operator< (const ResidueID& rid) const
 	{
 		return (chain_id<rid.chain_id || (chain_id==rid.chain_id && residue_number<rid.residue_number));
+	}
+
+	friend std::ostream& operator<<(std::ostream &output, const ResidueID &rid)
+	{
+		output << rid.chain_id << " ";
+		output << rid.residue_number;
+		return output;
+	}
+
+	friend std::istream& operator>>(std::istream &input, ResidueID &rid)
+	{
+		input >> rid.chain_id;
+		input >> rid.residue_number;
+		return input;
 	}
 };
 
