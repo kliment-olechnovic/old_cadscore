@@ -12,6 +12,10 @@ struct InterAtomContact
 	int b;
 	double area;
 
+	InterAtomContact() : a(0), b(0), area(0)
+	{
+	}
+
 	InterAtomContact(const int a, const int b, const double area) : a(a), b(b), area(area)
 	{
 	}
