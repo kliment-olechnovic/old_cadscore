@@ -12,6 +12,8 @@ std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > >
 
 	const std::set<std::size_t> hidden_spheres=hierarchy.find_all_hidden_spheres();
 
+	std::clog << hidden_spheres.size() << " hidden\n";
+
 	if(hidden_spheres.empty())
 	{
 		return std::make_pair(
@@ -31,7 +33,7 @@ std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > >
 			}
 		}
 
-		const Hierarchy refined_hierarchy(unrefined_protein_atoms, 1.4*3, 50);
+		const Hierarchy refined_hierarchy(refined_protein_atoms, 1.4*3, 50);
 
 		return std::make_pair(
 				refined_protein_atoms,
