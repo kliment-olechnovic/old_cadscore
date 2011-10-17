@@ -4,8 +4,13 @@
 #include <vector>
 #include <map>
 
+#include "contacto/inter_atom_contact.h"
 #include "protein/atom.h"
 #include "protein/residue_id.h"
+
+std::map< std::pair<protein::ResidueID, protein::ResidueID>, std::map<std::string, double> > collect_contacts_between_residues(
+		const std::vector<protein::Atom>& atoms,
+		const std::vector<contacto::InterAtomContact>& inter_atom_contacts);
 
 std::map< std::pair<protein::ResidueID, protein::ResidueID>, std::map<std::string, double> > collect_contacts_between_residues(
 		const std::vector<protein::Atom>& atoms,
