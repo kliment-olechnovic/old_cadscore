@@ -7,6 +7,8 @@
 #include "apollo/contact_surface.h"
 #include "monitor/BlockTimer.h"
 
+#include "contacto/contact_classification.h"
+
 int main()
 {
 	const std::vector<protein::Atom> unrefined_atoms=read_protein_atoms(false, false);
