@@ -71,7 +71,7 @@ public:
 		return quadruples_map;
 	}
 
-	static Graph construct_graph_from_quadruples(const QuadruplesMap& quadruples_map)
+	static Graph construct_graph_from_quadruples(const QuadruplesMap& quadruples_map, const std::size_t graph_size)
 	{
 		typedef std::tr1::unordered_map<std::size_t, std::tr1::unordered_set<std::size_t> > GraphMap;
 		GraphMap graph_map;
@@ -89,7 +89,7 @@ public:
 				}
 			}
 		}
-		Graph graph(graph_map.size());
+		Graph graph(std::max(graph_map.size(), graph_size));
 		for(GraphMap::const_iterator it=graph_map.begin();it!=graph_map.end();it++)
 		{
 			graph[it->first].insert(graph[it->first].end(), it->second.begin(), it->second.end());

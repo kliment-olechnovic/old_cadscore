@@ -16,7 +16,7 @@ std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > >
 	{
 		return std::make_pair(
 				unrefined_protein_atoms,
-				Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(hierarchy))
+				Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(hierarchy), unrefined_protein_atoms.size())
 		);
 	}
 	else
@@ -35,7 +35,7 @@ std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > >
 
 		return std::make_pair(
 				refined_protein_atoms,
-				Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(refined_hierarchy))
+				Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(refined_hierarchy), refined_protein_atoms.size())
 		);
 	}
 }
