@@ -8,96 +8,105 @@
 namespace contacto
 {
 
-inline std::set<std::string> construct_main_chain_atom_names_set()
+class ContactClassification
 {
-	std::set<std::string> names;
-
-	names.insert("C");
-	names.insert("CA");
-	names.insert("C0");
-	names.insert("N");
-	names.insert("O");
-	names.insert("OXT");
-
-	names.insert("0P3");
-	names.insert("O3P");
-	names.insert("P");
-	names.insert("OP1");
-	names.insert("O1P");
-	names.insert("OP2");
-	names.insert("O2P");
-	names.insert("O5'");
-	names.insert("O5*");
-	names.insert("C5'");
-	names.insert("C5*");
-	names.insert("C4'");
-	names.insert("C4*");
-	names.insert("04'");
-	names.insert("04*");
-	names.insert("C3'");
-	names.insert("C3*");
-	names.insert("03'");
-	names.insert("03*");
-	names.insert("C2'");
-	names.insert("C2*");
-	names.insert("O2'");
-	names.insert("O2*");
-	names.insert("C1'");
-	names.insert("C1*");
-
-	return names;
-}
-
-inline bool check_if_atom_belongs_to_main_chain_by_name(const std::string& name)
-{
-	static const std::set<std::string> names(construct_main_chain_atom_names_set());
-	return (names.find(name)!=names.end());
-}
-
-inline std::vector<std::string> classify_atom_by_name(const std::string& name)
-{
-	std::vector<std::string> classes;
-	classes.push_back(check_if_atom_belongs_to_main_chain_by_name(name) ? "M" : "S");
-	classes.push_back("A");
-	return classes;
-}
-
-inline std::vector<std::string> classify_atoms_contact_by_names(const std::string& a_name, const std::string& b_name)
-{
-	std::vector<std::string> classes;
-	const std::vector<std::string> a_classes=classify_atom_by_name(a_name);
-	const std::vector<std::string> b_classes=classify_atom_by_name(b_name);
-	for(std::size_t i=0;i<a_classes.size();i++)
+public:
+	template<typename AtomType, typename ResidueIDType>
+	static std::vector<std::string> classify_atoms_contact(const AtomType& a, const AtomType& b)
 	{
-		for(std::size_t j=0;j<b_classes.size();j++)
+		const bool same_object=(a==b);
+		const bool same_residue=same_object || ResidueIDType::from_atom(a)==ResidueIDType::from_atom(b);
+
+		if(same_object)
 		{
-			classes.push_back(a_classes[i]+b_classes[j]);
+			std::vector<std::string> atom_classes=classify_atom_by_name(a.atom_name);
+			for(std::size_t i=0;i<atom_classes.size();i++)
+			{
+				atom_classes[i]+="W";
+			}
+			return atom_classes;
 		}
-	}
-	return classes;
-}
-
-template<typename AtomType, typename ResidueIDType>
-std::vector<std::string> classify_atoms_contact(const AtomType& a, const AtomType& b)
-{
-	const bool same_object=(a==b);
-	const bool same_residue=same_object || ResidueIDType::from_atom(a)==ResidueIDType::from_atom(b);
-
-	if(same_object)
-	{
-		std::vector<std::string> atom_classes=classify_atom_by_name(a.atom_name);
-		for(std::size_t i=0;i<atom_classes.size();i++)
+		else if(!same_residue)
 		{
-			atom_classes[i]+="W";
+			return classify_atoms_contact_by_names(a.atom_name, b.atom_name);
 		}
-		return atom_classes;
+		return std::vector<std::string>();
 	}
-	else if(!same_residue)
+
+private:
+	ContactClassification()
 	{
-		return classify_atoms_contact_by_names(a.atom_name, b.atom_name);
 	}
-	return std::vector<std::string>();
-}
+
+	static std::set<std::string> construct_main_chain_atom_names_set()
+	{
+		std::set<std::string> names;
+
+		names.insert("C");
+		names.insert("CA");
+		names.insert("C0");
+		names.insert("N");
+		names.insert("O");
+		names.insert("OXT");
+
+		names.insert("0P3");
+		names.insert("O3P");
+		names.insert("P");
+		names.insert("OP1");
+		names.insert("O1P");
+		names.insert("OP2");
+		names.insert("O2P");
+		names.insert("O5'");
+		names.insert("O5*");
+		names.insert("C5'");
+		names.insert("C5*");
+		names.insert("C4'");
+		names.insert("C4*");
+		names.insert("04'");
+		names.insert("04*");
+		names.insert("C3'");
+		names.insert("C3*");
+		names.insert("03'");
+		names.insert("03*");
+		names.insert("C2'");
+		names.insert("C2*");
+		names.insert("O2'");
+		names.insert("O2*");
+		names.insert("C1'");
+		names.insert("C1*");
+
+		return names;
+	}
+
+	static bool check_if_atom_belongs_to_main_chain_by_name(const std::string& name)
+	{
+		static const std::set<std::string> names(construct_main_chain_atom_names_set());
+		return (names.find(name)!=names.end());
+	}
+
+	static std::vector<std::string> classify_atom_by_name(const std::string& name)
+	{
+		std::vector<std::string> classes;
+		classes.push_back(check_if_atom_belongs_to_main_chain_by_name(name) ? "M" : "S");
+		classes.push_back("A");
+		return classes;
+	}
+
+	static std::vector<std::string> classify_atoms_contact_by_names(const std::string& a_name, const std::string& b_name)
+	{
+		std::vector<std::string> classes;
+		const std::vector<std::string> a_classes=classify_atom_by_name(a_name);
+		const std::vector<std::string> b_classes=classify_atom_by_name(b_name);
+		for(std::size_t i=0;i<a_classes.size();i++)
+		{
+			for(std::size_t j=0;j<b_classes.size();j++)
+			{
+				classes.push_back(a_classes[i]+b_classes[j]);
+			}
+		}
+		return classes;
+	}
+};
 
 }
 
