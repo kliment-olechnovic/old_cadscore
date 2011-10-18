@@ -312,23 +312,26 @@ private:
 	{
 		const std::vector<Sphere>& spheres=hierarchy.spheres();
 		std::deque<Face> result;
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
-		const std::size_t a=0;
-		for(std::size_t b=a+1;b<traversal.size();b++)
+		if(!spheres.empty())
 		{
-			for(std::size_t c=b+1;c<traversal.size();c++)
+			const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
+			const std::size_t a=0;
+			for(std::size_t b=a+1;b<traversal.size();b++)
 			{
-				for(std::size_t d=c+1;d<traversal.size();d++)
+				for(std::size_t c=b+1;c<traversal.size();c++)
 				{
-					Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-					std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-					if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
+					for(std::size_t d=c+1;d<traversal.size();d++)
 					{
-						for(int i=0;i<4;i++)
+						Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
+						std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+						if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
 						{
-							result.push_back(Face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front()));
+							for(int i=0;i<4;i++)
+							{
+								result.push_back(Face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front()));
+							}
+							return result;
 						}
-						return result;
 					}
 				}
 			}
