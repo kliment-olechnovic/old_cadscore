@@ -1,7 +1,8 @@
-#ifndef BLOCKTIMER_H_
-#define BLOCKTIMER_H_
+#ifndef BLOCK_TIMER_H_
+#define BLOCK_TIMER_H_
 
 #include <sys/time.h>
+#include <string>
 
 namespace auxiliaries
 {
@@ -36,4 +37,4 @@ private:
 
 }
 
-#endif /* BLOCKTIMER_H_ */
+#endif /* BLOCK_TIMER_H_ */
