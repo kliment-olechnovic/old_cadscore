@@ -38,9 +38,11 @@ public:
 				d1_tangent_sphere_(d1_tangent_sphere),
 				tangent_planes_(construct_spheres_tangent_planes(*a_, *b_, *c_)),
 				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(*a_, *b_, *c_) : std::pair<const Sphere*, const Sphere*>(NULL, NULL)),
+				has_valid_tangency_information_(tangent_planes_.size()==2 || (tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)),
+				can_have_d2_(has_valid_tangency_information_),
 				free_tangent_plane_id_(select_free_tangent_plane_id(*a_, *b_, *c_, tangent_planes_, *d1_, d1_tangent_sphere_)),
 				centroid_(calculate_centroid(*a_, *b_, *c_)),
-				can_have_d3_(!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0)),
+				can_have_d3_(has_valid_tangency_information_ && (!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0))),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
 	{
@@ -59,23 +61,12 @@ public:
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
 
-		if(tangent_planes_.size()!=2)
+		if(!has_valid_tangency_information_)
 		{
-			if(!tangent_planes_.empty())
-			{
-				throw std::logic_error("Invalid tangent planes");
-			}
-			else
-			{
-				if(tangent_stick_.first==NULL || tangent_stick_.second==NULL)
-				{
-					std::clog << "LIST\n";
-					std::clog << "SPHERE " << a_->r << " " << a_->x << " " << a_->y << " " << a_->z << "\n";
-					std::clog << "SPHERE " << b_->r << " " << b_->x << " " << b_->y << " " << b_->z << "\n";
-					std::clog << "SPHERE " << c_->r << " " << c_->x << " " << c_->y << " " << c_->z << "\n";
-					throw std::logic_error("Invalid tangent stick");
-				}
-			}
+			std::clog << "Failed to aquire valid tangency information for the following 3 spheres:\n";
+			std::clog << "SPHERE " << a_->r << " " << a_->x << " " << a_->y << " " << a_->z << "\n";
+			std::clog << "SPHERE " << b_->r << " " << b_->x << " " << b_->y << " " << b_->z << "\n";
+			std::clog << "SPHERE " << c_->r << " " << c_->x << " " << c_->y << " " << c_->z << "\n";
 		}
 	}
 
@@ -92,6 +83,11 @@ public:
 	const SimpleSphere& d1_tangent_sphere() const
 	{
 		return d1_tangent_sphere_;
+	}
+
+	const bool can_have_d2() const
+	{
+		return can_have_d2_;
 	}
 
 	std::size_t d2_id() const
@@ -122,12 +118,12 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d2(const InputSphereType& x) const
 	{
-		return (free_tangent_plane_id_!=npos ? sphere_is_on_free_plane(x) : !sphere_is_inner(x));
+		return (can_have_d2_ && (free_tangent_plane_id_!=npos ? sphere_is_on_free_plane(x) : !sphere_is_inner(x)));
 	}
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
 	{
-		if(d2_id!=npos && !abc_ids_.contains(d2_id))
+		if(can_have_d2_ && d2_id!=npos && !abc_ids_.contains(d2_id))
 		{
 			const Sphere& d2=spheres_->at(d2_id);
 			if(sphere_may_contain_candidate_for_d2(d2) && !sphere_intersects_sphere(d1_tangent_sphere_, d2))
@@ -295,11 +291,7 @@ private:
 			const Sphere& d1,
 			const SimpleSphere& d1_tangent_sphere)
 	{
-		if(tangent_planes.empty())
-		{
-			return npos;
-		}
-		else
+		if(tangent_planes.size()==2)
 		{
 			const int h0=halfspace_of_sphere(tangent_planes[0].first, tangent_planes[0].second, d1);
 			const int h1=halfspace_of_sphere(tangent_planes[1].first, tangent_planes[1].second, d1);
@@ -335,6 +327,7 @@ private:
 				}
 			}
 		}
+		return npos;
 	}
 
 	static SimplePoint calculate_centroid(const Sphere& a, const Sphere& b, const Sphere& c)
@@ -351,7 +344,7 @@ private:
 	template<typename InputSphereType>
 	bool sphere_may_contain_inner_sphere(const InputSphereType& x) const
 	{
-		if(!tangent_planes_.empty())
+		if(tangent_planes_.size()==2)
 		{
 			for(std::size_t i=0;i<tangent_planes_.size();i++)
 			{
@@ -360,21 +353,27 @@ private:
 					return false;
 				}
 			}
+			return true;
 		}
-		else
+		else if(tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)
 		{
 			if(!stick_intersects_sphere(*tangent_stick_.first, *tangent_stick_.second, x))
 			{
 				return false;
 			}
+			return true;
 		}
-		return true;
+		else
+		{
+			throw std::logic_error("Missing face tangency information");
+			return false;
+		}
 	}
 
 	template<typename InputSphereType>
 	bool sphere_is_inner(const InputSphereType& x) const
 	{
-		if(!tangent_planes_.empty())
+		if(tangent_planes_.size()==2)
 		{
 			for(std::size_t i=0;i<tangent_planes_.size();i++)
 			{
@@ -385,9 +384,14 @@ private:
 			}
 			return true;
 		}
-		else
+		else if(tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)
 		{
 			return stick_contains_sphere(*tangent_stick_.first, *tangent_stick_.second, x);
+		}
+		else
+		{
+			throw std::logic_error("Missing face tangency information");
+			return false;
 		}
 	}
 
@@ -538,6 +542,8 @@ private:
 	SimpleSphere d1_tangent_sphere_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	std::pair<const Sphere*, const Sphere*> tangent_stick_;
+	bool has_valid_tangency_information_;
+	bool can_have_d2_;
 	std::size_t free_tangent_plane_id_;
 	SimplePoint centroid_;
 	bool can_have_d3_;
