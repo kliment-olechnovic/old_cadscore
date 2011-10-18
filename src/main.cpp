@@ -15,7 +15,7 @@ int main(const int argc, const char** argv)
 
 	try
 	{
-		auxiliaries::CommandLineOptions clo(argc, argv);
+		const auxiliaries::CommandLineOptions clo(argc, argv);
 		const std::string radius_classes_file_name=clo.arg<std::string>("-radius-classes");
 		const std::string radius_members_file_name=clo.arg<std::string>("-radius-members");
 		const std::size_t subdivision_depth=clo.arg<std::size_t>("-depth");
