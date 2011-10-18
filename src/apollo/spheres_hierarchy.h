@@ -170,21 +170,24 @@ private:
 	static std::vector<SimpleSphere> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
 	{
 		std::vector<SimpleSphere> centers;
-		std::vector<bool> allowed(spheres.size(), true);
-		const std::vector<std::size_t> global_traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<SphereType, SphereType>, spheres[0], std::tr1::placeholders::_1));
-		for(std::size_t k=0;k<spheres.size();k++)
+		if(!spheres.empty())
 		{
-			const std::size_t i=global_traversal[k];
-			if(allowed[i])
+			std::vector<bool> allowed(spheres.size(), true);
+			const std::vector<std::size_t> global_traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<SphereType, SphereType>, spheres[0], std::tr1::placeholders::_1));
+			for(std::size_t k=0;k<spheres.size();k++)
 			{
-				const SimpleSphere center=custom_sphere_from_object<SimpleSphere>(spheres[i]);
-				centers.push_back(center);
-				allowed[i]=false;
-				for(std::size_t j=0;j<spheres.size();j++)
+				const std::size_t i=global_traversal[k];
+				if(allowed[i])
 				{
-					if(maximal_distance_from_point_to_sphere(center, spheres[j])<r*2)
+					const SimpleSphere center=custom_sphere_from_object<SimpleSphere>(spheres[i]);
+					centers.push_back(center);
+					allowed[i]=false;
+					for(std::size_t j=0;j<spheres.size();j++)
 					{
-						allowed[j]=false;
+						if(maximal_distance_from_point_to_sphere(center, spheres[j])<r*2)
+						{
+							allowed[j]=false;
+						}
 					}
 				}
 			}
