@@ -67,7 +67,7 @@ public:
 		if(!(value>=min_value && value<=max_value))
 		{
 			std::ostringstream output;
-			output << "Command line argument '" << name << "' should is not in the allowed range [" << min_value << ", " << max_value << "]";
+			output << "Command line argument '" << name << "' is not in the allowed range [" << min_value << ", " << max_value << "]";
 			throw std::invalid_argument(output.str());
 		}
 		return value;
