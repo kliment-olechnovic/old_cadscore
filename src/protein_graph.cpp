@@ -34,7 +34,7 @@ std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > >
 
 	if(hidden_spheres.empty())
 	{
-		std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(hierarchy), unrefined_protein_atoms.size());
+		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(hierarchy), unrefined_protein_atoms.size());
 		report_atoms_without_neighbours(unrefined_protein_atoms, graph);
 		return std::make_pair(unrefined_protein_atoms, graph);
 	}
@@ -51,7 +51,7 @@ std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > >
 		}
 
 		const Hierarchy refined_hierarchy(refined_protein_atoms, 1.4*3, 50);
-		std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(refined_hierarchy), refined_protein_atoms.size());
+		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(refined_hierarchy), refined_protein_atoms.size());
 		report_atoms_without_neighbours(refined_protein_atoms, graph);
 		return std::make_pair(refined_protein_atoms, graph);
 	}
