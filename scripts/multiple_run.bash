@@ -5,8 +5,6 @@ OUTPUT_PREFIX=$2
 
 for f in `find $INPUT_PATH -name "*" -type f`
 do
-  echo "Processing $f"
-  time ./single_run.bash $f $OUTPUT_PREFIX
-  echo ""
-  echo ""
+# echo "Processing $f"
+  ./single_run.bash $f $OUTPUT_PREFIX
 done
