@@ -1,6 +1,6 @@
 #include "protein_input.h"
 #include "protein_graph.h"
-#include "protein_contacts.h"
+#include "protein_inter_atom_contacts.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/vector_io.h"
