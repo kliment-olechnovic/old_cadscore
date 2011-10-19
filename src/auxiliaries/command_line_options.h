@@ -5,6 +5,7 @@
 #include <map>
 #include <sstream>
 #include <stdexcept>
+#include <limits>
 
 namespace auxiliaries
 {
@@ -17,14 +18,14 @@ public:
 		for(int i=1;i<argc;i++)
 		{
 			const std::string str(argv[i]);
-			if(str.find("-")==0)
+			if(str.find("--")==0)
 			{
 				options_[str]="";
 			}
 			else if(i>0)
 			{
 				const std::string prev_str(argv[i-1]);
-				if(prev_str.find("-")==0)
+				if(prev_str.find("--")==0)
 				{
 					options_[prev_str]=str;
 				}
@@ -55,6 +56,19 @@ public:
 		if(input.fail())
 		{
 			throw std::invalid_argument(std::string("Invalid command line argument: ")+name);
+		}
+		return value;
+	}
+
+	template<typename T>
+	T arg(const std::string& name, const T min_value, const T max_value=std::numeric_limits<T>::max()) const
+	{
+		const T value=arg<T>(name);
+		if(!(value>=min_value && value<=max_value))
+		{
+			std::ostringstream output;
+			output << "Command line argument '" << name << "' should is not in the allowed range [" << min_value << ", " << max_value << "]";
+			throw std::invalid_argument(output.str());
 		}
 		return value;
 	}
