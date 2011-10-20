@@ -102,7 +102,7 @@ private:
 		std::vector<typename OutputFunctor::ResultType> surfaces;
 		SubdividedIcosahedron sih(subdivision_depth);
 		surfaces.reserve(graph.size());
-		for(std::size_t i=0;i<graph.size();i++)
+		for(std::size_t i=0;i<spheres.size();i++)
 		{
 			sih.fit_into_sphere(spheres[i], spheres[i].r+probe_radius);
 			OutputFunctor output_functor;
