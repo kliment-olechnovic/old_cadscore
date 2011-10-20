@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <deque>
+#include <iostream>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
 #include <tr1/functional>
@@ -67,6 +68,8 @@ public:
 				}
 			}
 		}
+
+		std::clog << hierarchy.spheres().size() << " atoms processed, " << quadruples_map.size() << " quadruples found\n";
 
 		return quadruples_map;
 	}
