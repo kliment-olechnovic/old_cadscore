@@ -20,6 +20,11 @@ struct InterResidueContactID
 	{
 	}
 
+	bool operator==(const InterResidueContactID& irc) const
+	{
+		return (a==irc.a && b==irc.b);
+	}
+
 	bool operator<(const InterResidueContactID& irc) const
 	{
 		return (a<irc.a || (a==irc.a && b<irc.b));
