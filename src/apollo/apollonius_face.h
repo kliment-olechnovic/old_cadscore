@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <stdexcept>
+#include <iostream>
 
 #include "tuples.h"
 #include "points_basic_operations.h"
