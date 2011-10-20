@@ -45,7 +45,7 @@ std::map< Key, std::pair<Value1, Value2> > combine_two_maps(const std::map<Key, 
 	typename CombinedMap::iterator prev=combined_map.begin();
 	while(it_1!=map_1.end() || it_2!=map_2.end())
 	{
-		if(it_1!=map_1.end() && it_1!=map_2.end() && it_1->first==it_2->first)
+		if(it_1!=map_1.end() && it_2!=map_2.end() && it_1->first==it_2->first)
 		{
 			prev=combined_map.insert(prev, std::make_pair(it_1->first, std::make_pair(it_1->second, it_2->second)));
 			++it_1;
