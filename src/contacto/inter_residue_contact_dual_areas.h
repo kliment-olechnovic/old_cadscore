@@ -8,7 +8,6 @@
 namespace contacto
 {
 
-template<typename ResidueIDType>
 struct InterResidueContactDualAreas
 {
 	typedef std::map<std::string, std::pair<double, double> > AreasMap;
