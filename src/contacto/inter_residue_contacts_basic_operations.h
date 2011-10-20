@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <stdexcept>
 
 #include "inter_atom_contact.h"
 #include "contact_classification.h"
@@ -60,6 +61,10 @@ std::map< Key, std::pair<Value1, Value2> > combine_two_maps(const std::map<Key, 
 		{
 			prev=combined_map.insert(prev, std::make_pair(it_2->first, std::make_pair(Value1(), it_2->second)));
 			++it_2;
+		}
+		else
+		{
+			throw std::logic_error("Two maps iteration error");
 		}
 	}
 	return combined_map;
