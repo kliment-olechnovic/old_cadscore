@@ -1,5 +1,5 @@
-#ifndef INTER_RESIDUE_CONTACT_ID_H_
-#define INTER_RESIDUE_CONTACT_ID_H_
+#ifndef CONTACTO_INTER_RESIDUE_CONTACT_ID_H_
+#define CONTACTO_INTER_RESIDUE_CONTACT_ID_H_
 
 namespace contacto
 {
@@ -46,4 +46,4 @@ struct InterResidueContactID
 
 }
 
-#endif /* INTER_RESIDUE_CONTACT_ID_H_ */
+#endif /* CONTACTO_INTER_RESIDUE_CONTACT_ID_H_ */

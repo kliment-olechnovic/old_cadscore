@@ -1,5 +1,5 @@
-#ifndef RESIDUE_ID_H_
-#define RESIDUE_ID_H_
+#ifndef PROTEIN_RESIDUE_ID_H_
+#define PROTEIN_RESIDUE_ID_H_
 
 #include <string>
 #include <iostream>
@@ -53,4 +53,4 @@ struct ResidueID
 
 }
 
-#endif /* RESIDUE_ID_H_ */
+#endif /* PROTEIN_RESIDUE_ID_H_ */

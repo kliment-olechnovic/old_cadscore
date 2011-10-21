@@ -1,5 +1,5 @@
-#ifndef SPHERES_BASIC_OPERATIONS_H_
-#define SPHERES_BASIC_OPERATIONS_H_
+#ifndef APOLLO_SPHERES_BASIC_OPERATIONS_H_
+#define APOLLO_SPHERES_BASIC_OPERATIONS_H_
 
 #include "safe_comparison.h"
 #include "points_basic_operations.h"
@@ -117,4 +117,4 @@ struct SimpleSphere
 
 }
 
-#endif /* SPHERES_BASIC_OPERATIONS_H_ */
+#endif /* APOLLO_SPHERES_BASIC_OPERATIONS_H_ */

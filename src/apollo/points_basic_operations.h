@@ -1,5 +1,5 @@
-#ifndef POINTS_BASIC_OPERATIONS_H_
-#define POINTS_BASIC_OPERATIONS_H_
+#ifndef APOLLO_POINTS_BASIC_OPERATIONS_H_
+#define APOLLO_POINTS_BASIC_OPERATIONS_H_
 
 #include <cmath>
 
@@ -231,4 +231,4 @@ double triangle_area(const InputPointTypeA& a, const InputPointTypeB& b, const I
 
 }
 
-#endif /* POINTS_BASIC_OPERATIONS_H_ */
+#endif /* APOLLO_POINTS_BASIC_OPERATIONS_H_ */

@@ -1,5 +1,5 @@
-#ifndef PDBPARSING_H_
-#define PDBPARSING_H_
+#ifndef PROTEIN_PDBPARSING_H_
+#define PROTEIN_PDBPARSING_H_
 
 #include <string>
 #include <vector>
@@ -105,4 +105,4 @@ private:
 
 }
 
-#endif /* PDBPARSING_H_ */
+#endif /* PROTEIN_PDBPARSING_H_ */

@@ -1,5 +1,5 @@
-#ifndef ROTATION_H_
-#define ROTATION_H_
+#ifndef APOLLO_ROTATION_H_
+#define APOLLO_ROTATION_H_
 
 #include "points_basic_operations.h"
 #include "quaternion.h"
@@ -67,4 +67,4 @@ struct Rotation
 }
 
 
-#endif /* ROTATION_H_ */
+#endif /* APOLLO_ROTATION_H_ */

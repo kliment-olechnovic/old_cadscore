@@ -1,5 +1,5 @@
-#ifndef SPHERES_TANGENT_H_
-#define SPHERES_TANGENT_H_
+#ifndef APOLLO_SPHERES_TANGENT_H_
+#define APOLLO_SPHERES_TANGENT_H_
 
 #include <vector>
 
@@ -104,4 +104,4 @@ inline std::vector<OutputSphereType> construct_spheres_tangent(const InputSphere
 
 }
 
-#endif /* SPHERES_TANGENT_H_ */
+#endif /* APOLLO_SPHERES_TANGENT_H_ */

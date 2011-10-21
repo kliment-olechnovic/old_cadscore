@@ -1,5 +1,5 @@
-#ifndef FILE_HEADER_H_
-#define FILE_HEADER_H_
+#ifndef AUXILIARIES_FILE_HEADER_H_
+#define AUXILIARIES_FILE_HEADER_H_
 
 #include <string>
 #include <iostream>
@@ -25,4 +25,4 @@ inline void assert_file_header(const std::string& header)
 
 }
 
-#endif /* FILE_HEADER_H_ */
+#endif /* AUXILIARIES_FILE_HEADER_H_ */

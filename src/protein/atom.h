@@ -1,5 +1,5 @@
-#ifndef ATOM_H_
-#define ATOM_H_
+#ifndef PROTEIN_ATOM_H_
+#define PROTEIN_ATOM_H_
 
 #include <string>
 #include <iostream>
@@ -66,4 +66,4 @@ struct Atom
 
 }
 
-#endif /* ATOM_H_ */
+#endif /* PROTEIN_ATOM_H_ */

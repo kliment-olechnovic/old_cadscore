@@ -1,5 +1,5 @@
-#ifndef SPHERES_TANGENT_STICK_H_
-#define SPHERES_TANGENT_STICK_H_
+#ifndef APOLLO_SPHERES_TANGENT_STICK_H_
+#define APOLLO_SPHERES_TANGENT_STICK_H_
 
 #include <utility>
 
@@ -139,4 +139,4 @@ std::pair<const InputSphereType*, const InputSphereType*> select_tangent_stick(c
 
 }
 
-#endif /* SPHERES_TANGENT_STICK_H_ */
+#endif /* APOLLO_SPHERES_TANGENT_STICK_H_ */

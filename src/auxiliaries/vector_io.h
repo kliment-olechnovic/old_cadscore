@@ -1,5 +1,5 @@
-#ifndef VECTOR_IO_H_
-#define VECTOR_IO_H_
+#ifndef AUXILIARIES_VECTOR_IO_H_
+#define AUXILIARIES_VECTOR_IO_H_
 
 #include <vector>
 #include <iostream>
@@ -39,4 +39,4 @@ std::vector<T> read_vector()
 
 }
 
-#endif /* VECTOR_IO_H_ */
+#endif /* AUXILIARIES_VECTOR_IO_H_ */

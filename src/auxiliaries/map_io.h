@@ -1,5 +1,5 @@
-#ifndef MAP_IO_H_
-#define MAP_IO_H_
+#ifndef AUXILIARIES_MAP_IO_H_
+#define AUXILIARIES_MAP_IO_H_
 
 #include <map>
 #include <iostream>
@@ -40,4 +40,4 @@ std::map<A, B> read_map()
 
 }
 
-#endif /* MAP_IO_H_ */
+#endif /* AUXILIARIES_MAP_IO_H_ */

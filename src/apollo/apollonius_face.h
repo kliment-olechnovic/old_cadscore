@@ -1,5 +1,5 @@
-#ifndef APOLLONIUS_FACE_H_
-#define APOLLONIUS_FACE_H_
+#ifndef APOLLO_APOLLONIUS_FACE_H_
+#define APOLLO_APOLLONIUS_FACE_H_
 
 #include <vector>
 #include <map>
@@ -556,4 +556,4 @@ private:
 
 }
 
-#endif /* APOLLONIUS_FACE_H_ */
+#endif /* APOLLO_APOLLONIUS_FACE_H_ */

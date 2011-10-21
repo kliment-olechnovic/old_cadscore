@@ -1,5 +1,5 @@
-#ifndef SUBDIVIDED_ICOSAHEDRON_H_
-#define SUBDIVIDED_ICOSAHEDRON_H_
+#ifndef APOLLO_SUBDIVIDED_ICOSAHEDRON_H_
+#define APOLLO_SUBDIVIDED_ICOSAHEDRON_H_
 
 #include <cmath>
 #include <tr1/unordered_map>
@@ -129,4 +129,4 @@ private:
 
 }
 
-#endif /* SUBDIVIDED_ICOSAHEDRON_H_ */
+#endif /* APOLLO_SUBDIVIDED_ICOSAHEDRON_H_ */

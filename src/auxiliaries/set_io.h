@@ -1,5 +1,5 @@
-#ifndef SET_IO_H_
-#define SET_IO_H_
+#ifndef AUXILIARIES_SET_IO_H_
+#define AUXILIARIES_SET_IO_H_
 
 #include <set>
 #include <iostream>
@@ -38,4 +38,4 @@ std::set<T> read_set()
 
 }
 
-#endif /* SET_IO_H_ */
+#endif /* AUXILIARIES_SET_IO_H_ */
