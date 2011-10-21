@@ -3,10 +3,11 @@
 
 #include "auxiliaries/command_line_options.h"
 
+void main_collect_atoms(const auxiliaries::CommandLineOptions& clo);
+void main_collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void main_construct_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 void main_construct_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
 void main_combine_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
-void main_collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -16,21 +17,25 @@ int main(const int argc, const char** argv)
 	try
 	{
 		const auxiliaries::CommandLineOptions clo(argc, argv);
-		if(clo.arg<std::string>("--mode")=="ciac")
+		if(clo.arg<std::string>("--mode")=="collect-atoms")
+		{
+			main_collect_atoms(clo);
+		}
+		else if(clo.arg<std::string>("--mode")=="collect-residue-ids")
+		{
+			main_collect_residue_ids(clo);
+		}
+		else if(clo.arg<std::string>("--mode")=="construct-inter-atom-contacts")
 		{
 			main_construct_inter_atom_contacts(clo);
 		}
-		else if(clo.arg<std::string>("--mode")=="circ")
+		else if(clo.arg<std::string>("--mode")=="construct-inter-residue-contacts")
 		{
 			main_construct_inter_residue_contacts(clo);
 		}
-		else if(clo.arg<std::string>("--mode")=="cmirc")
+		else if(clo.arg<std::string>("--mode")=="combine-inter-residue-contacts")
 		{
 			main_combine_inter_residue_contacts(clo);
-		}
-		else if(clo.arg<std::string>("--mode")=="cris")
-		{
-			main_collect_residue_ids(clo);
 		}
 		else
 		{
