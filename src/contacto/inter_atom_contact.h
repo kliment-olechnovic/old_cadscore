@@ -1,5 +1,5 @@
-#ifndef INTER_ATOM_CONTACT_H_
-#define INTER_ATOM_CONTACT_H_
+#ifndef CONTACTO_INTER_ATOM_CONTACT_H_
+#define CONTACTO_INTER_ATOM_CONTACT_H_
 
 #include <iostream>
 
@@ -39,4 +39,4 @@ struct InterAtomContact
 
 }
 
-#endif /* INTER_ATOM_CONTACT_H_ */
+#endif /* CONTACTO_INTER_ATOM_CONTACT_H_ */

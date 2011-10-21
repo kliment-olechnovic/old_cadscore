@@ -1,5 +1,5 @@
-#ifndef SPHERES_TANGENT_PLANE_H_
-#define SPHERES_TANGENT_PLANE_H_
+#ifndef APOLLO_SPHERES_TANGENT_PLANE_H_
+#define APOLLO_SPHERES_TANGENT_PLANE_H_
 
 #include <vector>
 #include <algorithm>
@@ -101,4 +101,4 @@ inline std::vector< std::pair<SimplePoint, SimplePoint> > construct_spheres_tang
 
 }
 
-#endif /* SPHERES_TANGENT_PLANE_H_ */
+#endif /* APOLLO_SPHERES_TANGENT_PLANE_H_ */

@@ -1,5 +1,5 @@
-#ifndef CONTACT_SURFACE_H_
-#define CONTACT_SURFACE_H_
+#ifndef APOLLO_CONTACT_SURFACE_H_
+#define APOLLO_CONTACT_SURFACE_H_
 
 #include <vector>
 #include <set>
@@ -214,4 +214,4 @@ private:
 
 }
 
-#endif /* CONTACT_SURFACE_H_ */
+#endif /* APOLLO_CONTACT_SURFACE_H_ */

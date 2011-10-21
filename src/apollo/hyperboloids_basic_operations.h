@@ -1,5 +1,5 @@
-#ifndef HYPERBOLOIDS_BASIC_OPERATIONS_H_
-#define HYPERBOLOIDS_BASIC_OPERATIONS_H_
+#ifndef APOLLO_HYPERBOLOIDS_BASIC_OPERATIONS_H_
+#define APOLLO_HYPERBOLOIDS_BASIC_OPERATIONS_H_
 
 #include <cmath>
 #include <vector>
@@ -142,4 +142,4 @@ std::vector<SimplePoint> intersect_triangle_with_hyperboloid(const SimplePoint& 
 
 }
 
-#endif /* HYPERBOLOIDS_BASIC_OPERATIONS_H_ */
+#endif /* APOLLO_HYPERBOLOIDS_BASIC_OPERATIONS_H_ */

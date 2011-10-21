@@ -1,5 +1,5 @@
-#ifndef ATOMS_H_
-#define ATOMS_H_
+#ifndef PROTEIN_ATOMS_H_
+#define PROTEIN_ATOMS_H_
 
 #include <string>
 #include <vector>
@@ -83,4 +83,4 @@ private:
 
 }
 
-#endif /* ATOMS_H_ */
+#endif /* PROTEIN_ATOMS_H_ */

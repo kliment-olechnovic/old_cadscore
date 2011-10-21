@@ -1,5 +1,5 @@
-#ifndef SAFE_COMPARISON_H_
-#define SAFE_COMPARISON_H_
+#ifndef APOLLO_SAFE_COMPARISON_H_
+#define APOLLO_SAFE_COMPARISON_H_
 
 namespace apollo
 {
@@ -36,4 +36,4 @@ inline bool greater_or_equal(const double a, const double b)
 
 }
 
-#endif /* SAFE_COMPARISON_H_ */
+#endif /* APOLLO_SAFE_COMPARISON_H_ */

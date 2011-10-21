@@ -1,5 +1,5 @@
-#ifndef BLOCK_TIMER_H_
-#define BLOCK_TIMER_H_
+#ifndef AUXILIARIES_BLOCK_TIMER_H_
+#define AUXILIARIES_BLOCK_TIMER_H_
 
 #include <sys/time.h>
 #include <string>
@@ -37,4 +37,4 @@ private:
 
 }
 
-#endif /* BLOCK_TIMER_H_ */
+#endif /* AUXILIARIES_BLOCK_TIMER_H_ */

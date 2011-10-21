@@ -1,5 +1,5 @@
-#ifndef SPHERES_HIERARCHY_H_
-#define SPHERES_HIERARCHY_H_
+#ifndef APOLLO_SPHERES_HIERARCHY_H_
+#define APOLLO_SPHERES_HIERARCHY_H_
 
 #include <vector>
 #include <deque>
@@ -275,4 +275,4 @@ private:
 
 }
 
-#endif /* SPHERES_HIERARCHY_H_ */
+#endif /* APOLLO_SPHERES_HIERARCHY_H_ */

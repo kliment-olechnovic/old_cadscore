@@ -1,5 +1,5 @@
-#ifndef QUATERNION_H_
-#define QUATERNION_H_
+#ifndef APOLLO_QUATERNION_H_
+#define APOLLO_QUATERNION_H_
 
 #include "points_basic_operations.h"
 
@@ -50,4 +50,4 @@ struct Quaternion
 
 }
 
-#endif /* QUATERNION_H_ */
+#endif /* APOLLO_QUATERNION_H_ */

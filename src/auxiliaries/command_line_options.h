@@ -1,5 +1,5 @@
-#ifndef COMMAND_LINE_OPTIONS_H_
-#define COMMAND_LINE_OPTIONS_H_
+#ifndef AUXILIARIES_COMMAND_LINE_OPTIONS_H_
+#define AUXILIARIES_COMMAND_LINE_OPTIONS_H_
 
 #include <string>
 #include <map>
@@ -79,4 +79,4 @@ private:
 
 }
 
-#endif /* COMMAND_LINE_OPTIONS_H_ */
+#endif /* AUXILIARIES_COMMAND_LINE_OPTIONS_H_ */

@@ -1,5 +1,5 @@
-#ifndef UTILITIES_H_
-#define UTILITIES_H_
+#ifndef APOLLO_UTILITIES_H_
+#define APOLLO_UTILITIES_H_
 
 #include <vector>
 #include <algorithm>
@@ -58,4 +58,4 @@ std::pair< std::vector<typename T::value_type::first_type>, std::vector<typename
 
 }
 
-#endif /* UTILITIES_H_ */
+#endif /* APOLLO_UTILITIES_H_ */

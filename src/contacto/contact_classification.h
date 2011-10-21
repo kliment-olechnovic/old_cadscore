@@ -1,5 +1,5 @@
-#ifndef CONTACT_CLASSIFICATION_H_
-#define CONTACT_CLASSIFICATION_H_
+#ifndef CONTACTO_CONTACT_CLASSIFICATION_H_
+#define CONTACTO_CONTACT_CLASSIFICATION_H_
 
 #include <string>
 #include <set>
@@ -110,4 +110,4 @@ private:
 
 }
 
-#endif /* CONTACT_CLASSIFICATION_H_ */
+#endif /* CONTACTO_CONTACT_CLASSIFICATION_H_ */

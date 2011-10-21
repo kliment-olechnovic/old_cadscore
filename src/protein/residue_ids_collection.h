@@ -1,5 +1,5 @@
-#ifndef RESIDUE_IDS_COLLECTION_H_
-#define RESIDUE_IDS_COLLECTION_H_
+#ifndef PROTEIN_RESIDUE_IDS_COLLECTION_H_
+#define PROTEIN_RESIDUE_IDS_COLLECTION_H_
 
 #include <vector>
 #include <set>
@@ -23,4 +23,4 @@ std::set<ResidueID> collect_residue_ids_from_atoms(const std::vector<AtomType>& 
 
 }
 
-#endif /* RESIDUE_IDS_COLLECTION_H_ */
+#endif /* PROTEIN_RESIDUE_IDS_COLLECTION_H_ */

@@ -1,5 +1,5 @@
-#ifndef INTER_RESIDUE_CONTACT_AREAS_H_
-#define INTER_RESIDUE_CONTACT_AREAS_H_
+#ifndef CONTACTO_INTER_RESIDUE_CONTACT_AREAS_H_
+#define CONTACTO_INTER_RESIDUE_CONTACT_AREAS_H_
 
 #include <map>
 #include <string>
@@ -53,4 +53,4 @@ struct InterResidueContactAreas
 
 }
 
-#endif /* INTER_RESIDUE_CONTACT_AREAS_H_ */
+#endif /* CONTACTO_INTER_RESIDUE_CONTACT_AREAS_H_ */
