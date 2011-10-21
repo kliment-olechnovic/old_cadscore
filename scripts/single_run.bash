@@ -8,13 +8,17 @@ LOG_OUTPUT_PREFIX=$3
 LOG_OUTPUT_FILE=$LOG_OUTPUT_PREFIX"/log_"$INPUT_FILE_BASE
 
 timeout 10s \
-./voroprot2 \
---mode ciac \
+cat $INPUT_FILE \
+| \
+./voroprot \
+--mode collect-atoms \
 --radius-classes ./resources/vdwr_classes.txt \
 --radius-members ./resources/vdwr_members.txt \
+| \
+./voroprot \
+--mode construct-inter-atom-contacts \
 --depth 3 \
 --probe 1.4 \
-< $INPUT_FILE \
 1> $CONTACTS_OUTPUT_FILE \
 2> $LOG_OUTPUT_FILE
 
