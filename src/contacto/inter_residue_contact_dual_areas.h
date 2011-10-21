@@ -18,6 +18,12 @@ struct InterResidueContactDualAreas
 	{
 	}
 
+	std::pair<double, double> area(const std::string& area_class) const
+	{
+		AreasMap::const_iterator it=areas.find(area_class);
+		return (it!=areas.end() ? it->second : std::make_pair(0.0, 0.0));
+	}
+
 	friend std::ostream& operator<<(std::ostream& output, const InterResidueContactDualAreas& contact)
 	{
 		output << contact.areas.size() << "\n";
