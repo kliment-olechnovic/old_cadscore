@@ -25,7 +25,6 @@ std::map<A, B> read_map()
 	std::map<A, B> map;
 	if(n>0)
 	{
-		std::map<A, B> map;
 		typename std::map<A, B>::iterator prev=map.begin();
 		for(std::size_t i=0;i<n;i++)
 		{
