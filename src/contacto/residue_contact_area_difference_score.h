@@ -10,7 +10,31 @@ namespace contacto
 
 struct ResidueContactAreaDifferenceScore
 {
-	typedef std::map<std::string, std::pair<double, double> > RatiosMap;
+	struct Ratio
+	{
+		double difference;
+		double reference;
+
+		Ratio() : difference(0), reference(0)
+		{
+		}
+
+		friend std::ostream& operator<<(std::ostream &output, const Ratio &ratio)
+		{
+			output << ratio.difference << " ";
+			output << ratio.reference;
+			return output;
+		}
+
+		friend std::istream& operator>>(std::istream &input, Ratio &ratio)
+		{
+			input >> ratio.difference;
+			input >> ratio.reference;
+			return input;
+		}
+	};
+
+	typedef std::map<std::string, Ratio> RatiosMap;
 
 	RatiosMap ratios;
 
@@ -29,7 +53,7 @@ struct ResidueContactAreaDifferenceScore
 		output << contact.areas.size() << "\n";
 		for(RatiosMap::const_iterator it=contact.areas.begin();it!=contact.areas.end();++it)
 		{
-			output << it->first << " " << it->second.first << " " << it->second.second << "\n";
+			output << it->first << " " << it->second << "\n";
 		}
 		return output;
 	}
@@ -43,11 +67,9 @@ struct ResidueContactAreaDifferenceScore
 		{
 			std::string key;
 			input >> key;
-			double value1=0;
-			input >> value1;
-			double value2=0;
-			input >> value2;
-			contact.areas[key]=std::make_pair(value1, value2);
+			Ratio value;
+			input >> value;
+			contact.areas[key]=value;
 		}
 		return input;
 	}
