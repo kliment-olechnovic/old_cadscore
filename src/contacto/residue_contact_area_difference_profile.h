@@ -2,6 +2,7 @@
 #define CONTACTO_RESIDUE_CONTACT_AREA_DIFFERENCE_PROFILE_H_
 
 #include <map>
+#include <set>
 
 #include "inter_residue_contact_id.h"
 #include "inter_residue_contact_dual_areas.h"
