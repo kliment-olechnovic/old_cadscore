@@ -7,7 +7,6 @@ CONTACTS_OUTPUT_FILE=$CONTACTS_OUTPUT_PREFIX"/contacts_"$INPUT_FILE_BASE
 LOG_OUTPUT_PREFIX=$3
 LOG_OUTPUT_FILE=$LOG_OUTPUT_PREFIX"/log_"$INPUT_FILE_BASE
 
-timeout 10s \
 cat $INPUT_FILE \
 | \
 ./voroprot \
@@ -15,7 +14,7 @@ cat $INPUT_FILE \
 --radius-classes ./resources/vdwr_classes.txt \
 --radius-members ./resources/vdwr_members.txt \
 | \
-./voroprot \
+timeout 10s ./voroprot \
 --mode construct-inter-atom-contacts \
 --depth 3 \
 --probe 1.4 \
