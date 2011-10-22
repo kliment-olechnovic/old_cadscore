@@ -8,6 +8,7 @@ void main_collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void main_construct_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 void main_construct_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
 void main_combine_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
+void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -36,6 +37,10 @@ int main(const int argc, const char** argv)
 		else if(clo.arg<std::string>("--mode")=="combine-inter-residue-contacts")
 		{
 			main_combine_inter_residue_contacts(clo);
+		}
+		else if(clo.arg<std::string>("--mode")=="calculate-contact-area-difference-profile")
+		{
+			main_calculate_contact_area_difference_profile(clo);
 		}
 		else
 		{

@@ -42,25 +42,25 @@ struct ResidueContactAreaDifferenceScore
 	{
 	}
 
-	std::pair<double, double> ratio(const std::string& area_class) const
+	Ratio ratio(const std::string& area_class) const
 	{
 		RatiosMap::const_iterator it=ratios.find(area_class);
-		return (it!=ratios.end() ? it->second : std::make_pair(0.0, 0.0));
+		return (it!=ratios.end() ? it->second : Ratio());
 	}
 
-	friend std::ostream& operator<<(std::ostream& output, const InterResidueContactDualAreas& contact)
+	friend std::ostream& operator<<(std::ostream& output, const ResidueContactAreaDifferenceScore& score)
 	{
-		output << contact.areas.size() << "\n";
-		for(RatiosMap::const_iterator it=contact.areas.begin();it!=contact.areas.end();++it)
+		output << score.ratios.size() << "\n";
+		for(RatiosMap::const_iterator it=score.ratios.begin();it!=score.ratios.end();++it)
 		{
 			output << it->first << " " << it->second << "\n";
 		}
 		return output;
 	}
 
-	friend std::istream& operator>>(std::istream& input, InterResidueContactDualAreas& contact)
+	friend std::istream& operator>>(std::istream& input, ResidueContactAreaDifferenceScore& score)
 	{
-		contact.areas.clear();
+		score.ratios.clear();
 		std::size_t n=0;
 		input >> n;
 		for(std::size_t i=0;i<n;i++)
@@ -69,7 +69,7 @@ struct ResidueContactAreaDifferenceScore
 			input >> key;
 			Ratio value;
 			input >> value;
-			contact.areas[key]=value;
+			score.ratios[key]=value;
 		}
 		return input;
 	}
