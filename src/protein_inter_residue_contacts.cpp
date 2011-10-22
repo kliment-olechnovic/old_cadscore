@@ -16,7 +16,7 @@ std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterRe
 		const std::vector<protein::Atom>& atoms_2,
 		const std::vector<contacto::InterAtomContact>& inter_atom_contacts_2)
 {
-	return contacto::InterResidueContactsCombination::combine_two_inter_residue_contact_maps<protein::ResidueID>(
+	return contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
 			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1),
 			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2));
 }

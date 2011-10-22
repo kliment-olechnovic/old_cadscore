@@ -1,0 +1,58 @@
+#ifndef CONTACTO_RESIDUE_CONTACT_AREA_DIFFERENCE_SCORE_H_
+#define CONTACTO_RESIDUE_CONTACT_AREA_DIFFERENCE_SCORE_H_
+
+#include <map>
+#include <string>
+#include <iostream>
+
+namespace contacto
+{
+
+struct ResidueContactAreaDifferenceScore
+{
+	typedef std::map<std::string, std::pair<double, double> > RatiosMap;
+
+	RatiosMap ratios;
+
+	ResidueContactAreaDifferenceScore()
+	{
+	}
+
+	std::pair<double, double> ratio(const std::string& area_class) const
+	{
+		RatiosMap::const_iterator it=ratios.find(area_class);
+		return (it!=ratios.end() ? it->second : std::make_pair(0.0, 0.0));
+	}
+
+	friend std::ostream& operator<<(std::ostream& output, const InterResidueContactDualAreas& contact)
+	{
+		output << contact.areas.size() << "\n";
+		for(RatiosMap::const_iterator it=contact.areas.begin();it!=contact.areas.end();++it)
+		{
+			output << it->first << " " << it->second.first << " " << it->second.second << "\n";
+		}
+		return output;
+	}
+
+	friend std::istream& operator>>(std::istream& input, InterResidueContactDualAreas& contact)
+	{
+		contact.areas.clear();
+		std::size_t n=0;
+		input >> n;
+		for(std::size_t i=0;i<n;i++)
+		{
+			std::string key;
+			input >> key;
+			double value1=0;
+			input >> value1;
+			double value2=0;
+			input >> value2;
+			contact.areas[key]=std::make_pair(value1, value2);
+		}
+		return input;
+	}
+};
+
+}
+
+#endif /* CONTACTO_RESIDUE_CONTACT_AREA_DIFFERENCE_SCORE_H_ */
