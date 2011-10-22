@@ -2,7 +2,6 @@
 #define CONTACTO_INTER_RESIDUE_CONTACTS_COMBINATION_H_
 
 #include <map>
-#include <stdexcept>
 
 #include "inter_residue_contact_id.h"
 #include "inter_residue_contact_areas.h"

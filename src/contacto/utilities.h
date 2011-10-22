@@ -2,6 +2,7 @@
 #define CONTACTO_UTILITIES_H_
 
 #include <map>
+#include <stdexcept>
 
 namespace contacto
 {
