@@ -11,6 +11,12 @@
 namespace contacto
 {
 
+inline InterResidueContactDualAreas combine_two_contacts(const InterResidueContactAreas& contact_1, const InterResidueContactAreas& contact_2)
+{
+	InterResidueContactDualAreas combination;
+	combination.areas=combine_two_maps(contact_1.areas, contact_2.areas);
+	return combination;
+}
 
 template<typename ResidueID>
 std::map< InterResidueContactID<ResidueID>, InterResidueContactDualAreas > combine_two_inter_residue_contact_maps(const std::map< InterResidueContactID<ResidueID>, InterResidueContactAreas >& contact_map_1, const std::map< InterResidueContactID<ResidueID>, InterResidueContactAreas >& contact_map_2)
@@ -25,13 +31,6 @@ std::map< InterResidueContactID<ResidueID>, InterResidueContactDualAreas > combi
 		prev=result.insert(prev, std::make_pair(it->first, combine_two_contacts(it->second.first, it->second.second)));
 	}
 	return result;
-}
-
-InterResidueContactDualAreas combine_two_contacts(const InterResidueContactAreas& contact_1, const InterResidueContactAreas& contact_2)
-{
-	InterResidueContactDualAreas combination;
-	combination.areas=combine_two_maps(contact_1.areas, contact_2.areas);
-	return combination;
 }
 
 }
