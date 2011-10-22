@@ -65,6 +65,27 @@ public:
 		return (theoretical_surface_area-sum)/theoretical_surface_area;
 	}
 
+	template<typename InterSphereContact>
+	static std::vector<InterSphereContact> construct_inter_sphere_contacts_from_surface_areas(const std::vector<SurfaceArea>& surface_areas)
+	{
+		std::vector<InterSphereContact> inter_sphere_contacts;
+		std::size_t contacts_count=0;
+		for(std::size_t i=0;i<surface_areas.size();i++)
+		{
+			contacts_count+=surface_areas[i].size();
+		}
+		inter_sphere_contacts.reserve(contacts_count);
+		for(std::size_t i=0;i<surface_areas.size();i++)
+		{
+			const SurfaceArea& surface_area=surface_areas[i];
+			for(SurfaceArea::const_iterator it=surface_area.begin();it!=surface_area.end();it++)
+			{
+				inter_sphere_contacts.push_back(InterSphereContact(i, it->first, it->second));
+			}
+		}
+		return inter_sphere_contacts;
+	}
+
 private:
 	ContactSurface()
 	{
