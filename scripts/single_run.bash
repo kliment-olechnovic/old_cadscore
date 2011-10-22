@@ -14,7 +14,7 @@ cat $INPUT_FILE \
 --radius-classes ./resources/vdwr_classes.txt \
 --radius-members ./resources/vdwr_members.txt \
 | \
-timeout 10s ./voroprot \
+timeout 20s ./voroprot \
 --mode construct-inter-atom-contacts \
 --depth 3 \
 --probe 1.4 \
