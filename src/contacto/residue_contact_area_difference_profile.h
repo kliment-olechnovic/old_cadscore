@@ -29,9 +29,10 @@ std::map<ResidueID, ResidueContactAreaDifferenceScore> construct_residue_contact
 	for(typename std::map<InterResidueContactID<ResidueID>, InterResidueContactDualAreas>::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
 	{
 		const ResidueID& residue_id=it->first.a;
-		if(residue_ids.find(residue_id)!=residue_ids.end())
+		typename std::map<ResidueID, ResidueContactAreaDifferenceScore>::iterator profile_it=profile.find(residue_id);
+		if(profile_it!=profile.end())
 		{
-			ResidueContactAreaDifferenceScore& residue_score=profile[residue_id];
+			ResidueContactAreaDifferenceScore& residue_score=profile_it->second;
 			const InterResidueContactDualAreas::AreasMap& areas_map=it->second.areas;
 			for(InterResidueContactDualAreas::AreasMap::const_iterator jt=areas_map.begin();jt!=areas_map.end();++jt)
 			{
