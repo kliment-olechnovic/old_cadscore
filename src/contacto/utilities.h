@@ -2,6 +2,8 @@
 #define CONTACTO_UTILITIES_H_
 
 #include <map>
+#include <set>
+#include <algorithm>
 #include <stdexcept>
 
 namespace contacto
@@ -39,6 +41,33 @@ static std::map< Key, std::pair<Value1, Value2> > combine_two_maps(const std::ma
 		}
 	}
 	return combined_map;
+}
+
+template<typename T>
+static std::set<T> intersect_two_sets(const std::set<T>& set_1, const std::set<T>& set_2)
+{
+	std::set<T> result;
+	typename std::set<T>::const_iterator it_1=set_1.begin();
+	typename std::set<T>::const_iterator it_2=set_2.begin();
+	typename std::set<T>::iterator prev=result.begin();
+	while(it_1!=set_1.end() && it_2!=set_2.end())
+	{
+		if( (*it_1) < (*it_2) )
+		{
+			++it_1;
+		}
+		else if( (*it_2) < (*it_1) )
+		{
+			++it_2;
+		}
+		else
+		{
+			prev=result.insert(prev, (*it_1));
+			++it_1;
+			++it_2;
+		}
+	}
+	return result;
 }
 
 }

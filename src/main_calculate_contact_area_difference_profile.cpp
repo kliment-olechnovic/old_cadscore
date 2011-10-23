@@ -14,6 +14,8 @@
 
 void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo)
 {
+	const bool intersect_sequences=clo.isopt("--intersect-sequences");
+
 	auxiliaries::assert_file_header("atoms");
 	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>();
 
@@ -26,7 +28,7 @@ void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLi
 	auxiliaries::assert_file_header("contacts");
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>();
 
-	const std::set<protein::ResidueID> residue_ids_1=protein::collect_residue_ids_from_atoms(atoms_1);
+	const std::set<protein::ResidueID> residue_ids_1=intersect_sequences ? contacto::intersect_two_sets(protein::collect_residue_ids_from_atoms(atoms_1), protein::collect_residue_ids_from_atoms(atoms_2)) : protein::collect_residue_ids_from_atoms(atoms_1);
 
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
 			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1),
