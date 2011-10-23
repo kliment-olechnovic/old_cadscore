@@ -33,6 +33,21 @@ public:
 		return std::vector<std::string>();
 	}
 
+	static std::vector<std::string> get_all_classes_list()
+	{
+		std::vector<std::string> all_classes;
+		std::string c1[3]={"A", "M", "S"};
+		std::string c2[4]={"A", "M", "S", "W"};
+		for(int i=0;i<3;i++)
+		{
+			for(int j=0;j<4;j++)
+			{
+				all_classes.push_back(c1[i]+c2[j]);
+			}
+		}
+		return all_classes;
+	}
+
 private:
 	ContactClassification()
 	{
