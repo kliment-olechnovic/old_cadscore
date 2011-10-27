@@ -17,6 +17,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	const double radius=clo.arg<double>("--radius", 1);
 	const std::size_t low_count=clo.arg<double>("--low-count", 1);
 	const int as_points=clo.arg<int>("--as-points", 0, 1);
+	const int search_for_d3=clo.arg<int>("--search-for-d3", 0, 1);
 
 	auxiliaries::assert_file_header("atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
@@ -29,7 +30,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	}
 
 	const Hierarchy hierarchy(atoms, radius, low_count);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy);
+	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3>0);
 
 	auxiliaries::print_file_header("apollonius_quadruples");
 	std::cout << quadruples_map.size() << "\n";

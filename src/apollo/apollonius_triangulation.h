@@ -23,7 +23,7 @@ public:
 	typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> PairsNeighboursMap;
 	typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> TriplesNeighboursMap;
 
-	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy)
+	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy, bool enable_searching_for_d3)
 	{
 		QuadruplesMap quadruples_map;
 
@@ -48,7 +48,7 @@ public:
 				if(triples_map.find(face.abc_ids())->second==1)
 				{
 					const bool found_d2=face.can_have_d2() && find_valid_d2(hierarchy, face);
-					const bool found_d3=face.can_have_d3() && find_valid_d3(hierarchy, face);
+					const bool found_d3=enable_searching_for_d3 && face.can_have_d3() && find_valid_d3(hierarchy, face);
 					if(found_d2 || found_d3)
 					{
 						const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples();
