@@ -11,6 +11,7 @@ void main_combine_inter_residue_contacts(const auxiliaries::CommandLineOptions& 
 void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
 void main_calculate_contact_area_difference_global_score(const auxiliaries::CommandLineOptions& clo);
 void main_filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
+void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -52,6 +53,10 @@ int main(const int argc, const char** argv)
 		else if(mode=="filter-atoms-by-target")
 		{
 			main_filter_atoms_by_target(clo);
+		}
+		else if(mode=="construct-apollonius-quadrupalization")
+		{
+			main_construct_apollonius_quadrupalization(clo);
 		}
 		else
 		{
