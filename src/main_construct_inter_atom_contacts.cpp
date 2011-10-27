@@ -29,7 +29,7 @@ std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > co
 
 	if(hidden_spheres.empty())
 	{
-		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(hierarchy), unrefined_spheres.size());
+		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(hierarchy, true), unrefined_spheres.size());
 		return std::make_pair(unrefined_spheres, graph);
 	}
 	else
@@ -45,7 +45,7 @@ std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > co
 		}
 
 		const Hierarchy refined_hierarchy(refined_spheres, r, low_count);
-		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(refined_hierarchy), refined_spheres.size());
+		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(Apollo::find_quadruples(refined_hierarchy, true), refined_spheres.size());
 		return std::make_pair(refined_spheres, graph);
 	}
 }
