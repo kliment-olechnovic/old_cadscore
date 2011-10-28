@@ -10,13 +10,14 @@
 #include "auxiliaries/map_io.h"
 
 typedef std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> Profile;
+typedef std::map<protein::ResidueID, double> LocalScores;
 
 const double GAP_VALUE=-1;
 const double NO_VALUE=-2;
 
-std::map<protein::ResidueID, double> construct_local_scores_from_profile(const Profile& profile, const std::string& category)
+LocalScores construct_local_scores_from_profile(const Profile& profile, const std::string& category)
 {
-	std::map<protein::ResidueID, double> local_scores;
+	LocalScores local_scores;
 	for(Profile::const_iterator it=profile.begin();it!=profile.end();++it)
 	{
 		const protein::ResidueID& residue_id=it->first;
@@ -42,17 +43,62 @@ std::map<protein::ResidueID, double> construct_local_scores_from_profile(const P
 	return local_scores;
 }
 
+std::map<protein::ResidueID, double> blur_local_scores(const LocalScores& local_scores, const int window_size)
+{
+	if(window_size==0)
+	{
+		return local_scores;
+	}
+
+	LocalScores blured_scores;
+	LocalScores::iterator prev=blured_scores.begin();
+	for(LocalScores::const_iterator it=local_scores.begin();it!=local_scores.end();++it)
+	{
+		const protein::ResidueID& residue_id=it->first;
+		double sum=it->second;
+		int count=1;
+		LocalScores::const_iterator left=it;
+		LocalScores::const_iterator right=it;
+		for(int i=1;i<=window_size;i++)
+		{
+			if(left!=local_scores.begin())
+			{
+				left--;
+				const protein::ResidueID& left_residue_id=left->first;
+				if(residue_id.residue_number-left_residue_id.residue_number<=window_size && residue_id.chain_id==left_residue_id.chain_id)
+				{
+					sum+=left->second;
+					count++;
+				}
+			}
+			if(right!=local_scores.end())
+			{
+				right++;
+				const protein::ResidueID& right_residue_id=right->first;
+				if(right_residue_id.residue_number-residue_id.residue_number<=window_size && residue_id.chain_id==right_residue_id.chain_id)
+				{
+					sum+=right->second;
+					count++;
+				}
+			}
+		}
+		prev=blured_scores.insert(prev, std::make_pair(residue_id, (sum/count)));
+	}
+	return blured_scores;
+}
+
 void main_calculate_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo)
 {
-	const std::string category=clo.arg<std::string>("--category") ;
+	const std::string category=clo.arg<std::string>("--category");
+	const int window_size=clo.arg<int>("--window", 0, 1000);
 
 	auxiliaries::assert_file_header("cad_profile");
 	const Profile profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>();
 
-	const std::map<protein::ResidueID, double> local_scores=construct_local_scores_from_profile(profile, category);
+	const LocalScores local_scores=blur_local_scores(construct_local_scores_from_profile(profile, category), window_size);
 
 	auxiliaries::print_file_header("local_scores");
-	for(std::map<protein::ResidueID, double>::const_iterator it=local_scores.begin();it!=local_scores.end();++it)
+	for(LocalScores::const_iterator it=local_scores.begin();it!=local_scores.end();++it)
 	{
 		std::cout << it->first << " " << it->second << "\n";
 	}
