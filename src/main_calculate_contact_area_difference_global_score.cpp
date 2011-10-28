@@ -20,10 +20,10 @@ void main_calculate_contact_area_difference_global_score(const auxiliaries::Comm
 	const std::vector<std::string> all_classes=contacto::ContactClassification::get_all_classes_list();
 	for(std::size_t i=0;i<all_classes.size();i++)
 	{
-		if(!prefix.empty())
-		{
-			std::cout << prefix << "_";
-		}
-		std::cout << all_classes[i] << " " << global_score.ratio(all_classes[i]) << "\n";
+		const std::string& the_class=all_classes[i];
+		const contacto::ResidueContactAreaDifferenceScore::Ratio& ratio=global_score.ratio(the_class);
+		const std::string big_prefix=(!prefix.empty() ? (prefix+"_") : std::string(""))+the_class;
+		std::cout << big_prefix << "_diff " << ratio.difference << "\n";
+		std::cout << big_prefix << "_ref " << ratio.reference << "\n";
 	}
 }
