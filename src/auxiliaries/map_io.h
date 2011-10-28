@@ -8,12 +8,12 @@ namespace auxiliaries
 {
 
 template<typename A, typename B>
-void print_map(const std::map<A, B>& map)
+void print_map(const std::map<A, B>& map, const bool separate_with_new_line=true)
 {
 	std::cout << map.size() << "\n";
 	for(typename std::map<A, B>::const_iterator it=map.begin();it!=map.end();++it)
 	{
-		std::cout << it->first << "\n" << it->second << "\n";
+		std::cout << it->first << (separate_with_new_line ? "\n" : " ") << it->second << "\n";
 	}
 }
 
