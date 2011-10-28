@@ -107,8 +107,5 @@ void main_calculate_contact_area_difference_local_scores(const auxiliaries::Comm
 	const LocalScores local_scores=blur_local_scores(construct_local_scores_from_profile(profile, category), window_size);
 
 	auxiliaries::print_file_header("local_scores");
-	for(LocalScores::const_iterator it=local_scores.begin();it!=local_scores.end();++it)
-	{
-		std::cout << it->first << " " << it->second << "\n";
-	}
+	auxiliaries::print_map(local_scores, false);
 }
