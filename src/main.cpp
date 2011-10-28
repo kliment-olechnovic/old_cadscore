@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 #include <exception>
 
 #include "auxiliaries/command_line_options.h"
@@ -23,49 +24,31 @@ int main(const int argc, const char** argv)
 	{
 		const auxiliaries::CommandLineOptions clo(argc, argv);
 		const std::string mode=clo.arg<std::string>("--mode");
-		if(mode=="collect-atoms")
+
+		typedef std::pointer_to_unary_function<const auxiliaries::CommandLineOptions&, void> ModeFunctionPointer;
+		std::map< std::string, ModeFunctionPointer > modes_map;
+		modes_map["collect-atoms"]=ModeFunctionPointer(main_collect_atoms);
+		modes_map["collect-residue-ids"]=ModeFunctionPointer(main_collect_residue_ids);
+		modes_map["construct-inter-atom-contacts"]=ModeFunctionPointer(main_construct_inter_atom_contacts);
+		modes_map["construct-inter-residue-contacts"]=ModeFunctionPointer(main_construct_inter_residue_contacts);
+		modes_map["combine-inter-residue-contacts"]=ModeFunctionPointer(main_combine_inter_residue_contacts);
+		modes_map["calculate-contact-area-difference-profile"]=ModeFunctionPointer(main_calculate_contact_area_difference_profile);
+		modes_map["calculate-contact-area-difference-global-score"]=ModeFunctionPointer(main_calculate_contact_area_difference_global_score);
+		modes_map["filter-atoms-by-target"]=ModeFunctionPointer(main_filter_atoms_by_target);
+		modes_map["construct-apollonius-quadrupalization"]=ModeFunctionPointer(main_construct_apollonius_quadrupalization);
+		modes_map["calculate-contact-area-difference-local-scores"]=ModeFunctionPointer(main_calculate_contact_area_difference_local_scores);
+
+		if(modes_map.count(mode)==1)
 		{
-			main_collect_atoms(clo);
-		}
-		else if(mode=="collect-residue-ids")
-		{
-			main_collect_residue_ids(clo);
-		}
-		else if(mode=="construct-inter-atom-contacts")
-		{
-			main_construct_inter_atom_contacts(clo);
-		}
-		else if(mode=="construct-inter-residue-contacts")
-		{
-			main_construct_inter_residue_contacts(clo);
-		}
-		else if(mode=="combine-inter-residue-contacts")
-		{
-			main_combine_inter_residue_contacts(clo);
-		}
-		else if(mode=="calculate-contact-area-difference-profile")
-		{
-			main_calculate_contact_area_difference_profile(clo);
-		}
-		else if(mode=="calculate-contact-area-difference-global-score")
-		{
-			main_calculate_contact_area_difference_global_score(clo);
-		}
-		else if(mode=="filter-atoms-by-target")
-		{
-			main_filter_atoms_by_target(clo);
-		}
-		else if(mode=="construct-apollonius-quadrupalization")
-		{
-			main_construct_apollonius_quadrupalization(clo);
-		}
-		else if(mode=="calculate-contact-area-difference-local-scores")
-		{
-			main_calculate_contact_area_difference_local_scores(clo);
+			modes_map.find(mode)->second(clo);
 		}
 		else
 		{
-			std::cerr << "Unknown mode" << std::endl;
+			std::cerr << "Unknown mode. Available modes are:" << std::endl;
+			for(std::map< std::string, ModeFunctionPointer >::const_iterator it=modes_map.begin();it!=modes_map.end();++it)
+			{
+				std::cerr << it->first << std::endl;
+			}
 			return -1;
 		}
 	}
