@@ -57,28 +57,37 @@ std::map<protein::ResidueID, double> blur_local_scores(const LocalScores& local_
 		const protein::ResidueID& residue_id=it->first;
 		double sum=it->second;
 		int count=1;
-		LocalScores::const_iterator left=it;
-		LocalScores::const_iterator right=it;
-		for(int i=1;i<=window_size;i++)
+		if(it->second>0)
 		{
-			if(left!=local_scores.begin())
+			LocalScores::const_iterator left=it;
+			LocalScores::const_iterator right=it;
+			for(int i=1;i<=window_size;i++)
 			{
-				left--;
-				const protein::ResidueID& left_residue_id=left->first;
-				if(residue_id.residue_number-left_residue_id.residue_number<=window_size && residue_id.chain_id==left_residue_id.chain_id)
+				if(left!=local_scores.begin())
 				{
-					sum+=left->second;
-					count++;
+					left--;
+					const protein::ResidueID& left_residue_id=left->first;
+					if(residue_id.residue_number-left_residue_id.residue_number<=window_size && residue_id.chain_id==left_residue_id.chain_id)
+					{
+						if(left->second>0)
+						{
+							sum+=left->second;
+							count++;
+						}
+					}
 				}
-			}
-			if(right!=local_scores.end())
-			{
-				right++;
-				const protein::ResidueID& right_residue_id=right->first;
-				if(right_residue_id.residue_number-residue_id.residue_number<=window_size && residue_id.chain_id==right_residue_id.chain_id)
+				if(right!=local_scores.end())
 				{
-					sum+=right->second;
-					count++;
+					right++;
+					const protein::ResidueID& right_residue_id=right->first;
+					if(right_residue_id.residue_number-residue_id.residue_number<=window_size && residue_id.chain_id==right_residue_id.chain_id)
+					{
+						if(right->second>0)
+						{
+							sum+=right->second;
+							count++;
+						}
+					}
 				}
 			}
 		}
