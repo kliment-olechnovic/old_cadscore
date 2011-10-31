@@ -4,6 +4,7 @@
 #include <string>
 #include <set>
 #include <vector>
+#include <cstdlib>
 
 namespace contacto
 {
@@ -14,10 +15,7 @@ public:
 	template<typename AtomType, typename ResidueIDType>
 	static std::vector<std::string> classify_atoms_contact(const AtomType& a, const AtomType& b)
 	{
-		const bool same_object=(a==b);
-		const bool same_residue=same_object || ResidueIDType::from_atom(a)==ResidueIDType::from_atom(b);
-
-		if(same_object)
+		if(a==a)
 		{
 			std::vector<std::string> atom_classes=classify_atom_by_name(a.atom_name);
 			for(std::size_t i=0;i<atom_classes.size();i++)
@@ -26,9 +24,13 @@ public:
 			}
 			return atom_classes;
 		}
-		else if(!same_residue)
+		else
 		{
-			return classify_atoms_contact_by_names(a.atom_name, b.atom_name);
+			if(!(ResidueIDType::from_atom(a)==ResidueIDType::from_atom(b))
+					&& !check_if_atoms_contact_is_covalent(a, b))
+			{
+				return classify_atoms_contact_by_names(a.atom_name, b.atom_name);
+			}
 		}
 		return std::vector<std::string>();
 	}
@@ -59,12 +61,12 @@ private:
 
 		names.insert("C");
 		names.insert("CA");
-		names.insert("C0");
+		names.insert("CO");//TODO check
 		names.insert("N");
 		names.insert("O");
 		names.insert("OXT");
 
-		names.insert("0P3");
+		names.insert("OP3");//TODO check
 		names.insert("O3P");
 		names.insert("P");
 		names.insert("OP1");
@@ -77,12 +79,12 @@ private:
 		names.insert("C5*");
 		names.insert("C4'");
 		names.insert("C4*");
-		names.insert("04'");
-		names.insert("04*");
+		names.insert("O4'");//TODO check
+		names.insert("O4*");//TODO check
 		names.insert("C3'");
 		names.insert("C3*");
-		names.insert("03'");
-		names.insert("03*");
+		names.insert("O3'");//TODO check
+		names.insert("O3*");//TODO check
 		names.insert("C2'");
 		names.insert("C2*");
 		names.insert("O2'");
@@ -120,6 +122,20 @@ private:
 			}
 		}
 		return classes;
+	}
+
+	template<typename AtomType>
+	static bool check_if_atoms_contact_is_covalent(const AtomType& a, const AtomType& b)
+	{
+		if(abs(a.residue_number-b.residue_number)==1 && a.chain_id==b.chain_id)
+		{
+			//TODO add stuff for RNA
+			if((a.atom_name=="C" && b.atom_name=="N") || (a.atom_name=="N" && b.atom_name=="C"))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 };
 
