@@ -14,6 +14,7 @@ void main_calculate_contact_area_difference_global_score(const auxiliaries::Comm
 void main_filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
 void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOptions& clo);
 void main_calculate_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
+void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -37,6 +38,7 @@ int main(const int argc, const char** argv)
 		modes_map["filter-atoms-by-target"]=ModeFunctionPointer(main_filter_atoms_by_target);
 		modes_map["construct-apollonius-quadrupalization"]=ModeFunctionPointer(main_construct_apollonius_quadrupalization);
 		modes_map["calculate-contact-area-difference-local-scores"]=ModeFunctionPointer(main_calculate_contact_area_difference_local_scores);
+		modes_map["print-contact-area-difference-local-scores-plot"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_plot);
 
 		if(modes_map.count(mode)==1)
 		{

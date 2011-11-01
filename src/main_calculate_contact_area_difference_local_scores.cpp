@@ -1,9 +1,5 @@
-#include <iostream>
-#include <limits>
-
 #include "protein/residue_id.h"
 
-#include "contacto/residue_contact_area_difference_profile.h"
 #include "contacto/residue_contact_area_difference_local_scores.h"
 
 #include "auxiliaries/command_line_options.h"
