@@ -40,6 +40,9 @@ cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voropro
 GLOBAL_SCORES_FILE=$OUTPUT_DIRECTORY/global_scores_of_$BOTH_NAMES
 (echo "target $TARGET_NAME"; echo "model $MODEL_NAME"; cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-global-score --use-min 0) > $GLOBAL_SCORES_FILE
 
-LOCAL_SCORES_CATEGORY="AA"
-LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot_$LOCAL_SCORES_CATEGORY"_"of_$BOTH_NAMES.ppm
-cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $LOCAL_SCORES_CATEGORY --max-window 30 > $LOCAL_SCORES_PLOT_FILE
+CONTACT_CATEGORIES=(AA SA AS SS AW SW)
+for CONTACT_CATEGORY in ${CONTACT_CATEGORIES[*]}
+do
+  LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot_$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
+  cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window 30 > $LOCAL_SCORES_PLOT_FILE
+done
