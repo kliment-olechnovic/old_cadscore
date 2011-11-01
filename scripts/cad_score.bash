@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TARGET_FILE=$1
+TARGET_NAME=$(basename $TARGET_FILE)
+
+MODEL_FILE=$2
+MODEL_NAME=$(basename $MODEL_FILE)
