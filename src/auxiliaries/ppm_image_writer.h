@@ -4,32 +4,14 @@
 #include <iostream>
 #include <vector>
 
+#include "color.h"
+
 namespace auxiliaries
 {
 
 class PPMImageWriter
 {
 public:
-	struct Color
-	{
-		unsigned char r;
-		unsigned char g;
-		unsigned char b;
-
-		Color() : r(0), g(0), b(0)
-		{
-		}
-
-		Color(const unsigned char r, const unsigned char g, const unsigned char b) : r(r), g(g), b(b)
-		{
-		}
-
-		static Color from_code(const unsigned int rgb)
-		{
-			return Color(((rgb&0xFF0000) >> 16), ((rgb&0x00FF00) >> 8), (rgb&0x0000FF));
-		}
-	};
-
 	PPMImageWriter(const std::size_t height, const std::size_t width) :
 		height_(height),
 		width_(width),
