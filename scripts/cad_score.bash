@@ -27,6 +27,7 @@ cat $MODEL_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/
 
 MODEL_SELECTED_ATOMS_FILE=$OUTPUT_DIRECTORY/selected_atoms_of_model_$MODEL_NAME
 cat $TARGET_ALL_ATOMS_FILE $MODEL_ALL_ATOMS_FILE | ./voroprot2 --mode filter-atoms-by-target > $MODEL_SELECTED_ATOMS_FILE
+#rm $MODEL_ALL_ATOMS_FILE
 
 MODEL_INTER_ATOM_CONTACTS_FILE=$OUTPUT_DIRECTORY/inter_atom_contacts_of_model_$MODEL_NAME
 cat $MODEL_SELECTED_ATOMS_FILE | ./voroprot2 --mode construct-inter-atom-contacts --depth 3 --probe 1.4 > $MODEL_INTER_ATOM_CONTACTS_FILE
@@ -40,9 +41,14 @@ cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voropro
 GLOBAL_SCORES_FILE=$OUTPUT_DIRECTORY/global_scores_of_$BOTH_NAMES
 (echo "target $TARGET_NAME"; echo "model $MODEL_NAME"; cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-global-score --use-min 0) > $GLOBAL_SCORES_FILE
 
-CONTACT_CATEGORIES=(AA SA AS SS AW SW)
+CONTACT_CATEGORIES=(AA AS SA SS)
 for CONTACT_CATEGORY in ${CONTACT_CATEGORIES[*]}
 do
   LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot_$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
   cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window 30 > $LOCAL_SCORES_PLOT_FILE
+  COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot_$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
+  cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
+  COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PNG=$COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM".png"
+  convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PNG
+#  rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
 done
