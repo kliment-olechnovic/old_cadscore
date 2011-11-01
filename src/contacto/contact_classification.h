@@ -15,7 +15,7 @@ public:
 	template<typename AtomType, typename ResidueIDType>
 	static std::vector<std::string> classify_atoms_contact(const AtomType& a, const AtomType& b)
 	{
-		if(a==a)
+		if(a==b)
 		{
 			std::vector<std::string> atom_classes=classify_atom_by_name(a.atom_name);
 			for(std::size_t i=0;i<atom_classes.size();i++)
