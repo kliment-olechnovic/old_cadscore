@@ -78,4 +78,10 @@ echo TM_score_GDT_TS `cat $TMSCORE_PROFILE_FILE | egrep GDT-TS-score | sed 's/GD
 echo TM_score_GDT_HA `cat $TMSCORE_PROFILE_FILE | egrep GDT-HA-score | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g'` >> $TMSCORE_VALUES_FILE
 
 SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_of_$BOTH_NAMES
-(echo "target $TARGET_NAME"; echo "model $MODEL_NAME"; cat $OUTPUT_DIRECTORY/global_scores_*_of_$BOTH_NAMES $TMSCORE_VALUES_FILE) > $SUMMARY_FILE
+echo "target $TARGET_NAME" > $SUMMARY_FILE
+echo "model $MODEL_NAME" >> $SUMMARY_FILE
+echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $SUMMARY_FILE
+echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $SUMMARY_FILE
+echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
+echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
+cat $OUTPUT_DIRECTORY/global_scores_*_of_$BOTH_NAMES $TMSCORE_VALUES_FILE >> $SUMMARY_FILE
