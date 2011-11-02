@@ -31,7 +31,7 @@ fi
 TARGET_INTER_ATOM_CONTACTS_FILE=$PARENT_OUTPUT_DIRECTORY/inter_atom_contacts_of_target_$TARGET_NAME
 if [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ];
 then
-  cat $TARGET_ALL_ATOMS_FILE | ./voroprot2 --mode construct-inter-atom-contacts --depth 3 --probe 1.4 > $TARGET_INTER_ATOM_CONTACTS_FILE
+  cat $TARGET_ALL_ATOMS_FILE | timeout 30s ./voroprot2 --mode construct-inter-atom-contacts --depth 3 --probe 1.4 > $TARGET_INTER_ATOM_CONTACTS_FILE
 fi
 
 MODEL_ALL_ATOMS_FILE=$OUTPUT_DIRECTORY/all_atoms_of_model_$MODEL_NAME
@@ -44,7 +44,7 @@ MODEL_RESIDUE_IDS_FILE=$OUTPUT_DIRECTORY/residue_ids_of_model_$MODEL_NAME
 cat $MODEL_SELECTED_ATOMS_FILE | ./voroprot2 --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
 
 MODEL_INTER_ATOM_CONTACTS_FILE=$OUTPUT_DIRECTORY/inter_atom_contacts_of_model_$MODEL_NAME
-cat $MODEL_SELECTED_ATOMS_FILE | ./voroprot2 --mode construct-inter-atom-contacts --depth 3 --probe 1.4 > $MODEL_INTER_ATOM_CONTACTS_FILE
+cat $MODEL_SELECTED_ATOMS_FILE | timeout 30s ./voroprot2 --mode construct-inter-atom-contacts --depth 3 --probe 1.4 > $MODEL_INTER_ATOM_CONTACTS_FILE
 
 for SCORING_MODE in ${SCORING_MODES[*]}
 do
@@ -90,3 +90,6 @@ fi
 
 SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_of_$BOTH_NAMES
 cat $DESCRIPTION_FILE $OUTPUT_DIRECTORY/global_scores_* $OUTPUT_DIRECTORY/tm_score_results_* > $SUMMARY_FILE
+
+TABLE_SUMMARY_FILE=$OUTPUT_DIRECTORY/table_summary_of_$BOTH_NAMES
+for i in 1 2 ; do cat $SUMMARY_FILE | cut --delimiter " " --fields $i | paste -s ; done > $TABLE_SUMMARY_FILE
