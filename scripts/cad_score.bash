@@ -54,3 +54,10 @@ do
 #  convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PNG
 #  rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
 done
+
+TMSCORE_PROFILE_FILE=$OUTPUT_DIRECTORY/tm_score_profile_of_$BOTH_NAMES
+TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PROFILE_FILE
+TMSCORE_VALUES_FILE=$OUTPUT_DIRECTORY/tm_score_values_of_$BOTH_NAMES
+echo TM_score `cat $TMSCORE_PROFILE_FILE | egrep "TM-score\s*=.*d0" | sed 's/TM-score\s*=\s*\(.*\)\s*(.*/\1/g'` > $TMSCORE_VALUES_FILE
+echo TM_score_GDT_TS `cat $TMSCORE_PROFILE_FILE | egrep GDT-TS-score | sed 's/GDT-TS-score\s*=\s*\(.*\)\s*%(d<1).*/\1/g'` >> $TMSCORE_VALUES_FILE
+echo TM_score_GDT_HA `cat $TMSCORE_PROFILE_FILE | egrep GDT-HA-score | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g'` >> $TMSCORE_VALUES_FILE
