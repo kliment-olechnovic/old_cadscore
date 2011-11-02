@@ -70,23 +70,23 @@ do
   cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
 done
 
-SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_of_$BOTH_NAMES
-echo "target $TARGET_NAME" > $SUMMARY_FILE
-echo "model $MODEL_NAME" >> $SUMMARY_FILE
-echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $SUMMARY_FILE
-echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $SUMMARY_FILE
-echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
-echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
-cat $OUTPUT_DIRECTORY/global_scores_*_of_$BOTH_NAMES >> $SUMMARY_FILE
+DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description_of_$BOTH_NAMES
+echo "target $TARGET_NAME" > $DESCRIPTION_FILE
+echo "model $MODEL_NAME" >> $DESCRIPTION_FILE
+echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $DESCRIPTION_FILE
+echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $DESCRIPTION_FILE
+echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
+echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
 
 TMSCORE_PROFILE_FILE=$OUTPUT_DIRECTORY/tm_score_profile_of_$BOTH_NAMES
 TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PROFILE_FILE
 if grep -q "TM-score" $TMSCORE_PROFILE_FILE
 then
   TMSCORE_RESULTS_FILE=$OUTPUT_DIRECTORY/tm_score_results_of_$BOTH_NAMES
-  echo "target $TARGET_NAME" > $TMSCORE_RESULTS_FILE
-  echo "model $MODEL_NAME" >> $TMSCORE_RESULTS_FILE
-  echo TM_score `cat $TMSCORE_PROFILE_FILE | egrep "TM-score\s*=.*d0" | sed 's/TM-score\s*=\s*\(.*\)\s*(.*/\1/g'` >> $TMSCORE_RESULTS_FILE
+  echo TM_score `cat $TMSCORE_PROFILE_FILE | egrep "TM-score\s*=.*d0" | sed 's/TM-score\s*=\s*\(.*\)\s*(.*/\1/g'` > $TMSCORE_RESULTS_FILE
   echo TM_score_GDT_TS `cat $TMSCORE_PROFILE_FILE | egrep "GDT-TS-score" | sed 's/GDT-TS-score\s*=\s*\(.*\)\s*%(d<1).*/\1/g'` >> $TMSCORE_RESULTS_FILE
   echo TM_score_GDT_HA `cat $TMSCORE_PROFILE_FILE | egrep "GDT-HA-score" | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g'` >> $TMSCORE_RESULTS_FILE
 fi
+
+SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_of_$BOTH_NAMES
+cat $DESCRIPTION_FILE $OUTPUT_DIRECTORY/global_scores_* $OUTPUT_DIRECTORY/tm_score_results_* > $SUMMARY_FILE
