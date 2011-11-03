@@ -66,6 +66,17 @@ public:
 			insert_string_to_PDB_file_line(convert_double_to_string(temperature_factor, 2), 61, 66, true, line);
 			return line;
 		}
+
+		std::string generate_TER_PDB_file_line() const
+		{
+			std::string line(80, ' ');
+			insert_string_to_PDB_file_line("TER", 1, 6, false, line);
+			insert_string_to_PDB_file_line(convert_int_to_string(atom_serial_number+1), 7, 11, true, line);
+			insert_string_to_PDB_file_line(residue_name, 18, 20, false, line);
+			insert_string_to_PDB_file_line(chain_name, 22, 22, false, line);
+			insert_string_to_PDB_file_line(convert_int_to_string(residue_sequence_number), 23, 26, true, line);
+			return line;
+		}
 	};
 
 	static std::vector<AtomRecord> read_PDB_atom_records_from_PDB_file_stream(std::istream& pdb_file_stream)
