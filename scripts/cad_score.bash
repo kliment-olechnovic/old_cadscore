@@ -58,6 +58,9 @@ do
   do
     LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot_$SCORING_MODE"_"$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
     cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window 30 > $LOCAL_SCORES_PLOT_FILE
+    
+    LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model_$SCORING_MODE"_"$CONTACT_CATEGORY"_"of_$BOTH_NAMES.pdb
+    (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window 5 ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE
   done
 done
 
@@ -68,6 +71,8 @@ for CONTACT_CATEGORY in ${CONTACT_CATEGORIES[*]}
 do
   COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot_$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
   cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
+  convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM".png"
+  rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
 done
 
 DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description_of_$BOTH_NAMES
