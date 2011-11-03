@@ -36,7 +36,7 @@ private:
 	static Atom atom_from_PDB_atom_record(const PDBParsing::AtomRecord& record, const VanDerWaalsRadiusAssigner& vdwr_assigner)
 	{
 		Atom atom;
-		atom.chain_id=record.chain_name.empty() ? std::string("X") : record.chain_name;
+		atom.chain_id=record.chain_name;
 		atom.atom_number=record.atom_serial_number;
 		atom.residue_number=record.residue_sequence_number;
 		atom.residue_name=record.residue_name;
