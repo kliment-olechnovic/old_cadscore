@@ -47,6 +47,10 @@ public:
 			{
 				throw std::runtime_error("Atom record has not enough string data");
 			}
+			if(chain_name.empty())
+			{
+				chain_name="X";
+			}
 		}
 
 		std::string generate_PDB_file_line() const
