@@ -16,6 +16,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 void main_calculate_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
 void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
+void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -41,6 +42,7 @@ int main(const int argc, const char** argv)
 		modes_map["calculate-contact-area-difference-local-scores"]=ModeFunctionPointer(main_calculate_contact_area_difference_local_scores);
 		modes_map["print-contact-area-difference-local-scores-plot"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_plot);
 		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_plot);
+		modes_map["print-contact-area-difference-local-scores-injected-to-pdb-file"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_injected_to_pdb_file);
 
 		if(modes_map.count(mode)==1)
 		{
