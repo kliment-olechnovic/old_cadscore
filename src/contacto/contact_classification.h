@@ -55,18 +55,21 @@ private:
 	{
 	}
 
-	static std::set<std::string> construct_main_chain_atom_names_set()
+	static std::set<std::string> construct_amino_acid_main_chain_atom_names_set()
 	{
 		std::set<std::string> names;
-
 		names.insert("C");
 		names.insert("CA");
-		names.insert("CO");//TODO check
 		names.insert("N");
 		names.insert("O");
 		names.insert("OXT");
+		return names;
+	}
 
-		names.insert("OP3");//TODO check
+	static std::set<std::string> construct_nucleotide_main_chain_atom_names_set()
+	{
+		std::set<std::string> names;
+		names.insert("OP3");
 		names.insert("O3P");
 		names.insert("P");
 		names.insert("OP1");
@@ -79,19 +82,26 @@ private:
 		names.insert("C5*");
 		names.insert("C4'");
 		names.insert("C4*");
-		names.insert("O4'");//TODO check
-		names.insert("O4*");//TODO check
+		names.insert("O4'");
+		names.insert("O4*");
 		names.insert("C3'");
 		names.insert("C3*");
-		names.insert("O3'");//TODO check
-		names.insert("O3*");//TODO check
+		names.insert("O3'");
+		names.insert("O3*");
 		names.insert("C2'");
 		names.insert("C2*");
 		names.insert("O2'");
 		names.insert("O2*");
 		names.insert("C1'");
 		names.insert("C1*");
+		return names;
+	}
 
+	static std::set<std::string> construct_main_chain_atom_names_set()
+	{
+		std::set<std::string> names=construct_nucleotide_main_chain_atom_names_set();
+		std::set<std::string> more_names=construct_amino_acid_main_chain_atom_names_set();
+		names.insert(more_names.begin(), more_names.end());
 		return names;
 	}
 
@@ -129,8 +139,14 @@ private:
 	{
 		if(abs(a.residue_number-b.residue_number)==1 && a.chain_id==b.chain_id)
 		{
-			//TODO add stuff for RNA
-			if((a.atom_name=="C" && b.atom_name=="N") || (a.atom_name=="N" && b.atom_name=="C"))
+			if((a.atom_name=="C" && b.atom_name=="N")
+					|| (b.atom_name=="C" && a.atom_name=="N"))
+			{
+				return true;
+			}
+
+			if((a.atom_name=="P" && (b.atom_name=="O3'" || b.atom_name=="O3*"))
+					|| (b.atom_name=="P" && (a.atom_name=="O3'" || a.atom_name=="O3*")))
 			{
 				return true;
 			}
