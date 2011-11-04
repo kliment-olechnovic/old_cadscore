@@ -9,6 +9,9 @@ namespace protein
 
 struct Atom
 {
+	enum MoleculeClass {unidentified_molecule_class, amino_acid, nucleotide};
+	enum LocationClass {unidentified_location_class, main_chain, side_chain};
+
 	std::string chain_id;
 	int atom_number;
 	int residue_number;
@@ -18,8 +21,21 @@ struct Atom
 	double y;
 	double z;
 	double r;
+	int molecule_class;
+	int location_class;
 
-	Atom() : atom_number(0), residue_number(0), x(0), y(0), z(0), r(0) {}
+	Atom() :
+		chain_id("?"),
+		atom_number(0),
+		residue_number(0),
+		residue_name("?"),
+		atom_name("?"),
+		x(0),
+		y(0),
+		z(0),
+		r(0),
+		molecule_class(unidentified_molecule_class),
+		location_class(unidentified_location_class) {}
 
 	bool operator==(const Atom& a) const
 	{
@@ -32,7 +48,9 @@ struct Atom
 				x==a.x &&
 				y==a.y &&
 				z==a.z &&
-				r==a.r));
+				r==a.r &&
+				molecule_class==a.molecule_class &&
+				location_class==a.location_class));
 	}
 
 	friend std::ostream& operator<<(std::ostream &output, const Atom &atom)
@@ -45,7 +63,9 @@ struct Atom
 		output << atom.x << " ";
 		output << atom.y << " ";
 		output << atom.z << " ";
-		output << atom.r;
+		output << atom.r << " ";
+		output << atom.molecule_class << " ";
+		output << atom.location_class;
 		return output;
 	}
 
@@ -60,6 +80,8 @@ struct Atom
 		input >> atom.y;
 		input >> atom.z;
 		input >> atom.r;
+		input >> atom.molecule_class;
+		input >> atom.location_class;
 		return input;
 	}
 };

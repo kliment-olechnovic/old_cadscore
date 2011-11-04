@@ -31,6 +31,11 @@ struct ResidueID
 		return (residue_number==rid.residue_number && chain_id==rid.chain_id);
 	}
 
+	bool operator!=(const ResidueID& rid) const
+	{
+		return (residue_number!=rid.residue_number || chain_id!=rid.chain_id);
+	}
+
 	bool operator< (const ResidueID& rid) const
 	{
 		return (chain_id<rid.chain_id || (chain_id==rid.chain_id && residue_number<rid.residue_number));
