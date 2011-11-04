@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "protein/atoms_reading.h"
+#include "protein/atoms_classification.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
@@ -19,7 +20,8 @@ void main_collect_atoms(const auxiliaries::CommandLineOptions& clo)
 	std::ifstream radius_members_stream(radius_members_file_name.c_str());
 	const protein::VanDerWaalsRadiusAssigner radius_assigner(radius_classes_stream, radius_members_stream);
 
-	const std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, (include_heteroatoms==1), (include_water==1));
+	std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, (include_heteroatoms==1), (include_water==1));
+	protein::AtomsClassification::classify_atoms(atoms);
 
 	auxiliaries::print_file_header("atoms");
 	auxiliaries::print_vector(atoms);
