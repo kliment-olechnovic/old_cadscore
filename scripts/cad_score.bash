@@ -5,16 +5,11 @@ SUBDIVISION_DEPTH="3"
 PROBE_RADIUS="1.4"
 CALCULATION_TIMEOUT="3000s"
 SCORING_MODES=(0 1 2)
-
-###########################################
-
-LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES=(AA AM AS AW MA MM MS MW SA SM SS SW)
+LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES=(AA)
 LOCAL_SCORES_PLOTS_MAX_WINDOW="20"
-
-LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES=(AA AM AS AW MA MM MS MW SA SM SS SW)
+LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES=(AA)
 LOCAL_SCORES_INJECTION_WINDOW="3"
-
-COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES=(AA AM AS MA MM MS SA SM SS)
+COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES=(AA)
 
 ###########################################
 
@@ -22,80 +17,79 @@ TARGET_FILE=$1
 TARGET_NAME=$(basename $TARGET_FILE)
 MODEL_FILE=$2
 MODEL_NAME=$(basename $MODEL_FILE)
-
-###########################################
-
 DOMAIN_DIRECTORY=$3
 PARENT_OUTPUT_DIRECTORY=$DOMAIN_DIRECTORY"/"$TARGET_NAME
 OUTPUT_DIRECTORY=$PARENT_OUTPUT_DIRECTORY"/"$MODEL_NAME
 
+###########################################
+
 mkdir -p $OUTPUT_DIRECTORY
 
 TARGET_ALL_ATOMS_FILE=$PARENT_OUTPUT_DIRECTORY/all_atoms
-if [ ! -f $TARGET_ALL_ATOMS_FILE ];
-then
-  cat $TARGET_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $TARGET_ALL_ATOMS_FILE
-fi
+test -f $TARGET_ALL_ATOMS_FILE || cat $TARGET_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $TARGET_ALL_ATOMS_FILE
 
 TARGET_RESIDUE_IDS_FILE=$PARENT_OUTPUT_DIRECTORY/residue_ids
-if [ ! -f $TARGET_RESIDUE_IDS_FILE ];
-then
-  cat $TARGET_ALL_ATOMS_FILE | ./voroprot2 --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE
-fi
+test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_ALL_ATOMS_FILE | ./voroprot2 --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE
 
 TARGET_INTER_ATOM_CONTACTS_FILE=$PARENT_OUTPUT_DIRECTORY/inter_atom_contacts
-if [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ];
-then
-  cat $TARGET_ALL_ATOMS_FILE | timeout $CALCULATION_TIMEOUT ./voroprot2 --mode construct-inter-atom-contacts --depth $SUBDIVISION_DEPTH --probe $PROBE_RADIUS > $TARGET_INTER_ATOM_CONTACTS_FILE
-fi
+test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_ALL_ATOMS_FILE | timeout $CALCULATION_TIMEOUT ./voroprot2 --mode construct-inter-atom-contacts --depth $SUBDIVISION_DEPTH --probe $PROBE_RADIUS > $TARGET_INTER_ATOM_CONTACTS_FILE
 
 MODEL_ALL_ATOMS_FILE=$OUTPUT_DIRECTORY/all_atoms
-cat $MODEL_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $MODEL_ALL_ATOMS_FILE
+test -f $MODEL_ALL_ATOMS_FILE || cat $MODEL_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $MODEL_ALL_ATOMS_FILE
 
 MODEL_SELECTED_ATOMS_FILE=$OUTPUT_DIRECTORY/selected_atoms
-cat $TARGET_ALL_ATOMS_FILE $MODEL_ALL_ATOMS_FILE | ./voroprot2 --mode filter-atoms-by-target > $MODEL_SELECTED_ATOMS_FILE
+test -f $MODEL_SELECTED_ATOMS_FILE || cat $TARGET_ALL_ATOMS_FILE $MODEL_ALL_ATOMS_FILE | ./voroprot2 --mode filter-atoms-by-target > $MODEL_SELECTED_ATOMS_FILE
 
 MODEL_RESIDUE_IDS_FILE=$OUTPUT_DIRECTORY/selected_residue_ids
-cat $MODEL_SELECTED_ATOMS_FILE | ./voroprot2 --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
+test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_SELECTED_ATOMS_FILE | ./voroprot2 --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
 
 MODEL_INTER_ATOM_CONTACTS_FILE=$OUTPUT_DIRECTORY/inter_atom_contacts_of_model_$MODEL_NAME
-cat $MODEL_SELECTED_ATOMS_FILE | timeout $CALCULATION_TIMEOUT ./voroprot2 --mode construct-inter-atom-contacts --depth $SUBDIVISION_DEPTH --probe $PROBE_RADIUS > $MODEL_INTER_ATOM_CONTACTS_FILE
+test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_SELECTED_ATOMS_FILE | timeout $CALCULATION_TIMEOUT ./voroprot2 --mode construct-inter-atom-contacts --depth $SUBDIVISION_DEPTH --probe $PROBE_RADIUS > $MODEL_INTER_ATOM_CONTACTS_FILE
 
 for SCORING_MODE in ${SCORING_MODES[*]}
 do
   CAD_PROFILE_FILE=$OUTPUT_DIRECTORY/cad_profile_$SCORING_MODE
-  cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voroprot2 --mode calculate-contact-area-difference-profile --intersect-sequences 0 --scoring-mode $SCORING_MODE > $CAD_PROFILE_FILE
+  test -f $CAD_PROFILE_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voroprot2 --mode calculate-contact-area-difference-profile --intersect-sequences 0 --scoring-mode $SCORING_MODE > $CAD_PROFILE_FILE
 
   GLOBAL_SCORES_FILE=$OUTPUT_DIRECTORY/global_scores_$SCORING_MODE
-  cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-global-score --use-min 1 --prefix sm$SCORING_MODE > $GLOBAL_SCORES_FILE
+  test -f $GLOBAL_SCORES_FILE || cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-global-score --use-min 1 --prefix sm$SCORING_MODE > $GLOBAL_SCORES_FILE
 
   for CONTACT_CATEGORY in ${LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES[*]}
   do
-  	mkdir -p $OUTPUT_DIRECTORY/local_scores_plot/
-    LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_PLOTS_MAX_WINDOW.ppm
-    cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window $LOCAL_SCORES_PLOTS_MAX_WINDOW > $LOCAL_SCORES_PLOT_FILE
-    convert $LOCAL_SCORES_PLOT_FILE $LOCAL_SCORES_PLOT_FILE".png"
-    rm $LOCAL_SCORES_PLOT_FILE
+  	LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_PLOTS_MAX_WINDOW.ppm
+    if [ ! -f $LOCAL_SCORES_PLOT_FILE.png ];
+    then
+  	  mkdir -p $OUTPUT_DIRECTORY/local_scores_plot/
+      cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window $LOCAL_SCORES_PLOTS_MAX_WINDOW > $LOCAL_SCORES_PLOT_FILE
+      convert $LOCAL_SCORES_PLOT_FILE $LOCAL_SCORES_PLOT_FILE.png
+      rm $LOCAL_SCORES_PLOT_FILE
+    fi
   done
   
   for CONTACT_CATEGORY in ${LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES[*]}
   do
-    mkdir -p $OUTPUT_DIRECTORY/local_scores_injected_to_model/
-    LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_INJECTION_WINDOW.pdb
-    (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $LOCAL_SCORES_INJECTION_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE
+  	LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_INJECTION_WINDOW.pdb
+    if [ ! -f $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE ];
+    then
+      mkdir -p $OUTPUT_DIRECTORY/local_scores_injected_to_model/
+      (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $LOCAL_SCORES_INJECTION_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE
+    fi
   done
 done
 
 COMBINED_INTER_RESIDUE_CONTACTS_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts
-cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voroprot2 --mode combine-inter-residue-contacts > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
+test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voroprot2 --mode combine-inter-residue-contacts > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
 
 for CONTACT_CATEGORY in ${COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES[*]}
 do
-  mkdir -p $OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/
   COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/$CONTACT_CATEGORY".ppm"
-  cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE
-  convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE".png"
-  rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE
+  if [ ! -f $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE.png ];
+  then
+    mkdir -p $OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/
+    cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE
+    convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE".png"
+    rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE
+  fi
 done
 
 DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description
