@@ -2,12 +2,19 @@
 
 INCLUDE_HETEROATOMS="0"
 SUBDIVISION_DEPTH="3"
-CALCULATION_TIMEOUT="30s"
+CALCULATION_TIMEOUT="3000s"
 PROBE_RADIUS="1.4"
 SCORING_MODES=(0 1 2)
-CONTACT_CATEGORIES=(AA AS SA SS MM)
-MAX_WINDOW="20"
-DEFAULT_WINDOW="3"
+
+LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES=(AA AM AS AW MA MM MS MW SA SM SS SW)
+LOCAL_SCORES_PLOTS_MAX_WINDOW="20"
+
+LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES=(AA AM AS AW MA MM MS MW SA SM SS SW)
+LOCAL_SCORES_INJECTION_WINDOW="3"
+
+COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES=(AA AM AS MA MM MS SA SM SS)
+
+###########################################
 
 TARGET_FILE=$1
 TARGET_NAME=$(basename $TARGET_FILE)
@@ -19,6 +26,8 @@ BOTH_NAMES=$TARGET_NAME"_and_"$MODEL_NAME
 
 PARENT_OUTPUT_DIRECTORY=$3/$TARGET_NAME
 OUTPUT_DIRECTORY=$PARENT_OUTPUT_DIRECTORY/$MODEL_NAME
+
+###########################################
 
 mkdir -p $OUTPUT_DIRECTORY
 
@@ -60,25 +69,33 @@ do
   GLOBAL_SCORES_FILE=$OUTPUT_DIRECTORY/global_scores_$SCORING_MODE"_"of_$BOTH_NAMES
   cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-global-score --use-min 1 --prefix sm$SCORING_MODE > $GLOBAL_SCORES_FILE
 
-  for CONTACT_CATEGORY in ${CONTACT_CATEGORIES[*]}
+  for CONTACT_CATEGORY in ${LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES[*]}
   do
-    LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot_$SCORING_MODE"_"$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
-    cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window $MAX_WINDOW > $LOCAL_SCORES_PLOT_FILE
-    
-    LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model_$SCORING_MODE"_"$CONTACT_CATEGORY"_"of_$BOTH_NAMES.pdb
-    (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $DEFAULT_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE
+  	mkdir -p $OUTPUT_DIRECTORY/local_scores_plot/
+    LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot/$SCORING_MODE"_"$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
+    cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window $LOCAL_SCORES_PLOTS_MAX_WINDOW > $LOCAL_SCORES_PLOT_FILE
+    convert $LOCAL_SCORES_PLOT_FILE $LOCAL_SCORES_PLOT_FILE".png"
+    rm $LOCAL_SCORES_PLOT_FILE
+  done
+  
+  for CONTACT_CATEGORY in ${LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES[*]}
+  do
+    mkdir -p $OUTPUT_DIRECTORY/local_scores_injected_to_model/
+    LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"of_$BOTH_NAMES.pdb
+    (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $LOCAL_SCORES_INJECTION_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE
   done
 done
 
 COMBINED_INTER_RESIDUE_CONTACTS_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_of_$BOTH_NAMES
 cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | ./voroprot2 --mode combine-inter-residue-contacts > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
 
-for CONTACT_CATEGORY in ${CONTACT_CATEGORIES[*]}
+for CONTACT_CATEGORY in ${COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES[*]}
 do
-  COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot_$CONTACT_CATEGORY"_"of_$BOTH_NAMES.ppm
-  cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
-  convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM".png"
-  rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE_PPM
+  mkdir -p $OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/
+  COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/$CONTACT_CATEGORY"_"of_$BOTH_NAMES".ppm"
+  cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE
+  convert $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE".png"
+  rm $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE
 done
 
 DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description_of_$BOTH_NAMES
@@ -99,8 +116,8 @@ then
   echo TM_score_GDT_HA `cat $TMSCORE_PROFILE_FILE | egrep "GDT-HA-score" | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g'` >> $TMSCORE_RESULTS_FILE
 fi
 
-SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_of_$BOTH_NAMES
+SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_list_of_$BOTH_NAMES
 cat $DESCRIPTION_FILE $OUTPUT_DIRECTORY/global_scores_* $OUTPUT_DIRECTORY/tm_score_results_* > $SUMMARY_FILE
 
-TABLE_SUMMARY_FILE=$OUTPUT_DIRECTORY/table_summary_of_$BOTH_NAMES
+TABLE_SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_table_row_of_$BOTH_NAMES
 for i in 1 2 ; do cat $SUMMARY_FILE | cut --delimiter " " --fields $i | paste -s ; done > $TABLE_SUMMARY_FILE
