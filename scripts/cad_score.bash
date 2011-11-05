@@ -25,6 +25,8 @@ OUTPUT_DIRECTORY=$PARENT_OUTPUT_DIRECTORY"/"$MODEL_NAME
 
 mkdir -p $OUTPUT_DIRECTORY
 
+exec &> $PARENT_OUTPUT_DIRECTORY/log
+
 TARGET_ALL_ATOMS_FILE=$PARENT_OUTPUT_DIRECTORY/all_atoms
 test -f $TARGET_ALL_ATOMS_FILE || cat $TARGET_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $TARGET_ALL_ATOMS_FILE
 
@@ -33,6 +35,8 @@ test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_ALL_ATOMS_FILE | ./voroprot2 --m
 
 TARGET_INTER_ATOM_CONTACTS_FILE=$PARENT_OUTPUT_DIRECTORY/inter_atom_contacts
 test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_ALL_ATOMS_FILE | timeout $CALCULATION_TIMEOUT ./voroprot2 --mode construct-inter-atom-contacts --depth $SUBDIVISION_DEPTH --probe $PROBE_RADIUS > $TARGET_INTER_ATOM_CONTACTS_FILE
+
+exec &> $OUTPUT_DIRECTORY/log
 
 MODEL_ALL_ATOMS_FILE=$OUTPUT_DIRECTORY/all_atoms
 test -f $MODEL_ALL_ATOMS_FILE || cat $MODEL_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $MODEL_ALL_ATOMS_FILE
@@ -92,16 +96,8 @@ do
   fi
 done
 
-DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description
-echo "target $TARGET_NAME" > $DESCRIPTION_FILE
-echo "model $MODEL_NAME" >> $DESCRIPTION_FILE
-echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $DESCRIPTION_FILE
-echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $DESCRIPTION_FILE
-echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
-echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
-
 TMSCORE_PROFILE_FILE=$OUTPUT_DIRECTORY/tm_score_profile
-TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PROFILE_FILE
+test -f $TMSCORE_PROFILE_FILE || TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PROFILE_FILE
 if grep -q "TM-score" $TMSCORE_PROFILE_FILE
 then
   TMSCORE_RESULTS_FILE=$OUTPUT_DIRECTORY/tm_score_results
@@ -109,6 +105,14 @@ then
   echo TM_score_GDT_TS `cat $TMSCORE_PROFILE_FILE | egrep "GDT-TS-score" | sed 's/GDT-TS-score\s*=\s*\(.*\)\s*%(d<1).*/\1/g'` >> $TMSCORE_RESULTS_FILE
   echo TM_score_GDT_HA `cat $TMSCORE_PROFILE_FILE | egrep "GDT-HA-score" | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g'` >> $TMSCORE_RESULTS_FILE
 fi
+
+DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description
+echo "target $TARGET_NAME" > $DESCRIPTION_FILE
+echo "model $MODEL_NAME" >> $DESCRIPTION_FILE
+echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $DESCRIPTION_FILE
+echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $DESCRIPTION_FILE
+echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
+echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
 
 SUMMARY_FILE=$OUTPUT_DIRECTORY/summary_list
 cat $DESCRIPTION_FILE $OUTPUT_DIRECTORY/global_scores_* $OUTPUT_DIRECTORY/tm_score_results > $SUMMARY_FILE
