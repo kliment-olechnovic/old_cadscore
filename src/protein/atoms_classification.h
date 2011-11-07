@@ -85,8 +85,8 @@ public:
 	}
 
 private:
-	static const std::size_t AMINO_ACID_MAIN_CHAIN_ATOMS_MIN_COUNT=4;
-	static const std::size_t NUCLEOTIDE_MAIN_CHAIN_ATOMS_MIN_COUNT=13;
+	static const std::size_t AMINO_ACID_MAIN_CHAIN_ATOMS_MIN_COUNT=3;
+	static const std::size_t NUCLEOTIDE_MAIN_CHAIN_ATOMS_MIN_COUNT=11;
 
 	AtomsClassification()
 	{
