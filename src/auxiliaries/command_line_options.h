@@ -73,6 +73,19 @@ public:
 		return value;
 	}
 
+	template<typename T>
+	T arg_or_default_value(const std::string& name, const T default_value) const
+	{
+		if(isopt(name))
+		{
+			return arg<T>(name);
+		}
+		else
+		{
+			return default_value;
+		}
+	}
+
 private:
 	std::map<std::string, std::string> options_;
 };

@@ -10,7 +10,7 @@
 void main_calculate_contact_area_difference_global_score(const auxiliaries::CommandLineOptions& clo)
 {
 	const int use_min=clo.arg<int>("--use-min", 0, 1);
-	const std::string prefix=(clo.isopt("--prefix") ? clo.arg<std::string>("--prefix") : "");
+	const std::string prefix=clo.arg_or_default_value<std::string>("--prefix", "");
 
 	auxiliaries::assert_file_header("cad_profile");
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>();
