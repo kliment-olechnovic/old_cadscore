@@ -15,7 +15,7 @@
 
 void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo)
 {
-	const int scoring_mode=clo.arg<int>("--scoring-mode", 0, 2);
+	const int scoring_mode=clo.arg<int>("--scoring-mode", 0, 3);
 
 	auxiliaries::assert_file_header("atoms");
 	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>();
@@ -50,6 +50,11 @@ void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLi
 	{
 		residue_contact_area_difference_profile=
 				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, contacto::SimpleDifferenceProducer, contacto::SummingReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
+	}
+	else if(scoring_mode==3)
+	{
+		residue_contact_area_difference_profile=
+				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, contacto::SimpleDifferenceProducer, contacto::SummingReferenceProducer>(combined_inter_residue_contacts, contacto::intersect_two_sets(residue_ids_1, protein::collect_residue_ids_from_atoms(atoms_2)));
 	}
 	else
 	{
