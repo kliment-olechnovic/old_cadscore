@@ -65,7 +65,7 @@ do
     then
   	  mkdir -p $OUTPUT_DIRECTORY/local_scores_plot/
       cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window $LOCAL_SCORES_PLOTS_MAX_WINDOW > $LOCAL_SCORES_PLOT_FILE 2> $LOCAL_SCORES_PLOT_FILE.log
-      convert $LOCAL_SCORES_PLOT_FILE $LOCAL_SCORES_PLOT_FILE.png
+      convert $LOCAL_SCORES_PLOT_FILE $LOCAL_SCORES_PLOT_FILE.png 2> $LOCAL_SCORES_PLOT_FILE.png.log
       rm $LOCAL_SCORES_PLOT_FILE
     fi
   done
