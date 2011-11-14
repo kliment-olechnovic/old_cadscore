@@ -17,7 +17,7 @@ TARGET_FILE=$1
 TARGET_NAME=$(basename $TARGET_FILE)
 MODEL_FILE=$2
 MODEL_NAME=$(basename $MODEL_FILE)
-DOMAIN_DIRECTORY=$3"/domain_"$INCLUDE_HETEROATOMS"_"$SUBDIVISION_DEPTH"_"$PROBE_RADIUS
+DOMAIN_DIRECTORY=$3"/cad_score_"$INCLUDE_HETEROATOMS"_"$SUBDIVISION_DEPTH"_"$PROBE_RADIUS
 PARENT_OUTPUT_DIRECTORY=$DOMAIN_DIRECTORY"/"$TARGET_NAME
 OUTPUT_DIRECTORY=$PARENT_OUTPUT_DIRECTORY"/"$MODEL_NAME
 
@@ -116,21 +116,3 @@ CAD_SCORE_SUMMARY_LIST_FILE=$OUTPUT_DIRECTORY/summary_list
 
 CAD_SCORE_SUMMARY_TABLE_FILE=$OUTPUT_DIRECTORY/summary_table
 for i in 1 2 ; do cat $CAD_SCORE_SUMMARY_LIST_FILE | cut --delimiter " " --fields $i | paste -s ; done > $CAD_SCORE_SUMMARY_TABLE_FILE
-
-###################
-
-TMSCORE_PROFILE_FILE=$OUTPUT_DIRECTORY/tm_score_profile
-test -f $TMSCORE_PROFILE_FILE || TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PROFILE_FILE 2> $TMSCORE_PROFILE_FILE.log
-if grep -q "TM-score" $TMSCORE_PROFILE_FILE
-then
-  TMSCORE_RESULTS_FILE=$OUTPUT_DIRECTORY/tm_score_results
-  echo TM_score `cat $TMSCORE_PROFILE_FILE | egrep "TM-score\s*=.*d0" | sed 's/TM-score\s*=\s*\(.*\)\s*(.*/\1/g'` > $TMSCORE_RESULTS_FILE
-  echo TM_score_GDT_TS `cat $TMSCORE_PROFILE_FILE | egrep "GDT-TS-score" | sed 's/GDT-TS-score\s*=\s*\(.*\)\s*%(d<1).*/\1/g'` >> $TMSCORE_RESULTS_FILE
-  echo TM_score_GDT_HA `cat $TMSCORE_PROFILE_FILE | egrep "GDT-HA-score" | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g'` >> $TMSCORE_RESULTS_FILE
-  
-  TMSCORE_SCORE_SUMMARY_LIST_FILE=$OUTPUT_DIRECTORY/tm_score_summary_list
-  cat $DESCRIPTION_FILE $OUTPUT_DIRECTORY/tm_score_results > $TMSCORE_SCORE_SUMMARY_LIST_FILE
-
-  TMSCORE_SUMMARY_TABLE_FILE=$OUTPUT_DIRECTORY/tm_score_summary_table
-  for i in 1 2 ; do cat $TMSCORE_SCORE_SUMMARY_LIST_FILE | cut --delimiter " " --fields $i | paste -s ; done > $TMSCORE_SUMMARY_TABLE_FILE
-fi
