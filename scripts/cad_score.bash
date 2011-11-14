@@ -103,16 +103,14 @@ done
 
 ###################
 
-DESCRIPTION_FILE=$OUTPUT_DIRECTORY/description
-echo "target $TARGET_NAME" > $DESCRIPTION_FILE
-echo "model $MODEL_NAME" >> $DESCRIPTION_FILE
-echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $DESCRIPTION_FILE
-echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $DESCRIPTION_FILE
-echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
-echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $DESCRIPTION_FILE
-
 CAD_SCORE_SUMMARY_LIST_FILE=$OUTPUT_DIRECTORY/summary_list
-(cat $DESCRIPTION_FILE ; for SCORING_MODE in ${SCORING_MODES[*]} ; do cat $OUTPUT_DIRECTORY/global_scores_$SCORING_MODE ; done) > $CAD_SCORE_SUMMARY_LIST_FILE
+echo "target $TARGET_NAME" > $CAD_SCORE_SUMMARY_LIST_FILE
+echo "model $MODEL_NAME" >> $CAD_SCORE_SUMMARY_LIST_FILE
+echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
+echo model_atoms_count `sed -n '2p' $MODEL_SELECTED_ATOMS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
+echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
+echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
+for SCORING_MODE in ${SCORING_MODES[*]} ; do cat $OUTPUT_DIRECTORY/global_scores_$SCORING_MODE ; done >> $CAD_SCORE_SUMMARY_LIST_FILE
 
 CAD_SCORE_SUMMARY_TABLE_FILE=$OUTPUT_DIRECTORY/summary_table
 for i in 1 2 ; do cat $CAD_SCORE_SUMMARY_LIST_FILE | cut --delimiter " " --fields $i | paste -s ; done > $CAD_SCORE_SUMMARY_TABLE_FILE
