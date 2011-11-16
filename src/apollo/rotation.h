@@ -29,16 +29,15 @@ struct Rotation
 	}
 
 	template<typename InputPointTypeA, typename InputPointTypeB>
-	static Rotation from_two_points(const InputPointTypeA& a, const InputPointTypeB& a)
+	static Rotation from_two_points(const InputPointTypeA& a, const InputPointTypeB& b)
 	{
 		const SimplePoint axis=cross_product<SimplePoint>(a, b);
-		const double angle=0;
+		double angle=0;
 		const double am=point_module(a);
 		const double bm=point_module(b);
 		if(!equal(am*bm, 0))
 		{
 			angle=(180/PI)*asin(axis.module()/(am*bm));
-			const double abm=sub_of_points<SimplePoint>(b, a).module();
 			if(point_squared_module(sub_of_points<SimplePoint>(b, a))>(am*am+bm*bm))
 			{
 				angle=180-angle;
