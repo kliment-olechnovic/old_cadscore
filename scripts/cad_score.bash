@@ -30,7 +30,7 @@ TARGET_CONTACTS_DIRECTORY=$DOMAIN_DIRECTORY"/contacts"/$TARGET_NAME
 mkdir -p $TARGET_CONTACTS_DIRECTORY
 
 TARGET_ALL_ATOMS_FILE=$TARGET_CONTACTS_DIRECTORY/all_atoms
-test -f $TARGET_ALL_ATOMS_FILE || cat $TARGET_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $TARGET_ALL_ATOMS_FILE 2> $TARGET_ALL_ATOMS_FILE.log
+test -f $TARGET_ALL_ATOMS_FILE || cat $TARGET_FILE | ./voroprot2 --mode collect-atoms --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $TARGET_ALL_ATOMS_FILE 2> $TARGET_ALL_ATOMS_FILE.log
 
 TARGET_RESIDUE_IDS_FILE=$TARGET_CONTACTS_DIRECTORY/residue_ids
 test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_ALL_ATOMS_FILE | ./voroprot2 --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE 2> $TARGET_RESIDUE_IDS_FILE.log
@@ -44,7 +44,7 @@ MODEL_CONTACTS_DIRECTORY=$DOMAIN_DIRECTORY"/contacts"/$MODEL_NAME
 mkdir -p $MODEL_CONTACTS_DIRECTORY
 
 MODEL_ALL_ATOMS_FILE=$MODEL_CONTACTS_DIRECTORY/all_atoms
-test -f $MODEL_ALL_ATOMS_FILE || cat $MODEL_FILE | ./voroprot2 --mode collect-atoms --radius-classes ./resources/vdwr_classes.txt --radius-members ./resources/vdwr_members.txt --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $MODEL_ALL_ATOMS_FILE 2> $MODEL_ALL_ATOMS_FILE.log
+test -f $MODEL_ALL_ATOMS_FILE || cat $MODEL_FILE | ./voroprot2 --mode collect-atoms --include-heteroatoms $INCLUDE_HETEROATOMS --include-water 0 > $MODEL_ALL_ATOMS_FILE 2> $MODEL_ALL_ATOMS_FILE.log
 
 if $FILTER_MODEL_ATOMS_BY_TARGET
 then
