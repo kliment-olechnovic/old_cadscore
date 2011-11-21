@@ -11,6 +11,7 @@ LOCAL_SCORES_PLOTS_MAX_WINDOW="20"
 LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES=(AA)
 LOCAL_SCORES_INJECTION_WINDOWS=(0)
 COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES=(AA)
+USE_TM_SCORE=true
 
 ###########################################
 
@@ -118,14 +119,33 @@ done
 
 ###################
 
-CAD_SCORE_SUMMARY_LIST_FILE=$OUTPUT_DIRECTORY/summary_list
-echo "target $TARGET_NAME" > $CAD_SCORE_SUMMARY_LIST_FILE
-echo "model $MODEL_NAME" >> $CAD_SCORE_SUMMARY_LIST_FILE
-echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
-echo model_atoms_count `sed -n '2p' $MODEL_ALL_ATOMS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
-echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
-echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $CAD_SCORE_SUMMARY_LIST_FILE
-for SCORING_MODE in ${SCORING_MODES[*]} ; do cat $OUTPUT_DIRECTORY/global_scores_$SCORING_MODE ; done >> $CAD_SCORE_SUMMARY_LIST_FILE
+SUMMARY_LIST_FILE=$OUTPUT_DIRECTORY/summary_list
+echo "target $TARGET_NAME" > $SUMMARY_LIST_FILE
+echo "model $MODEL_NAME" >> $SUMMARY_LIST_FILE
+echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $SUMMARY_LIST_FILE
+echo model_atoms_count `sed -n '2p' $MODEL_ALL_ATOMS_FILE` >> $SUMMARY_LIST_FILE
+echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_LIST_FILE
+echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_LIST_FILE
+for SCORING_MODE in ${SCORING_MODES[*]} ; do cat $OUTPUT_DIRECTORY/global_scores_$SCORING_MODE ; done >> $SUMMARY_LIST_FILE
 
-CAD_SCORE_SUMMARY_TABLE_FILE=$OUTPUT_DIRECTORY/summary_table
-for i in 1 2 ; do cat $CAD_SCORE_SUMMARY_LIST_FILE | cut --delimiter " " --fields $i | paste -s ; done > $CAD_SCORE_SUMMARY_TABLE_FILE
+if $USE_TM_SCORE
+then
+  TMSCORE_PROFILE_FILE=$OUTPUT_DIRECTORY/tm_score_profile
+  test -f $TMSCORE_PROFILE_FILE || TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PROFILE_FILE 2> $TMSCORE_PROFILE_FILE.log
+
+  TM_SCORE=$(cat $TMSCORE_PROFILE_FILE | egrep "TM-score\s*=.*d0" | sed 's/TM-score\s*=\s*\(.*\)\s*(.*/\1/g')
+  if [ -z "$TM_SCORE" ] ; then TM_SCORE=0 ; fi
+
+  TM_SCORE_GDT_TS=$(cat $TMSCORE_PROFILE_FILE | egrep "GDT-TS-score" | sed 's/GDT-TS-score\s*=\s*\(.*\)\s*%(d<1).*/\1/g')
+  if [ -z "$TM_SCORE_GDT_TS" ] ; then TM_SCORE_GDT_TS=0 ; fi
+
+  TM_SCORE_GDT_HA=$(cat $TMSCORE_PROFILE_FILE | egrep "GDT-HA-score" | sed 's/GDT-HA-score\s*=\s*\(.*\)\s*%(d<0\.5).*/\1/g')
+  if [ -z "$TM_SCORE_GDT_HA" ] ; then TM_SCORE_GDT_HA=0 ; fi
+
+  echo "TM_score $TM_SCORE" >> $SUMMARY_LIST_FILE
+  echo "TM_score_GDT_TS $TM_SCORE_GDT_TS" >> $SUMMARY_LIST_FILE
+  echo "TM_score_GDT_HA $TM_SCORE_GDT_HA" >> $SUMMARY_LIST_FILE
+fi
+
+SUMMARY_TABLE_FILE=$OUTPUT_DIRECTORY/summary_table
+for i in 1 2 ; do cat $SUMMARY_LIST_FILE | cut --delimiter " " --fields $i | paste -s ; done > $SUMMARY_TABLE_FILE
