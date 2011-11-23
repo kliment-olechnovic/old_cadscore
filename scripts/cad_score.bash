@@ -5,10 +5,11 @@ FILTER_MODEL_ATOMS_BY_TARGET=true
 SUBDIVISION_DEPTH="3"
 PROBE_RADIUS="1.4"
 CALCULATION_TIMEOUT="3000s"
-SCORING_MODES=(0 1 2)
+SCORING_MODES=(0)
 LOCAL_SCORES_CONTACT_CATEGORIES=(AA AS SA SS)
+LOCAL_SCORES_WINDOWS=(0)
 LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES=(AA)
-LOCAL_SCORES_PLOTS_MAX_WINDOW="20"
+LOCAL_SCORES_PLOTS_MAX_WINDOW="10"
 LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES=(AA)
 LOCAL_SCORES_INJECTION_WINDOWS=(0)
 COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES=(AA)
@@ -78,12 +79,15 @@ do
 
   for CONTACT_CATEGORY in ${LOCAL_SCORES_CONTACT_CATEGORIES[*]}
   do
-  	LOCAL_SCORES_FILE=$OUTPUT_DIRECTORY/local_scores/$SCORING_MODE"_"$CONTACT_CATEGORY
-    if [ ! -f $LOCAL_SCORES_FILE ];
-    then
-  	  mkdir -p $OUTPUT_DIRECTORY/local_scores/
-      cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window 0 > $LOCAL_SCORES_FILE 2> $LOCAL_SCORES_FILE.log
-    fi
+    for WINDOW in ${LOCAL_SCORES_WINDOWS[*]}
+    do
+  	  LOCAL_SCORES_FILE=$OUTPUT_DIRECTORY/local_scores/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$WINDOW
+      if [ ! -f $LOCAL_SCORES_FILE ];
+      then
+  	    mkdir -p $OUTPUT_DIRECTORY/local_scores/
+        cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $WINDOW > $LOCAL_SCORES_FILE 2> $LOCAL_SCORES_FILE.log
+      fi
+    done
   done
 
   for CONTACT_CATEGORY in ${LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES[*]}
@@ -100,13 +104,13 @@ do
   
   for CONTACT_CATEGORY in ${LOCAL_SCORES_INJECTION_CONTACT_CATEGORIES[*]}
   do
-  	for LOCAL_SCORES_INJECTION_WINDOW in ${LOCAL_SCORES_INJECTION_WINDOWS[*]}
+  	for INJECTION_WINDOW in ${LOCAL_SCORES_INJECTION_WINDOWS[*]}
   	do
-  	  LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_INJECTION_WINDOW.pdb
+  	  LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$INJECTION_WINDOW.pdb
       if [ ! -f $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE ];
       then
         mkdir -p $OUTPUT_DIRECTORY/local_scores_injected_to_model/
-        (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $LOCAL_SCORES_INJECTION_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE 2> $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE.log
+        (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $INJECTION_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE 2> $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE.log
       fi
     done
   done
