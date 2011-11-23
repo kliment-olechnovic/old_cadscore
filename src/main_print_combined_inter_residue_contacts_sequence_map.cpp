@@ -1,3 +1,5 @@
+#include <set>
+
 #include "protein/residue_id.h"
 
 #include "contacto/inter_residue_contact_id.h"
@@ -13,19 +15,19 @@ void main_print_combined_inter_residue_contacts_sequence_map(const auxiliaries::
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
 			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >();
 
-	std::map<protein::ResidueID, std::size_t> sequence_map;
+	std::set<protein::ResidueID> sequence_set;
 	for(std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
 	{
-		sequence_map[it->first.a]=0;
-		sequence_map[it->first.b]=0;
+		sequence_set.insert(it->first.a);
+		sequence_set.insert(it->first.b);
 	}
 
 	auxiliaries::print_file_header("sequence_map");
-	std::cout << sequence_map.size() << "\n";
+	std::cout << sequence_set.size() << "\n";
 	std::size_t i=0;
-	for(std::map<protein::ResidueID, std::size_t>::iterator it=sequence_map.begin();it!=sequence_map.end();++it)
+	for(std::set<protein::ResidueID>::iterator it=sequence_set.begin();it!=sequence_set.end();++it)
 	{
-		std::cout << i << " " << it->first << "\n";
+		std::cout << i << " " << (*it) << "\n";
 		i++;
 	}
 }
