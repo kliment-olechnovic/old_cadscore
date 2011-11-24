@@ -25,6 +25,6 @@ void main_calculate_contact_area_difference_global_score(const auxiliaries::Comm
 		const std::string big_prefix=(!prefix.empty() ? (prefix+"_") : std::string(""))+the_class;
 		std::cout << big_prefix << "_diff " << ratio.difference << "\n";
 		std::cout << big_prefix << "_ref " << ratio.reference << "\n";
-		std::cout << big_prefix << (1-(ratio.difference/ratio.reference)) << "\n";
+		std::cout << big_prefix << " " << (1-(ratio.difference/ratio.reference)) << "\n";
 	}
 }
