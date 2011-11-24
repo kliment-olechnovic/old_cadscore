@@ -46,10 +46,20 @@ void main_collect_atoms(const auxiliaries::CommandLineOptions& clo)
 	const std::string radius_members_file_name=clo.arg_or_default_value<std::string>("--radius-members", "");
 	const int include_heteroatoms=clo.arg<int>("--include-heteroatoms", 0, 1);
 	const int include_water=clo.arg<int>("--include-water", 0, 1);
+	const int force_one_chain=clo.arg_or_default_value<int>("--force-one-chain", 0);
 
 	const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner(radius_classes_file_name, radius_members_file_name);
 
 	std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, (include_heteroatoms==1), (include_water==1));
+
+	if(force_one_chain>0)
+	{
+		for(std::size_t i=0;i<atoms.size();i++)
+		{
+			atoms[i].chain_id="X";
+		}
+	}
+
 	protein::AtomsClassification::classify_atoms(atoms);
 
 	auxiliaries::print_file_header("atoms");
