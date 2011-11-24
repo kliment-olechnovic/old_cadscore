@@ -8,5 +8,5 @@ echo $HEADER
 
 for F in `find $SEARCH_DIRECTORY -path $PATH_PATTERN -type f`
 do
-  cat $F | sed -n '2p'
+  cat $F | tail -n +2
 done
