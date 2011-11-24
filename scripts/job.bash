@@ -6,4 +6,3 @@ JOB_DIRECTORY=$1
 
 ./assemble_scores_table.bash $JOB_DIRECTORY/output "*summary_table" > $JOB_DIRECTORY/output/scores
 
-R --silent --vanilla --args $JOB_DIRECTORY/output/scores $JOB_DIRECTORY/scores < tidy_cad_scores_table.R
