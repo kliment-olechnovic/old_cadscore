@@ -42,4 +42,16 @@ t$solid_group=solid_group;
 
 ########################
 
+targets_set=union(t$target, t$target);
+target_parts_count=rep(0, length(t$target));
+for(i in targets_set)
+{
+  i_domains=t$domain[which(t$target==i)];
+  i_domains_set=union(i_domains, i_domains);
+  target_parts_count[which(t$target==i)]=length(i_domains_set);
+}
+t$target_parts_count=target_parts_count;
+
+########################
+
 write.table(t, cmd_args[2], quote=FALSE, row.names=FALSE);
