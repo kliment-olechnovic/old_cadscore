@@ -39,11 +39,11 @@ for(i in targets_set)
 
   png(paste(cmd_args[2], i, ".png", sep=""), width=12, height=9, units="in", res=300);
   par(mfrow=c(1,2));
-  plot(x=c(0, length(groups_set)), y=c(0,1));
+  plot(x=c(0, length(groups_set)), y=c(0,1), main=paste("Target ", i, ", GDT_TS of full(red), D1(green), D2(blue)", sep=""), xlab="Group", ylab="GDT_TS");
   points(x=gt$d0, col="red");
   points(x=gt$d1, col="green");
   points(x=gt$d2, col="blue");
-  plot(x=c(0, length(groups_set)), y=c(0,1));
+  plot(x=c(0, length(groups_set)), y=c(0,1), main=paste("Target ", i, ", sm0_SA of full(red), D1(green), D2(blue)", sep=""), xlab="Group", ylab="sm0_SA");
   points(x=vt$d0, col="red");
   points(x=vt$d1, col="green");
   points(x=vt$d2, col="blue");
