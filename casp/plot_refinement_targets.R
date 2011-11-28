@@ -15,7 +15,7 @@ for(i in targets_set)
   {
     plot(x=c(0, 1), y=c(0,1), main=paste("Target ", i, sep=""), xlab="GDT_HA", ylab=score_type, type="n");
     points(x=tt$TM_score_GDT_HA, y=tt[, score_type], col="blue", pch=21);
-    stt=t[which(tt$group==0), ];
+    stt=tt[which(tt$group==0), ];
     points(x=stt$TM_score_GDT_HA, y=stt[, score_type], col="red", pch=16);
     legend(0.1, 0.9, c("refined", "initial"), col=c("blue","red"), pch=c(21,16));
   }
