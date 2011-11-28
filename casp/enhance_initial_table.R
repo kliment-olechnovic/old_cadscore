@@ -54,4 +54,14 @@ t$target_parts_count=target_parts_count;
 
 ########################
 
+casp_9_targets_definition=read.table("casp_9_targets_definition.txt", header=FALSE, stringsAsFactors=FALSE);
+target_class=rep("unknown", length(t$target));
+for(i in 1:length(casp_9_targets_definition[[1]]))
+{
+  target_class[which(t$target==casp_9_targets_definition[[1]][i])]=casp_9_targets_definition[[2]][i];
+}
+t$target_class=target_class;
+
+########################
+
 write.table(t, cmd_args[2], quote=FALSE, row.names=FALSE);
