@@ -64,11 +64,12 @@ t$target_class=target_class;
 
 ########################
 
-targets_set=union(t$target, t$target);
-target_max_GDT_TS=rep(0, length(t$target));
-for(i in targets_set)
+real_targets=t$target+(t$domain*1000)
+real_targets_set=union(real_targets, real_targets);
+target_max_GDT_TS=rep(0, length(real_targets));
+for(i in real_targets_set)
 {
-  target_max_GDT_TS[which(t$target==i)]=max(t$GDT_TS[which(t$target==i)]);
+  target_max_GDT_TS[which(real_targets==i)]=max(t$GDT_TS[which(real_targets==i)]);
 }
 t$target_max_GDT_TS=target_max_GDT_TS
 
