@@ -64,4 +64,14 @@ t$target_class=target_class;
 
 ########################
 
+targets_set=union(t$target, t$target);
+target_max_GDT_TS=rep(0, length(t$target));
+for(i in targets_set)
+{
+  target_max_GDT_TS[which(t$target==i)]=max(t$GDT_TS[which(t$target==i)]);
+}
+t$target_max_GDT_TS=target_max_GDT_TS
+
+########################
+
 write.table(t, cmd_args[2], quote=FALSE, row.names=FALSE);
