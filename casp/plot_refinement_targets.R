@@ -24,6 +24,7 @@ for(i in targets_set)
     legend(0.05, 0.95, c("Initial", "Refined"), col=c("red","blue"), pch=c(21,16));
     text(x=0.7, y=0.95, labels=paste("The best is TR", best$target[1], "TS", best$group[1], "_", best$model[1], sep=""));
     text(x=0.7, y=0.9, labels=paste("Best score improved ", sprintf("%.3f", (max_score/stt[, score_type][1])), " times", sep=""));
+    text(x=0.7, y=0.85, labels=paste(sprintf("%.2f", length(which(scores>stt[, score_type][1]))/length(scores)*100), "% are better", sep=""));
   }
   dev.off();
 }
