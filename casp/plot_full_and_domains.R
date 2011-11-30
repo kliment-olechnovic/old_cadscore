@@ -45,8 +45,11 @@ for(trg in targets_set)
 	}
 	if(parts_count==3)
 	{
-	  points(x=rep(group_num, 2), y=c(gt[, score_name][which(gt$domain==0)][1], gt[, score_name][which(gt$domain==1)][1]), col=domains_colors[2], type="l");
-	  points(x=rep(group_num, 2), y=c(gt[, score_name][which(gt$domain==0)][1], gt[, score_name][which(gt$domain==2)][1]), col=domains_colors[3], type="l");
+	  score_of_D0=gt[, score_name][which(gt$domain==0)][1];
+	  score_of_D1=gt[, score_name][which(gt$domain==1)][1];
+	  score_of_D2=gt[, score_name][which(gt$domain==2)][1];
+	  points(x=rep(group_num, 2), y=c(score_of_D0, score_of_D1), col=domains_colors[2], type="l");
+	  points(x=rep(group_num, 2), y=c(score_of_D0, score_of_D2), col=domains_colors[3], type="l");
 	}
       }
     }
