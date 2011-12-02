@@ -25,7 +25,7 @@ void main_filter_combined_inter_residue_contacts(const auxiliaries::CommandLineO
 	for(CombinedContacts::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
 	{
 		if((filter_mode==0 && (residue_ids.count(it->first.a)==0 || residue_ids.count(it->first.b)==0)) ||
-				(filter_mode==1 && (residue_ids.count(it->first.a)==1 && residue_ids.count(it->first.b)==1)))
+				(filter_mode==1 && (residue_ids.count(it->first.a)==1 || residue_ids.count(it->first.b)==1)))
 		{
 			prev=filtered_combined_inter_residue_contacts.insert(prev, *it);
 		}
