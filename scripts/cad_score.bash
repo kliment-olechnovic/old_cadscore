@@ -18,12 +18,34 @@ USE_TM_SCORE=true
 
 ###########################################
 
-TARGET_FILE=$1
-TARGET_NAME=$(basename $TARGET_FILE)
-MODEL_FILE=$2
-MODEL_NAME=$(basename $MODEL_FILE)
+if [ -n "$1" ]
+then
+  DOMAIN_DIRECTORY=$1"/cad_score"
+else
+  exit 1
+fi
 
-DOMAIN_DIRECTORY=$3"/cad_score"
+if [ -n "$2" ]
+then
+  TARGET_FILE=$2
+  TARGET_NAME=$(basename $TARGET_FILE)
+else
+  exit 2
+fi
+
+if [ -n "$3" ]
+then
+  MODEL_FILE=$3
+  MODEL_NAME=$(basename $MODEL_FILE)
+else
+  exit 3
+fi
+
+if [ -n "$4" ]
+then
+  FILTER_FILE=$4
+  FILTER_NAME=$(basename $FILTER_FILE)
+fi
 
 ###########################################
 
@@ -74,6 +96,20 @@ test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS
 
 COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_sequence_map
 test -f $COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-sequence-map > $COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE 2> $COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE.log
+
+if [ -n "$FILTER_NAME" ]
+then
+  TARGET_NAME=$TARGET_NAME"_filtered_by_"$FILTER_NAME
+  OUTPUT_DIRECTORY=$DOMAIN_DIRECTORY"/comparison/"$TARGET_NAME"/"$MODEL_NAME
+  mkdir -p $OUTPUT_DIRECTORY
+  
+  FULL_COMBINED_INTER_RESIDUE_CONTACTS_FILE=$COMBINED_INTER_RESIDUE_CONTACTS_FILE
+  COMBINED_INTER_RESIDUE_CONTACTS_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts
+  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $FULL_COMBINED_INTER_RESIDUE_CONTACTS_FILE $FILTER_FILE | ./voroprot2 --mode filter-combined-inter-residue-contacts --filter-mode 0 > $COMBINED_INTER_RESIDUE_CONTACTS_FILE 2> $COMBINED_INTER_RESIDUE_CONTACTS_FILE.log
+
+  COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_sequence_map
+  test -f $COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-sequence-map > $COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE 2> $COMBINED_INTER_RESIDUE_CONTACTS_SEQUENCE_MAP_FILE.log
+fi
 
 for SCORING_MODE in ${SCORING_MODES[*]}
 do
