@@ -13,11 +13,16 @@ inline void print_file_header(const std::string& header)
 	std::cout << header << "\n";
 }
 
-inline void assert_file_header(const std::string& header)
+inline bool check_file_header(const std::string& header)
 {
 	std::string value;
 	std::cin >> value;
-	if(header!=value)
+	return (header==value);
+}
+
+inline void assert_file_header(const std::string& header)
+{
+	if(!check_file_header(header))
 	{
 		throw std::runtime_error(std::string("Missing file header: ")+header);
 	}

@@ -15,22 +15,24 @@ void main_filter_combined_inter_residue_contacts(const auxiliaries::CommandLineO
 	typedef std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > CombinedContacts;
 
 	auxiliaries::assert_file_header("combined_residue_contacts");
-	const CombinedContacts combined_inter_residue_contacts=auxiliaries::read_map< CombinedContacts::key_type, CombinedContacts::mapped_type >();
+	CombinedContacts combined_inter_residue_contacts=auxiliaries::read_map< CombinedContacts::key_type, CombinedContacts::mapped_type >();
 
-	auxiliaries::assert_file_header("residue_ids");
-	const std::set<protein::ResidueID> residue_ids=auxiliaries::read_set<protein::ResidueID>();
-
-	CombinedContacts filtered_combined_inter_residue_contacts;
-	CombinedContacts::iterator prev=filtered_combined_inter_residue_contacts.begin();
-	for(CombinedContacts::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
+	while(auxiliaries::check_file_header("residue_ids"))
 	{
-		if((filter_mode==0 && (residue_ids.count(it->first.a)==0 || residue_ids.count(it->first.b)==0)) ||
-				(filter_mode==1 && (residue_ids.count(it->first.a)==1 || residue_ids.count(it->first.b)==1)))
+		const std::set<protein::ResidueID> residue_ids=auxiliaries::read_set<protein::ResidueID>();
+		CombinedContacts filtered_combined_inter_residue_contacts;
+		CombinedContacts::iterator prev=filtered_combined_inter_residue_contacts.begin();
+		for(CombinedContacts::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
 		{
-			prev=filtered_combined_inter_residue_contacts.insert(prev, *it);
+			if((filter_mode==0 && (residue_ids.count(it->first.a)==0 || residue_ids.count(it->first.b)==0)) ||
+					(filter_mode==1 && (residue_ids.count(it->first.a)==1 || residue_ids.count(it->first.b)==1)))
+			{
+				prev=filtered_combined_inter_residue_contacts.insert(prev, *it);
+			}
 		}
+		combined_inter_residue_contacts=filtered_combined_inter_residue_contacts;
 	}
 
 	auxiliaries::print_file_header("combined_residue_contacts");
-	auxiliaries::print_map(filtered_combined_inter_residue_contacts);
+	auxiliaries::print_map(combined_inter_residue_contacts);
 }
