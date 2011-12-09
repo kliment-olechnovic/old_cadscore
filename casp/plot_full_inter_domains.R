@@ -58,3 +58,8 @@ png(cmd_args[5], width=12, height=7, units="in", res=200);
 plot(x=GDT_TS_scaled_difference_value, y=normalised_orientation_error, col="red", cex=0.5, xlab="Scaled difference", ylab="Normalized orientation error", main="Scaled difference vs orientation error");
 points(x=score_scaled_difference_value, y=normalised_orientation_error, col="blue", cex=0.5);
 dev.off();
+
+png(cmd_args[6], width=7, height=7, units="in", res=200);
+plot(x=normalised_orientation_error, y=t0[, "GDT_TS"]/100, xlim=c(0.0, 0.2), ylim=c(0,1), col="red", cex=0.5, xlab="Normalized orientation error", ylab="Score", main="Normalized orientation error vs scores");
+points(x=normalised_orientation_error, y=t0[, score_name], col="blue", cex=0.5);
+dev.off();
