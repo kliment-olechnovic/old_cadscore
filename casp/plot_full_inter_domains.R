@@ -51,3 +51,10 @@ plot(x=GDT_TS_lower_value, y=normalised_orientation_error, col="red", cex=0.5, x
 points(x=score_lower_value, y=normalised_orientation_error, col="blue", cex=0.5);
 points(x=c(0,0), y=c(0,1), type="l", col="black");
 dev.off();
+
+score_scaled_difference_value=((1-t0[, score_name])-(1-t1[, score_name])*(t1$target_atoms_count/t0$target_atoms_count)-(1-t2[, score_name])*(t2$target_atoms_count/t0$target_atoms_count))/(1-t0[, score_name]);
+GDT_TS_scaled_difference_value=((100-t0[, "GDT_TS"])-(100-t1[, "GDT_TS"])*(t1$target_atoms_count/t0$target_atoms_count)-(100-t2[, "GDT_TS"])*(t2$target_atoms_count/t0$target_atoms_count))/(100-t0[, "GDT_TS"]);
+png(cmd_args[5], width=12, height=7, units="in", res=200);
+plot(x=GDT_TS_scaled_difference_value, y=normalised_orientation_error, col="red", cex=0.5, xlab="Scaled difference", ylab="Normalized orientation error", main="Scaled difference vs orientation error");
+points(x=score_scaled_difference_value, y=normalised_orientation_error, col="blue", cex=0.5);
+dev.off();
