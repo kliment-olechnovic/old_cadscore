@@ -36,10 +36,18 @@ t2=t2[order(t2_keys),];
 
 score_name="sm0_AA"
 normalised_orientation_error=tid[,paste(score_name, "_diff", sep="")]/t0[,paste(score_name, "_ref", sep="")];
+
 score_insiding_value=abs(t1[, score_name]-t2[, score_name])-(abs(t0[, score_name]-t1[, score_name])+abs(t0[, score_name]-t2[, score_name]));
 GDT_TS_insiding_value=(abs(t1$GDT_TS-t2$GDT_TS)-(abs(t0$GDT_TS-t1$GDT_TS)+abs(t0$GDT_TS-t2$GDT_TS)))/100;
-
 png(cmd_args[3], width=12, height=7, units="in", res=200);
 plot(x=GDT_TS_insiding_value, y=normalised_orientation_error, col="red", cex=0.5, xlab="Insiding", ylab="Normalized orientation error", main="Insiding vs orientation error");
 points(x=score_insiding_value, y=normalised_orientation_error, col="blue", cex=0.5);
+dev.off();
+
+score_lower_value=t0[, score_name]-pmin(t1[, score_name], t2[, score_name]);
+GDT_TS_lower_value=(t0$GDT_TS-pmin(t1$GDT_TS, t2$GDT_TS))/100;
+png(cmd_args[4], width=12, height=7, units="in", res=200);
+plot(x=GDT_TS_lower_value, y=normalised_orientation_error, col="red", cex=0.5, xlab="Difference from worst", ylab="Normalized orientation error", main="Difference from worst vs orientation error");
+points(x=score_lower_value, y=normalised_orientation_error, col="blue", cex=0.5);
+points(x=c(0,0), y=c(0,1), type="l", col="black");
 dev.off();
