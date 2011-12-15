@@ -20,31 +20,58 @@ USE_TM_SCORE=true
 
 if [ -n "$1" ]
 then
-  DOMAIN_DIRECTORY=$1"/cad_score"
+  if [ -d "$1" ]
+  then
+    DOMAIN_DIRECTORY=$1"/cad_score"
+  else
+    echo "Output directory \"$1\" does not exist" 1>&2
+    exit 10
+  fi
 else
-  exit 1
+  echo "Missing output directory path" 1>&2
+  exit 11
 fi
 
 if [ -n "$2" ]
 then
-  TARGET_FILE=$2
-  TARGET_NAME=$(basename $TARGET_FILE)
+  if [ -f "$2" ]
+  then
+    TARGET_FILE=$2
+    TARGET_NAME=$(basename $TARGET_FILE)
+  else
+    echo "Target file \"$2\" does not exist" 1>&2
+    exit 20
+  fi
 else
-  exit 2
+  echo "Missing target file path" 1>&2
+  exit 21
 fi
 
 if [ -n "$3" ]
 then
-  MODEL_FILE=$3
-  MODEL_NAME=$(basename $MODEL_FILE)
+  if [ -f "$3" ]
+  then
+    MODEL_FILE=$3
+    MODEL_NAME=$(basename $MODEL_FILE)
+  else
+    echo "Model file \"$3\" does not exist" 1>&2
+    exit 30
+  fi
 else
-  exit 3
+  echo "Missing model path" 1>&2
+  exit 31
 fi
 
 if [ -n "$4" ]
 then
-  FILTER_FILE=$4
-  FILTER_NAME=$(basename $FILTER_FILE)
+  if [ -f "$4" ]
+  then
+    FILTER_FILE=$4
+    FILTER_NAME=$(basename $FILTER_FILE)
+  else
+    echo "Filter file \"$4\" does not exist" 1>&2
+    exit 40
+  fi
 fi
 
 ###########################################
@@ -124,7 +151,7 @@ do
     for WINDOW in ${LOCAL_SCORES_WINDOWS[*]}
     do
   	  LOCAL_SCORES_FILE=$OUTPUT_DIRECTORY/local_scores/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$WINDOW
-      if [ ! -f $LOCAL_SCORES_FILE ];
+      if [ ! -f $LOCAL_SCORES_FILE ]
       then
   	    mkdir -p $OUTPUT_DIRECTORY/local_scores/
         cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $WINDOW > $LOCAL_SCORES_FILE 2> $LOCAL_SCORES_FILE.log
@@ -135,7 +162,7 @@ do
   for CONTACT_CATEGORY in ${LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES[*]}
   do
   	LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_PLOTS_MAX_WINDOW.ppm
-    if [ ! -f $LOCAL_SCORES_PLOT_FILE.png ];
+    if [ ! -f $LOCAL_SCORES_PLOT_FILE.png ]
     then
   	  mkdir -p $OUTPUT_DIRECTORY/local_scores_plot/
       cat $CAD_PROFILE_FILE | ./voroprot2 --mode print-contact-area-difference-local-scores-plot --category $CONTACT_CATEGORY --max-window $LOCAL_SCORES_PLOTS_MAX_WINDOW > $LOCAL_SCORES_PLOT_FILE 2> $LOCAL_SCORES_PLOT_FILE.log
@@ -149,7 +176,7 @@ do
   	for INJECTION_WINDOW in ${LOCAL_SCORES_INJECTION_WINDOWS[*]}
   	do
   	  LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$INJECTION_WINDOW.pdb
-      if [ ! -f $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE ];
+      if [ ! -f $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE ]
       then
         mkdir -p $OUTPUT_DIRECTORY/local_scores_injected_to_model/
         (cat $CAD_PROFILE_FILE | ./voroprot2 --mode calculate-contact-area-difference-local-scores --category $CONTACT_CATEGORY --window $INJECTION_WINDOW ; cat $MODEL_FILE) | ./voroprot2 --mode print-contact-area-difference-local-scores-injected-to-pdb-file > $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE 2> $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE.log
@@ -163,7 +190,7 @@ done
 for CONTACT_CATEGORY in ${COMBINED_INTER_RESIDUE_CONTACT_PLOTS_CATEGORIES[*]}
 do
   COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE=$OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/$CONTACT_CATEGORY".ppm"
-  if [ ! -f $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE.png ];
+  if [ ! -f $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE.png ]
   then
     mkdir -p $OUTPUT_DIRECTORY/combined_inter_residue_contacts_plot/
     cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE | ./voroprot2 --mode print-combined-inter-residue-contacts-plot --category $CONTACT_CATEGORY > $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE 2> $COMBINED_INTER_RESIDUE_CONTACTS_PLOT_FILE.log
