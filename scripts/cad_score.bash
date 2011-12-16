@@ -148,17 +148,17 @@ fi
 
 for SCORING_MODE in ${SCORING_MODES[*]}
 do
-  CAD_PROFILE_FILE=$OUTPUT_DIRECTORY/cad_profile_$SCORING_MODE
+  CAD_PROFILE_FILE=$OUTPUT_DIRECTORY/cad_profile_sm$SCORING_MODE
   test -f $CAD_PROFILE_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode calculate-contact-area-difference-profile --scoring-mode $SCORING_MODE > $CAD_PROFILE_FILE 2> $CAD_PROFILE_FILE.log
 
-  GLOBAL_SCORES_FILE=$OUTPUT_DIRECTORY/global_scores_$SCORING_MODE
+  GLOBAL_SCORES_FILE=$OUTPUT_DIRECTORY/global_scores_sm$SCORING_MODE
   test -f $GLOBAL_SCORES_FILE || cat $CAD_PROFILE_FILE | $VOROPROT --mode calculate-contact-area-difference-global-score --use-min 1 --prefix sm$SCORING_MODE > $GLOBAL_SCORES_FILE 2> $GLOBAL_SCORES_FILE.log
 
   for CONTACT_CATEGORY in ${LOCAL_SCORES_CONTACT_CATEGORIES[*]}
   do
     for WINDOW in ${LOCAL_SCORES_WINDOWS[*]}
     do
-  	  LOCAL_SCORES_FILE=$OUTPUT_DIRECTORY/local_scores/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$WINDOW
+  	  LOCAL_SCORES_FILE=$OUTPUT_DIRECTORY/local_scores/sm$SCORING_MODE"_"$CONTACT_CATEGORY"_"wnd$WINDOW
       if [ ! -f $LOCAL_SCORES_FILE ]
       then
   	    mkdir -p $OUTPUT_DIRECTORY/local_scores/
@@ -169,7 +169,7 @@ do
 
   for CONTACT_CATEGORY in ${LOCAL_SCORES_PLOTS_CONTACT_CATEGORIES[*]}
   do
-  	LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$LOCAL_SCORES_PLOTS_MAX_WINDOW.ppm
+  	LOCAL_SCORES_PLOT_FILE=$OUTPUT_DIRECTORY/local_scores_plot/sm$SCORING_MODE"_"$CONTACT_CATEGORY"_"wnd$LOCAL_SCORES_PLOTS_MAX_WINDOW.ppm
     if [ ! -f $LOCAL_SCORES_PLOT_FILE.png ]
     then
   	  mkdir -p $OUTPUT_DIRECTORY/local_scores_plot/
@@ -183,7 +183,7 @@ do
   do
   	for INJECTION_WINDOW in ${LOCAL_SCORES_INJECTION_WINDOWS[*]}
   	do
-  	  LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/$SCORING_MODE"_"$CONTACT_CATEGORY"_"$INJECTION_WINDOW.pdb
+  	  LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE=$OUTPUT_DIRECTORY/local_scores_injected_to_model/sm$SCORING_MODE"_"$CONTACT_CATEGORY"_"wnd$INJECTION_WINDOW.pdb
       if [ ! -f $LOCAL_SCORES_INJECTED_TO_MODEL_PDB_FILE ]
       then
         mkdir -p $OUTPUT_DIRECTORY/local_scores_injected_to_model/
@@ -216,7 +216,7 @@ echo target_atoms_count `sed -n '2p' $TARGET_ALL_ATOMS_FILE` >> $SUMMARY_LIST_FI
 echo model_atoms_count `sed -n '2p' $MODEL_ALL_ATOMS_FILE` >> $SUMMARY_LIST_FILE
 echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_LIST_FILE
 echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_LIST_FILE
-for SCORING_MODE in ${SCORING_MODES[*]} ; do cat $OUTPUT_DIRECTORY/global_scores_$SCORING_MODE ; done >> $SUMMARY_LIST_FILE
+for SCORING_MODE in ${SCORING_MODES[*]} ; do cat $OUTPUT_DIRECTORY/global_scores_sm$SCORING_MODE ; done >> $SUMMARY_LIST_FILE
 
 if $USE_TM_SCORE
 then
