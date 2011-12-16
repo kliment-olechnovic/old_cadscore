@@ -18,60 +18,73 @@ USE_TM_SCORE=true
 
 ###########################################
 
-if [ -n "$1" ]
+print_help()
+{
+cat << EOF 1>&2
+
+$0 options:
+
+  -h    show this message and exit
+  -O    path to writable output directory
+  -t    path to target file in PBD format
+  -m    path to model file in PBD format
+  -f    path to filter file (optional)
+
+EOF
+}
+
+while getopts “hO:t:m:f:” OPTION
+do
+  case $OPTION in
+    h)
+      print_help
+      exit 0
+      ;;
+    O)
+      OUTPUT_PATH=$OPTARG
+      ;;
+    t)
+      TARGET_FILE=$OPTARG
+      ;;
+    m)
+      MODEL_FILE=$OPTARG
+      ;;
+    f)
+      FILTER_FILE=$OPTARG
+      ;;
+    ?)
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$OUTPUT_PATH" ] || [ -z "$TARGET_FILE" ] || [ -z "$MODEL_FILE" ]
 then
-  if [ -d "$1" ]
-  then
-    DOMAIN_DIRECTORY=$1"/cad_score"
-  else
-    echo "Output directory \"$1\" does not exist" 1>&2
-    exit 10
-  fi
-else
-  echo "Missing output directory path" 1>&2
-  exit 11
+  print_help
+  exit 1
 fi
 
-if [ -n "$2" ]
+DOMAIN_DIRECTORY=$OUTPUT_PATH"/cad_score"
+
+if [ -f "$TARGET_FILE" ]
 then
-  if [ -f "$2" ]
-  then
-    TARGET_FILE=$2
-    TARGET_NAME=$(basename $TARGET_FILE)
-  else
-    echo "Target file \"$2\" does not exist" 1>&2
-    exit 20
-  fi
+  TARGET_NAME=$(basename $TARGET_FILE)
 else
-  echo "Missing target file path" 1>&2
-  exit 21
+  echo "Target file \"$TARGET_FILE\" does not exist" 1>&2
+  exit 1
 fi
 
-if [ -n "$3" ]
+if [ -f "$MODEL_FILE" ]
 then
-  if [ -f "$3" ]
-  then
-    MODEL_FILE=$3
-    MODEL_NAME=$(basename $MODEL_FILE)
-  else
-    echo "Model file \"$3\" does not exist" 1>&2
-    exit 30
-  fi
+  MODEL_NAME=$(basename $MODEL_FILE)
 else
-  echo "Missing model path" 1>&2
-  exit 31
+  echo "Model file \"$MODEL_FILE\" does not exist" 1>&2
+  exit 1
 fi
 
-if [ -n "$4" ]
+if [ -n "$FILTER_FILE" ] && [ -f "$FILTER_FILE" ]
 then
-  if [ -f "$4" ]
-  then
-    FILTER_FILE=$4
-    FILTER_NAME=$(basename $FILTER_FILE)
-  else
-    echo "Filter file \"$4\" does not exist" 1>&2
-    exit 40
-  fi
+  FILTER_NAME=$(basename $FILTER_FILE)
 fi
 
 ###########################################
