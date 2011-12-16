@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIRECTORY=$(dirname $0)
+CAD_SCORE=$SCRIPT_DIRECTORY/cad_score.bash
+
 print_help()
 {
 cat << EOF 1>&2
@@ -85,13 +88,13 @@ do
   for MODEL_FILE in `find $MODELS_DIRECTORY -name "$MODEL_FILE_NAME_PATTERN" -type f`
   do
     echo "Scoring target $TARGET_FILE and model $MODEL_FILE" 1>&2
-    ./cad_score.bash -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE
+    $CAD_SCORE -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE
     if [ -n "$FILTERS_DIRECTORY" ]
     then
       for FILTER_FILE in `find $FILTERS_DIRECTORY -name "$FILTER_FILE_NAME_PATTERN" -type f`
       do
         echo "  Using filter $FILTER_FILE" 1>&2
-        ./cad_score.bash -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE -f $FILTER_FILE
+        $CAD_SCORE -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE -f $FILTER_FILE
       done
     fi
   done
