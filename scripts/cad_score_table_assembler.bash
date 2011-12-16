@@ -48,6 +48,8 @@ then
   exit 1
 fi
 
+###########################################
+
 HEADER=""
 
 for F in `find $SEARCH_DIRECTORY -path $PATH_PATTERN -type f`

@@ -4,7 +4,11 @@ SCRIPT_DIRECTORY=$(dirname $0)
 CAD_SCORE_LOOPER=$SCRIPT_DIRECTORY/cad_score_looper.bash
 CAD_SCORE_TABLE_ASSEMBLER=$SCRIPT_DIRECTORY/cad_score_table_assembler.bash
 
+###########################################
+
 JOB_DIRECTORY=$1
+
+###########################################
 
 if [ ! -d "$JOB_DIRECTORY" ]
 then
