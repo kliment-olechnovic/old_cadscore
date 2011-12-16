@@ -3,7 +3,11 @@
 SCRIPT_DIRECTORY=$(dirname $0)
 CAD_SCORE_JOB=$SCRIPT_DIRECTORY/cad_score_job.bash
 
+###########################################
+
 JOBS_DIRECTORY=$1
+
+###########################################
 
 if [ ! -d "$JOBS_DIRECTORY" ]
 then

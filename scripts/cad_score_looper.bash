@@ -3,6 +3,8 @@
 SCRIPT_DIRECTORY=$(dirname $0)
 CAD_SCORE=$SCRIPT_DIRECTORY/cad_score.bash
 
+###########################################
+
 print_help()
 {
 cat << EOF 1>&2
@@ -21,8 +23,12 @@ $0 options:
 EOF
 }
 
+OUTPUT_DIRECTORY=""
+TARGETS_DIRECTORY=""
 TARGET_FILE_NAME_PATTERN="*"
+MODELS_DIRECTORY=""
 MODEL_FILE_NAME_PATTERN="*"
+FILTERS_DIRECTORY=""
 FILTER_FILE_NAME_PATTERN="*"
 
 while getopts “hO:T:t:M:m:F:f:” OPTION
@@ -82,6 +88,8 @@ then
   echo "Filters directory \"$FILTERS_DIRECTORY\" does not exist" 1>&2
   exit 1
 fi
+
+###########################################
 
 for TARGET_FILE in `find $TARGETS_DIRECTORY -name "$TARGET_FILE_NAME_PATTERN" -type f`
 do
