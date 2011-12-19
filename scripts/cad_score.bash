@@ -1,10 +1,10 @@
 #!/bin/bash
 
 SCRIPT_DIRECTORY=$(dirname $0)
-CAD_SCORE_PARAMETERS=$SCRIPT_DIRECTORY/cad_score_configuration.bash
+CAD_SCORE_CONFIGURATION=$SCRIPT_DIRECTORY/cad_score_configuration.bash
 VOROPROT=$SCRIPT_DIRECTORY/voroprot2
 
-source $CAD_SCORE_PARAMETERS
+source $CAD_SCORE_CONFIGURATION
 
 ###########################################
 
