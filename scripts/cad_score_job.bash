@@ -18,4 +18,4 @@ fi
 
 $CAD_SCORE_LOOPER -O $JOB_DIRECTORY/output -T $JOB_DIRECTORY/target -M $JOB_DIRECTORY/model -F $JOB_DIRECTORY/filter
 
-$CAD_SCORE_TABLE_ASSEMBLER -S $JOB_DIRECTORY/output -p "*summary_table" -f "sm0_SS" > $JOB_DIRECTORY/output/scores
+$CAD_SCORE_TABLE_ASSEMBLER -S $JOB_DIRECTORY/output -p "*summary_table" -f "_SS" > $JOB_DIRECTORY/output/scores
