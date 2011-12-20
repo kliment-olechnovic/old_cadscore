@@ -8,6 +8,8 @@ t$GDT_TS=t$GDT_TS/100
 
 tid=read.table(cmd_args[2], header=TRUE, stringsAsFactors=FALSE);
 
+########################
+
 tid_keys=tid$target*10000+tid$group*10+tid$domain;
 t_keys=t$target*10000+t$group*10+t$domain;
 t0_keys=t_keys[which(is.element(t_keys, tid_keys))];
@@ -35,26 +37,57 @@ t2_keys=t_keys[t2_keys_sel];
 t2=t[t2_keys_sel,];
 t2=t2[order(t2_keys),];
 
+########################
+
 orientation_error=tid[,"sm0_AA_diff"];
 normalised_orientation_error=orientation_error/t0[,"sm0_AA_ref"];
 
 score_names=c("GDT_TS", "TM_score", "sm0_AA", "sm0_SA", "sm0_SS");
 score_colors=c("red", "pink", "blue", "green", "purple");
 
-png(paste(cmd_args[3], "full_vs_domains.png", sep=""), width=4*4, height=4*length(score_names), units="in", res=200);
-par(mfrow=c(length(score_names), 4));
-for(score_name in score_names)
-{
-  score_color=score_colors[which(score_names==score_name)];
-  
-  score_of_both_domains=((t1[, score_name])*(t1$target_atoms_count)+(t2[, score_name])*(t2$target_atoms_count))/(t1$target_atoms_count+t2$target_atoms_count);
-  score_diff_between_full_and_domains=(t0[, score_name]-score_of_both_domains);
-  score_insiding_value=abs(t1[, score_name]-t2[, score_name])-(abs(t0[, score_name]-t1[, score_name])+abs(t0[, score_name]-t2[, score_name]));
-  score_difference_with_lower_value=t0[, score_name]-pmin(t1[, score_name], t2[, score_name]);
+########################
 
-  plot(x=t0[, score_name], y=score_of_both_domains, xlim=c(0, 1), ylim=c(0, 1), col=score_color, cex=0.5, xlab="Full score", ylab="Domains score (combined score of two domains)", main=score_name);
-  plot(x=normalised_orientation_error, y=score_diff_between_full_and_domains, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Full and domains scores absolute difference", main=score_name);
-  plot(x=normalised_orientation_error, y=score_insiding_value, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Insiding value (any non-zero means outside)", main=score_name);
-  plot(x=normalised_orientation_error, y=score_difference_with_lower_value, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Difference between full score and worst domain score", main=score_name);
+targets_set=c(0-89, 0-8, 0-9);
+targets_set=c(targets_set, union(t0$target, t0$target));
+for(target in targets_set)
+{
+  target_name="all";
+  target_sel=1:length(t0$target);
+  if(target==0-8)
+  {
+    target_name="all_casp8";
+    target_sel=which(t0$CASP==8);
+  }
+  if(target==0-9)
+  {
+    target_name="all_casp9";
+    target_sel=which(t0$CASP==9);
+  }
+  if(target>=0)
+  {
+    target_name=target;
+    target_sel=which(t0$target==target);
+  }
+  st0=t0[target_sel,];
+  st1=t1[target_sel,];
+  st2=t2[target_sel,];
+  snormalised_orientation_error=normalised_orientation_error[target_sel];
+  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*5, height=4*length(score_names), units="in", res=200);
+  par(mfrow=c(length(score_names), 5));
+  for(score_name in score_names)
+  {
+    score_color=score_colors[which(score_names==score_name)];
+    
+    score_of_both_domains=((st1[, score_name])*(st1$target_atoms_count)+(st2[, score_name])*(st2$target_atoms_count))/(st1$target_atoms_count+st2$target_atoms_count);
+    score_diff_between_full_and_domains=(st0[, score_name]-score_of_both_domains);
+    score_insiding_value=abs(st1[, score_name]-st2[, score_name])-(abs(st0[, score_name]-st1[, score_name])+abs(st0[, score_name]-st2[, score_name]));
+    score_difference_with_lower_value=st0[, score_name]-pmin(st1[, score_name], st2[, score_name]);
+
+    plot(x=st0[, score_name], y=score_of_both_domains, xlim=c(0, 1), ylim=c(0, 1), col=score_color, cex=0.5, xlab="Full score", ylab="Domains score (combined score of two domains)", main=score_name);
+    plot(x=snormalised_orientation_error, y=st0[, score_name], col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Full score", main=score_name);
+    plot(x=snormalised_orientation_error, y=score_diff_between_full_and_domains, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Full and domains scores absolute difference", main=score_name);
+    plot(x=snormalised_orientation_error, y=score_insiding_value, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Insiding value (any non-zero means outside)", main=score_name);
+    plot(x=snormalised_orientation_error, y=score_difference_with_lower_value, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Difference between full score and worst domain score", main=score_name);
+  }
+  dev.off();
 }
-dev.off();
