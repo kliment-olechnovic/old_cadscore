@@ -68,12 +68,12 @@ fi
 
 ###########################################
 
-bash $SCRIPT_DIRECTORY/db_atoms.bash -D $DATABASE -i $TARGET_FILE
-bash $SCRIPT_DIRECTORY/db_atoms.bash -D $DATABASE -i $MODEL_FILE -t $TARGET_NAME
-bash $SCRIPT_DIRECTORY/db_contacts.bash -D $DATABASE -n $TARGET_NAME
-bash $SCRIPT_DIRECTORY/db_contacts.bash -D $DATABASE -n "$MODEL_NAME/$TARGET_NAME"
-bash $SCRIPT_DIRECTORY/db_cadscore.bash -D $DATABASE -t $TARGET_NAME -m "$MODEL_NAME/$TARGET_NAME"
-bash $SCRIPT_DIRECTORY/db_tmscore.bash -D $DATABASE -t $TARGET_FILE -m $MODEL_FILE
+bash $SCRIPT_DIRECTORY/db_set_atoms.bash -D $DATABASE -i $TARGET_FILE
+bash $SCRIPT_DIRECTORY/db_set_atoms.bash -D $DATABASE -i $MODEL_FILE -t $TARGET_NAME
+bash $SCRIPT_DIRECTORY/db_set_contacts.bash -D $DATABASE -n $TARGET_NAME
+bash $SCRIPT_DIRECTORY/db_set_contacts.bash -D $DATABASE -n "$MODEL_NAME/$TARGET_NAME"
+bash $SCRIPT_DIRECTORY/db_set_cadscore.bash -D $DATABASE -t $TARGET_NAME -m "$MODEL_NAME/$TARGET_NAME"
+bash $SCRIPT_DIRECTORY/db_set_tmscore.bash -D $DATABASE -t $TARGET_FILE -m $MODEL_FILE
 
 OUTPUT_DIRECTORY="$DATABASE/reports/$TARGET_NAME/$MODEL_NAME"
 mkdir -p $OUTPUT_DIRECTORY
