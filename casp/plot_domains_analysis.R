@@ -3,6 +3,7 @@ cmd_args=commandArgs(TRUE);
 t=read.table(cmd_args[1], header=TRUE, stringsAsFactors=FALSE);
 t=t[which(t$target_parts_count==3),];
 t=t[which(t$solid_group==1),];
+t=t[which(t$target!=629),];
 t$GDT_TS=t$GDT_TS/100
 
 tid=read.table(cmd_args[2], header=TRUE, stringsAsFactors=FALSE);
@@ -37,16 +38,16 @@ t2=t2[order(t2_keys),];
 orientation_error=tid[,"sm0_AA_diff"];
 normalised_orientation_error=orientation_error/t0[,"sm0_AA_ref"];
 
-score_names=c("GDT_TS", "sm0_AA");
-score_colors=c("red", "blue");
+score_names=c("GDT_TS", "TM_score", "sm0_AA", "sm0_SA", "sm0_SS");
+score_colors=c("red", "pink", "blue", "green", "purple");
 
-png(paste(cmd_args[3], "full_vs_domains.png", sep=""), width=7*4, height=7*length(score_names), units="in", res=200);
+png(paste(cmd_args[3], "full_vs_domains.png", sep=""), width=4*4, height=4*length(score_names), units="in", res=200);
 par(mfrow=c(length(score_names), 4));
 for(score_name in score_names)
 {
   score_color=score_colors[which(score_names==score_name)];
   
-  score_of_both_domains=((t1[, score_name])*(t1$target_atoms_count/(t1$target_atoms_count+t2$target_atoms_count))+(t2[, score_name])*(t2$target_atoms_count/(t1$target_atoms_count+t2$target_atoms_count)));
+  score_of_both_domains=((t1[, score_name])*(t1$target_atoms_count)+(t2[, score_name])*(t2$target_atoms_count))/(t1$target_atoms_count+t2$target_atoms_count);
   score_diff_between_full_and_domains=(t0[, score_name]-score_of_both_domains);
   score_insiding_value=abs(t1[, score_name]-t2[, score_name])-(abs(t0[, score_name]-t1[, score_name])+abs(t0[, score_name]-t2[, score_name]));
   score_difference_with_lower_value=t0[, score_name]-pmin(t1[, score_name], t2[, score_name]);
