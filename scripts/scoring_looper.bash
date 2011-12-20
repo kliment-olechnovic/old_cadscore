@@ -79,6 +79,6 @@ do
   for MODEL_FILE in `find $MODELS_DIRECTORY -name "$MODEL_FILE_NAME_PATTERN" -type f`
   do
     echo "Scoring target $TARGET_FILE and model $MODEL_FILE" 1>&2
-    $SCRIPT_DIRECTORY/cad_score.bash -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE
+    $SCRIPT_DIRECTORY/db_set_scoring_report.bash -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE
   done
 done
