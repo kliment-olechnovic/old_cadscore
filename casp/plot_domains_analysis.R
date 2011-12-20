@@ -42,8 +42,8 @@ t2=t2[order(t2_keys),];
 orientation_error=tid[,"sm0_AA_diff"];
 normalised_orientation_error=orientation_error/t0[,"sm0_AA_ref"];
 
-score_names=c("GDT_TS", "TM_score", "sm0_AA", "sm0_SA", "sm0_SS");
-score_colors=c("red", "pink", "blue", "green", "purple");
+score_names=c("GDT_TS", "sm0_AA", "sm0_SA");
+score_colors=c("red", "blue", "purple");
 
 ########################
 
@@ -72,8 +72,8 @@ for(target in targets_set)
   st1=t1[target_sel,];
   st2=t2[target_sel,];
   snormalised_orientation_error=normalised_orientation_error[target_sel];
-  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*5, height=4*length(score_names), units="in", res=200);
-  par(mfrow=c(length(score_names), 5));
+  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*6, height=4*length(score_names), units="in", res=200);
+  par(mfrow=c(length(score_names), 6));
   for(score_name in score_names)
   {
     score_color=score_colors[which(score_names==score_name)];
@@ -88,6 +88,13 @@ for(target in targets_set)
     plot(x=snormalised_orientation_error, y=score_diff_between_full_and_domains, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Full and domains scores absolute difference", main=score_name);
     plot(x=snormalised_orientation_error, y=score_insiding_value, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Insiding value (any non-zero means outside)", main=score_name);
     plot(x=snormalised_orientation_error, y=score_difference_with_lower_value, col=score_color, cex=0.5, xlab="Norm. orientation error", ylab="Difference between full score and worst domain score", main=score_name);
+    
+    ordering=order(st0[, score_name]);
+    plot(st0[, score_name][ordering], col="red", pch=21, ylim=c(0, 1), xlab="Nr.", ylab="Score", main=score_name);
+    points(st1[, score_name][ordering], col="blue", pch=21);
+    points(st2[, score_name][ordering], col="green", pch=21);
+    points(st0[, score_name][ordering], col="red", pch=21);
+    legend(0, 1, c("Full", "D1", "D2"), col=c("red", "blue", "green"), pch=rep(21, 21, 21));
   }
   dev.off();
 }
