@@ -39,8 +39,10 @@ t2=t2[order(t2_keys),];
 
 ########################
 
-orientation_error=tid[,"sm0_AA_diff"];
-normalised_orientation_error=orientation_error/t0[,"sm0_AA_ref"];
+model_orientation_error=tid[,"sm0_AA_diff"];
+orientation_score=tid[,"sm0_AA"];
+normalised_orientation_error=model_orientation_error/t0[,"sm0_AA_ref"];
+target_orientation_value=tid[,"sm0_AA_ref"]/t0[,"sm0_AA_ref"];
 
 score_names=c("GDT_TS", "sm0_AA", "sm0_SA", "sm0_SS");
 score_colors=c("red", "blue", "purple", "brown");
@@ -71,9 +73,10 @@ for(target in targets_set)
   st0=t0[target_sel,];
   st1=t1[target_sel,];
   st2=t2[target_sel,];
+  sorientation_score=orientation_score[target_sel];
   snormalised_orientation_error=normalised_orientation_error[target_sel];
-  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*10, height=4*length(score_names), units="in", res=100);
-  par(mfrow=c(length(score_names), 10));
+  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*12, height=4*length(score_names), units="in", res=150);
+  par(mfrow=c(length(score_names), 12));
   for(score_name in score_names)
   {
     score_color=score_colors[which(score_names==score_name)];
@@ -89,7 +92,18 @@ for(target in targets_set)
     points(x=c(0, 1), y=c(0, 1), type="l", col="black");
     
     hist(score_of_both_domains/st0[, score_name], xlim=c(0.9, 2.5), col="grey", xlab="(Domains score)/(Full score)", main="Histogram of (Domains score)/(Full score)");
-   
+    
+    x=sorientation_score;
+    y=st0[, score_name];
+    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=densCols(x, y), pch=16, cex=0.5, xlab="Orientation AA score", ylab="Full score", main=paste(score_name, ": Full score vs orientation AA score", sep=""));
+    legend(0, 1, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
+
+    x=sorientation_score;
+    y=score_diff_between_full_and_domains;
+    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0-0.25, 0.25), col=densCols(x, y), pch=16, cex=0.5, xlab="Orientation AA score", ylab="Full and domains scores absolute difference", main=paste(score_name, ": Full and domains scores absolute difference", sep=""));
+    points(x=c(0, 1), y=c(0, 0), type="l", col="black");
+    legend(0, 0.25, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
+    
     x=snormalised_orientation_error;
     y=st0[, score_name];
     plot(x=x, y=y, xlim=c(0, 0.2), ylim=c(0, 1), col=densCols(x, y), pch=16, cex=0.5, xlab="Norm. orientation error", ylab="Full score", main=paste(score_name, ": Full score vs orientation error", sep=""));
@@ -98,6 +112,7 @@ for(target in targets_set)
     y=score_diff_between_full_and_domains;
     plot(x=x, y=y, xlim=c(0, 0.2), ylim=c(0-0.25, 0.25), col=densCols(x, y), pch=16, cex=0.5, xlab="Norm. orientation error", ylab="Full and domains scores absolute difference", main=paste(score_name, ": Full and domains scores absolute difference", sep=""));
     points(x=c(0, 1), y=c(0, 0), type="l", col="black");
+    legend(0, 0.25, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
     
     x=snormalised_orientation_error;
     y=score_insiding_value;
