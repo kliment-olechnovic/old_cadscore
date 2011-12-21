@@ -75,8 +75,8 @@ for(target in targets_set)
   st2=t2[target_sel,];
   sorientation_score=orientation_score[target_sel];
   snormalised_orientation_error=normalised_orientation_error[target_sel];
-  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*12, height=4*length(score_names), units="in", res=150);
-  par(mfrow=c(length(score_names), 12));
+  png(paste(cmd_args[3], target_name, ".png", sep=""), height=4*12, width=4*length(score_names), units="in", res=150);
+  par(mfcol=c(12, length(score_names)));
   for(score_name in score_names)
   {
     score_color=score_colors[which(score_names==score_name)];
