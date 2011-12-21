@@ -42,7 +42,7 @@ t2=t2[order(t2_keys),];
 orientation_error=tid[,"sm0_AA_diff"];
 normalised_orientation_error=orientation_error/t0[,"sm0_AA_ref"];
 
-score_names=c("GDT_TS", "sm0_AA");
+score_names=c("GDT_TS", "sm0_AA", "sm0_SA", "sm0_SS");
 score_colors=c("red", "blue", "purple", "brown");
 
 ########################
@@ -72,8 +72,8 @@ for(target in targets_set)
   st1=t1[target_sel,];
   st2=t2[target_sel,];
   snormalised_orientation_error=normalised_orientation_error[target_sel];
-  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*7, height=4*length(score_names), units="in", res=200);
-  par(mfrow=c(length(score_names), 7));
+  png(paste(cmd_args[3], target_name, ".png", sep=""), width=4*10, height=4*length(score_names), units="in", res=100);
+  par(mfrow=c(length(score_names), 10));
   for(score_name in score_names)
   {
     score_color=score_colors[which(score_names==score_name)];
@@ -115,6 +115,23 @@ for(target in targets_set)
     points(st2[, score_name][ordering], col="green", pch=21, cex=0.3);
     points(st0[, score_name][ordering], col="red", pch=21, cex=0.3);
     legend(0, 1, c("Full", "D1", "D2"), col=c("red", "blue", "green"), pch=rep(21, 21, 21));
+    
+    x=st0$GDT_TS;
+    y=st0[, score_name];
+    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=densCols(x, y), pch=16, cex=0.5, xlab="GDT_TS", ylab=score_name, main=paste(score_name, ": Correlation of full score with full GDT_TS", sep=""));
+    legend(0, 1, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
+    
+    x=st1$GDT_TS;
+    y=st1[, score_name];
+    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=densCols(x, y), pch=16, cex=0.5, xlab="GDT_TS", ylab=score_name, main=paste(score_name, ": Correlation of D1 score with D1 GDT_TS", sep=""));
+    legend(0, 1, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
+    
+    x=st2$GDT_TS;
+    y=st2[, score_name];
+    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=densCols(x, y), pch=16, cex=0.5, xlab="GDT_TS", ylab=score_name, main=paste(score_name, ": Correlation of D2 score with D2 GDT_TS", sep=""));
+    legend(0, 1, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
   }
   dev.off();
 }
+
+warnings();
