@@ -58,7 +58,7 @@ casp_9_targets_definition=read.table("casp_9_targets_definition.txt", header=FAL
 target_class=rep("unknown", length(t$target));
 for(i in 1:length(casp_9_targets_definition[[1]]))
 {
-  target_class[which(t$target==casp_9_targets_definition[[1]][i])]=casp_9_targets_definition[[2]][i];
+  target_class[which((t$target*10+t$domain)==(casp_9_targets_definition[[1]][i]*10+casp_9_targets_definition[[2]][i]))]=casp_9_targets_definition[[3]][i];
 }
 t$target_class=target_class;
 
