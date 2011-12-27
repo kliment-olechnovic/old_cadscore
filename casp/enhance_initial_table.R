@@ -29,11 +29,9 @@ t$server=server;
 
 ########################
 
-target_ratios=t$target_atoms_count/t$target_residues_count;
-min_target_ratio=min(target_ratios);
 model_ratios=t$model_atoms_count/t$model_residues_count;
 
-not_solid_real_groups=real_groups[which(model_ratios<min_target_ratio)];
+not_solid_real_groups=real_groups[which(model_ratios<6.5)];
 not_solid_real_groups_set=union(not_solid_real_groups, not_solid_real_groups);
 
 solid_group=rep(1, length(real_groups));
@@ -72,6 +70,10 @@ for(i in real_targets_set)
   target_max_GDT_TS[which(real_targets==i)]=max(t$GDT_TS[which(real_targets==i)]);
 }
 t$target_max_GDT_TS=target_max_GDT_TS
+
+########################
+
+t=t[which((t$model_atoms_count/t$model_residues_count)<9.5),]
 
 ########################
 
