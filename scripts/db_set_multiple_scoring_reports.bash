@@ -11,7 +11,7 @@ cat << EOF 1>&2
 $0 options:
 
   -h    show this message and exit
-  -O    path to writable output directory
+  -D    path to writable database directory
   -T    path to directory with target files
   -t    target file name pattern (optional, default is *)
   -M    path to directory with model files
@@ -26,14 +26,14 @@ TARGET_FILE_NAME_PATTERN="*"
 MODELS_DIRECTORY=""
 MODEL_FILE_NAME_PATTERN="*"
 
-while getopts “hO:T:t:M:m:F:f:” OPTION
+while getopts “hD:T:t:M:m:F:f:” OPTION
 do
   case $OPTION in
     h)
       print_help
       exit 0
       ;;
-    O)
+    D)
       OUTPUT_DIRECTORY=$OPTARG
       ;;
     T)
@@ -79,6 +79,6 @@ do
   for MODEL_FILE in `find $MODELS_DIRECTORY -name "$MODEL_FILE_NAME_PATTERN" -type f`
   do
     echo "Scoring target $TARGET_FILE and model $MODEL_FILE" 1>&2
-    $SCRIPT_DIRECTORY/db_set_scoring_report.bash -O $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE
+    $SCRIPT_DIRECTORY/db_set_scoring_report.bash -D $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE
   done
 done
