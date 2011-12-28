@@ -14,6 +14,6 @@ then
   exit 1
 fi
 
-$SCRIPT_DIRECTORY/scoring_looper.bash -O $JOB_DIRECTORY/db -T $JOB_DIRECTORY/target -M $JOB_DIRECTORY/model
+$SCRIPT_DIRECTORY/db_set_multiple_scoring_reports.bash -D $JOB_DIRECTORY/db -T $JOB_DIRECTORY/target -M $JOB_DIRECTORY/model
 
-$SCRIPT_DIRECTORY/util_cat_tables.bash -S $JOB_DIRECTORY/db -p "*scoring_report/*/table_row" -f "AA" > $JOB_DIRECTORY/db/all_scores_table
+$SCRIPT_DIRECTORY/db_set_scoring_summary.bash -D $JOB_DIRECTORY/db

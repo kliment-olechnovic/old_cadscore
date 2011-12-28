@@ -11,7 +11,7 @@ cat << EOF 1>&2
 $0 options:
 
   -h    show this message and exit
-  -O    path to writable output directory
+  -D    path to writable database directory
   -t    path to target file in PBD format
   -m    path to model file in PBD format
 
@@ -22,14 +22,14 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 
-while getopts “hO:t:m:f:” OPTION
+while getopts “hD:t:m:f:” OPTION
 do
   case $OPTION in
     h)
       print_help
       exit 0
       ;;
-    O)
+    D)
       DATABASE=$OPTARG
       ;;
     t)
