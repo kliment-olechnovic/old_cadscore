@@ -18,6 +18,7 @@ $0 options:
   -m    model name in the database
   -c    contacts category
   -w    bluring window size
+  -p    flag for output in the PDB format
 
 EOF
 }
@@ -27,8 +28,9 @@ TARGET_NAME=""
 MODEL_NAME=""
 CATEGORY=""
 WINDOW="0"
+PDB_FILE=""
 
-while getopts “hD:t:m:c:w:” OPTION
+while getopts “hD:t:m:c:w:p:” OPTION
 do
   case $OPTION in
     h)
@@ -49,6 +51,9 @@ do
       ;;
     w)
       WINDOW=$OPTARG
+      ;;
+    p)
+      PDB_FILE=$OPTARG
       ;;
     ?)
       exit 1
@@ -71,4 +76,9 @@ fi
 
 ###########################################
 
-cat $CAD_PROFILE_FILE | $VOROPROT --mode calculate-contact-area-difference-local-scores --category $CATEGORY --window $WINDOW
+if [ -z "$PDB_FILE" ]
+then
+  cat $CAD_PROFILE_FILE | $VOROPROT --mode calculate-contact-area-difference-local-scores --category $CATEGORY --window $WINDOW
+else
+  (cat $CAD_PROFILE_FILE | $VOROPROT --mode calculate-contact-area-difference-local-scores --category $CATEGORY --window $WINDOW ; cat $PDB_FILE) | $VOROPROT --mode print-contact-area-difference-local-scores-injected-to-pdb-file
+fi
