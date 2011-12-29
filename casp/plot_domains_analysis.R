@@ -75,8 +75,8 @@ for(target in targets_set)
   st2=t2[target_sel,];
   sorientation_score=orientation_score[target_sel];
   snormalised_orientation_error=normalised_orientation_error[target_sel];
-  png(paste(cmd_args[3], target_name, ".png", sep=""), height=4*12, width=4*length(score_names), units="in", res=150);
-  par(mfcol=c(12, length(score_names)));
+  png(paste(cmd_args[3], target_name, ".png", sep=""), height=4*13, width=4*length(score_names), units="in", res=150);
+  par(mfcol=c(13, length(score_names)));
   for(score_name in score_names)
   {
     score_color=score_colors[which(score_names==score_name)];
@@ -91,7 +91,11 @@ for(target in targets_set)
     plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=densCols(x, y), pch=16, cex=0.5, xlab="Full score", ylab="Domains score (combined score of two domains)", main=paste(score_name, ": Domains score vs full score", sep=""));
     points(x=c(0, 1), y=c(0, 1), type="l", col="black");
     
-    hist(score_of_both_domains/st0[, score_name], xlim=c(0.9, 2.5), col="grey", xlab="(Domains score)/(Full score)", main="Histogram of (Domains score)/(Full score)");
+    hist(score_of_both_domains/st0[, score_name], xlim=c(0.5, 2.5), col="grey", xlab="(Domains score)/(Full score)", main="Histogram of (Domains score)/(Full score)");
+    
+    x=st0[, score_name];
+    y=score_of_both_domains;
+    hist(sqrt(x^2+y^2-((x+y)^2)/2), xlim=c(0.0, 0.4), col="grey", xlab="(Full score;Domains score) distance to vector (1;1)", main="Histogram of (Full score;Domains score) distance to vector (1;1)");
     
     x=sorientation_score;
     y=st0[, score_name];
