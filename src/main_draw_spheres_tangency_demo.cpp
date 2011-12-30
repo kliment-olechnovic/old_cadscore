@@ -76,12 +76,16 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		const std::vector<Point> ps=apollo::construct_spheres_tangent_planes_normals<Point>(a, b, c);
 		for(std::size_t i=0;i<ps.size();i++)
 		{
-			const Point& p=ps[i];
-			draw_triangle(
-					apollo::custom_point_from_object<Point>(a)+(p*a.r),
-					apollo::custom_point_from_object<Point>(b)+(p*b.r),
-					apollo::custom_point_from_object<Point>(c)+(p*c.r),
-					p);
+			const Point& n=ps[i];
+			Point plane[3]={apollo::custom_point_from_object<Point>(a)+(n*a.r), apollo::custom_point_from_object<Point>(b)+(n*b.r), apollo::custom_point_from_object<Point>(c)+(n*c.r)};
+			const Point center=(plane[0]+plane[1]+plane[2])/3.0;
+			for(int j=0;j<3;j++)
+			{
+				plane[j]=center+((plane[j]-center)*3);
+			}
+			draw_triangle(plane[0]+n*0.0001, plane[1]+n*0.0001, plane[2]+n*0.0001, n);
+			const Point rn=Point()-n;
+			draw_triangle(plane[0]+rn*0.0001, plane[1]+rn*0.0001, plane[2]+rn*0.0001, rn);
 		}
 	}
 
