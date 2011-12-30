@@ -49,6 +49,8 @@ score_colors=c("red", "blue", "purple", "brown");
 
 ########################
 
+summary_table=c();
+
 targets_set=c(0-89, 0-8, 0-9);
 targets_set=c(targets_set, union(t0$target, t0$target));
 for(target in targets_set)
@@ -183,6 +185,18 @@ for(target in targets_set)
     legend(0, 1, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
   }
   dev.off();
+  
+  summary_row=data.frame(target_name=paste(target_name), models_count=length(target_sel));
+  if(length(summary_table)==0)
+  {
+    summary_table=summary_row;
+  }
+  else
+  {
+    summary_table=rbind(summary_table, summary_row);
+  }
 }
+
+write.table(summary_table, paste(cmd_args[3], "summary_table.txt", sep=""), quote=FALSE, row.names=FALSE);
 
 warnings();
