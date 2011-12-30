@@ -50,8 +50,9 @@ for(full_target_id in full_target_ids_set)
   {
     x=st$GDT_TS;
     y=st[, score_name];
-    density_colors=densCols(x, y);
-    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=density_colors, pch=16, cex=0.5, xlab="GDT_TS", ylab=score_name, main=paste(score_name, " correlation with GDT_TS", sep=""));
+    coloring="blue";
+    if(full_target_id<0) { coloring=densCols(x, y); }
+    plot(x=x, y=y, xlim=c(0, 1), ylim=c(0, 1), col=coloring, pch=16, cex=0.5, xlab="GDT_TS", ylab=score_name, main=paste(score_name, " correlation with GDT_TS", sep=""));
     if(full_target_id==0-9)
     {
       red_spectrum=c("#FF8888", "#FF6666", "#FF4444", "#FF3333", "#FF1111", "#FF0000");
