@@ -129,6 +129,17 @@ public:
 		return result;
 	}
 
+	std::vector< std::vector<SimpleSphere> > get_spheres_layers() const
+	{
+		std::vector< std::vector<SimpleSphere> > spheres_layers;
+		spheres_layers.reserve(clusters_layers_.size());
+		for(std::size_t i=0;i<clusters_layers_.size();i++)
+		{
+			spheres_layers.push_back(split_pairs(clusters_layers_[i]).first);
+		}
+		return spheres_layers;
+	}
+
 private:
 	typedef std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > ClustersLayer;
 
