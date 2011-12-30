@@ -22,7 +22,7 @@ void main_draw_spheres_hierarchy(const auxiliaries::CommandLineOptions& clo)
 	const std::size_t low_count=clo.arg<double>("--low-count", 0);
 
 	auxiliaries::assert_file_header("atoms");
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
 
 	const Hierarchy hierarchy(atoms, radius, low_count);
 
