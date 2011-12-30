@@ -46,6 +46,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--ts"))
 	{
+		std::cout << "$tangent_sphere\n";
 		Sphere d(0.0, 0.0, 0.7, 0.15);
 		draw_sphere(d, 3, 0);
 		std::cout << "color 1 1 0\n";
@@ -58,6 +59,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--dc"))
 	{
+		std::cout << "$Dupine_cyclide\n";
 		std::cout << "color 1 1 0\n";
 		Sphere d(0.0, 0.0, 0.0, 0.15);
 		for(d.z=-0.7;d.z<=0.7;d.z+=0.05)
@@ -72,6 +74,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--tp"))
 	{
+		std::cout << "$tangent_planes\n";
 		std::cout << "color 0 1 0\n";
 		const std::vector<Point> ps=apollo::construct_spheres_tangent_planes_normals<Point>(a, b, c);
 		for(std::size_t i=0;i<ps.size();i++)
