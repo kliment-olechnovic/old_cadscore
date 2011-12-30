@@ -4,6 +4,7 @@
 
 #include "apollo/spheres_tangent_sphere.h"
 #include "apollo/spheres_tangent_plane.h"
+#include "apollo/spheres_tangent_stick.h"
 
 #include "auxiliaries/command_line_options.h"
 
@@ -31,6 +32,38 @@ void draw_triangle(const T& a, const T& b, const T& c, const T& n)
 	std::cout << "\n";
 }
 
+void draw_cone(const apollo::SimpleSphere& a, const apollo::SimpleSphere& b)
+{
+	typedef apollo::SimpleSphere Sphere;
+	typedef apollo::SimplePoint Point;
+
+	const std::pair<bool, Point> descriptor=apollo::construct_spheres_circles_tangent_line_normal(a, b);
+	if(descriptor.first)
+	{
+		Point start=apollo::custom_point_from_object<Point>(a);
+		double start_r=a.r;
+		Point end=apollo::custom_point_from_object<Point>(b);
+		double end_r=b.r;
+		if(a.r>b.r)
+		{
+			std::swap(start, end);
+			std::swap(start_r, end_r);
+		}
+		const Point face_start=start+((end-start).unit()*(descriptor.second.x*start_r));
+		const double face_start_r=descriptor.second.y*start_r;
+		const Point face_end=end+((end-start).unit()*(descriptor.second.x*end_r));
+		const double face_end_r=descriptor.second.y*end_r;
+		std::cout << "tube ";
+		print_point(face_start);
+		print_point(face_end);
+		std::cout << face_start_r << " " << face_end_r << " 108\n";
+	}
+	else
+	{
+		std::cerr << "err\n";
+	}
+}
+
 void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SimpleSphere Sphere;
@@ -38,7 +71,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	std::cout << "color 1 1 1\n";
 	const Sphere a( 0.0, 0.6, 0.0, 0.5);
-	const Sphere b( 0.5,-0.3, 0.0, 0.4);
+	const Sphere b( 0.51,-0.3, 0.0, 0.4);
 	const Sphere c(-0.5,-0.3, 0.0, 0.1);
 	draw_sphere(a, 3, 0);
 	draw_sphere(b, 3, 0);
@@ -90,6 +123,15 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 			const Point rn=Point()-n;
 			draw_triangle(plane[0]+rn*0.0001, plane[1]+rn*0.0001, plane[2]+rn*0.0001, rn);
 		}
+	}
+
+	if(clo.isopt("--tc"))
+	{
+		std::cout << "$tangent_cones\n";
+		std::cout << "color 0 1 1\n";
+		draw_cone(a, b);
+		draw_cone(a, c);
+		draw_cone(b, c);
 	}
 
 	std::cout << "flush\n";
