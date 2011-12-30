@@ -15,23 +15,25 @@ void draw_sphere(const T& s, const int quality, const int wired)
 void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SimpleSphere Sphere;
-	const Sphere a( 0.0, 0.6, 0.0, 0.1);
-	const Sphere b( 0.5,-0.3, 0.0, 0.2);
-	const Sphere c(-0.5,-0.3, 0.0, 0.3);
-	const Sphere d( 0.0, 0.0, 0.5, 0.2);
-
-	const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 
 	std::cout << "color 1 1 1\n";
+
+	const Sphere a( 0.0, 0.6, 0.0, 0.5);
+	const Sphere b( 0.5,-0.3, 0.0, 0.4);
+	const Sphere c(-0.5,-0.3, 0.0, 0.1);
 	draw_sphere(a, 3, 0);
 	draw_sphere(b, 3, 0);
 	draw_sphere(c, 3, 0);
-	draw_sphere(d, 3, 0);
 
 	std::cout << "color 1 1 0\n";
-	for(std::size_t i=0;i<ts.size();i++)
+	Sphere d( 0.0, 0.0, 0.0, 0.15);
+	for(d.z=-0.7;d.z<=0.7;d.z+=0.05)
 	{
-		draw_sphere(ts[i], 3, 0);
+		const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
+		for(std::size_t i=0;i<ts.size();i++)
+		{
+			draw_sphere(ts[0], 3, 0);
+		}
 	}
 
 	std::cout << "flush\n";
