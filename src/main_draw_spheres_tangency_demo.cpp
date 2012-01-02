@@ -56,7 +56,7 @@ void draw_cone(const apollo::SimpleSphere& a, const apollo::SimpleSphere& b)
 		std::cout << "tube ";
 		print_point(face_start);
 		print_point(face_end);
-		std::cout << face_start_r << " " << face_end_r << " 108\n";
+		std::cout << face_start_r << " " << face_end_r << " 108 1\n";
 	}
 	else
 	{
