@@ -139,14 +139,16 @@ std::pair< std::vector< std::vector<Point> >, std::vector< std::vector<Point> > 
 
 void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 {
+	std::cout << "background 1 1 1\n";
+
 	const Sphere a( 0.0, 0.6, 0.0, 0.5);
 	const Sphere b( 0.51,-0.3, 0.0, 0.4);
 	const Sphere c(-0.5,-0.3, 0.0, 0.3);
 
-	if(clo.isopt("--s"))
+	if(clo.isopt("--st"))
 	{
 		std::cout << "$spheres_triple\n";
-		std::cout << "color 1 1 1\n";
+		std::cout << "color 0.7 0.8 1.0\n";
 		draw_sphere(a, 3, 0);
 		draw_sphere(b, 3, 0);
 		draw_sphere(c, 3, 0);
@@ -233,7 +235,6 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--tp"))
 	{
 		std::cout << "$tangent_planes\n";
-		std::cout << "color 0 1 0\n";
 		const std::vector<Point> ps=apollo::construct_spheres_tangent_planes_normals<Point>(a, b, c);
 		for(std::size_t i=0;i<ps.size();i++)
 		{
@@ -244,9 +245,18 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 			{
 				plane[j]=center+((plane[j]-center)*3);
 			}
-			draw_triangle(plane[0]+n*0.0001, plane[1]+n*0.0001, plane[2]+n*0.0001, n);
-			const Point rn=Point()-n;
-			draw_triangle(plane[0]+rn*0.0001, plane[1]+rn*0.0001, plane[2]+rn*0.0001, rn);
+			if(clo.isopt("--tp-blend"))
+			{
+				std::cout << "color 0 1 0 0.5\n";
+				draw_triangle(plane[0], plane[1], plane[2], n);
+			}
+			else
+			{
+				std::cout << "color 0 1 0\n";
+				draw_triangle(plane[0]+n*0.0001, plane[1]+n*0.0001, plane[2]+n*0.0001, n);
+				const Point rn=Point()-n;
+				draw_triangle(plane[0]+rn*0.0001, plane[1]+rn*0.0001, plane[2]+rn*0.0001, rn);
+			}
 		}
 	}
 
