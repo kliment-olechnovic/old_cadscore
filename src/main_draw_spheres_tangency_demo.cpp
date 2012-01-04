@@ -151,7 +151,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 				std::cout << "color 1 0 0\n";
 				{
 					const double step=0.05;
-					for(double l=step;l<=1.0;l+=step)
+					for(double l=step;l<1.0+step;l+=step)
 					{
 						std::cout << "line ";
 						print_point(cc+(((t1+((t2-t1)*(l-step)))-cc).unit()*ccr));
