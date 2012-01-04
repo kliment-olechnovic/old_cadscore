@@ -168,6 +168,22 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
+	if(clo.isopt("--trace"))
+	{
+		std::cout << "color 1 0 0\n";
+		Sphere d(0.0, 0.0, 0.0, 0.15);
+		for(d.z=-2.0;d.z<=2.0;d.z+=0.01)
+		{
+			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
+			for(std::size_t i=0;i<ts.size();i++)
+			{
+				Sphere t=ts[i];
+				t.r=0.02;
+				draw_sphere(t, 3, 0);
+			}
+		}
+	}
+
 	if(clo.isopt("--dc"))
 	{
 		std::cout << "$Dupine_cyclide\n";
