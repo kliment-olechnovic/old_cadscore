@@ -158,7 +158,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--ts1") || clo.isopt("--ts2"))
 	{
 		std::cout << "$tangent_sphere\n";
-		Sphere d=clo.isopt("--ts1") ? Sphere(0.0, 0.0, 0.7, 0.1) : Sphere(0.0, 0.0, 0.001, 0.1);
+		Sphere d=clo.isopt("--ts1") ? Sphere(0.0, 0.0, 0.7, 0.1) : Sphere(0.0, 0.0, 0.1, 0.1);
 		draw_sphere(d, 3, 0);
 		std::cout << "color 1 1 0\n";
 		const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
