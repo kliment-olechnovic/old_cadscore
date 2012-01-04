@@ -72,21 +72,21 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	std::cout << "color 1 1 1\n";
 	const Sphere a( 0.0, 0.6, 0.0, 0.5);
 	const Sphere b( 0.51,-0.3, 0.0, 0.4);
-	const Sphere c(-0.5,-0.3, 0.0, 0.1);
+	const Sphere c(-0.5,-0.3, 0.0, 0.3);
 	draw_sphere(a, 3, 0);
 	draw_sphere(b, 3, 0);
 	draw_sphere(c, 3, 0);
 
-	if(clo.isopt("--ts"))
+	if(clo.isopt("--ts1") || clo.isopt("--ts2"))
 	{
 		std::cout << "$tangent_sphere\n";
-		Sphere d(0.0, 0.0, 0.7, 0.15);
+		Sphere d=clo.isopt("--ts1") ? Sphere(0.0, 0.0, 0.7, 0.1) : Sphere(0.0, 0.0, 0.001, 0.1);
 		draw_sphere(d, 3, 0);
 		std::cout << "color 1 1 0\n";
 		const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 		for(std::size_t i=0;i<ts.size();i++)
 		{
-			draw_sphere(ts[0], 3, 0);
+			draw_sphere(ts[i], 3, 0);
 		}
 	}
 
@@ -95,12 +95,12 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		std::cout << "$Dupine_cyclide\n";
 		std::cout << "color 1 1 0\n";
 		Sphere d(0.0, 0.0, 0.0, 0.15);
-		for(d.z=-0.7;d.z<=0.7;d.z+=0.05)
+		for(d.z=-0.7;d.z<=0.7;d.z+=0.01)
 		{
 			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 			for(std::size_t i=0;i<ts.size();i++)
 			{
-				draw_sphere(ts[0], 3, 0);
+				draw_sphere(ts[i], 3, 0);
 			}
 		}
 	}
