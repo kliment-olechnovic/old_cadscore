@@ -149,7 +149,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	{
 		const int wired=clo.isopt("--st-wired") ? 1 : 0;
 		std::cout << "$spheres_triple\n";
-		std::cout << "color 0.7 0.8 1.0\n";
+		std::cout << "color 0.4 0.6 1.0\n";
 		draw_sphere(a, 3, wired);
 		draw_sphere(b, 3, wired);
 		draw_sphere(c, 3, wired);
@@ -160,7 +160,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		std::cout << "$tangent_sphere\n";
 		Sphere d=clo.isopt("--ts1") ? Sphere(0.0, 0.0, 0.7, 0.1) : Sphere(0.0, 0.0, 0.1, 0.1);
 		draw_sphere(d, 3, 0);
-		std::cout << "color 1 1 0\n";
+		std::cout << "color 1.0 0.5 0.4\n";
 		const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 		for(std::size_t i=0;i<ts.size();i++)
 		{
@@ -170,7 +170,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--trace"))
 	{
-		std::cout << "color 1 0 0\n";
+		std::cout << "color 1.0 0.5 0.4\n";
 		Sphere d(0.0, 0.0, 0.0, 0.15);
 		for(d.z=-2.0;d.z<=2.0;d.z+=0.001)
 		{
@@ -194,7 +194,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--dc"))
 	{
 		std::cout << "$Dupine_cyclide\n";
-		std::cout << "color 1 0 0\n";
+		std::cout << "color 1.0 0.5 0.4\n";
 		const std::pair< std::vector< std::vector<Point> >, std::vector< std::vector<Point> > > cps=construct_Dupine_cyclide_circles(a, b, c);
 		for(std::size_t i=0;i<cps.first.size();i++)
 		{
@@ -268,7 +268,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 			if(clo.isopt("--tp-points"))
 			{
-				std::cout << "color 0 1 0\n";
+				std::cout << "color 0.4 1 0.5\n";
 				for(int j=0;j<3;j++)
 				{
 					draw_sphere(apollo::custom_sphere_from_point<Sphere>(plane[j], 0.02), 3, 0);
@@ -282,12 +282,12 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 			if(clo.isopt("--tp-blend"))
 			{
-				std::cout << "color 0 1 0 0.5\n";
+				std::cout << "color 0.4 1 0.5 0.5\n";
 				draw_triangle(plane[0], plane[1], plane[2], n);
 			}
 			else
 			{
-				std::cout << "color 0 1 0\n";
+				std::cout << "color 0.4 1 0.5\n";
 				draw_triangle(plane[0]+n*0.0001, plane[1]+n*0.0001, plane[2]+n*0.0001, n);
 				const Point rn=Point()-n;
 				draw_triangle(plane[0]+rn*0.0001, plane[1]+rn*0.0001, plane[2]+rn*0.0001, rn);
@@ -298,7 +298,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--tc"))
 	{
 		std::cout << "$tangent_cones\n";
-		std::cout << "color 0 1 1\n";
+		std::cout << "color 0.4 1 0.5\n";
 		draw_cone(a, b);
 		draw_cone(a, c);
 		draw_cone(b, c);
