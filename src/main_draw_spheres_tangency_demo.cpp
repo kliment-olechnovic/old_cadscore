@@ -242,10 +242,21 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 			const Point& n=ps[i];
 			Point plane[3]={apollo::custom_point_from_object<Point>(a)+(n*a.r), apollo::custom_point_from_object<Point>(b)+(n*b.r), apollo::custom_point_from_object<Point>(c)+(n*c.r)};
 			const Point center=(plane[0]+plane[1]+plane[2])/3.0;
+
+			if(clo.isopt("--tp-points"))
+			{
+				std::cout << "color 0 1 0\n";
+				for(int j=0;j<3;j++)
+				{
+					draw_sphere(apollo::custom_sphere_from_point<Sphere>(plane[j], 0.02), 3, 0);
+				}
+			}
+
 			for(int j=0;j<3;j++)
 			{
 				plane[j]=center+((plane[j]-center)*3);
 			}
+
 			if(clo.isopt("--tp-blend"))
 			{
 				std::cout << "color 0 1 0 0.5\n";
