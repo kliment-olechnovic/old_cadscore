@@ -98,7 +98,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		const Point ap=apollo::custom_point_from_object<Point>(a);
 		const Point bp=apollo::custom_point_from_object<Point>(b);
 		const Point cp=apollo::custom_point_from_object<Point>(c);
-		for(d.z=-0.7;d.z<=0.7;d.z+=0.01)
+		for(d.z=-2.0;d.z<=2.0;d.z+=0.01)
 		{
 			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 			for(std::size_t i=0;i<ts.size();i++)
