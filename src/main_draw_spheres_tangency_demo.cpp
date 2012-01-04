@@ -150,9 +150,18 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		const int wired=clo.isopt("--st-wired") ? 1 : 0;
 		std::cout << "$spheres_triple\n";
 		std::cout << "color 0.4 0.6 1.0\n";
-		draw_sphere(a, 3, wired);
-		draw_sphere(b, 3, wired);
-		draw_sphere(c, 3, wired);
+		if(clo.isopt("--st-smaller"))
+		{
+			draw_sphere(apollo::custom_sphere_from_point<Sphere>(a, a.r-0.005), 3, wired);
+			draw_sphere(apollo::custom_sphere_from_point<Sphere>(b, b.r-0.005), 3, wired);
+			draw_sphere(apollo::custom_sphere_from_point<Sphere>(c, c.r-0.005), 3, wired);
+		}
+		else
+		{
+			draw_sphere(a, 3, wired);
+			draw_sphere(b, 3, wired);
+			draw_sphere(c, 3, wired);
+		}
 	}
 
 	if(clo.isopt("--ts1") || clo.isopt("--ts2"))
