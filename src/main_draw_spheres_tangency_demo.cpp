@@ -172,7 +172,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	{
 		std::cout << "color 1 0 0\n";
 		Sphere d(0.0, 0.0, 0.0, 0.15);
-		for(d.z=-2.0;d.z<=2.0;d.z+=0.01)
+		for(d.z=-2.0;d.z<=2.0;d.z+=0.001)
 		{
 			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 			for(std::size_t i=0;i<ts.size();i++)
