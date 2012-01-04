@@ -178,8 +178,15 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 			for(std::size_t i=0;i<ts.size();i++)
 			{
 				Sphere t=ts[i];
-				t.r=0.02;
-				draw_sphere(t, 3, 0);
+				if(clo.isopt("--trace-line"))
+				{
+					t.r=0.02;
+					draw_sphere(t, 3, 0);
+				}
+				else if(t.r<1.0)
+				{
+					draw_sphere(t, 3, 0);
+				}
 			}
 		}
 	}
