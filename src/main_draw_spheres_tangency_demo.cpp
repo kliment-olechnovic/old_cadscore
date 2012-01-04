@@ -95,12 +95,31 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		std::cout << "$Dupine_cyclide\n";
 		std::cout << "color 1 1 0\n";
 		Sphere d(0.0, 0.0, 0.0, 0.15);
+		const Point ap=apollo::custom_point_from_object<Point>(a);
+		const Point bp=apollo::custom_point_from_object<Point>(b);
+		const Point cp=apollo::custom_point_from_object<Point>(c);
 		for(d.z=-0.7;d.z<=0.7;d.z+=0.01)
 		{
 			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 			for(std::size_t i=0;i<ts.size();i++)
 			{
-				draw_sphere(ts[i], 3, 0);
+				const Sphere& t=ts[i];
+				Point tp=apollo::custom_point_from_object<Point>(t);
+				const Point t1=(tp+((ap-tp).unit()*t.r));
+				const Point t2=(tp+((bp-tp).unit()*t.r));
+				const Point t3=(tp+((cp-tp).unit()*t.r));
+				std::cout << "line ";
+				print_point(t1);
+				print_point(t2);
+				std::cout << "\n";
+				std::cout << "line ";
+				print_point(t2);
+				print_point(t3);
+				std::cout << "\n";
+				std::cout << "line ";
+				print_point(t3);
+				print_point(t1);
+				std::cout << "\n";
 			}
 		}
 	}
