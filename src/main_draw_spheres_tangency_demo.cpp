@@ -145,6 +145,7 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--s"))
 	{
+		std::cout << "$spheres_triple\n";
 		std::cout << "color 1 1 1\n";
 		draw_sphere(a, 3, 0);
 		draw_sphere(b, 3, 0);
