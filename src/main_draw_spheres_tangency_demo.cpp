@@ -59,7 +59,7 @@ void draw_cone(const apollo::SimpleSphere& a, const apollo::SimpleSphere& b)
 		std::cout << "tube ";
 		print_point(face_start);
 		print_point(face_end);
-		std::cout << face_start_r << " " << face_end_r << " 108 1\n";
+		std::cout << face_start_r << " " << face_end_r << " 108 0\n";
 	}
 	else
 	{
@@ -297,11 +297,16 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--tc"))
 	{
+		const Sphere s1(-0.7, 0.0, 0.0, 0.6);
+		const Sphere s2( 0.7, 0.0, 0.0, 0.2);
+		const Sphere s3( 0.0, 0.1, 0.1, 0.15);
 		std::cout << "$tangent_cones\n";
-		std::cout << "color 0.4 1 0.5\n";
-		draw_cone(a, b);
-		draw_cone(a, c);
-		draw_cone(b, c);
+		std::cout << "color 0.4 0.6 1.0\n";
+		draw_sphere(s1, 3, 0);
+		draw_sphere(s2, 3, 0);
+		draw_sphere(s3, 3, 0);
+		std::cout << "color 0.4 1 0.5 0.5\n";
+		draw_cone(s1, s2);
 	}
 
 	std::cout << "flush\n";
