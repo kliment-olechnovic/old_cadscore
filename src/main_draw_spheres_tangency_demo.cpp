@@ -8,6 +8,9 @@
 
 #include "auxiliaries/command_line_options.h"
 
+typedef apollo::SimpleSphere Sphere;
+typedef apollo::SimplePoint Point;
+
 template<typename T>
 void draw_sphere(const T& s, const int quality, const int wired)
 {
@@ -64,18 +67,89 @@ void draw_cone(const apollo::SimpleSphere& a, const apollo::SimpleSphere& b)
 	}
 }
 
+std::pair< std::vector< std::vector<Point> >, std::vector< std::vector<Point> > > construct_Dupine_cyclide_circles(const Sphere& a, const Sphere& b, const Sphere& c)
+{
+	std::pair< std::vector< std::vector<Point> >, std::vector< std::vector<Point> > > result;
+	Sphere d(0.0, 0.0, 0.0, 0.15);
+	const Point ap=apollo::custom_point_from_object<Point>(a);
+	const Point bp=apollo::custom_point_from_object<Point>(b);
+	const Point cp=apollo::custom_point_from_object<Point>(c);
+	for(d.z=-2.0;d.z<=2.0;d.z+=0.01)
+	{
+		const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
+		for(std::size_t i=0;i<ts.size();i++)
+		{
+			const Sphere& t=ts[i];
+			const Point tp=apollo::custom_point_from_object<Point>(t);
+			const Point t1=(tp+((ap-tp).unit()*t.r));
+			const Point t2=(tp+((bp-tp).unit()*t.r));
+			const Point t3=(tp+((cp-tp).unit()*t.r));
+
+			Point cc;
+			double err=((t1-cc).module()-(t2-cc).module())*((t1-cc).module()-(t2-cc).module())+
+					((t1-cc).module()-(t3-cc).module())*((t1-cc).module()-(t3-cc).module())+
+					((t2-cc).module()-(t3-cc).module())*((t2-cc).module()-(t3-cc).module());
+			{
+				const double step=0.005;
+				for(double rnd1=0.0;rnd1<=1.0;rnd1+=step)
+				{
+					for(double rnd2=0.0;rnd2<=1.0;rnd2+=step)
+					{
+						const Point ncc=(t1+((t2-t1)*rnd1))+((t3-t2)*rnd2);
+						double nerr=((t1-ncc).module()-(t2-ncc).module())*((t1-ncc).module()-(t2-ncc).module())+
+								((t1-ncc).module()-(t3-ncc).module())*((t1-ncc).module()-(t3-ncc).module())+
+								((t2-ncc).module()-(t3-ncc).module())*((t2-ncc).module()-(t3-ncc).module());
+						if(nerr<err)
+						{
+							cc=ncc;
+							err=nerr;
+						}
+					}
+				}
+			}
+			const double ccr=((t1-cc).module()+(t2-cc).module()+(t3-cc).module())/3.0;
+
+			result.first.push_back(std::vector<Point>());
+			result.second.push_back(std::vector<Point>());
+			{
+				const double step=0.05;
+				for(double l=step;l<=1.0;l+=step)
+				{
+					const Point rp=cc+(((t1+((t2-t1)*l))-cc).unit()*ccr);
+					result.first.back().push_back(rp);
+					result.second.back().push_back((rp-cc).unit());
+				}
+				for(double l=step;l<=1.0;l+=step)
+				{
+					const Point rp=cc+(((t2+((t3-t2)*l))-cc).unit()*ccr);
+					result.first.back().push_back(rp);
+					result.second.back().push_back((rp-cc).unit());
+				}
+				for(double l=step;l<=1.0;l+=step)
+				{
+					const Point rp=cc+(((t3+((t1-t3)*l))-cc).unit()*ccr);
+					result.first.back().push_back(rp);
+					result.second.back().push_back((rp-cc).unit());
+				}
+			}
+		}
+	}
+	return result;
+}
+
 void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo::SimpleSphere Sphere;
-	typedef apollo::SimplePoint Point;
-
-	std::cout << "color 1 1 1\n";
 	const Sphere a( 0.0, 0.6, 0.0, 0.5);
 	const Sphere b( 0.51,-0.3, 0.0, 0.4);
 	const Sphere c(-0.5,-0.3, 0.0, 0.3);
-	draw_sphere(a, 3, 0);
-	draw_sphere(b, 3, 0);
-	draw_sphere(c, 3, 0);
+
+	if(clo.isopt("--s"))
+	{
+		std::cout << "color 1 1 1\n";
+		draw_sphere(a, 3, 0);
+		draw_sphere(b, 3, 0);
+		draw_sphere(c, 3, 0);
+	}
 
 	if(clo.isopt("--ts1") || clo.isopt("--ts2"))
 	{
@@ -93,81 +167,63 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--dc"))
 	{
 		std::cout << "$Dupine_cyclide\n";
-		Sphere d(0.0, 0.0, 0.0, 0.15);
-		const Point ap=apollo::custom_point_from_object<Point>(a);
-		const Point bp=apollo::custom_point_from_object<Point>(b);
-		const Point cp=apollo::custom_point_from_object<Point>(c);
-		for(d.z=-2.0;d.z<=2.0;d.z+=0.01)
+		std::cout << "color 1 0 0\n";
+		const std::pair< std::vector< std::vector<Point> >, std::vector< std::vector<Point> > > cps=construct_Dupine_cyclide_circles(a, b, c);
+		for(std::size_t i=0;i<cps.first.size();i++)
 		{
-			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
-			for(std::size_t i=0;i<ts.size();i++)
+			std::size_t u=i+1;
+			for(std::size_t e=u+1;e<cps.first.size();e++)
 			{
-				const Sphere& t=ts[i];
-				const Point tp=apollo::custom_point_from_object<Point>(t);
-				const Point t1=(tp+((ap-tp).unit()*t.r));
-				const Point t2=(tp+((bp-tp).unit()*t.r));
-				const Point t3=(tp+((cp-tp).unit()*t.r));
-
-//				std::cout << "color 1 1 0\n";
-//				{
-//					std::cout << "line ";
-//					print_point(t1);
-//					print_point(t2);
-//					std::cout << "\n";
-//					std::cout << "line ";
-//					print_point(t2);
-//					print_point(t3);
-//					std::cout << "\n";
-//					std::cout << "line ";
-//					print_point(t3);
-//					print_point(t1);
-//					std::cout << "\n";
-//				}
-
-				Point cc;
-				double err=((t1-cc).module()-(t2-cc).module())*((t1-cc).module()-(t2-cc).module())+
-						((t1-cc).module()-(t3-cc).module())*((t1-cc).module()-(t3-cc).module())+
-						((t2-cc).module()-(t3-cc).module())*((t2-cc).module()-(t3-cc).module());
+				if(e!=i && ((cps.first[e][0]-cps.first[i][0]).module()<(cps.first[u][0]-cps.first[i][0]).module()))
 				{
-					const double step=0.005;
-					for(double rnd1=0.0;rnd1<=1.0;rnd1+=step)
-					{
-						for(double rnd2=0.0;rnd2<=1.0;rnd2+=step)
-						{
-							const Point ncc=(t1+((t2-t1)*rnd1))+((t3-t2)*rnd2);
-							double nerr=((t1-ncc).module()-(t2-ncc).module())*((t1-ncc).module()-(t2-ncc).module())+
-									((t1-ncc).module()-(t3-ncc).module())*((t1-ncc).module()-(t3-ncc).module())+
-									((t2-ncc).module()-(t3-ncc).module())*((t2-ncc).module()-(t3-ncc).module());
-							if(nerr<err)
-							{
-								cc=ncc;
-								err=nerr;
-							}
-						}
-					}
+					u=e;
 				}
-				const double ccr=((t1-cc).module()+(t2-cc).module()+(t3-cc).module())/3.0;
-
-				std::cout << "color 1 0 0\n";
+			}
+			if(u<cps.first.size())
+			{
+				for(std::size_t j=0;j<cps.first[i].size();j++)
 				{
-					const double step=0.05;
-					for(double l=step;l<1.0+step;l+=step)
-					{
-						std::cout << "line ";
-						print_point(cc+(((t1+((t2-t1)*(l-step)))-cc).unit()*ccr));
-						print_point(cc+(((t1+((t2-t1)*(l-0.0)))-cc).unit()*ccr));
-						std::cout << "\n";
+					const std::size_t g=(j+1<cps.first[i].size()) ? j+1 : 0;
 
-						std::cout << "line ";
-						print_point(cc+(((t2+((t3-t2)*(l-step)))-cc).unit()*ccr));
-						print_point(cc+(((t2+((t3-t2)*(l-0.0)))-cc).unit()*ccr));
-						std::cout << "\n";
+					std::cout << "triangle ";
+					print_point(cps.first[i][j]);
+					print_point(cps.first[i][g]);
+					print_point(cps.first[u][g]);
+					std::cout << "3 ";
+					print_point(cps.second[i][j]);
+					print_point(cps.second[i][g]);
+					print_point(cps.second[u][g]);
+					std::cout << "\n";
 
-						std::cout << "line ";
-						print_point(cc+(((t1+((t3-t1)*(l-step)))-cc).unit()*ccr));
-						print_point(cc+(((t1+((t3-t1)*(l-0.0)))-cc).unit()*ccr));
-						std::cout << "\n";
-					}
+					std::cout << "triangle ";
+					print_point(cps.first[i][j]);
+					print_point(cps.first[u][j]);
+					print_point(cps.first[u][g]);
+					std::cout << "3 ";
+					print_point(cps.second[i][j]);
+					print_point(cps.second[u][j]);
+					print_point(cps.second[u][g]);
+					std::cout << "\n";
+
+					std::cout << "triangle ";
+					print_point(cps.first[i][j]-(cps.second[i][j]*0.0001));
+					print_point(cps.first[i][g]-(cps.second[i][g]*0.0001));
+					print_point(cps.first[u][g]-(cps.second[u][g]*0.0001));
+					std::cout << "3 ";
+					print_point(Point()-cps.second[i][j]);
+					print_point(Point()-cps.second[i][g]);
+					print_point(Point()-cps.second[u][g]);
+					std::cout << "\n";
+
+					std::cout << "triangle ";
+					print_point(cps.first[i][j]-(cps.second[i][j]*0.0001));
+					print_point(cps.first[u][j]-(cps.second[u][j]*0.0001));
+					print_point(cps.first[u][g]-(cps.second[u][g]*0.0001));
+					std::cout << "3 ";
+					print_point(Point()-cps.second[i][j]);
+					print_point(Point()-cps.second[u][j]);
+					print_point(Point()-cps.second[u][g]);
+					std::cout << "\n";
 				}
 			}
 		}
