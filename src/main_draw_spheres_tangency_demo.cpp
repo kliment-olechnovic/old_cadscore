@@ -147,11 +147,12 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--st"))
 	{
+		const int wired=clo.isopt("--st-wired") ? 1 : 0;
 		std::cout << "$spheres_triple\n";
 		std::cout << "color 0.7 0.8 1.0\n";
-		draw_sphere(a, 3, 0);
-		draw_sphere(b, 3, 0);
-		draw_sphere(c, 3, 0);
+		draw_sphere(a, 3, wired);
+		draw_sphere(b, 3, wired);
+		draw_sphere(c, 3, wired);
 	}
 
 	if(clo.isopt("--ts1") || clo.isopt("--ts2"))
