@@ -93,7 +93,6 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--dc"))
 	{
 		std::cout << "$Dupine_cyclide\n";
-		std::cout << "color 1 1 0\n";
 		Sphere d(0.0, 0.0, 0.0, 0.15);
 		const Point ap=apollo::custom_point_from_object<Point>(a);
 		const Point bp=apollo::custom_point_from_object<Point>(b);
@@ -104,22 +103,72 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 			for(std::size_t i=0;i<ts.size();i++)
 			{
 				const Sphere& t=ts[i];
-				Point tp=apollo::custom_point_from_object<Point>(t);
+				const Point tp=apollo::custom_point_from_object<Point>(t);
 				const Point t1=(tp+((ap-tp).unit()*t.r));
 				const Point t2=(tp+((bp-tp).unit()*t.r));
 				const Point t3=(tp+((cp-tp).unit()*t.r));
-				std::cout << "line ";
-				print_point(t1);
-				print_point(t2);
-				std::cout << "\n";
-				std::cout << "line ";
-				print_point(t2);
-				print_point(t3);
-				std::cout << "\n";
-				std::cout << "line ";
-				print_point(t3);
-				print_point(t1);
-				std::cout << "\n";
+
+//				std::cout << "color 1 1 0\n";
+//				{
+//					std::cout << "line ";
+//					print_point(t1);
+//					print_point(t2);
+//					std::cout << "\n";
+//					std::cout << "line ";
+//					print_point(t2);
+//					print_point(t3);
+//					std::cout << "\n";
+//					std::cout << "line ";
+//					print_point(t3);
+//					print_point(t1);
+//					std::cout << "\n";
+//				}
+
+				Point cc;
+				double err=((t1-cc).module()-(t2-cc).module())*((t1-cc).module()-(t2-cc).module())+
+						((t1-cc).module()-(t3-cc).module())*((t1-cc).module()-(t3-cc).module())+
+						((t2-cc).module()-(t3-cc).module())*((t2-cc).module()-(t3-cc).module());
+				{
+					const double step=0.005;
+					for(double rnd1=0.0;rnd1<=1.0;rnd1+=step)
+					{
+						for(double rnd2=0.0;rnd2<=1.0;rnd2+=step)
+						{
+							const Point ncc=(t1+((t2-t1)*rnd1))+((t3-t2)*rnd2);
+							double nerr=((t1-ncc).module()-(t2-ncc).module())*((t1-ncc).module()-(t2-ncc).module())+
+									((t1-ncc).module()-(t3-ncc).module())*((t1-ncc).module()-(t3-ncc).module())+
+									((t2-ncc).module()-(t3-ncc).module())*((t2-ncc).module()-(t3-ncc).module());
+							if(nerr<err)
+							{
+								cc=ncc;
+								err=nerr;
+							}
+						}
+					}
+				}
+				const double ccr=((t1-cc).module()+(t2-cc).module()+(t3-cc).module())/3.0;
+
+				std::cout << "color 1 0 0\n";
+				{
+					const double step=0.05;
+					for(double l=step;l<=1.0;l+=step)
+					{
+						std::cout << "line ";
+						print_point(cc+(((t1+((t2-t1)*(l-step)))-cc).unit()*ccr));
+						print_point(cc+(((t1+((t2-t1)*(l-0.0)))-cc).unit()*ccr));
+						std::cout << "\n";
+
+						std::cout << "line ";
+						print_point(cc+(((t2+((t3-t2)*(l-step)))-cc).unit()*ccr));
+						print_point(cc+(((t2+((t3-t2)*(l-0.0)))-cc).unit()*ccr));
+						std::cout << "\n";
+
+						std::cout << "line ";
+						print_point(cc+(((t1+((t3-t1)*(l-step)))-cc).unit()*ccr));
+						print_point(cc+(((t1+((t3-t1)*(l-0.0)))-cc).unit()*ccr));
+						std::cout << "\n";
+					}
+				}
 			}
 		}
 	}
