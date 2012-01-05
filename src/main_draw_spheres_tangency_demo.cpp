@@ -168,12 +168,31 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 	{
 		std::cout << "$tangent_sphere\n";
 		Sphere d=clo.isopt("--ts1") ? Sphere(0.0, 0.0, 0.7, 0.1) : Sphere(0.0, 0.0, 0.1, 0.1);
+		std::cout << "color 0.4 0.6 1.0\n";
 		draw_sphere(d, 3, 0);
 		std::cout << "color 1.0 0.5 0.4\n";
 		const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
 		for(std::size_t i=0;i<ts.size();i++)
 		{
 			draw_sphere(ts[i], 3, 0);
+		}
+	}
+
+	if(clo.isopt("--tsa"))
+	{
+		std::cout << "$tsa\n";
+		Sphere ds[3]={Sphere(0.0, 0.0, 0.01, 0.1), Sphere(0.2,-0.2, 1.5, 0.2), Sphere(-0.2,-0.2,-1.2, 0.2)};
+		for(int j=0;j<3;j++)
+		{
+			const Sphere& d=ds[j];
+			std::cout << "color 0.4 0.6 1.0\n";
+			draw_sphere(d, 3, 0);
+			const std::vector<Sphere> ts=apollo::construct_spheres_tangent<Sphere>(a, b, c, d);
+			std::cout << "color 1.0 0.5 0.4\n";
+			for(std::size_t i=0;i<ts.size();i++)
+			{
+				draw_sphere(ts[i], 3, 1);
+			}
 		}
 	}
 
