@@ -47,8 +47,8 @@ void main_draw_spheres_hierarchy_demo(const auxiliaries::CommandLineOptions& clo
 		for(std::size_t j=0;j<spheres_layer.size();j++)
 		{
 			apollo::SimpleSphere cs=spheres_layer[j].first;
-			cs.z=(j+1)*10;
-			std::cout << "color 0.7 1 0.7\n";
+			cs.z=0.0-(j+1)*3;
+			std::cout << "color 0.8 1 0.8\n";
 			draw_circle(cs, cs.r, 120);
 			std::cout << "color 0.4 1 0.5\n";
 			cs.z+=0.001;
@@ -94,7 +94,7 @@ void main_draw_spheres_hierarchy_demo(const auxiliaries::CommandLineOptions& clo
 			for(std::size_t j=0;j<spheres_layer.size();j++)
 			{
 				apollo::SimpleSphere s=spheres_layer[j].first;
-				s.z=(i+1)*50;
+				s.z=(i+1)*70;
 				draw_circle(s, 1, 120);
 			}
 		}
