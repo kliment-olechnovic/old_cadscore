@@ -24,55 +24,81 @@ void main_draw_spheres_hierarchy_demo(const auxiliaries::CommandLineOptions& clo
 
 	std::vector<Sphere> spheres;
 	srand(1);
-	for(int i=0;i<200;i++)
+	for(int i=0;i<300;i++)
 	{
 		spheres.push_back(Sphere(rand()%100, rand()%100, 0, rand()%5));
 	}
 
 	const Hierarchy hierarchy(spheres, radius, 0);
 
-	const std::vector< std::vector<apollo::SimpleSphere> > spheres_layers=hierarchy.get_bounding_spheres_layers();
+	const std::vector< std::vector< std::pair<Sphere, std::vector<std::size_t> > > > spheres_layers=hierarchy.get_clusters_layers();
 
 	if(!spheres_layers.empty())
 	{
-		const apollo::SimpleSphere& s=spheres_layers.back().front();
+		const apollo::SimpleSphere& s=spheres_layers.back().front().first;
 		std::cout << "scale " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
 	}
 
 	std::cout << "background 1 1 1\n";
 
-	for(std::size_t i=0;i<spheres.size();i++)
+	if(clo.isopt("--single"))
 	{
-		Sphere s=spheres[i];
-		std::cout << "color 0.4 0.6 1.0\n";
-		draw_circle(s, s.r, 36);
-		std::cout << "color 0.2 0.2 0.2\n";
-		s.z+=0.001;
-		draw_circle(s, 0.5, 120);
-	}
-	std::cout << "flush\n";
-	std::cout.flush();
-
-	std::cout << "color 0 0 0\n";
-	for(std::size_t i=0;i<spheres_layers.size() && i<max_level;i++)
-	{
-		std::cout << "$layer" << i << "\n";
-		if(i==0)
-		{
-			std::cout << "color 0.4 1 0.5\n";
-		}
-		else
-		{
-			std::cout << "ncolor " << (i*10) << "\n";
-		}
-		const std::vector<apollo::SimpleSphere>& spheres_layer=spheres_layers[i];
+		const std::vector< std::pair<Sphere, std::vector<std::size_t> > >& spheres_layer=spheres_layers[0];
 		for(std::size_t j=0;j<spheres_layer.size();j++)
 		{
-			apollo::SimpleSphere s=spheres_layer[j];
-			s.z=(i+1)*50;
-			draw_circle(s, 1, 120);
+			apollo::SimpleSphere cs=spheres_layer[j].first;
+			cs.z=(j+1)*10;
+			std::cout << "color 0.7 1 0.7\n";
+			draw_circle(cs, cs.r, 120);
+			std::cout << "color 0.4 1 0.5\n";
+			cs.z+=0.001;
+			draw_circle(cs, 1, 120);
+			for(std::size_t i=0;i<spheres_layer[j].second.size();i++)
+			{
+				Sphere s=spheres[spheres_layer[j].second[i]];
+				s.z=cs.z+0.001;
+				std::cout << "color 0.4 0.6 1.0\n";
+				draw_circle(s, s.r, 36);
+				std::cout << "color 0.2 0.2 0.2\n";
+				s.z+=0.001;
+				draw_circle(s, 0.5, 120);
+			}
+		}
+	}
+	else
+	{
+		for(std::size_t i=0;i<spheres.size();i++)
+		{
+			Sphere s=spheres[i];
+			std::cout << "color 0.4 0.6 1.0\n";
+			draw_circle(s, s.r, 36);
+			std::cout << "color 0.2 0.2 0.2\n";
+			s.z+=0.001;
+			draw_circle(s, 0.5, 120);
 		}
 		std::cout << "flush\n";
 		std::cout.flush();
+		std::cout << "color 0 0 0\n";
+		for(std::size_t i=0;i<spheres_layers.size() && i<max_level;i++)
+		{
+			std::cout << "$layer" << i << "\n";
+			if(i==0)
+			{
+				std::cout << "color 0.4 1 0.5\n";
+			}
+			else
+			{
+				std::cout << "ncolor " << (i*10) << "\n";
+			}
+			const std::vector< std::pair<Sphere, std::vector<std::size_t> > >& spheres_layer=spheres_layers[i];
+			for(std::size_t j=0;j<spheres_layer.size();j++)
+			{
+				apollo::SimpleSphere s=spheres_layer[j].first;
+				s.z=(i+1)*50;
+				draw_circle(s, 1, 120);
+			}
+		}
 	}
+	std::cout << "flush\n";
+	std::cout.flush();
 }
