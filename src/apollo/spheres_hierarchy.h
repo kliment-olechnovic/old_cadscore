@@ -129,7 +129,12 @@ public:
 		return result;
 	}
 
-	std::vector< std::vector<SimpleSphere> > get_spheres_layers() const
+	std::vector< std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > > get_clusters_layers()
+	{
+		return clusters_layers_;
+	}
+
+	std::vector< std::vector<SimpleSphere> > get_bounding_spheres_layers() const
 	{
 		std::vector< std::vector<SimpleSphere> > spheres_layers;
 		spheres_layers.reserve(clusters_layers_.size());

@@ -31,7 +31,7 @@ void main_draw_spheres_hierarchy_demo(const auxiliaries::CommandLineOptions& clo
 
 	const Hierarchy hierarchy(spheres, radius, 0);
 
-	const std::vector< std::vector<apollo::SimpleSphere> > spheres_layers=hierarchy.get_spheres_layers();
+	const std::vector< std::vector<apollo::SimpleSphere> > spheres_layers=hierarchy.get_bounding_spheres_layers();
 
 	if(!spheres_layers.empty())
 	{
