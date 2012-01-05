@@ -129,7 +129,7 @@ public:
 		return result;
 	}
 
-	std::vector< std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > > get_clusters_layers()
+	std::vector< std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > > get_clusters_layers() const
 	{
 		return clusters_layers_;
 	}
