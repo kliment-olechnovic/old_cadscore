@@ -44,25 +44,32 @@ void main_draw_spheres_hierarchy_demo(const auxiliaries::CommandLineOptions& clo
 	for(std::size_t i=0;i<spheres.size();i++)
 	{
 		Sphere s=spheres[i];
-		std::cout << "color 1 0 0\n";
+		std::cout << "color 0.4 0.6 1.0\n";
 		draw_circle(s, s.r, 36);
-		std::cout << "color 0 0 0\n";
+		std::cout << "color 0.2 0.2 0.2\n";
 		s.z+=0.001;
 		draw_circle(s, 0.5, 120);
 	}
 	std::cout << "flush\n";
 	std::cout.flush();
 
-	std::cout << "color 1 1 1\n";
+	std::cout << "color 0 0 0\n";
 	for(std::size_t i=0;i<spheres_layers.size() && i<max_level;i++)
 	{
 		std::cout << "$layer" << i << "\n";
-		std::cout << "ncolor " << (i*10) << "\n";
+		if(i==0)
+		{
+			std::cout << "color 0.4 1 0.5\n";
+		}
+		else
+		{
+			std::cout << "ncolor " << (i*10) << "\n";
+		}
 		const std::vector<apollo::SimpleSphere>& spheres_layer=spheres_layers[i];
 		for(std::size_t j=0;j<spheres_layer.size();j++)
 		{
 			apollo::SimpleSphere s=spheres_layer[j];
-			s.z=(i+1)*40;
+			s.z=(i+1)*50;
 			draw_circle(s, 1, 120);
 		}
 		std::cout << "flush\n";
