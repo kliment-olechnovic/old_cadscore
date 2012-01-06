@@ -39,7 +39,7 @@ t2=t2[order(t2_keys),];
 
 ########################
 
-g_orientation_value=tid[,"sm0_AA_ref"]/t0[,"sm0_AW_ref"];
+g_orientation_value=tid[,"sm0_AA_ref"]/t0[,"sm0_AA_ref"];
 
 score_names=c("GDT_TS", "sm0_AA", "sm0_SA", "sm0_SS");
 
