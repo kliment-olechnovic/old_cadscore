@@ -5,6 +5,7 @@ t=t[which(t$target_parts_count==3),];
 t=t[which(t$solid_group==1),];
 t=t[which(t$target!=629),];
 t$GDT_TS=t$GDT_TS/100
+#t=t[which(t$GDT_TS>0.2),];
 
 tid=read.table(cmd_args[2], header=TRUE, stringsAsFactors=FALSE);
 
@@ -41,7 +42,26 @@ t2=t2[order(t2_keys),];
 
 g_orientation_value=tid[,"sm0_AA_ref"]/t0[,"sm0_AA_ref"];
 
+# size_factor=t0$target_atoms_count/(t1$target_atoms_count+t2$target_atoms_count);
+# size_factor=1;
+# interface_area_from_sas=((t1$sm0_AW_ref+t2$sm0_AW_ref)*size_factor-t0$sm0_AW_ref)*0.5;
+# g_orientation_value=interface_area_from_sas/t0$sm0_AW_ref;
+
 score_names=c("GDT_TS", "sm0_AA", "sm0_SA", "sm0_SS");
+
+########################
+
+targets_set=union(t0$target, t0$target);
+for(target in targets_set)
+{
+  target_sel=which(t0$target==target);
+  for(score_name in score_names)
+  {
+    t0[target_sel, score_name]=mean(t0[target_sel, score_name]);
+    t1[target_sel, score_name]=mean(t1[target_sel, score_name]);
+    t2[target_sel, score_name]=mean(t2[target_sel, score_name]);
+  }
+}
 
 ########################
 
@@ -84,13 +104,13 @@ for(target in targets_set)
     x=s_orientation_value;
     y=st0[, score_name];
     coloring="blue";
-    if(target<0) { coloring=densCols(x, y); }
+    #if(target<0) { coloring=densCols(x, y); }
     plot(x=x, y=y, col=coloring, pch=16, cex=0.5, xlab="Orientation value", ylab="Full score", main=paste(score_name, ": Full score vs orientation value", sep=""));
    
     x=s_orientation_value;
     y=score_diff_between_full_and_domains;
     coloring="blue";
-    if(target<0) { coloring=densCols(x, y); }
+    #if(target<0) { coloring=densCols(x, y); }
     plot(x=x, y=y, col=coloring, pch=16, cex=0.5, xlab="Orientation value", ylab="Full and domains scores absolute difference", main=paste(score_name, ": Full and domains scores absolute difference", sep=""));
     points(x=c(0, 1), y=c(0, 0), type="l", col="black");
     legend(0, 0.25, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
@@ -99,14 +119,14 @@ for(target in targets_set)
     x=s_orientation_value;
     y=score_insiding_value;
     coloring="blue";
-    if(target<0) { coloring=densCols(x, y); }
+    #if(target<0) { coloring=densCols(x, y); }
     plot(x=x, y=y, col=coloring, pch=16, cex=0.5, xlab="Orientation value", ylab="Insiding value (any non-zero means outside)", main=paste(score_name, ": Insiding value", sep=""));
     points(x=c(0, 1), y=c(0, 0), type="l", col="black");
     
     x=s_orientation_value;
     y=score_difference_with_lower_value;
     coloring="blue";
-    if(target<0) { coloring=densCols(x, y); }
+    #if(target<0) { coloring=densCols(x, y); }
     plot(x=x, y=y, col=coloring, pch=16, cex=0.5, xlab="Orientation value", ylab="Difference between full score and worst domain score", main=paste(score_name, ": Difference between full score and worst domain score", sep=""));    points(x=c(0, 1), y=c(0, 0), type="l", col="black");
   }
   dev.off();
