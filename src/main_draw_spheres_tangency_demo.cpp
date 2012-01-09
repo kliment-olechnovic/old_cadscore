@@ -337,6 +337,20 @@ void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo)
 		draw_cone(s1, s2);
 	}
 
+	if(clo.isopt("--no-tangents-quadruple"))
+	{
+		const Sphere s1( 0.0, 0.0, 0.0, 1.0);
+		const Sphere s2( 1.7, 0.0, 0.0, 0.4);
+		const Sphere s3( 0.0, 1.7, 0.0, 0.4);
+		const Sphere s4(-1.4,-1.5, 0.0, 0.5);
+		std::cout << "$no_tangents_quadruple\n";
+		std::cout << "color 0.4 0.6 1.0\n";
+		draw_sphere(s1, 3, 0);
+		draw_sphere(s2, 3, 0);
+		draw_sphere(s3, 3, 0);
+		draw_sphere(s4, 3, 0);
+	}
+
 	std::cout << "flush\n";
 	std::cout.flush();
 }
