@@ -47,7 +47,6 @@ public:
 				Face face=stack.back();
 				stack.pop_back();
 				stack_map.erase(face.abc_ids());
-				if(processed_triples.count(face.abc_ids())==0)
 				{
 					const bool found_d2=(face.d2_id()==Face::npos) && face.can_have_d2() && find_valid_d2(hierarchy, face);
 					const bool found_d3=enable_searching_for_d3 && face.can_have_d3() && find_valid_d3(hierarchy, face);
@@ -76,17 +75,20 @@ public:
 						for(std::size_t i=0;i<produced_faces.size();i++)
 						{
 							const Face& produced_face=produced_faces[i];
-							std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor>::const_iterator sm_it=stack_map.find(produced_faces[i].abc_ids());
-							if(sm_it==stack_map.end())
+							if(processed_triples.count(produced_face.abc_ids())==0)
 							{
-								stack_map[produced_face.abc_ids()]=stack.size();
-								stack.push_back(produced_face);
-							}
-							else
-							{
-								if(stack[sm_it->second].d1_id()!=produced_face.d1_id())
+								std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor>::const_iterator sm_it=stack_map.find(produced_faces[i].abc_ids());
+								if(sm_it==stack_map.end())
 								{
-									stack[sm_it->second].set_d2_and_unset_d3(produced_face.d1_id(), produced_face.d1_tangent_sphere());
+									stack_map[produced_face.abc_ids()]=stack.size();
+									stack.push_back(produced_face);
+								}
+								else
+								{
+									if(stack[sm_it->second].d1_id()!=produced_face.d1_id())
+									{
+										stack[sm_it->second].set_d2_and_unset_d3(produced_face.d1_id(), produced_face.d1_tangent_sphere());
+									}
 								}
 							}
 						}
