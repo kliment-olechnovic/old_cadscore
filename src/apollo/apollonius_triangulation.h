@@ -28,26 +28,28 @@ public:
 		QuadruplesMap quadruples_map;
 
 		std::deque<Face> stack=find_first_faces(hierarchy);
+		std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> stack_map;
+		for(std::size_t i=0;i<stack.size();i++)
+		{
+			stack_map[stack[i].abc_ids()]=i;
+		}
 		if(!stack.empty())
 		{
-			std::tr1::unordered_map<Triple, int, Triple::HashFunctor> triples_map;
+			std::tr1::unordered_set<Triple, Triple::HashFunctor> processed_triples;
 
 			{
 				const Quadruple quadruple=stack.front().quadruple_with_d1();
 				quadruples_map[quadruple].push_back(stack.front().d1_tangent_sphere());
-				for(int j=0;j<quadruple.size();j++)
-				{
-					triples_map[quadruple.exclude(j)]++;
-				}
 			}
 
 			while(!stack.empty())
 			{
 				Face face=stack.back();
 				stack.pop_back();
-				if(triples_map.find(face.abc_ids())->second==1)
+				stack_map.erase(face.abc_ids());
+				if(processed_triples.count(face.abc_ids())==0)
 				{
-					const bool found_d2=face.can_have_d2() && find_valid_d2(hierarchy, face);
+					const bool found_d2=(face.d2_id()==Face::npos) && face.can_have_d2() && find_valid_d2(hierarchy, face);
 					const bool found_d3=enable_searching_for_d3 && face.can_have_d3() && find_valid_d3(hierarchy, face);
 					if(found_d2 || found_d3)
 					{
@@ -56,14 +58,24 @@ public:
 						{
 							const Quadruple& quadruple=produced_quadruples[i].first;
 							quadruples_map[quadruple].push_back(produced_quadruples[i].second);
-							for(int j=0;j<quadruple.size();j++)
-							{
-								triples_map[quadruple.exclude(j)]++;
-							}
 						}
 						const std::vector<Face> produced_faces=face.produce_faces();
-						stack.insert(stack.end(), produced_faces.begin(), produced_faces.end());
+						for(std::size_t i=0;i<produced_faces.size();i++)
+						{
+							const Face& produced_face=produced_faces[i];
+							std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor>::const_iterator sm_it=stack_map.find(produced_faces[i].abc_ids());
+							if(sm_it==stack_map.end())
+							{
+								stack_map[produced_face.abc_ids()]=stack.size();
+								stack.push_back(produced_face);
+							}
+							else
+							{
+								stack[sm_it->second].set_d2_and_unset_d3(produced_face.d1_id(), produced_face.d1_tangent_sphere());
+							}
+						}
 					}
+					processed_triples.insert(face.abc_ids());
 				}
 			}
 		}
