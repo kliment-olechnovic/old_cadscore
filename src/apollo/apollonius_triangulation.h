@@ -71,7 +71,10 @@ public:
 							}
 							else
 							{
-								stack[sm_it->second].set_d2_and_unset_d3(produced_face.d1_id(), produced_face.d1_tangent_sphere());
+								if(stack[sm_it->second].d1_id()!=produced_face.d1_id())
+								{
+									stack[sm_it->second].set_d2_and_unset_d3(produced_face.d1_id(), produced_face.d1_tangent_sphere());
+								}
 							}
 						}
 					}
