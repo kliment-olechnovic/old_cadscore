@@ -21,6 +21,9 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 
 	auxiliaries::assert_file_header("atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
+
+	std::clog << "atoms " << atoms.size() << "\n";
+
 	if(as_points>0)
 	{
 		for(std::size_t i=0;i<atoms.size();i++)
@@ -31,6 +34,14 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 
 	const Hierarchy hierarchy(atoms, radius, low_count);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3>0);
+
+	std::clog << "quadruples " << quadruples_map.size() << "\n";
+	int vertices_count=0;
+	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+	{
+		vertices_count+=it->second.size();
+	}
+	std::clog << "vertices " << vertices_count << "\n";
 
 	auxiliaries::print_file_header("apollonius_quadruples");
 	std::cout << quadruples_map.size() << "\n";
@@ -44,6 +55,19 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 		{
 			const apollo::SimpleSphere& s=tangents[i];
 			std::cout << s.x << " " << s.y << " " << s.z << " " << s.r << ((i+1<tangents.size()) ? " " : "\n");
+		}
+	}
+
+	if(clo.isopt("--check"))
+	{
+		std::clog << "validity ";
+		if(Apollo::check_quadruples(quadruples_map, atoms))
+		{
+			std::clog << "good\n";
+		}
+		else
+		{
+			std::clog << "bad\n";
 		}
 	}
 }
