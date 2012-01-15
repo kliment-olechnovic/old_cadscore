@@ -8,6 +8,24 @@ LOWCOUNT=50
 ASPOINTS=0
 SD3=1
 
+while getopts “p:s:f:” OPTION
+do
+  case $OPTION in
+    p)
+      ASPOINTS=$OPTARG
+      ;;
+    s)
+      SD3=$OPTARG
+      ;;
+    f)
+      INPUTFILE=$OPTARG
+      ;;
+    ?)
+      exit 1
+      ;;
+  esac
+done
+
 OUTPUTFILE="$INPUTFILE.vq.p$ASPOINTS.i$SD3.out"
 OUTPUTFILELOG="$OUTPUTFILE.log"
 
