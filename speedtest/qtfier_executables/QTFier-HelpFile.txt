@@ -1,0 +1,56 @@
+=======================================================================        
+  QTFier - version 1.0                                                          
+  Compiled with Linux g++ version 3.4.3                                         
+  October 18, 2011                                                              
+  Developed by VDRC directed by Prof. Deok-Soo Kim                             
+  Contact: maintainbeta@voronoi.hanyang.ac.kr                                  
+=======================================================================        
+                                                                               
+Descriptions:                                                                  
+                                                                               
+  This software, QTFier, creates a text file (QTF file) containing the quasi-             
+  triangulation of a set of spherical balls (or atoms) which is the dual        
+  structure of the Voronoi diagram of the balls. Refer to the following         
+  papers for more details on the quasi-triangulation.                          
+                                                                               
+  Reference:                                                                    
+  1) Deok-Soo Kim, Donguk Kim, Youngsong Cho, and Kokichi Sugihara,            
+     Quasi-Triangulation and Interworld Data Structure in Three Dimensions,    
+     Computer-Aided Design, 38(7), pp.808-819, 2006.                           
+                                                                               
+  2) Deok-Soo Kim, Youngsong Cho, and Kokichi Sugihara,                        
+     Quasi-worlds and Quasi-operators on Quasi-triangulations,                 
+     Computer-Aided Design, 42(10), pp.874-888, 2010.                          
+                                                              
+  3) Deok-Soo Kim, Youngsong Cho, Jae-Kwan Kim, and Joonghyun Ryu,
+     QTF: Quasi-triangulation File Format,
+     Computer-Aided Design, (under review), 2011.   
+     NOTE: This article can also be downloaded from the VDRC website.
+                                                                                   
+  NOTE:                                                                        
+    - For molecules, QTFier (currently) uses the atomic radii reported in:     
+        A. Bondi, van der Waals Volumes and Radii, Journal of Physical         
+        Chemistry, 68(3), pp. 441-451, 1964.                                   
+      (To use other radii values, contact Deok-Soo Kim.)                       
+                                                                               
+    - Input file format : .pdb and naked format                                
+                          (.mol and .mol2 will be available later.)                                                     
+                                                                               
+Usage:                                                                         
+  QTFier [OPTION]  [INPUT_FILE]  [OUTPUT_DIRECTORY]                              
+    Generate the QTF file for INPUT_FILE and store in OUTPUT_DIRECTORY.
+    For the details of the file format, see the reference 3 above. 
+                                                                                                                                                              
+Input Options:                                                                                                                                              
+  -HOH           : HOH atoms in PDB_file are included in the computation of    
+                   the quasi-triangulation.  
+                   Without this option, QTFier computes the quasi-triangulation
+                   after water molecules are removed.
+                   Note that this option applies for PDB file (.pdb) only.
+
+  -h   or  -help : Show this help message.                                     
+                                                                                                                                                              
+Examples:                                                                      
+  ./QTFier /home/Input/1C26.pdb /home/Output/                                  
+  ./QTFier -HOH /home/Input/1C26.pdb /home/Output/ 
+  ./QTFier -h                             
