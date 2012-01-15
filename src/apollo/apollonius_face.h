@@ -42,7 +42,6 @@ public:
 				has_valid_tangency_information_(tangent_planes_.size()==2 || (tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)),
 				can_have_d2_(has_valid_tangency_information_),
 				free_tangent_plane_id_(select_free_tangent_plane_id(*a_, *b_, *c_, tangent_planes_, *d1_, d1_tangent_sphere_)),
-				centroid_(calculate_centroid(*a_, *b_, *c_)),
 				can_have_d3_(has_valid_tangency_information_ && (!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0))),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
@@ -155,7 +154,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d3(const InputSphereType& x) const
 	{
-		return (can_have_d3_ && sphere_may_contain_inner_sphere(x) && !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(x));
+		return (can_have_d3_ && sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(x) && sphere_may_contain_inner_sphere(x));
 	}
 
 	std::pair<bool, std::vector<SimpleSphere> > check_candidate_for_d3(const std::size_t d3_id) const
@@ -163,8 +162,8 @@ public:
 		if(can_have_d3_ && d3_id!=npos && d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
 			const Sphere& d3=spheres_->at(d3_id);
-			if(sphere_is_inner(d3)
-					&& !sphere_is_outside_the_bounding_sphere_of_d1_and_d2(d3)
+			if(sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(d3)
+					&& sphere_is_inner(d3)
 					&& !sphere_intersects_sphere(d1_tangent_sphere_, d3)
 					&& (d2_id_==npos || !sphere_intersects_sphere(d2_tangent_sphere_, d3)))
 			{
@@ -331,11 +330,6 @@ private:
 		return npos;
 	}
 
-	static SimplePoint calculate_centroid(const Sphere& a, const Sphere& b, const Sphere& c)
-	{
-		return ((custom_point_from_object<SimplePoint>(a)+custom_point_from_object<SimplePoint>(b)+custom_point_from_object<SimplePoint>(c))/3);
-	}
-
 	template<typename InputSphereType>
 	bool sphere_is_on_free_plane(const InputSphereType& x) const
 	{
@@ -397,16 +391,20 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_is_outside_the_bounding_sphere_of_d1_and_d2(const InputSphereType& x) const
+	bool sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(const InputSphereType& x) const
 	{
-		if(d2_id_!=npos)
+		const double expansion_radius=std::max(a_->r, std::max(b_->r, c_->r));
+		const SimpleSphere expanded_d1_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d1_tangent_sphere_, d1_tangent_sphere_.r+expansion_radius);
+		if(sphere_intersects_sphere(x, expanded_d1_tangent_sphere))
 		{
-			const SimpleSphere allowed_volume=custom_sphere_from_point<SimpleSphere>(centroid_,
-					std::max(maximal_distance_from_point_to_sphere(centroid_, d1_tangent_sphere_),
-							maximal_distance_from_point_to_sphere(centroid_, d2_tangent_sphere_)));
-			if(!sphere_intersects_sphere(allowed_volume, x))
+			if(d2_id_==npos)
 			{
 				return true;
+			}
+			else
+			{
+				const SimpleSphere expanded_d2_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d2_tangent_sphere_, d2_tangent_sphere_.r+expansion_radius);
+				return sphere_intersects_sphere(x, expanded_d2_tangent_sphere);
 			}
 		}
 		return false;
@@ -546,7 +544,6 @@ private:
 	bool has_valid_tangency_information_;
 	bool can_have_d2_;
 	std::size_t free_tangent_plane_id_;
-	SimplePoint centroid_;
 	bool can_have_d3_;
 
 	std::size_t d2_id_;
