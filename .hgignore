@@ -3,3 +3,5 @@ syntax: regexp
 ^Release$
 syntax: regexp
 ^speedtest/data$
+syntax: regexp
+^speedtest/summary$
