@@ -58,7 +58,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 		}
 	}
 
-	if(clo.isopt("--check"))
+	if(clo.isopt("--check-quadruples"))
 	{
 		std::clog << "validity ";
 		if(Apollo::check_quadruples(quadruples_map, atoms))
@@ -69,5 +69,20 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 		{
 			std::clog << "bad\n";
 		}
+	}
+
+	if(clo.isopt("--check-for-orphans"))
+	{
+		std::clog << "orphans ";
+		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(quadruples_map, atoms.size());
+		std::vector<std::size_t> orphans;
+		for(std::size_t i=0;i<graph.size();i++)
+		{
+			if(graph[i].empty())
+			{
+				orphans.push_back(i);
+			}
+		}
+		std::clog << orphans.size() << "\n";
 	}
 }
