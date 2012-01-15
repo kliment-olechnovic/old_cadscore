@@ -85,9 +85,11 @@ public:
 								}
 								else
 								{
-									if(stack[sm_it->second].d1_id()!=produced_face.d1_id())
+									const std::size_t candidate_id=produced_face.d1_id();
+									const std::pair<bool, SimpleSphere> candidate_tangent_sphere=stack[sm_it->second].check_candidate_for_d2(candidate_id);
+									if(candidate_tangent_sphere.first)
 									{
-										stack[sm_it->second].set_d2_and_unset_d3(produced_face.d1_id(), produced_face.d1_tangent_sphere());
+										stack[sm_it->second].set_d2_and_unset_d3(candidate_id, candidate_tangent_sphere.second);
 									}
 								}
 							}
