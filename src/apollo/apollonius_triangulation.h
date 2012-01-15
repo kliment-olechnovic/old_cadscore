@@ -12,7 +12,7 @@
 namespace apollo
 {
 
-template<typename SpheresHierarchyType>
+template<typename SpheresHierarchyType, int MonitoringLevel=0>
 class ApolloniusTriangulation
 {
 public:
@@ -37,10 +37,7 @@ public:
 		{
 			std::tr1::unordered_set<Triple, Triple::HashFunctor> processed_triples;
 
-			{
-				const Quadruple quadruple=stack.front().quadruple_with_d1();
-				quadruples_map[quadruple].push_back(stack.front().d1_tangent_sphere());
-			}
+			quadruples_map[stack.front().quadruple_with_d1()].push_back(stack.front().d1_tangent_sphere());
 
 			while(!stack.empty())
 			{
@@ -97,6 +94,12 @@ public:
 					}
 					processed_triples.insert(face.abc_ids());
 				}
+			}
+
+			if(MonitoringLevel==1)
+			{
+				std::clog << "quadruples " << quadruples_map.size() << "\n";
+				std::clog << "triples " << processed_triples.size() << "\n";
 			}
 		}
 
@@ -363,7 +366,10 @@ private:
 							{
 								result.push_back(Face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front()));
 							}
-//							std::clog << "brute " << tries_before_success << "\n";
+							if(MonitoringLevel==1)
+							{
+								std::clog << "brute " << tries_before_success << "\n";
+							}
 							return result;
 						}
 						else
