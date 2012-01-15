@@ -393,7 +393,7 @@ private:
 	template<typename InputSphereType>
 	bool sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(const InputSphereType& x) const
 	{
-		const double expansion_radius=std::max(a_->r, std::max(b_->r, c_->r));
+		const double expansion_radius=std::max(a_->r, std::max(b_->r, c_->r))*((d2_id_==npos) ? 2 : 1);
 		const SimpleSphere expanded_d1_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d1_tangent_sphere_, d1_tangent_sphere_.r+expansion_radius);
 		if(sphere_intersects_sphere(x, expanded_d1_tangent_sphere))
 		{
