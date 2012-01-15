@@ -13,7 +13,10 @@ fi
 INPUTFILE=$1
 OUTPUTDIR=$(dirname $INPUTFILE)
 OUTPUTDIR="$OUTPUTDIR/"
-OUTPUTLOG="$INPUTFILE.qtf.log"
+OUTPUTFILEBASE=$(basename $INPUTFILE .pdb)
+OUTPUTFILE="$OUTPUTDIR/$OUTPUTFILEBASE.a.qtf"
+OUTPUTLOG="$OUTPUTFILE.log"
 
 (echo "input $INPUTFILE" >&2 ; time -p $QTFIER $INPUTFILE $OUTPUTDIR) > /dev/null 2> $OUTPUTLOG
-
+cat $OUTPUTFILE | egrep '^MODEL' | awk '{print "atoms",$3}' >> $OUTPUTLOG
+cat $OUTPUTFILE | egrep '^MODEL' | awk '{print "vertices",$4}' >> $OUTPUTLOG
