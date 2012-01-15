@@ -33,7 +33,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	}
 
 	const Hierarchy hierarchy(atoms, radius, low_count);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3>0);
+	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3>0 && !as_points);
 
 	std::clog << "quadruples " << quadruples_map.size() << "\n";
 	int vertices_count=0;
