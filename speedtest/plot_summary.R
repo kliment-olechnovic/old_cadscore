@@ -52,3 +52,21 @@ points(x=qtf$atoms, y=qtf$vertices-qtf$vertices, col="red", type="l");
 points(x=qtf$atoms, y=qtf$vertices-qtf$vertices, col="red", type="p", pch=16);
 
 dev.off();
+
+####################
+
+png("summary/atoms_vs_vertices.png", width=7, height=7, units="in", res=300);
+
+plot(x=vq01$atoms, y=vq01$vertices, col="purple", type="l", main="Voronoi vertices count", xlab="Atoms", ylab="Vertices");
+points(x=vq01$atoms, y=vq01$vertices, col="purple", type="p", pch=16);
+
+points(x=vq00$atoms, y=vq00$vertices, col="blue", type="l");
+points(x=vq00$atoms, y=vq00$vertices, col="blue", type="p", pch=16);
+
+points(x=vq10$atoms, y=vq10$vertices, col="green", type="l");
+points(x=vq10$atoms, y=vq10$vertices, col="green", type="p", pch=16);
+
+points(x=qtf$atoms, y=qtf$vertices, col="red", type="l");
+points(x=qtf$atoms, y=qtf$vertices, col="red", type="p", pch=16);
+
+dev.off();
