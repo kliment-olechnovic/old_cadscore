@@ -28,7 +28,16 @@ dev.off();
 
 ####################
 
-png("summary/atoms_vs_vertices.png", width=7, height=7, units="in", res=300);
+png("summary/atoms_vs_vertices_diff.png", width=7, height=7, units="in", res=300);
+
+plot(x=vq01$atoms, y=vq00$vertices-vq01$vertices, col="black", type="l", main="Voronoi vertices count difference", xlab="Atoms", ylab="Difference");
+points(x=vq01$atoms, y=vq00$vertices-vq01$vertices, col="black", type="p", pch=16);
+
+dev.off();
+
+####################
+
+png("summary/atoms_vs_vertices_diff_all.png", width=7, height=7, units="in", res=300);
 
 plot(ylim=c(min(vq10$vertices-qtf$vertices), max(vq01$vertices-qtf$vertices)), x=vq01$atoms, y=vq01$vertices-qtf$vertices, col="purple", type="l", main="Voronoi vertices count difference", xlab="Atoms", ylab="Difference");
 points(x=vq01$atoms, y=vq01$vertices-qtf$vertices, col="purple", type="p", pch=16);
