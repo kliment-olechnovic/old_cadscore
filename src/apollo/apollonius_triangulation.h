@@ -344,6 +344,7 @@ private:
 	{
 		const std::vector<Sphere>& spheres=hierarchy.spheres();
 		std::deque<Face> result;
+		int tries_before_success=0;
 		if(!spheres.empty())
 		{
 			const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
@@ -362,7 +363,12 @@ private:
 							{
 								result.push_back(Face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front()));
 							}
+//							std::clog << "brute " << tries_before_success << "\n";
 							return result;
+						}
+						else
+						{
+							tries_before_success++;
 						}
 					}
 				}
