@@ -8,7 +8,7 @@ LOWCOUNT=50
 ASPOINTS=0
 SD3=1
 
-while getopts “p:s:f:” OPTION
+while getopts “p:s:r:l:f:” OPTION
 do
   case $OPTION in
     p)
@@ -16,6 +16,12 @@ do
       ;;
     s)
       SD3=$OPTARG
+      ;;
+    r)
+      RADIUS=$OPTARG
+      ;;
+    l)
+      LOWCOUNT=$OPTARG
       ;;
     f)
       INPUTFILE=$OPTARG

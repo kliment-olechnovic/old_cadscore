@@ -5,3 +5,5 @@ syntax: regexp
 ^speedtest/data$
 syntax: regexp
 ^speedtest/summary$
+syntax: regexp
+^speedtest/parametrization$
