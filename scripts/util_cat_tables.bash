@@ -16,7 +16,7 @@ $0 options:
 EOF
 }
 
-while getopts “hS:p:f:” OPTION
+while getopts "hS:p:f:" OPTION
 do
   case $OPTION in
    h)

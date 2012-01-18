@@ -30,7 +30,7 @@ CATEGORY=""
 WINDOW="0"
 PDB_FILE=""
 
-while getopts “hD:t:m:c:w:p:” OPTION
+while getopts "hD:t:m:c:w:p:" OPTION
 do
   case $OPTION in
     h)

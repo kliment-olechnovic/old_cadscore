@@ -22,7 +22,7 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 
-while getopts “hD:t:m:f:” OPTION
+while getopts "hD:t:m:f:" OPTION
 do
   case $OPTION in
     h)

@@ -26,7 +26,7 @@ TARGET_FILE_NAME_PATTERN="*"
 MODELS_DIRECTORY=""
 MODEL_FILE_NAME_PATTERN="*"
 
-while getopts “hD:T:t:M:m:F:f:” OPTION
+while getopts "hD:T:t:M:m:F:f:" OPTION
 do
   case $OPTION in
     h)
