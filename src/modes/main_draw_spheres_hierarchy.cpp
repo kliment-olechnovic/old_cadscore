@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "protein/atom.h"
+#include "../protein/atom.h"
 
-#include "apollo/spheres_hierarchy.h"
+#include "../apollo/spheres_hierarchy.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/vector_io.h"
 
 template<typename T>
 void draw_sphere(const T& s, const int quality, const int wired)

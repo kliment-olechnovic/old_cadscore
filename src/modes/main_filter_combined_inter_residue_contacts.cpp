@@ -1,12 +1,12 @@
-#include "protein/residue_id.h"
+#include "../protein/residue_id.h"
 
-#include "contacto/inter_residue_contact_id.h"
-#include "contacto/inter_residue_contact_dual_areas.h"
+#include "../contacto/inter_residue_contact_id.h"
+#include "../contacto/inter_residue_contact_dual_areas.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/map_io.h"
-#include "auxiliaries/set_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/map_io.h"
+#include "../auxiliaries/set_io.h"
 
 void main_filter_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {

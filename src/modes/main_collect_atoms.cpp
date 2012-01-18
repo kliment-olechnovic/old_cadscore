@@ -3,12 +3,12 @@
 #include <fstream>
 #include <sstream>
 
-#include "protein/atoms_reading.h"
-#include "protein/atoms_classification.h"
+#include "../protein/atoms_reading.h"
+#include "../protein/atoms_classification.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/vector_io.h"
 
 #include "resources.h"
 

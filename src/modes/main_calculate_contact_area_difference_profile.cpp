@@ -1,15 +1,15 @@
-#include "protein/atom.h"
-#include "protein/residue_id.h"
+#include "../protein/atom.h"
+#include "../protein/residue_id.h"
 
-#include "contacto/inter_residue_contact_dual_areas.h"
-#include "contacto/residue_contact_area_difference_profile.h"
-#include "contacto/residue_contact_area_difference_basic_scoring_functors.h"
-#include "contacto/utilities.h"
+#include "../contacto/inter_residue_contact_dual_areas.h"
+#include "../contacto/residue_contact_area_difference_profile.h"
+#include "../contacto/residue_contact_area_difference_basic_scoring_functors.h"
+#include "../contacto/utilities.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/map_io.h"
-#include "auxiliaries/set_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/map_io.h"
+#include "../auxiliaries/set_io.h"
 
 void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo)
 {

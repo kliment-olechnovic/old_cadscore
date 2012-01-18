@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include "protein/atom.h"
+#include "../protein/atom.h"
 
-#include "apollo/spheres_hierarchy.h"
-#include "apollo/apollonius_triangulation.h"
+#include "../apollo/spheres_hierarchy.h"
+#include "../apollo/apollonius_triangulation.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/vector_io.h"
 
 void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOptions& clo)
 {

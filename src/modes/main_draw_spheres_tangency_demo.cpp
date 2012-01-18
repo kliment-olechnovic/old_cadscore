@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "protein/atom.h"
+#include "../protein/atom.h"
 
-#include "apollo/spheres_tangent_sphere.h"
-#include "apollo/spheres_tangent_plane.h"
-#include "apollo/spheres_tangent_stick.h"
+#include "../apollo/spheres_tangent_sphere.h"
+#include "../apollo/spheres_tangent_plane.h"
+#include "../apollo/spheres_tangent_stick.h"
 
-#include "auxiliaries/command_line_options.h"
+#include "../auxiliaries/command_line_options.h"
 
 typedef apollo::SimpleSphere Sphere;
 typedef apollo::SimplePoint Point;

@@ -1,9 +1,9 @@
-#include "protein/residue_id.h"
-#include "protein/pdb_parsing.h"
+#include "../protein/residue_id.h"
+#include "../protein/pdb_parsing.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/map_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/map_io.h"
 
 void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo)
 {

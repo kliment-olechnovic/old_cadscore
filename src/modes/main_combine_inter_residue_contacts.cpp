@@ -1,13 +1,13 @@
-#include "protein/atom.h"
-#include "protein/residue_id.h"
+#include "../protein/atom.h"
+#include "../protein/residue_id.h"
 
-#include "contacto/inter_residue_contacts_construction.h"
-#include "contacto/inter_residue_contacts_combination.h"
+#include "../contacto/inter_residue_contacts_construction.h"
+#include "../contacto/inter_residue_contacts_combination.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/vector_io.h"
+#include "../auxiliaries/map_io.h"
 
 void main_combine_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {

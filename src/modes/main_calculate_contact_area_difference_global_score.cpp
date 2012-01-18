@@ -1,11 +1,11 @@
-#include "protein/residue_id.h"
+#include "../protein/residue_id.h"
 
-#include "contacto/residue_contact_area_difference_profile.h"
-#include "contacto/contact_classification.h"
+#include "../contacto/residue_contact_area_difference_profile.h"
+#include "../contacto/contact_classification.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/map_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/map_io.h"
 
 void main_calculate_contact_area_difference_global_score(const auxiliaries::CommandLineOptions& clo)
 {
