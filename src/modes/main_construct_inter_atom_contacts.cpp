@@ -1,16 +1,16 @@
 #include <iostream>
 
-#include "protein/atom.h"
+#include "../protein/atom.h"
 
-#include "apollo/spheres_hierarchy.h"
-#include "apollo/apollonius_triangulation.h"
-#include "apollo/contact_surface.h"
+#include "../apollo/spheres_hierarchy.h"
+#include "../apollo/apollonius_triangulation.h"
+#include "../apollo/contact_surface.h"
 
-#include "contacto/inter_atom_contact.h"
+#include "../contacto/inter_atom_contact.h"
 
-#include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
+#include "../auxiliaries/command_line_options.h"
+#include "../auxiliaries/file_header.h"
+#include "../auxiliaries/vector_io.h"
 
 template<typename SphereType>
 std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > construct_spheres_graph(const std::vector<SphereType>& unrefined_spheres, const double r, const std::size_t low_count)
