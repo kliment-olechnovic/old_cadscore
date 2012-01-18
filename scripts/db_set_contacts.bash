@@ -26,7 +26,7 @@ EOF
 DATABASE=""
 NAME=""
 
-while getopts “hD:n:” OPTION
+while getopts "hD:n:" OPTION
 do
   case $OPTION in
     h)

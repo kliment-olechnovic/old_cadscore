@@ -27,7 +27,7 @@ DATABASE=""
 INPUT_FILE=""
 TARGET_NAME=""
 
-while getopts “hD:i:t:” OPTION
+while getopts "hD:i:t:" OPTION
 do
   case $OPTION in
     h)
