@@ -86,4 +86,25 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 		}
 		std::clog << orphans.size() << "\n";
 	}
+
+	if(clo.isopt("--check-euler-formula"))
+	{
+		const Apollo::TriplesNeighboursMap triples_map=Apollo::collect_triples_neighbours_from_quadruples(quadruples_map);
+		std::size_t faces_count=0;
+		std::tr1::unordered_set<apollo::Pair, apollo::Pair::HashFunctor> edges_set;
+		std::tr1::unordered_set<std::size_t> vertices_set;
+		for(Apollo::TriplesNeighboursMap::const_iterator it=triples_map.begin();it!=triples_map.end();it++)
+		{
+			if(it->second.size()==1)
+			{
+				faces_count++;
+				for(int i=0;i<3;i++)
+				{
+					edges_set.insert(it->first.exclude(i));
+					vertices_set.insert(it->first.get(i));
+				}
+			}
+		}
+		std::clog << "euler " << (vertices_set.size()+faces_count-edges_set.size()) << "\n";
+	}
 }
