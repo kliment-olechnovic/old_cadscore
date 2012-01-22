@@ -4,9 +4,15 @@
 namespace apollo
 {
 
+inline double& epsilon_reference()
+{
+	static double e=0.00001;
+	return e;
+}
+
 inline double epsilon()
 {
-	return 0.00001;
+	return epsilon_reference();
 }
 
 inline bool equal(const double a, const double b)
