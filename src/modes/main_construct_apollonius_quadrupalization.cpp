@@ -14,6 +14,12 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy, 1> Apollo;
 
+	if(clo.isopt("--epsilon"))
+	{
+		const double epsilon=clo.arg<double>("--epsilon", 0.0);
+		apollo::epsilon_reference()=epsilon;
+	}
+
 	const double radius=clo.arg<double>("--radius", 1);
 	const std::size_t low_count=clo.arg<double>("--low-count", 1);
 	const int as_points=clo.arg<int>("--as-points", 0, 1);
