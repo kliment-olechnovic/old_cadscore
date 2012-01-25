@@ -51,8 +51,13 @@ fi
 OUTPUT_DIRECTORY="$DATABASE/scoring_summary"
 mkdir -p $OUTPUT_DIRECTORY
 
-TABLE_FILE=$OUTPUT_DIRECTORY/table
+TABLE_FILE="$OUTPUT_DIRECTORY/table"
 $SCRIPT_DIRECTORY/util_cat_tables.bash -S $DATABASE -p "*scoring_report/*/table_row" -f "target" > $TABLE_FILE
 
-FILLED_LOGS_LIST=$OUTPUT_DIRECTORY/filled_logs_list
-$SCRIPT_DIRECTORY/util_list_nonempty_files.bash -S $DATABASE -p "*.log" > $FILLED_LOGS_LIST
+LOGS_FILE="$OUTPUT_DIRECTORY/logs"
+true > $LOGS_FILE
+for L in `find $DATABASE -path "*scoring_report/*/log_pool" -type f ! -size 0`
+do
+  echo "$L" >> $LOGS_FILE
+  cat $L | sed 's/^/\t/' >> $LOGS_FILE
+done

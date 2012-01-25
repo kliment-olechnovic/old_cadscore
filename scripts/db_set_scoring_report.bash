@@ -124,3 +124,11 @@ fi
 
 TABLE_FILE="$OUTPUT_DIRECTORY/table_row"
 $SCRIPT_DIRECTORY/util_convert_list_to_table_row.bash $LIST_FILE > $TABLE_FILE
+
+LOG_POOL_FILE="$OUTPUT_DIRECTORY/log_pool"
+true > $LOG_POOL_FILE
+for L in `find $DATABASE -path "*$TARGET_NAME*$MODEL_NAME*.log" -type f ! -size 0`
+do
+  echo "$L" >> $LOG_POOL_FILE
+  cat $L | sed 's/^/\t/' >> $LOG_POOL_FILE
+done
