@@ -53,6 +53,3 @@ mkdir -p $OUTPUT_DIRECTORY
 
 TABLE_FILE=$OUTPUT_DIRECTORY/table
 $SCRIPT_DIRECTORY/util_cat_tables.bash -S $DATABASE -p "*scoring_report/*/table_row" -f "target" > $TABLE_FILE
-
-SHORT_TABLE_FILE=$OUTPUT_DIRECTORY/short_table
-awk '{print $1 " " $2 " " $9 " " $15 " " $33 " " $39 " " $44 " " $45}' $TABLE_FILE > $SHORT_TABLE_FILE

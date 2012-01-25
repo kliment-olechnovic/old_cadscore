@@ -46,4 +46,4 @@ fi
 
 ###########################################
 
-cat $DATABASE/scoring_summary/short_table
+cat $DATABASE/scoring_summary/table
