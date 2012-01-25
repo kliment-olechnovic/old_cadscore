@@ -47,3 +47,4 @@ fi
 ###########################################
 
 cat $DATABASE/scoring_summary/table
+cat $DATABASE/scoring_summary/logs 1>&2
