@@ -4,8 +4,6 @@ SCRIPT_DIRECTORY=$(dirname $0)
 
 ###########################################
 
-JOB_DIRECTORY=$1
-
 print_help()
 {
 cat << EOF 1>&2
