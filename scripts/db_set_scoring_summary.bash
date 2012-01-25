@@ -58,6 +58,7 @@ LOGS_FILE="$OUTPUT_DIRECTORY/logs"
 true > $LOGS_FILE
 for L in `find $DATABASE -path "*scoring_report/*/log_pool" -type f ! -size 0`
 do
-  echo "$L" >> $LOGS_FILE
+  echo "$L" | sed "s,$DATABASE,," >> $LOGS_FILE
   cat $L | sed 's/^/\t/' >> $LOGS_FILE
+  echo >> $LOGS_FILE
 done
