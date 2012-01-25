@@ -82,7 +82,6 @@ OUTPUT_DIRECTORY="$DATABASE/scoring_report/$TARGET_NAME/$MODEL_NAME"
 mkdir -p $OUTPUT_DIRECTORY
 
 LIST_FILE="$OUTPUT_DIRECTORY/list"
-
 echo target $TARGET_NAME > $LIST_FILE
 echo model $MODEL_NAME >> $LIST_FILE
 
@@ -129,6 +128,6 @@ LOG_POOL_FILE="$OUTPUT_DIRECTORY/log_pool"
 true > $LOG_POOL_FILE
 for L in `find $DATABASE -path "*$TARGET_NAME*$MODEL_NAME*.log" -type f ! -size 0`
 do
-  echo "$L" >> $LOG_POOL_FILE
+  echo "$L" | sed "s,$DATABASE,," >> $LOG_POOL_FILE
   cat $L | sed 's/^/\t/' >> $LOG_POOL_FILE
 done
