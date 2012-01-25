@@ -18,7 +18,7 @@ $0 options:
   -m    model name in the database
   -c    contacts category
   -w    bluring window size
-  -p    path to file in the PDB format to inject in
+  -p    path to file in the PDB format to inject in (optional)
 
 EOF
 }
