@@ -46,6 +46,12 @@ do
   esac
 done
 
+if [ -z "$JOB_DIRECTORY" ]
+then
+  print_help
+  exit 1
+fi
+
 if [ ! -d "$JOB_DIRECTORY" ]
 then
   echo "Job directory \"$JOB_DIRECTORY\" does not exist" 1>&2
