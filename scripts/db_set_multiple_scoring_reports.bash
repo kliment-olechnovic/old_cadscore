@@ -17,6 +17,7 @@ $0 options:
   -M    path to directory with model files
   -m    model file name pattern (optional, default is *)
   -g    flag to run TMScore
+  -l    flag to run LGA
   -p    flag to run MolProbity
 
 EOF
@@ -28,9 +29,10 @@ TARGET_FILE_NAME_PATTERN="*"
 MODELS_DIRECTORY=""
 MODEL_FILE_NAME_PATTERN="*"
 FLAG_TMSCORE=""
+FLAG_LGA=""
 FLAG_MOLPROBITY=""
 
-while getopts "hD:T:t:M:m:gp" OPTION
+while getopts "hD:T:t:M:m:glp" OPTION
 do
   case $OPTION in
     h)
@@ -54,6 +56,9 @@ do
       ;;
     g)
       FLAG_TMSCORE="-g"
+      ;;
+    l)
+      FLAG_LGA="-l"
       ;;
     p)
       FLAG_MOLPROBITY="-p"
@@ -89,6 +94,6 @@ do
   for MODEL_FILE in `find $MODELS_DIRECTORY -name "$MODEL_FILE_NAME_PATTERN" -type f`
   do
     echo "Scoring target $TARGET_FILE and model $MODEL_FILE" 1>&2
-    time -p $SCRIPT_DIRECTORY/db_set_scoring_report.bash -D $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE $FLAG_TMSCORE $FLAG_MOLPROBITY
+    time -p $SCRIPT_DIRECTORY/db_set_scoring_report.bash -D $OUTPUT_DIRECTORY -t $TARGET_FILE -m $MODEL_FILE $FLAG_TMSCORE $FLAG_LGA $FLAG_MOLPROBITY
   done
 done

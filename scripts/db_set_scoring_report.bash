@@ -15,6 +15,7 @@ $0 options:
   -t    path to target file in PBD format
   -m    path to model file in PBD format
   -g    flag to run TMScore
+  -l    flag to run LGA
   -p    flag to run MolProbity
 
 EOF
@@ -24,9 +25,10 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 FLAG_TMSCORE=false
+FLAG_LGA=false
 FLAG_MOLPROBITY=false
 
-while getopts "hD:t:m:gp" OPTION
+while getopts "hD:t:m:glp" OPTION
 do
   case $OPTION in
     h)
@@ -44,6 +46,9 @@ do
       ;;
     g)
       FLAG_TMSCORE=true
+      ;;
+    l)
+      FLAG_LGA=true
       ;;
     p)
       FLAG_MOLPROBITY=true
@@ -112,6 +117,13 @@ then
   $SCRIPT_DIRECTORY/db_set_tmscore.bash -D $DATABASE -t $TARGET_FILE -m $MODEL_FILE
   TMSCORE_FILE="$DATABASE/tmscore/$TARGET_NAME/$MODEL_NAME/tmscore_summary"
   cat $TMSCORE_FILE >> $LIST_FILE
+fi
+
+if $FLAG_LGA
+then
+  $SCRIPT_DIRECTORY/db_set_lgascore.bash -D $DATABASE -t $TARGET_FILE -m $MODEL_FILE
+  LGASCORE_FILE="$DATABASE/lgascore/$TARGET_NAME/$MODEL_NAME/lgascore_summary"
+  cat $LGASCORE_FILE >> $LIST_FILE
 fi
 
 if $FLAG_MOLPROBITY
