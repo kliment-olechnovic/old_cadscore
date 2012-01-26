@@ -13,6 +13,7 @@ $0 options:
   -h    show this message and exit
   -J    path to job directory
   -g    flag to run TMScore
+  -l    flag to run LGA
   -p    flag to run MolProbity
 
 EOF
@@ -20,9 +21,10 @@ EOF
 
 JOB_DIRECTORY=""
 FLAG_TMSCORE=""
+FLAG_LGA=""
 FLAG_MOLPROBITY=""
 
-while getopts "hJ:gp" OPTION
+while getopts "hJ:glp" OPTION
 do
   case $OPTION in
     h)
@@ -34,6 +36,9 @@ do
       ;;
     g)
       FLAG_TMSCORE="-g"
+      ;;
+    l)
+      FLAG_LGA="-l"
       ;;
     p)
       FLAG_MOLPROBITY="-p"
@@ -58,6 +63,6 @@ fi
 
 ###########################################
 
-$SCRIPT_DIRECTORY/db_set_multiple_scoring_reports.bash -D $JOB_DIRECTORY/db -T $JOB_DIRECTORY/target -M $JOB_DIRECTORY/model $FLAG_TMSCORE $FLAG_MOLPROBITY
+$SCRIPT_DIRECTORY/db_set_multiple_scoring_reports.bash -D $JOB_DIRECTORY/db -T $JOB_DIRECTORY/target -M $JOB_DIRECTORY/model $FLAG_TMSCORE $FLAG_LGA $FLAG_MOLPROBITY
 
 $SCRIPT_DIRECTORY/db_set_scoring_summary.bash -D $JOB_DIRECTORY/db
