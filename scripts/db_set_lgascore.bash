@@ -72,7 +72,7 @@ mkdir -p $OUTPUT_DIRECTORY
 LGA_PROFILE_FILE="$OUTPUT_DIRECTORY/lgascore_profile"
 test -f $LGA_PROFILE_FILE || lga.bash $MODEL_FILE $TARGET_FILE > $LGA_PROFILE_FILE 2> "$LGA_PROFILE_FILE.log"
 
-LGA_GDT_TS=$(cat $LGA_PROFILE_FILE | egrep '^SUMMARY' | awk '{print $7}')
+LGA_GDT_TS=$(cat $LGA_PROFILE_FILE | egrep '^SUMMARY' | awk '{printf $7}')
 if [ -z "$LGA_GDT_TS" ] ; then LGA_GDT_TS=0 ; fi
 
 LGA_SUMMARY_FILE="$OUTPUT_DIRECTORY/lgascore_summary"
