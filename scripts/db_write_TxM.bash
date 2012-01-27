@@ -17,6 +17,7 @@ $0 options:
   -M    path to directory with model files
   -m    model file name pattern (optional, default is *)
   -e    entity name
+  -o    parameters to pass
 
 EOF
 }
@@ -27,8 +28,9 @@ TARGET_FILE_NAME_PATTERN="*"
 MODELS_DIRECTORY=""
 MODEL_FILE_NAME_PATTERN="*"
 ENTITY_NAME=""
+PARAMETERS=""
 
-while getopts "hD:T:t:M:m:e:" OPTION
+while getopts "hD:T:t:M:m:e:o:" OPTION
 do
   case $OPTION in
     h)
@@ -52,6 +54,9 @@ do
       ;;
     e)
       ENTITY_NAME=$OPTARG
+      ;;
+    o)
+      PARAMETERS=$OPTARG
       ;;
   esac
 done
@@ -88,6 +93,6 @@ do
   for MODEL_FILE in `find $MODELS_DIRECTORY -name "$MODEL_FILE_NAME_PATTERN" -type f`
   do
     echo "Scoring target $TARGET_FILE and model $MODEL_FILE" 1>&2
-    time -p $SCRIPT_FILE -D $DATABASE -t $TARGET_FILE -m $MODEL_FILE
+    time -p $SCRIPT_FILE -D $DATABASE -t $TARGET_FILE -m $MODEL_FILE $PARAMETERS
   done
 done
