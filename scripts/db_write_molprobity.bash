@@ -12,6 +12,7 @@ $0 options:
   -D    path to writable database directory
   -t    path to target file in PBD format
   -m    path to model file in PBD format
+  -g    minimum GDT_TS treshold ranging from 0 to 1 (optional, default is 0.6)
 
 EOF
 }
@@ -19,8 +20,9 @@ EOF
 DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
+GDT_TS_TRESHOLD="0.6"
 
-while getopts "hD:t:m:" OPTION
+while getopts "hD:t:m:g:" OPTION
 do
   case $OPTION in
     h)
@@ -35,6 +37,9 @@ do
       ;;
     m)
       MODEL_FILE=$OPTARG
+      ;;
+    g)
+      GDT_TS_TRESHOLD=$OPTARG
       ;;
     ?)
       exit 1
@@ -74,7 +79,7 @@ test -f $TMSCORE_PROFILE_FILE || TMscore $MODEL_FILE $TARGET_FILE > $TMSCORE_PRO
 TM_SCORE_GDT_TS=$(cat $TMSCORE_PROFILE_FILE | egrep "GDT-TS-score" | sed 's/GDT-TS-score\s*=\s*\(.*\)\s*%(d<1).*/\1/g')
 if [ -z "$TM_SCORE_GDT_TS" ] ; then TM_SCORE_GDT_TS=0 ; fi
 
-CONDITION=$(echo "$TM_SCORE_GDT_TS > 0.6" | bc -l);
+CONDITION=$(echo "$TM_SCORE_GDT_TS > $GDT_TS_TRESHOLD" | bc -l);
 
 MOLPROBITY_SCORE="-1"
 if [ "$CONDITION" -eq "1" ]
