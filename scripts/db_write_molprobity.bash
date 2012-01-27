@@ -20,7 +20,7 @@ EOF
 DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
-GDT_TS_TRESHOLD="0.6"
+GDT_TS_TRESHOLD="0.7"
 
 while getopts "hD:t:m:g:" OPTION
 do
