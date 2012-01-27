@@ -10,7 +10,7 @@ $0 options:
 
   -h    show this message and exit
   -D    path to writable database directory
-  -m    model file
+  -m    path to file in PBD format
 
 EOF
 }
@@ -18,7 +18,7 @@ EOF
 DATABASE=""
 MODEL_FILE=""
 
-while getopts "hD:t:m:" OPTION
+while getopts "hD:m:" OPTION
 do
   case $OPTION in
     h)

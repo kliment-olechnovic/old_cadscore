@@ -10,8 +10,8 @@ $0 options:
 
   -h    show this message and exit
   -D    path to writable database directory
-  -t    target file
-  -m    model file
+  -t    path to target file in PBD format
+  -m    path to model file in PBD format
 
 EOF
 }
