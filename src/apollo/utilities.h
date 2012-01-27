@@ -16,6 +16,7 @@ std::vector<std::size_t> sort_objects_by_functor_result(const ListType& list, co
 	{
 		distances.push_back(std::make_pair(functor(list[i]), i));
 	}
+	std::sort(distances.begin(), distances.end());
 	std::vector<std::size_t> result;
 	result.reserve(distances.size());
 	for(std::size_t i=0;i<distances.size();i++)
