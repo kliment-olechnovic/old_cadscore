@@ -48,6 +48,7 @@ fi
 
 TMP_DIR=$(mktemp -d)
 
+LOG_POOL_FILE="$TMP_DIR/log_pool"
 LIST_FILE="$TMP_DIR/list"
 
 NEED_TO_PRINT_HEADER=true
@@ -57,36 +58,49 @@ do
   TARGET_NAME=$(echo $P | cut --delimiter '/' --fields 1);
   MODEL_NAME=$(echo $P | cut --delimiter '/' --fields 2);
   
-  echo "Log for target $TARGET_NAME model $MODEL_NAME:" 1>&2
-  for L in `find $DATABASE -path "*$TARGET_NAME*$MODEL_NAME*.log" -type f ! -size 0`
-  do
-    echo "$L" | sed "s,$DATABASE,," | sed 's/^/\t/' 1>&2
-    cat $L | sed 's/^/\t\t/' 1>&2
-  done
-  echo 1>&2
+  TARGET_ATOMS_DIR="$DATABASE/atoms/$TARGET_NAME/"
+  MODEL_ATOMS_DIR="$DATABASE/atoms/$MODEL_NAME/$TARGET_NAME/"
+  CADSCORE_DIR="$DATABASE/cadscore/$TARGET_NAME/$MODEL_NAME/$TARGET_NAME/"
+  TMSCORE_DIR="$DATABASE/tmscore/$TARGET_NAME/$MODEL_NAME/"
+  LGASCORE_DIR="$DATABASE/lgascore/$TARGET_NAME/$MODEL_NAME/"
+  MOLPROBITY_DIR="$DATABASE/molprobity/$TARGET_NAME/$MODEL_NAME/"
   
-  TARGET_ATOMS_FILE="$DATABASE/atoms/$TARGET_NAME/atoms"
+  true > $LOG_POOL_FILE
+  for L in `find $TARGET_ATOMS_DIR $MODEL_ATOMS_DIR $CADSCORE_DIR $TMSCORE_DIR $LGASCORE_DIR -name "*.log" -type f ! -size 0`
+  do
+    basename "$L" >> $LOG_POOL_FILE
+    cat $L | sed 's/^/\t/' >> $LOG_POOL_FILE
+  done
+  
+  if [ -s "$LOG_POOL_FILE" ]
+  then
+    echo "Log for target $TARGET_NAME model $MODEL_NAME" 1>&2
+    cat $LOG_POOL_FILE | sed 's/^/\t/' 1>&2
+    echo 1>&2
+  fi
+  
+  TARGET_ATOMS_FILE="$TARGET_ATOMS_DIR/atoms"
   [ -s "$TARGET_ATOMS_FILE" ] || continue
   
-  MODEL_ATOMS_FILE="$DATABASE/atoms/$MODEL_NAME/$TARGET_NAME/atoms"
-  [ -s "$MODEL_ATOMS_FILE" ] || continue
-  
-  TARGET_RESIDUE_IDS_FILE="$DATABASE/atoms/$TARGET_NAME/residue_ids"
+  TARGET_RESIDUE_IDS_FILE="$TARGET_ATOMS_DIR/residue_ids"
   [ -s "$TARGET_RESIDUE_IDS_FILE" ] || continue
   
-  MODEL_RESIDUE_IDS_FILE="$DATABASE/atoms/$MODEL_NAME/$TARGET_NAME/residue_ids"
+  MODEL_ATOMS_FILE="$MODEL_ATOMS_DIR/atoms"
+  [ -s "$MODEL_ATOMS_FILE" ] || continue
+  
+  MODEL_RESIDUE_IDS_FILE="$MODEL_ATOMS_DIR/residue_ids"
   [ -s "$MODEL_RESIDUE_IDS_FILE" ] || continue
   
-  CADSCORE_FILE="$DATABASE/cadscore/$TARGET_NAME/$MODEL_NAME/$TARGET_NAME/global_scores"
+  CADSCORE_FILE="$CADSCORE_DIR/global_scores"
   [ -s "$CADSCORE_FILE" ] || continue
   
-  TMSCORE_FILE="$DATABASE/tmscore/$TARGET_NAME/$MODEL_NAME/tmscore_summary"
+  TMSCORE_FILE="$TMSCORE_DIR/tmscore_summary"
   [ -s "$TMSCORE_FILE" ] || continue
   
-  LGASCORE_FILE="$DATABASE/lgascore/$TARGET_NAME/$MODEL_NAME/lgascore_summary"
+  LGASCORE_FILE="$LGASCORE_DIR/lgascore_summary"
   [ -s "$LGASCORE_FILE" ] || continue
   
-  MOLPROBITY_FILE="$DATABASE/molprobity/$TARGET_NAME/$MODEL_NAME/molprobity_summary"
+  MOLPROBITY_FILE="$MOLPROBITY_DIR/molprobity_summary"
   [ -s "$MOLPROBITY_FILE" ] || continue
   
   echo target $TARGET_NAME > $LIST_FILE
