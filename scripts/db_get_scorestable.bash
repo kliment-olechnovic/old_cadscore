@@ -81,18 +81,6 @@ do
     echo 1>&2
   fi
   
-  TARGET_ATOMS_FILE="$TARGET_ATOMS_DIR/atoms"
-  [ -s "$TARGET_ATOMS_FILE" ] || continue
-  
-  TARGET_RESIDUE_IDS_FILE="$TARGET_ATOMS_DIR/residue_ids"
-  [ -s "$TARGET_RESIDUE_IDS_FILE" ] || continue
-  
-  MODEL_ATOMS_FILE="$MODEL_ATOMS_DIR/atoms"
-  [ -s "$MODEL_ATOMS_FILE" ] || continue
-  
-  MODEL_RESIDUE_IDS_FILE="$MODEL_ATOMS_DIR/residue_ids"
-  [ -s "$MODEL_RESIDUE_IDS_FILE" ] || continue
-  
   CADSCORE_FILE="$CADSCORE_DIR/global_scores"
   [ -s "$CADSCORE_FILE" ] || continue
   
@@ -104,6 +92,11 @@ do
   
   MOLPROBITY_FILE="$MOLPROBITY_DIR/molprobity_summary"
   [ -s "$MOLPROBITY_FILE" ] || continue
+  
+  TARGET_ATOMS_FILE="$TARGET_ATOMS_DIR/atoms"
+  TARGET_RESIDUE_IDS_FILE="$TARGET_ATOMS_DIR/residue_ids"
+  MODEL_ATOMS_FILE="$MODEL_ATOMS_DIR/atoms"
+  MODEL_RESIDUE_IDS_FILE="$MODEL_ATOMS_DIR/residue_ids"
   
   echo target $TARGET_NAME > $LIST_FILE
   echo model $MODEL_NAME >> $LIST_FILE
