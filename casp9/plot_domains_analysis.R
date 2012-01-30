@@ -4,7 +4,6 @@ output_directory="plot_domains_analysis";
 dir.create(output_directory);
 
 score_names=c("LGA_GDT_TS", "AA", "SA", "SS");
-
 for(score_name in score_names)
 {
 
@@ -30,35 +29,43 @@ for(target in targets_set)
       group_domains_count=length(sst$domain);
       if(group_domains_count==target_domains_count)
       {
-	full_score=0;
-	full_sas=0;
-	weighted_sum=0;
-	sum_of_weights=0;
-	split_sas=0;
-	for(j in 1:group_domains_count)
-	{
-	  if(sst$domain[j]==0)
-	  {
-	    full_score=sst[, score_name][j];
-	    full_sas=sst$AW_ref[j];
-	  }
-	  else
-	  {
-	    weighted_sum=weighted_sum+(sst[, score_name][j]*sst$target_atoms_count[j]);
-	    sum_of_weights=sum_of_weights+sst$target_atoms_count[j];
-	    split_sas=split_sas+sst$AW_ref[j];
-	  }
-	}
-	target_map=c(target_map, target);
-	full_scores=c(full_scores, full_score);
-	full_sas_values=c(full_sas_values, full_sas);
-	combined_score=weighted_sum/sum_of_weights;
-	combined_scores=c(combined_scores, combined_score);
-	split_sas_values=c(split_sas_values, split_sas);
+        if(min(sst$CASP_GDT_TS[which(sst$domain>0)])>0.0)
+        {
+          full_score=0;
+          full_sas=0;
+          weighted_sum=0;
+          sum_of_weights=0;
+          split_sas=0;
+          for(j in 1:group_domains_count)
+          {
+            if(sst$domain[j]==0)
+            {
+              full_score=sst[, score_name][j];
+              full_sas=sst$AW_ref[j];
+            }
+            else
+            {
+              weighted_sum=weighted_sum+(sst[, score_name][j]*sst$target_atoms_count[j]);
+              sum_of_weights=sum_of_weights+sst$target_atoms_count[j];
+              split_sas=split_sas+sst$AW_ref[j];
+            }
+          }
+          target_map=c(target_map, target);
+          full_scores=c(full_scores, full_score);
+          full_sas_values=c(full_sas_values, full_sas);
+          combined_score=weighted_sum/sum_of_weights;
+          combined_scores=c(combined_scores, combined_score);
+          split_sas_values=c(split_sas_values, split_sas);
+        }
       }
     }
   }
 }
+
+png(paste(output_directory, "/", "combination", "_", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
+plot(x=full_scores, y=combined_scores, xlim=c(0, 1), ylim=c(0, 1), col="black", cex=0.5, xlab="Full model score", ylab="Combined domains score", main=score_name);
+points(x=c(0, 1), y=c(0, 1), type="l", lwd=1);
+dev.off();
 
 orientation_values=(split_sas_values-full_sas_values)/split_sas_values;
 difference_values=(full_scores-combined_scores);
@@ -76,11 +83,6 @@ for(target in targets_set)
   difference_minimums=c(difference_minimums, min(difference_values[sel]));
   difference_maximums=c(difference_maximums, max(difference_values[sel]));
 }
-
-png(paste(output_directory, "/", "combination", "_", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
-plot(x=full_scores, y=combined_scores, xlim=c(0, 1), ylim=c(0, 1), col="black", cex=0.5, xlab="Full model score", ylab="Combined domains score", main=score_name);
-points(x=c(0, 1), y=c(0, 1), type="l", lwd=1);
-dev.off();
 
 png(paste(output_directory, "/", "interface", "_", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
 ord=order(orientation_values);
