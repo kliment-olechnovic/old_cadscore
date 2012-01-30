@@ -1,6 +1,12 @@
 t=read.table("enhanced_table", header=TRUE, stringsAsFactors=FALSE);
 
-score_name="AA";
+output_directory="plot_domains_analysis";
+dir.create(output_directory);
+
+score_names=c("LGA_GDT_TS", "AA", "SA", "SS");
+
+for(score_name in score_names)
+{
 
 targets_set=t$target[which(t$domain==0)];
 targets_set=union(targets_set, targets_set);
@@ -60,14 +66,30 @@ difference_values=(full_scores-combined_scores);
 targets_set=union(target_map, target_map);
 orientation_means=c();
 difference_means=c();
+difference_minimums=c();
+difference_maximums=c();
 for(target in targets_set)
 {
   sel=which(target_map==target);
   orientation_means=c(orientation_means, mean(orientation_values[sel]));
   difference_means=c(difference_means, mean(difference_values[sel]));
+  difference_minimums=c(difference_minimums, min(difference_values[sel]));
+  difference_maximums=c(difference_maximums, max(difference_values[sel]));
 }
 
+png(paste(output_directory, "/", "combination", "_", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
+plot(x=full_scores, y=combined_scores, xlim=c(0, 1), ylim=c(0, 1), col="black", cex=0.5, xlab="Full model score", ylab="Combined domains score", main=score_name);
+points(x=c(0, 1), y=c(0, 1), type="l", lwd=1);
+dev.off();
+
+png(paste(output_directory, "/", "interface", "_", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
 ord=order(orientation_values);
-plot(x=orientation_values[ord], y=difference_values[ord], col="black", cex=0.5);
+plot(x=orientation_values[ord], y=difference_values[ord], type="n", xlab="Relative interface size", ylab="(Full model score)-(Combined domains score)", main=score_name);
+points(x=orientation_values[ord], y=difference_values[ord], col="black", cex=0.5);
 ord=order(orientation_means);
-points(x=orientation_means[ord], y=difference_means[ord], col="red", type="l", lwd=2);
+points(x=orientation_means[ord], y=difference_means[ord], col="purple", type="l", lwd=2);
+#points(x=orientation_means[ord], y=difference_minimums[ord], col="blue", type="l", lwd=2);
+#points(x=orientation_means[ord], y=difference_maximums[ord], col="red", type="l", lwd=2);
+dev.off();
+
+}
