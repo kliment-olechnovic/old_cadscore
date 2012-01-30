@@ -5,6 +5,7 @@ score_name="AA";
 targets_set=t$target[which(t$domain==0)];
 targets_set=union(targets_set, targets_set);
 
+target_map=c();
 full_scores=c();
 combined_scores=c();
 full_sas_values=c();
@@ -42,6 +43,7 @@ for(target in targets_set)
 	    split_sas=split_sas+sst$AW_ref[j];
 	  }
 	}
+	target_map=c(target_map, target);
 	full_scores=c(full_scores, full_score);
 	full_sas_values=c(full_sas_values, full_sas);
 	combined_score=weighted_sum/sum_of_weights;
@@ -52,6 +54,20 @@ for(target in targets_set)
   }
 }
 
-plot(full_scores, combined_scores);
+orientation_values=(split_sas_values-full_sas_values)/split_sas_values;
+difference_values=(full_scores-combined_scores);
 
-plot(x=(split_sas_values-full_sas_values)/split_sas_values, y=(full_scores-combined_scores));
+targets_set=union(target_map, target_map);
+orientation_means=c();
+difference_means=c();
+for(target in targets_set)
+{
+  sel=which(target_map==target);
+  orientation_means=c(orientation_means, mean(orientation_values[sel]));
+  difference_means=c(difference_means, mean(difference_values[sel]));
+}
+
+ord=order(orientation_values);
+plot(x=orientation_values[ord], y=difference_values[ord], col="black", cex=0.5);
+ord=order(orientation_means);
+points(x=orientation_means[ord], y=difference_means[ord], col="red", type="l", lwd=2);
