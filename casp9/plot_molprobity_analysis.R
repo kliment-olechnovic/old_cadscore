@@ -5,9 +5,9 @@ t=t[which(t$domain>0),];
 output_directory="plot_molprobity_analysis";
 dir.create(output_directory);
 
-cadscore_name="SA";
-
 targets_set=union(t$target, t$target);
+
+cadscore_name="SA";
 
 gdt_signs=c();
 cadscore_signs=c();
@@ -38,12 +38,11 @@ A=molprobity_signs*ids;
 B=cadscore_signs*ids;
 C=gdt_signs*ids;
 
-venn_parameters_1=c(length(A), length(B), length(C), length(intersect(A, B)), length(intersect(A, C)), length(intersect(B, C)), length(intersect(intersect(A, B), C)));
-write(venn_parameters_1, paste(output_directory, "/", "venn_parameters_1", sep=""), ncolumns=1);
+A_and_B_without_C=setdiff(intersect(A, B), C);
+A_and_C_without_B=setdiff(intersect(A, C), B);
 
-sel=which((gdt_signs*cadscore_signs)<0);
-A=A[sel];
-B=B[sel];
-C=C[sel];
-venn_parameters_2=c(length(A), length(B), length(C), length(intersect(A, B)), length(intersect(A, C)), length(intersect(B, C)), length(intersect(intersect(A, B), C)));
-write(venn_parameters_2, paste(output_directory, "/", "venn_parameters_2", sep=""), ncolumns=1);
+slices=c(length(A_and_B_without_C), length(A_and_C_without_B));
+situations=c(paste(cadscore_name, " agrees with MolProbity, but disagrees with GDT_TS", sep=""), paste("GDT_TS agrees with MolProbity, but disagrees with ", cadscore_name, sep=""));
+png(paste(output_directory, "/", "pie", "_", cadscore_name, ".png", sep=""), height=5, width=12, units="in", res=200);
+pie(slices, labels=situations, col=rainbow(length(slices)), main=paste("Pie for ", cadscore_name, sep=""));
+dev.off();
