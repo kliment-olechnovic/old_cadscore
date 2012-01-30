@@ -48,4 +48,4 @@ fi
 
 ###########################################
 
-($SCRIPT_DIRECTORY/db_get_scorestable.bash -D $DATABASE 2> $DATABASE/scorestable.log) | column -t > $DATABASE/scorestable
+$SCRIPT_DIRECTORY/db_get_scorestable.bash -D $DATABASE > $DATABASE/scorestable 2> $DATABASE/scorestable.log
