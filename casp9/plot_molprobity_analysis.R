@@ -5,7 +5,7 @@ rt=rt[which(rt$domain>0),];
 output_directory="plot_molprobity_analysis";
 dir.create(output_directory);
 
-tresholds_GDT_TS=c(0.6, 0.7, 0.8, 0.9);
+tresholds_GDT_TS=c(0.6, 0.7, 0.8);
 for(treshold in tresholds_GDT_TS)
 {
   t=rt[which(rt$CASP_GDT_TS>=treshold),];
