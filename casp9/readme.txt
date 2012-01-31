@@ -8,6 +8,7 @@ Lists of the server groups included (not included) into "enhanced_table" are in 
 
 Correlation analysis was performed for single domains only. The file "correlation_table" contains correlation coefficients and model counts.
 The directory "plot_correlation_analysis" contains the corresponding plots.
+Blue points are for TBM targets, red - for FM.
 
 The file "agreement_table" contains sizes of various sets used for MolProbity difference analysis.
-It was generated from the file scores differences values from the file "pairs_differences_table".
+It was generated from the scores differences values from the file "pairs_differences_table".
