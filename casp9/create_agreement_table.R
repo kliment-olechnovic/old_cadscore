@@ -8,6 +8,7 @@ names=c(names, "MP and GDT", "MP and AA", "MP and SA", "MP and SS");
 names=c(names, "GDT and AA", "GDT and SA", "GDT and SS");
 names=c(names, "MP and AA and GDT", "MP and SA and GDT", "MP and SS and GDT");
 names=c(names, "MP and AA without GDT", "MP and GDT without AA", "MP and SA without GDT", "MP and GDT without SA", "MP and SS without GDT", "MP and GDT without SS");
+names=c(names, "MP without GDT without AA", "MP without GDT without SA", "MP without GDT without SS");
 
 llt=data.frame(set_name=names);
 
@@ -48,6 +49,10 @@ for(treshold in tresholds_GDT_TS)
   ll=c(ll, length(setdiff(intersect(M, G), SA)));
   ll=c(ll, length(setdiff(intersect(M, SS), G)));
   ll=c(ll, length(setdiff(intersect(M, G), SS)));
+  
+  ll=c(ll, length(setdiff(M, union(G, AA))));
+  ll=c(ll, length(setdiff(M, union(G, SA))));
+  ll=c(ll, length(setdiff(M, union(G, SS))));
   
   llt[, paste("GDT_TS_", (treshold*100), sep="")]=ll;
 }
