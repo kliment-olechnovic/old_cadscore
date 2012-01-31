@@ -46,5 +46,9 @@ write.table(t, "enhanced_table", quote=FALSE, row.names=FALSE);
 set_of_all_servers=casp9_servers[[1]];
 set_of_used_servers=union(t$group, t$group);
 set_of_unused_servers=setdiff(set_of_all_servers, set_of_used_servers);
+
+list_of_used_servers=casp9_servers[which(is.element(casp9_servers[[1]], set_of_used_servers)),];
+write.table(list_of_used_servers, "list_of_used_servers", quote=FALSE, row.names=FALSE, col.names=FALSE);
+
 list_of_unused_servers=casp9_servers[which(is.element(casp9_servers[[1]], set_of_unused_servers)),];
 write.table(list_of_unused_servers, "list_of_unused_servers", quote=FALSE, row.names=FALSE, col.names=FALSE);
