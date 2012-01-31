@@ -10,4 +10,4 @@ Correlation analysis was performed for single domains only. The file "correlatio
 The directory "plot_correlation_analysis" contains the corresponding plots.
 
 The file "agreement_table" contains sizes of various sets used for MolProbity difference analysis.
-"agreement_table" was generated from the file scores differences values from the file "pairs_differences_table".
+It was generated from the file scores differences values from the file "pairs_differences_table".
