@@ -1,4 +1,5 @@
 t=read.table("shrinking_table", header=TRUE, stringsAsFactors=FALSE);
+t$LGA_GDT_TS=t$LGA_GDT_TS/100;
 
 factors=c();
 GDT_TS=c();
@@ -38,7 +39,15 @@ for(factor in factors_set)
   SA_means=c(SA_means, mean(SA[which(factors==factor)]));
   SS_means=c(SS_means, mean(SS[which(factors==factor)]));
 }
-plot(x=factors_set, y=SS_means, type="l", col="red");
-points(x=factors_set, y=AA_means, type="l", col="blue");
-points(x=factors_set, y=SA_means, type="l", col="purple");
-points(x=factors_set, y=GDT_TS_means, type="l", col="green");
+
+output_directory="plot_shrinking_analysis";
+dir.create(output_directory);
+
+png(paste(output_directory, "/shrinking_models", ".png", sep=""), height=7, width=7, units="in", res=200);
+plot(xlim=c(90, 110), ylim=c(-0.06, 0.04), x=c(0, 1000), y=c(0, 0), type="l", col="black", xlab="Factor %", ylab="Scores didderence", main="Scores didderences");
+points(x=factors_set, y=GDT_TS_means, type="l", col="green", lwd=2);
+points(x=factors_set, y=AA_means, type="l", col="blue", lwd=2);
+points(x=factors_set, y=SA_means, type="l", col="purple", lwd=2);
+points(x=factors_set, y=SS_means, type="l", col="red", lwd=2);
+legend(100, 0.04, c("LGA GDT_TS", "AA", "SA", "SS"), col=c("green", "blue", "purple", "red"), lty=c(1, 1, 1, 1), lwd=c(2, 2, 2, 2));
+dev.off();
