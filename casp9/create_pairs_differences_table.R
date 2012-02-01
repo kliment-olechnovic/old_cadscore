@@ -2,6 +2,8 @@ t=read.table("enhanced_table", header=TRUE, stringsAsFactors=FALSE);
 t=t[which(t$MolProbityScore>(0-1)),];
 t=t[which(t$domain>0),];
 
+full_targets=t$target*10+t$domain;
+
 MolProbity=c();
 GDT_TS=c();
 min_GDT_TS=c();
@@ -9,10 +11,10 @@ AA=c();
 SA=c();
 SS=c();
 
-targets_set=union(t$target, t$target);
+targets_set=union(full_targets, full_targets);
 for(target in targets_set)
 {
-  st=t[which(t$target==target),];
+  st=t[which(full_targets==target),];
   N=length(st[[1]]);
   for(i in 1:(N-1))
   {
