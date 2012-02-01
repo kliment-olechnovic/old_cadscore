@@ -1,4 +1,4 @@
-t=read.table("shrinking_table", header=TRUE, stringsAsFactors=FALSE);
+t=read.table("shrinking_models_table", header=TRUE, stringsAsFactors=FALSE);
 t$LGA_GDT_TS=t$LGA_GDT_TS/100;
 
 factors=c();
