@@ -22,5 +22,20 @@ for(target in targets_set)
   selected_GDT_TS=c(selected_GDT_TS, st$CASP_GDT_TS[selection]);
 }
 
-representatives_table=data.frame(target=selected_targets, domain=selected_domains, group=selected_groups, GDT_TS=selected_GDT_TS);
+selected_groups_titles=c()
+for(group in selected_groups)
+{
+  prefix="";
+  if(group<10)
+  {
+    prefix="00";
+  }
+  else if(group<100)
+  {
+    prefix="0";
+  }
+  selected_groups_titles=c(selected_groups_titles, paste(prefix, group, sep=""));
+}
+
+representatives_table=data.frame(target=selected_targets, domain=selected_domains, group=selected_groups_titles, GDT_TS=selected_GDT_TS);
 write.table(representatives_table, "representatives_table", quote=FALSE, row.names=FALSE);
