@@ -1,7 +1,5 @@
 t=read.table("enhanced_table", header=TRUE, stringsAsFactors=FALSE);
 t=t[which(t$domain>0),];
-t=t[which(t$CASP_GDT_TS>0.4),];
-t=t[which(t$CASP_GDT_TS<0.8),];
 
 selected_groups=c();
 selected_GDT_TS=c();
