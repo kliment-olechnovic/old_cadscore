@@ -3,6 +3,9 @@ rt=rt[which(rt$MolProbity!=0),];
 rt=rt[which(rt$GDT_TS!=0),];
 rt=rt[which(rt$SS!=0),];
 
+sd_MolProbity=sd(rt$MolProbity);
+rt=rt[which(abs(rt$MolProbity)>sd_MolProbity),];
+
 names=c("MP", "GDT", "AA", "SA", "SS");
 names=c(names, "MP and GDT", "MP and AA", "MP and SA", "MP and SS");
 names=c(names, "GDT and AA", "GDT and SA", "GDT and SS");
