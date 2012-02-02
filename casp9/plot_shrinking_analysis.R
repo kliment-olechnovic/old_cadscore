@@ -16,7 +16,7 @@ for(target in tagets_set)
   {
     sst=st[which(st$model==model),];
     nt=sst[which(sst$shrinking==100),];
-    for(i in length(sst[[1]]))
+    for(i in 1:length(sst[[1]]))
     {
       factors=c(factors, sst$shrinking[i]);
       GDT_TS=c(GDT_TS, (sst$LGA_GDT_TS[i]-nt$LGA_GDT_TS[1]));
