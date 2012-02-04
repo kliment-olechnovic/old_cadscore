@@ -83,7 +83,7 @@ for(treshold in tresholds_GDT_TS)
   difference_values=difference_values[global_order];
 
   png(paste(output_directory, "/", "interface", "_", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=7, width=7, units="in", res=200);
-  plot(x=orientation_values, y=difference_values, type="n", xlab="Relative interface size", ylab="abs((Full model score)-(Combined domains score))", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
+  plot(x=orientation_values, y=difference_values, type="n", xlab="Relative interface size", ylab="(Full model score)-(Combined domains score)", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
   points(x=orientation_values, y=difference_values, col="black", cex=0.5);
   smoothing_spline = smooth.spline(orientation_values, difference_values, spar=0.8)
   lines(smoothing_spline, lwd=3, col="blue")
