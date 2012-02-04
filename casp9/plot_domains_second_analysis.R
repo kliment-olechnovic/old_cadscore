@@ -66,7 +66,7 @@ plot(x=full_scores, y=combined_scores, xlim=c(0, 1), ylim=c(0, 1), col="black", 
 points(x=c(0, 1), y=c(0, 1), type="l", lwd=1);
 dev.off();
 
-tresholds_GDT_TS=c(0.0, 0.2, 0.4, 0.6, 0.8);
+tresholds_GDT_TS=c(0.0, 0.2, 0.4, 0.6);
 for(treshold in tresholds_GDT_TS)
 {
   treshold_sel=which(min_domain_GDT_TS>=treshold);
