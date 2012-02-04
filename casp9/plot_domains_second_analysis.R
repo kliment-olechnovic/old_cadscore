@@ -77,29 +77,16 @@ for(treshold in tresholds_GDT_TS)
   
   orientation_values=orientation_values[treshold_sel];
   difference_values=difference_values[treshold_sel];
-
-  targets_set=union(treshold_target_map, treshold_target_map);
-  orientation_means=c();
-  difference_means=c();
-  difference_minimums=c();
-  difference_maximums=c();
-  for(target in targets_set)
-  {
-    sel=which(treshold_target_map==target);
-    orientation_means=c(orientation_means, mean(orientation_values[sel]));
-    difference_means=c(difference_means, mean(difference_values[sel]));
-    difference_minimums=c(difference_minimums, min(difference_values[sel]));
-    difference_maximums=c(difference_maximums, max(difference_values[sel]));
-  }
+  
+  global_order=order(orientation_values);
+  orientation_values=orientation_values[global_order];
+  difference_values=difference_values[global_order];
 
   png(paste(output_directory, "/", "interface", "_", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=7, width=7, units="in", res=200);
-  ord=order(orientation_values);
-  plot(x=orientation_values[ord], y=difference_values[ord], type="n", xlab="Expected absolute difference", ylab="abs((Full model score)-(Combined domains score))", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
-  points(x=orientation_values[ord], y=difference_values[ord], col="black", cex=0.5);
-  ord=order(orientation_means);
-  points(x=orientation_means[ord], y=difference_means[ord], col="purple", type="l", lwd=2);
-  #points(x=orientation_means[ord], y=difference_minimums[ord], col="blue", type="l", lwd=2);
-  #points(x=orientation_means[ord], y=difference_maximums[ord], col="red", type="l", lwd=2);
+  plot(x=orientation_values, y=difference_values, type="n", xlab="Expected absolute difference", ylab="abs((Full model score)-(Combined domains score))", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
+  points(x=orientation_values, y=difference_values, col="black", cex=0.5);
+  smoothing_spline = smooth.spline(orientation_values, difference_values, spar=1.3)
+  lines(smoothing_spline, lwd=3, col="blue")
   dev.off();
 }
 
