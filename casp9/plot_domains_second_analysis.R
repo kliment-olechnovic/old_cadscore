@@ -82,11 +82,12 @@ for(treshold in tresholds_GDT_TS)
   orientation_values=orientation_values[global_order];
   difference_values=difference_values[global_order];
 
-  png(paste(output_directory, "/", "interface", "_", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=7, width=7, units="in", res=200);
-  plot(x=orientation_values, y=difference_values, type="n", xlab="Expected absolute difference", ylab="abs((Full model score)-(Combined domains score))", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
+  png(paste(output_directory, "/", "interface", "_", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=14, width=7, units="in", res=200);
+  plot(x=orientation_values, y=difference_values, xlim=c(0, 0.08), ylim=c(0, 0.4), type="n", xlab="Expected absolute difference", ylab="abs((Full model score)-(Combined domains score))", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
   points(x=orientation_values, y=difference_values, col="black", cex=0.5);
   smoothing_spline = smooth.spline(orientation_values, difference_values, spar=1.3)
   lines(smoothing_spline, lwd=3, col="blue")
+  legend(0.03, 0.4, c(paste("Pearson k =", format(cor(orientation_values, difference_values, method="pearson"), digits=3)), paste("Spearman k =", format(cor(orientation_values, difference_values, method="spearman"), digits=3))));
   dev.off();
 }
 
