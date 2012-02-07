@@ -44,8 +44,8 @@ void main_collect_atoms(const auxiliaries::CommandLineOptions& clo)
 {
 	const std::string radius_classes_file_name=clo.arg_or_default_value<std::string>("--radius-classes", "");
 	const std::string radius_members_file_name=clo.arg_or_default_value<std::string>("--radius-members", "");
-	const int include_heteroatoms=clo.arg<int>("--include-heteroatoms", 0, 1);
-	const int include_water=clo.arg<int>("--include-water", 0, 1);
+	const int include_heteroatoms=clo.arg_in_interval<int>("--include-heteroatoms", 0, 1);
+	const int include_water=clo.arg_in_interval<int>("--include-water", 0, 1);
 	const int force_one_chain=clo.arg_or_default_value<int>("--force-one-chain", 0);
 
 	const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner(radius_classes_file_name, radius_members_file_name);

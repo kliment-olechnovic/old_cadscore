@@ -16,14 +16,14 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 
 	if(clo.isopt("--epsilon"))
 	{
-		const double epsilon=clo.arg<double>("--epsilon", 0.0);
+		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
 		apollo::epsilon_reference()=epsilon;
 	}
 
-	const double radius=clo.arg<double>("--radius", 1);
-	const std::size_t low_count=clo.arg<double>("--low-count", 1);
-	const int as_points=clo.arg<int>("--as-points", 0, 1);
-	const int search_for_d3=clo.arg<int>("--search-for-d3", 0, 1);
+	const double radius=clo.arg_with_min_value<double>("--radius", 1);
+	const std::size_t low_count=clo.arg_with_min_value<double>("--low-count", 1);
+	const int as_points=clo.arg_in_interval<int>("--as-points", 0, 1);
+	const int search_for_d3=clo.arg_in_interval<int>("--search-for-d3", 0, 1);
 
 	auxiliaries::assert_file_header("atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
