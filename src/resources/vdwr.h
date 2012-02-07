@@ -1,5 +1,5 @@
-#ifndef RESOURCES_H_
-#define RESOURCES_H_
+#ifndef VDWR_H_
+#define VDWR_H_
 
 static const unsigned char vdwr_classes_txt[] = {
   0x43, 0x41, 0x09, 0x09, 0x09, 0x31, 0x2e, 0x37, 0x33, 0x0a, 0x43, 0x09,
@@ -151,4 +151,4 @@ static const unsigned char vdwr_members_txt[] = {
 };
 unsigned int vdwr_members_txt_len = 1291;
 
-#endif /* RESOURCES_H_ */
+#endif /* VDWR_H_ */
