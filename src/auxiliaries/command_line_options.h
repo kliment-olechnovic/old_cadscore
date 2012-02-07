@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <set>
 #include <sstream>
 #include <stdexcept>
 
@@ -102,37 +101,33 @@ public:
 	void check_allowed_options(const std::string& allowed_options)
 	{
 		std::istringstream input(allowed_options);
-		std::set<std::string> allowed_options_set_0;
-		std::set<std::string> allowed_options_set_1;
+		std::map<std::string, bool> allowed_options_map;
 		while(input.good())
 		{
 			std::string token;
 			input >> token;
-			if(token.find(":")==std::string::npos)
-			{
-				allowed_options_set_0.insert(token);
-			}
-			else
-			{
-				allowed_options_set_1.insert(token.substr(0, token.find(":")));
-			}
+			const std::size_t arg_pos=token.find(":");
+			allowed_options_map[token.substr(0, arg_pos)]=(arg_pos!=std::string::npos);
 		}
 		for(std::map<std::string, std::string>::const_iterator it=options_.begin();it!=options_.end();++it)
 		{
 			const std::string& option=it->first;
-			//TODO finish this
-			if(it->second.empty())
+			std::map<std::string, bool>::const_iterator jt=allowed_options_map.find(option);
+			if(jt==allowed_options_map.end())
 			{
-				//
+				throw std::runtime_error(std::string("Unrecognized command line option: ")+option);
 			}
-			else
+			else if((!it->second.empty())!=jt->second)
 			{
-				//
+				if(jt->second)
+				{
+					throw std::runtime_error(std::string("Command line option should have arguments: ")+option);
+				}
+				else
+				{
+					throw std::runtime_error(std::string("Command line option cannot have arguments: ")+option);
+				}
 			}
-//			if(allowed_options_set_0.count(option)==0)
-//			{
-//				throw std::runtime_error(std::string("Unrecognized command line option: ")+option);
-//			}
 		}
 	}
 
