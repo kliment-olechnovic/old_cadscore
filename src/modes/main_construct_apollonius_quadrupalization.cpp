@@ -14,16 +14,18 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy, 1> Apollo;
 
+	clo.check_allowed_options("--mode: --epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check-validity --check-for-orphans");
+
 	if(clo.isopt("--epsilon"))
 	{
 		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
 		apollo::epsilon_reference()=epsilon;
 	}
 
-	const double radius=clo.arg_with_min_value<double>("--radius", 1);
-	const std::size_t low_count=clo.arg_with_min_value<double>("--low-count", 1);
-	const int as_points=clo.arg_in_interval<int>("--as-points", 0, 1);
-	const int search_for_d3=clo.arg_in_interval<int>("--search-for-d3", 0, 1);
+	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
+	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<double>("--bsi-min-count", 1) : 50;
+	const bool as_points=clo.isopt("--as-points");
+	const bool search_for_d3=!clo.isopt("--skip-inner");
 
 	auxiliaries::assert_file_header("atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
@@ -39,7 +41,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	}
 
 	const Hierarchy hierarchy(atoms, radius, low_count);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3>0 && !as_points);
+	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3 && !as_points);
 
 	{
 		int vertices_count=0;
@@ -50,22 +52,21 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 		std::clog << "vertices " << vertices_count << "\n";
 	}
 
-	auxiliaries::print_file_header("apollonius_quadruples");
-	std::cout << quadruples_map.size() << "\n";
+	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
 	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 	{
+		std::cout << "\n";
 		const apollo::Quadruple& q=it->first;
-		std::cout << q.get(0) << " " << q.get(1) << " " << q.get(2) << " " << q.get(3) << "\n";
+		std::cout << "Quadruple (a, b, c, d): " << q.get(0) << " " << q.get(1) << " " << q.get(2) << " " << q.get(3) << "\n";
 		const std::vector<apollo::SimpleSphere>& tangents=it->second;
-		std::cout << tangents.size() << " ";
 		for(std::size_t i=0;i<tangents.size();i++)
 		{
 			const apollo::SimpleSphere& s=tangents[i];
-			std::cout << s.x << " " << s.y << " " << s.z << " " << s.r << ((i+1<tangents.size()) ? " " : "\n");
+			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
 		}
 	}
 
-	if(clo.isopt("--check-quadruples"))
+	if(clo.isopt("--check-validity"))
 	{
 		std::clog << "validity ";
 		if(Apollo::check_quadruples(quadruples_map, atoms))
@@ -91,26 +92,5 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 			}
 		}
 		std::clog << orphans.size() << "\n";
-	}
-
-	if(clo.isopt("--check-euler-formula"))
-	{
-		const Apollo::TriplesNeighboursMap triples_map=Apollo::collect_triples_neighbours_from_quadruples(quadruples_map);
-		std::size_t faces_count=0;
-		std::tr1::unordered_set<apollo::Pair, apollo::Pair::HashFunctor> edges_set;
-		std::tr1::unordered_set<std::size_t> vertices_set;
-		for(Apollo::TriplesNeighboursMap::const_iterator it=triples_map.begin();it!=triples_map.end();it++)
-		{
-			if(it->second.size()==1)
-			{
-				faces_count++;
-				for(int i=0;i<3;i++)
-				{
-					edges_set.insert(it->first.exclude(i));
-					vertices_set.insert(it->first.get(i));
-				}
-			}
-		}
-		std::clog << "euler " << (vertices_set.size()+faces_count-edges_set.size()) << "\n";
 	}
 }
