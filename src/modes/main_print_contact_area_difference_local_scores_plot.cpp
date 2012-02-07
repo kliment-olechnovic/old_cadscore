@@ -12,7 +12,7 @@
 void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo)
 {
 	const std::string category=clo.arg<std::string>("--category");
-	const int max_window_size=clo.arg<int>("--max-window", 0, 1000);
+	const int max_window_size=clo.arg_in_interval<int>("--max-window", 0, 1000);
 
 	auxiliaries::assert_file_header("cad_profile");
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>();

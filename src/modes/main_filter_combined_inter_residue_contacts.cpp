@@ -10,7 +10,7 @@
 
 void main_filter_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	const int filter_mode=clo.arg<int>("--filter-mode", 0, 1);
+	const int filter_mode=clo.arg_in_interval<int>("--filter-mode", 0, 1);
 
 	typedef std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > CombinedContacts;
 

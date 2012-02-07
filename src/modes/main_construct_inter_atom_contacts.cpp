@@ -52,8 +52,8 @@ std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > co
 
 void main_construct_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	const std::size_t subdivision_depth=clo.arg<std::size_t>("--depth", 1, 4);
-	const double probe_radius=clo.arg<double>("--probe", 0);
+	const std::size_t subdivision_depth=clo.arg_in_interval<std::size_t>("--depth", 1, 4);
+	const double probe_radius=clo.arg_with_min_value<double>("--probe", 0);
 
 	auxiliaries::assert_file_header("atoms");
 	const std::vector<protein::Atom> unrefined_atoms=auxiliaries::read_vector<protein::Atom>();

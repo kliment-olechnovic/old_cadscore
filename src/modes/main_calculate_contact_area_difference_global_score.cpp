@@ -9,7 +9,7 @@
 
 void main_calculate_contact_area_difference_global_score(const auxiliaries::CommandLineOptions& clo)
 {
-	const int use_min=clo.arg<int>("--use-min", 0, 1);
+	const int use_min=clo.arg_in_interval<int>("--use-min", 0, 1);
 	const std::string prefix=clo.arg_or_default_value<std::string>("--prefix", "");
 
 	auxiliaries::assert_file_header("cad_profile");

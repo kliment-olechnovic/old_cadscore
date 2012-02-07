@@ -61,13 +61,26 @@ public:
 	}
 
 	template<typename T>
-	T arg(const std::string& name, const T min_value, const T max_value=std::numeric_limits<T>::max()) const
+	T arg_in_interval(const std::string& name, const T min_value, const T max_value) const
 	{
 		const T value=arg<T>(name);
 		if(!(value>=min_value && value<=max_value))
 		{
 			std::ostringstream output;
 			output << "Command line argument '" << name << "' is not in the allowed range [" << min_value << ", " << max_value << "]";
+			throw std::invalid_argument(output.str());
+		}
+		return value;
+	}
+
+	template<typename T>
+	T arg_with_min_value(const std::string& name, const T min_value) const
+	{
+		const T value=arg<T>(name);
+		if(value<min_value)
+		{
+			std::ostringstream output;
+			output << "Command line argument '" << name << "' is less than " << min_value;
 			throw std::invalid_argument(output.str());
 		}
 		return value;

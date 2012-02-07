@@ -13,7 +13,7 @@
 
 void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo)
 {
-	const int scoring_mode=clo.arg<int>("--scoring-mode", 0, 2);
+	const int scoring_mode=clo.arg_in_interval<int>("--scoring-mode", 0, 2);
 
 	auxiliaries::assert_file_header("combined_residue_contacts");
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
