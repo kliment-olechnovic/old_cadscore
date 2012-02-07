@@ -19,9 +19,6 @@ void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandL
 void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
 void main_print_combined_inter_residue_contacts_sequence_map(const auxiliaries::CommandLineOptions& clo);
 void main_filter_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
-void main_draw_spheres_hierarchy(const auxiliaries::CommandLineOptions& clo);
-void main_draw_spheres_hierarchy_demo(const auxiliaries::CommandLineOptions& clo);
-void main_draw_spheres_tangency_demo(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -50,9 +47,6 @@ int main(const int argc, const char** argv)
 		modes_map["print-contact-area-difference-local-scores-injected-to-pdb-file"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_injected_to_pdb_file);
 		modes_map["print-combined-inter-residue-contacts-sequence-map"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_sequence_map);
 		modes_map["filter-combined-inter-residue-contacts"]=ModeFunctionPointer(main_filter_combined_inter_residue_contacts);
-		modes_map["draw-spheres-hierarchy"]=ModeFunctionPointer(main_draw_spheres_hierarchy);
-		modes_map["draw-spheres-hierarchy-demo"]=ModeFunctionPointer(main_draw_spheres_hierarchy_demo);
-		modes_map["draw-spheres-tangency-demo"]=ModeFunctionPointer(main_draw_spheres_tangency_demo);
 
 		if(modes_map.count(mode)==1)
 		{
