@@ -98,7 +98,7 @@ public:
 		}
 	}
 
-	void check_allowed_options(const std::string& allowed_options)
+	void check_allowed_options(const std::string& allowed_options) const
 	{
 		std::istringstream input(allowed_options);
 		std::map<std::string, bool> allowed_options_map;
