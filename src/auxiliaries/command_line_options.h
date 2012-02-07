@@ -102,20 +102,37 @@ public:
 	void check_allowed_options(const std::string& allowed_options)
 	{
 		std::istringstream input(allowed_options);
-		std::set<std::string> allowed_options_set;
+		std::set<std::string> allowed_options_set_0;
+		std::set<std::string> allowed_options_set_1;
 		while(input.good())
 		{
 			std::string token;
 			input >> token;
-			allowed_options_set.insert(token);
+			if(token.find(":")==std::string::npos)
+			{
+				allowed_options_set_0.insert(token);
+			}
+			else
+			{
+				allowed_options_set_1.insert(token.substr(0, token.find(":")));
+			}
 		}
 		for(std::map<std::string, std::string>::const_iterator it=options_.begin();it!=options_.end();++it)
 		{
 			const std::string& option=it->first;
-			if(allowed_options_set.count(option)==0)
+			//TODO finish this
+			if(it->second.empty())
 			{
-				throw std::runtime_error(std::string("Unrecognized command line option: ")+option);
+				//
 			}
+			else
+			{
+				//
+			}
+//			if(allowed_options_set_0.count(option)==0)
+//			{
+//				throw std::runtime_error(std::string("Unrecognized command line option: ")+option);
+//			}
 		}
 	}
 
