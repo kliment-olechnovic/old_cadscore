@@ -3,9 +3,9 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include <sstream>
 #include <stdexcept>
-#include <limits>
 
 namespace auxiliaries
 {
@@ -48,14 +48,14 @@ public:
 	{
 		if(!isarg(name))
 		{
-			throw std::invalid_argument(std::string("Missing command line argument: ")+name);
+			throw std::runtime_error(std::string("Missing command line argument: ")+name);
 		}
 		std::istringstream input(options_.find(name)->second);
 		T value;
 		input >> value;
 		if(input.fail())
 		{
-			throw std::invalid_argument(std::string("Invalid command line argument: ")+name);
+			throw std::runtime_error(std::string("Invalid command line argument: ")+name);
 		}
 		return value;
 	}
@@ -68,7 +68,7 @@ public:
 		{
 			std::ostringstream output;
 			output << "Command line argument '" << name << "' is not in the allowed range [" << min_value << ", " << max_value << "]";
-			throw std::invalid_argument(output.str());
+			throw std::runtime_error(output.str());
 		}
 		return value;
 	}
@@ -81,7 +81,7 @@ public:
 		{
 			std::ostringstream output;
 			output << "Command line argument '" << name << "' is less than " << min_value;
-			throw std::invalid_argument(output.str());
+			throw std::runtime_error(output.str());
 		}
 		return value;
 	}
@@ -96,6 +96,26 @@ public:
 		else
 		{
 			return default_value;
+		}
+	}
+
+	void check_allowed_options(const std::string& allowed_options)
+	{
+		std::istringstream input(allowed_options);
+		std::set<std::string> allowed_options_set;
+		while(input.good())
+		{
+			std::string token;
+			input >> token;
+			allowed_options_set.insert(token);
+		}
+		for(std::map<std::string, std::string>::const_iterator it=options_.begin();it!=options_.end();++it)
+		{
+			const std::string& option=it->first;
+			if(allowed_options_set.count(option)==0)
+			{
+				throw std::runtime_error(std::string("Unrecognized command line option: ")+option);
+			}
 		}
 	}
 
