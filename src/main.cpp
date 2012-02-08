@@ -18,7 +18,6 @@ void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOp
 void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
 void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
 void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
-void main_print_combined_inter_residue_contacts_sequence_map(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -47,7 +46,6 @@ int main(const int argc, const char** argv)
 		modes_map["print-contact-area-difference-local-scores-plot"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_plot);
 		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_plot);
 		modes_map["print-contact-area-difference-local-scores-injected-to-pdb-file"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_injected_to_pdb_file);
-		modes_map["print-combined-inter-residue-contacts-sequence-map"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_sequence_map);
 
 		if(modes_map.count(mode)==1)
 		{
