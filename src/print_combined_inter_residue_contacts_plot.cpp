@@ -1,15 +1,19 @@
-#include "../protein/residue_id.h"
+#include <iostream>
 
-#include "../contacto/inter_residue_contact_id.h"
-#include "../contacto/inter_residue_contact_dual_areas.h"
+#include "protein/residue_id.h"
 
-#include "../auxiliaries/command_line_options.h"
-#include "../auxiliaries/file_header.h"
-#include "../auxiliaries/map_io.h"
-#include "../auxiliaries/ppm_image_writer.h"
+#include "contacto/inter_residue_contact_id.h"
+#include "contacto/inter_residue_contact_dual_areas.h"
 
-void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo)
+#include "auxiliaries/command_line_options.h"
+#include "auxiliaries/file_header.h"
+#include "auxiliaries/map_io.h"
+#include "auxiliaries/ppm_image_writer.h"
+
+void print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo)
 {
+	clo.check_allowed_options("--mode: --category:");
+
 	const std::string category=clo.arg<std::string>("--category");
 
 	auxiliaries::assert_file_header("combined_residue_contacts");

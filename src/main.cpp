@@ -14,10 +14,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo);
-
-void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
-void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
-void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
+void print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
+void print_cad_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
+void print_cad_local_scores_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -42,10 +41,9 @@ int main(const int argc, const char** argv)
 		modes_map["calc-CAD-profile"]=ModeFunctionPointer(calc_contact_area_difference_profile);
 		modes_map["calc-CAD-local-scores"]=ModeFunctionPointer(calc_contact_area_difference_local_scores);
 		modes_map["calc-CAD-global-scores"]=ModeFunctionPointer(calc_contact_area_difference_global_scores);
-
-		modes_map["print-contact-area-difference-local-scores-plot"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_plot);
-		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_plot);
-		modes_map["print-contact-area-difference-local-scores-injected-to-pdb-file"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_injected_to_pdb_file);
+		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(print_combined_inter_residue_contacts_plot);
+		modes_map["print-CAD-local-scores-plot"]=ModeFunctionPointer(print_cad_local_scores_plot);
+		modes_map["print-CAD-local-scores-to-PDB-file"]=ModeFunctionPointer(print_cad_local_scores_to_pdb_file);
 
 		if(modes_map.count(mode)==1)
 		{
@@ -56,7 +54,7 @@ int main(const int argc, const char** argv)
 			std::cerr << "Unknown mode. Available modes are:" << std::endl;
 			for(std::map< std::string, ModeFunctionPointer >::const_iterator it=modes_map.begin();it!=modes_map.end();++it)
 			{
-				std::cerr << it->first << std::endl;
+				std::cerr << "--mode " << it->first << std::endl;
 			}
 			return -1;
 		}
