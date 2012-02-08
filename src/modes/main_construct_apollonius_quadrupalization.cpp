@@ -14,7 +14,7 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy, 1> Apollo;
 
-	clo.check_allowed_options("--mode: --epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check-validity --check-for-orphans");
+	clo.check_allowed_options("--mode: --epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -43,16 +43,17 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	const Hierarchy hierarchy(atoms, radius, low_count);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3 && !as_points);
 
+	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
+
 	{
-		int vertices_count=0;
+		int tangent_spheres_count=0;
 		for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
-			vertices_count+=it->second.size();
+			tangent_spheres_count+=it->second.size();
 		}
-		std::clog << "vertices " << vertices_count << "\n";
+		std::cout << "Tangent spheres count: " << tangent_spheres_count << "\n";
 	}
 
-	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
 	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 	{
 		std::cout << "\n";
@@ -64,33 +65,5 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 			const apollo::SimpleSphere& s=tangents[i];
 			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
 		}
-	}
-
-	if(clo.isopt("--check-validity"))
-	{
-		std::clog << "validity ";
-		if(Apollo::check_quadruples(quadruples_map, atoms))
-		{
-			std::clog << "good\n";
-		}
-		else
-		{
-			std::clog << "bad\n";
-		}
-	}
-
-	if(clo.isopt("--check-for-orphans"))
-	{
-		std::clog << "orphans ";
-		const std::vector< std::vector<std::size_t> > graph=Apollo::construct_graph_from_quadruples(quadruples_map, atoms.size());
-		std::vector<std::size_t> orphans;
-		for(std::size_t i=0;i<graph.size();i++)
-		{
-			if(graph[i].empty())
-			{
-				orphans.push_back(i);
-			}
-		}
-		std::clog << orphans.size() << "\n";
 	}
 }
