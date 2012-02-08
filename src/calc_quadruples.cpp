@@ -1,18 +1,18 @@
 #include <iostream>
 
-#include "../protein/atom.h"
+#include "protein/atom.h"
 
-#include "../apollo/spheres_hierarchy.h"
-#include "../apollo/apollonius_triangulation.h"
+#include "apollo/spheres_hierarchy.h"
+#include "apollo/apollonius_triangulation.h"
 
-#include "../auxiliaries/command_line_options.h"
-#include "../auxiliaries/file_header.h"
-#include "../auxiliaries/vector_io.h"
+#include "auxiliaries/command_line_options.h"
+#include "auxiliaries/file_header.h"
+#include "auxiliaries/vector_io.h"
 
-void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOptions& clo)
+void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
-	typedef apollo::ApolloniusTriangulation<Hierarchy, 1> Apollo;
+	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 
 	clo.check_allowed_options("--mode: --epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner");
 
@@ -23,14 +23,12 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 	}
 
 	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
-	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<double>("--bsi-min-count", 1) : 50;
+	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<double>("--bsi-min-count", 1) : 1;
 	const bool as_points=clo.isopt("--as-points");
 	const bool search_for_d3=!clo.isopt("--skip-inner");
 
 	auxiliaries::assert_file_header("atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
-
-	std::clog << "atoms " << atoms.size() << "\n";
 
 	if(as_points>0)
 	{
@@ -67,3 +65,4 @@ void main_construct_apollonius_quadrupalization(const auxiliaries::CommandLineOp
 		}
 	}
 }
+
