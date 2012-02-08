@@ -11,10 +11,10 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo);
 void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
 void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
+void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
+void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
+void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo);
 
-void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
-void main_calculate_contact_area_difference_global_score(const auxiliaries::CommandLineOptions& clo);
-void main_calculate_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
 void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
 void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
@@ -40,10 +40,10 @@ int main(const int argc, const char** argv)
 		modes_map["calc-inter-atom-contacts"]=ModeFunctionPointer(calc_inter_atom_contacts);
 		modes_map["calc-inter-residue-contacts"]=ModeFunctionPointer(calc_inter_residue_contacts);
 		modes_map["calc-combined-inter-residue-contacts"]=ModeFunctionPointer(calc_combined_inter_residue_contacts);
+		modes_map["calc-CAD-profile"]=ModeFunctionPointer(calc_contact_area_difference_profile);
+		modes_map["calc-CAD-local-scores"]=ModeFunctionPointer(calc_contact_area_difference_local_scores);
+		modes_map["calc-CAD-global-scores"]=ModeFunctionPointer(calc_contact_area_difference_global_scores);
 
-		modes_map["calculate-contact-area-difference-profile"]=ModeFunctionPointer(main_calculate_contact_area_difference_profile);
-		modes_map["calculate-contact-area-difference-global-score"]=ModeFunctionPointer(main_calculate_contact_area_difference_global_score);
-		modes_map["calculate-contact-area-difference-local-scores"]=ModeFunctionPointer(main_calculate_contact_area_difference_local_scores);
 		modes_map["print-contact-area-difference-local-scores-plot"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_plot);
 		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_plot);
 		modes_map["print-contact-area-difference-local-scores-injected-to-pdb-file"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_injected_to_pdb_file);
