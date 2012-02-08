@@ -6,6 +6,7 @@
 
 void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
+void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
 void calc_quadruples(const auxiliaries::CommandLineOptions& clo);
 
 void main_construct_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
@@ -13,7 +14,6 @@ void main_construct_inter_residue_contacts(const auxiliaries::CommandLineOptions
 void main_combine_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
 void main_calculate_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
 void main_calculate_contact_area_difference_global_score(const auxiliaries::CommandLineOptions& clo);
-void main_filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
 void main_calculate_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
 void main_print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
@@ -36,6 +36,7 @@ int main(const int argc, const char** argv)
 
 		modes_map["collect-atoms"]=ModeFunctionPointer(collect_atoms);
 		modes_map["collect-residue-ids"]=ModeFunctionPointer(collect_residue_ids);
+		modes_map["filter-atoms-by-target"]=ModeFunctionPointer(filter_atoms_by_target);
 		modes_map["calc-quadruples"]=ModeFunctionPointer(calc_quadruples);
 
 		modes_map["construct-inter-atom-contacts"]=ModeFunctionPointer(main_construct_inter_atom_contacts);
@@ -43,7 +44,6 @@ int main(const int argc, const char** argv)
 		modes_map["combine-inter-residue-contacts"]=ModeFunctionPointer(main_combine_inter_residue_contacts);
 		modes_map["calculate-contact-area-difference-profile"]=ModeFunctionPointer(main_calculate_contact_area_difference_profile);
 		modes_map["calculate-contact-area-difference-global-score"]=ModeFunctionPointer(main_calculate_contact_area_difference_global_score);
-		modes_map["filter-atoms-by-target"]=ModeFunctionPointer(main_filter_atoms_by_target);
 		modes_map["calculate-contact-area-difference-local-scores"]=ModeFunctionPointer(main_calculate_contact_area_difference_local_scores);
 		modes_map["print-contact-area-difference-local-scores-plot"]=ModeFunctionPointer(main_print_contact_area_difference_local_scores_plot);
 		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(main_print_combined_inter_residue_contacts_plot);
