@@ -1,16 +1,16 @@
 #include <iostream>
 
-#include "../protein/atom.h"
+#include "protein/atom.h"
 
-#include "../apollo/spheres_hierarchy.h"
-#include "../apollo/apollonius_triangulation.h"
-#include "../apollo/contact_surface.h"
+#include "apollo/spheres_hierarchy.h"
+#include "apollo/apollonius_triangulation.h"
+#include "apollo/contact_surface.h"
 
-#include "../contacto/inter_atom_contact.h"
+#include "contacto/inter_atom_contact.h"
 
-#include "../auxiliaries/command_line_options.h"
-#include "../auxiliaries/file_header.h"
-#include "../auxiliaries/vector_io.h"
+#include "auxiliaries/command_line_options.h"
+#include "auxiliaries/file_header.h"
+#include "auxiliaries/vector_io.h"
 
 template<typename SphereType>
 std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > construct_spheres_graph(const std::vector<SphereType>& unrefined_spheres, const double r, const std::size_t low_count)
@@ -50,10 +50,12 @@ std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > co
 	}
 }
 
-void main_construct_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
+void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	const std::size_t subdivision_depth=clo.arg_in_interval<std::size_t>("--depth", 1, 4);
-	const double probe_radius=clo.arg_with_min_value<double>("--probe", 0);
+	clo.check_allowed_options("--mode: --depth: --probe:");
+
+	const std::size_t subdivision_depth=clo.isopt("--depth") ? clo.arg_in_interval<std::size_t>("--depth", 1, 4) : 3;
+	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 
 	auxiliaries::assert_file_header("atoms");
 	const std::vector<protein::Atom> unrefined_atoms=auxiliaries::read_vector<protein::Atom>();
