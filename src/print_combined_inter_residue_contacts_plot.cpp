@@ -26,13 +26,29 @@ void print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOp
 		sequence_map[it->first.a]=0;
 		sequence_map[it->first.b]=0;
 	}
-	std::size_t i=0;
-	for(std::map<protein::ResidueID, std::size_t>::iterator it=sequence_map.begin();it!=sequence_map.end();++it)
+
 	{
-		it->second=i++;
+		std::size_t i=0;
+		for(std::map<protein::ResidueID, std::size_t>::iterator it=sequence_map.begin();it!=sequence_map.end();++it)
+		{
+			it->second=i++;
+		}
 	}
 
 	auxiliaries::PPMImageWriter image(sequence_map.size(), sequence_map.size());
+
+	for(std::map<protein::ResidueID, std::size_t>::const_iterator ait=sequence_map.begin();ait!=sequence_map.end();++ait)
+	{
+		for(std::map<protein::ResidueID, std::size_t>::const_iterator bit=sequence_map.begin();bit!=sequence_map.end();++bit)
+		{
+			if(ait->first.chain_id!=bit->first.chain_id)
+			{
+				auxiliaries::Color& color=image.color(ait->second, bit->second);
+				color.b=32;
+			}
+		}
+	}
+
 	for(std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
 	{
 		const std::pair<double, double> area=it->second.area(category);
