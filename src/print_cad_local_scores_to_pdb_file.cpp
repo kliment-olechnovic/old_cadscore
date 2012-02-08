@@ -1,12 +1,16 @@
-#include "../protein/residue_id.h"
-#include "../protein/pdb_parsing.h"
+#include <iostream>
 
-#include "../auxiliaries/command_line_options.h"
-#include "../auxiliaries/file_header.h"
-#include "../auxiliaries/map_io.h"
+#include "protein/residue_id.h"
+#include "protein/pdb_parsing.h"
 
-void main_print_contact_area_difference_local_scores_injected_to_pdb_file(const auxiliaries::CommandLineOptions& clo)
+#include "auxiliaries/command_line_options.h"
+#include "auxiliaries/file_header.h"
+#include "auxiliaries/map_io.h"
+
+void print_cad_local_scores_to_pdb_file(const auxiliaries::CommandLineOptions& clo)
 {
+	clo.check_allowed_options("--mode:");
+
 	auxiliaries::assert_file_header("local_scores");
 	const std::map<protein::ResidueID, double> local_scores=auxiliaries::read_map<protein::ResidueID, double>();
 

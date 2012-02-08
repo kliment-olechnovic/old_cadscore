@@ -1,16 +1,18 @@
 #include <iostream>
 
-#include "../protein/residue_id.h"
+#include "protein/residue_id.h"
 
-#include "../contacto/residue_contact_area_difference_local_scores.h"
+#include "contacto/residue_contact_area_difference_local_scores.h"
 
-#include "../auxiliaries/command_line_options.h"
-#include "../auxiliaries/file_header.h"
-#include "../auxiliaries/map_io.h"
-#include "../auxiliaries/ppm_image_writer.h"
+#include "auxiliaries/command_line_options.h"
+#include "auxiliaries/file_header.h"
+#include "auxiliaries/map_io.h"
+#include "auxiliaries/ppm_image_writer.h"
 
-void main_print_contact_area_difference_local_scores_plot(const auxiliaries::CommandLineOptions& clo)
+void print_cad_local_scores_plot(const auxiliaries::CommandLineOptions& clo)
 {
+	clo.check_allowed_options("--mode: --category: --max-window:");
+
 	const std::string category=clo.arg<std::string>("--category");
 	const int max_window_size=clo.arg_in_interval<int>("--max-window", 0, 1000);
 
@@ -39,7 +41,4 @@ void main_print_contact_area_difference_local_scores_plot(const auxiliaries::Com
 		}
 	}
 	image.write(std::cout);
-
-	auxiliaries::print_file_header("local_scores");
-	auxiliaries::print_map(local_scores, false);
 }
