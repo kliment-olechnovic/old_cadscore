@@ -143,7 +143,7 @@ then
   echo model_atoms_count `sed -n '2p' $MODEL_ATOMS_FILE` >> $SUMMARY_FILE
   echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
   echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
-  cat $CAD_GLOBAL_SCORES_FILE >> $SUMMARY_FILE
+  cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" >> $SUMMARY_FILE
   cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE
 else
   if [ -f "$SUMMARY_FILE" ]
