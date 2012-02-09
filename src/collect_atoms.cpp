@@ -94,18 +94,18 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 	clo.check_allowed_options("--mode:");
 
 	auxiliaries::assert_file_header("atoms");
-	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>();
-	std::set<protein::ResidueID> residue_ids_1=protein::collect_residue_ids_from_atoms(atoms_1);
+	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>();
 
 	auxiliaries::assert_file_header("atoms");
-	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>();
+	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>();
+	std::set<protein::ResidueID> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
 
 	std::vector<protein::Atom> result;
-	result.reserve(atoms_2.size());
-	for(std::size_t i=0;i<atoms_2.size();i++)
+	result.reserve(atoms_of_model.size());
+	for(std::size_t i=0;i<atoms_of_model.size();i++)
 	{
-		const protein::Atom& atom=atoms_2[i];
-		if(residue_ids_1.count(protein::ResidueID::from_atom(atom))>0)
+		const protein::Atom& atom=atoms_of_model[i];
+		if(residue_ids_of_target.count(protein::ResidueID::from_atom(atom))>0)
 		{
 			result.push_back(atom);
 		}
