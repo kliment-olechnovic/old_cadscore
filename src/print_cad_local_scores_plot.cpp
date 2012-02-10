@@ -31,7 +31,7 @@ void print_cad_local_scores_plot(const auxiliaries::CommandLineOptions& clo)
 			const double score=it->second;
 			if(score>=0)
 			{
-				color=auxiliaries::Color::from_temperature_to_green_yellow_red(score);
+				color=auxiliaries::Color::from_temperature_to_blue_white_red(score);
 			}
 			else
 			{
