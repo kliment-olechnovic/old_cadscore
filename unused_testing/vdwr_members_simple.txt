@@ -1,6 +1,0 @@
-*_C*	C_default
-*_N*	N_default
-*_O*	O_default
-*_P*	P_default
-
-*_*	default
