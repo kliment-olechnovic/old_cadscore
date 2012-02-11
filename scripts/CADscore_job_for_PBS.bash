@@ -1,7 +1,9 @@
-#PBS -N cadscorejob
+#!/bin/bash
 
-# Submission form:
-#  qsub -v "CADSCORE_JOB_DIR=?,CADSCORE_SCRIPTS_DIR=?,CADSCORE_CALC_OPTIONS=?" CADscore_job_for_PBS.bash
+# To submit this script to PBS, run qsub using absolute paths:
+#  qsub -v "CADSCORE_JOB_DIR=?,CADSCORE_SCRIPTS_DIR=?,CADSCORE_CALC_OPTIONS=?" "path_to_this_script"
+
+#PBS -N cadscorejob
 
 if [ -z "$CADSCORE_JOB_DIR" ] || [ ! -d "$CADSCORE_JOB_DIR" ]
 then
