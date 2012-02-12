@@ -18,7 +18,7 @@ EOF
 }
 
 SCRIPT_DIRECTORY=$(dirname $0)
-VOROPROT="$SCRIPT_DIRECTORY/voroprot"
+VOROPROT="$SCRIPT_DIRECTORY/voroprot2"
 TMSCORE_CALC="$SCRIPT_DIRECTORY/TMscore_calc.bash"
 
 if [ ! -f "$VOROPROT" ]

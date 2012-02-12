@@ -16,7 +16,7 @@ EOF
 }
 
 SCRIPT_DIRECTORY=$(dirname $0)
-VOROPROT="$SCRIPT_DIRECTORY/voroprot"
+VOROPROT="$SCRIPT_DIRECTORY/voroprot2"
 
 if [ ! -f "$VOROPROT" ]
 then
