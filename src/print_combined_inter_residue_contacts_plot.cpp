@@ -16,7 +16,7 @@ void print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOp
 
 	const std::string category=clo.arg<std::string>("--category");
 
-	auxiliaries::assert_file_header("combined_residue_contacts");
+	auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
 			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >();
 

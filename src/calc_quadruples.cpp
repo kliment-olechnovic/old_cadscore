@@ -27,7 +27,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	const bool as_points=clo.isopt("--as-points");
 	const bool search_for_d3=!clo.isopt("--skip-inner");
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
 
 	if(as_points>0)

@@ -15,12 +15,12 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 	const std::string category=clo.arg<std::string>("--category");
 	const int window_size=clo.arg_in_interval<int>("--window", 0, 1000);
 
-	auxiliaries::assert_file_header("cad_profile");
+	auxiliaries::assert_file_header(std::cin, "cad_profile");
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>();
 
 	const std::map<protein::ResidueID, double> local_scores=contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category), window_size);
 
-	auxiliaries::print_file_header("local_scores");
+	auxiliaries::print_file_header(std::cout, "local_scores");
 	auxiliaries::print_map(local_scores, false);
 }
 
@@ -30,7 +30,7 @@ void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOp
 
 	const bool use_min=clo.isopt("--use-min");
 
-	auxiliaries::assert_file_header("cad_profile");
+	auxiliaries::assert_file_header(std::cin, "cad_profile");
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>();
 
 	const contacto::ResidueContactAreaDifferenceScore global_score=contacto::calculate_global_contact_area_difference_score_from_profile(residue_contact_area_difference_profile, use_min);
