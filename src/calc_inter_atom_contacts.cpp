@@ -58,7 +58,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> unrefined_atoms=auxiliaries::read_vector<protein::Atom>();
+	const std::vector<protein::Atom> unrefined_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
 
 	const std::pair< std::vector<protein::Atom>, std::vector< std::vector<std::size_t> > > protein_graph=construct_spheres_graph(unrefined_atoms, 1.4*3, 50);
 	const std::vector<protein::Atom>& atoms=protein_graph.first;
@@ -76,8 +76,8 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 			apollo::ContactSurface::calculate_surface_areas(atoms, graph, subdivision_depth, probe_radius));
 
 	auxiliaries::print_file_header(std::cout, "atoms");
-	auxiliaries::print_vector(atoms);
+	auxiliaries::print_vector(std::cout, atoms);
 
 	auxiliaries::print_file_header(std::cout, "contacts");
-	auxiliaries::print_vector(inter_atom_contacts);
+	auxiliaries::print_vector(std::cout, inter_atom_contacts);
 }

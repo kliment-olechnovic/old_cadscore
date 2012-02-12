@@ -17,7 +17,7 @@ void print_cad_local_scores_plot(const auxiliaries::CommandLineOptions& clo)
 	const int max_window_size=clo.arg_in_interval<int>("--max-window", 0, 1000);
 
 	auxiliaries::assert_file_header(std::cin, "cad_profile");
-	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>();
+	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>(std::cin);
 
 	const std::map<protein::ResidueID, double> local_scores=contacto::construct_local_scores_from_profile(profile, category);
 	auxiliaries::PPMImageWriter image(static_cast<std::size_t>(max_window_size+1), local_scores.size());

@@ -8,20 +8,20 @@ namespace auxiliaries
 {
 
 template<typename A, typename B>
-void print_map(const std::map<A, B>& map, const bool separate_with_new_line=true)
+void print_map(std::ostream& out, const std::map<A, B>& map, const bool separate_with_new_line=true)
 {
-	std::cout << map.size() << "\n";
+	out << map.size() << "\n";
 	for(typename std::map<A, B>::const_iterator it=map.begin();it!=map.end();++it)
 	{
-		std::cout << it->first << (separate_with_new_line ? "\n" : " ") << it->second << "\n";
+		out << it->first << (separate_with_new_line ? "\n" : " ") << it->second << "\n";
 	}
 }
 
 template<typename A, typename B>
-std::map<A, B> read_map()
+std::map<A, B> read_map(std::istream& in)
 {
 	std::size_t n=0;
-	std::cin >> n;
+	in >> n;
 	std::map<A, B> map;
 	if(n>0)
 	{
@@ -29,9 +29,9 @@ std::map<A, B> read_map()
 		for(std::size_t i=0;i<n;i++)
 		{
 			A key;
-			std::cin >> key;
+			in >> key;
 			B value;
-			std::cin >> value;
+			in >> value;
 			prev=map.insert(prev, std::make_pair(key, value));
 		}
 	}

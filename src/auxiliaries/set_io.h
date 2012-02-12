@@ -8,20 +8,20 @@ namespace auxiliaries
 {
 
 template<typename T>
-void print_set(const std::set<T>& set)
+void print_set(std::ostream& out, const std::set<T>& set)
 {
-	std::cout << set.size() << "\n";
+	out << set.size() << "\n";
 	for(typename std::set<T>::const_iterator it=set.begin();it!=set.end();++it)
 	{
-		std::cout << (*it) << "\n";
+		out << (*it) << "\n";
 	}
 }
 
 template<typename T>
-std::set<T> read_set()
+std::set<T> read_set(std::istream& in)
 {
 	std::size_t n=0;
-	std::cin >> n;
+	in >> n;
 	std::set<T> set;
 	if(n>0)
 	{
@@ -29,7 +29,7 @@ std::set<T> read_set()
 		for(std::size_t i=0;i<n;i++)
 		{
 			T value;
-			std::cin >> value;
+			in >> value;
 			prev=set.insert(prev, value);
 		}
 	}

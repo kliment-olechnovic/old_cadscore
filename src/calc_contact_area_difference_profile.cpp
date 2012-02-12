@@ -18,10 +18,10 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 
 	auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >();
+			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
 
 	auxiliaries::assert_file_header(std::cin, "residue_ids");
-	const std::set<protein::ResidueID> residue_ids_1=auxiliaries::read_set<protein::ResidueID>();
+	const std::set<protein::ResidueID> residue_ids_1=auxiliaries::read_set<protein::ResidueID>(std::cin);
 
 	std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile;
 	if(scoring_mode==0)
@@ -45,7 +45,7 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 	}
 
 	auxiliaries::print_file_header(std::cout, "cad_profile");
-	auxiliaries::print_map(residue_contact_area_difference_profile);
+	auxiliaries::print_map(std::cout, residue_contact_area_difference_profile);
 }
 
 
