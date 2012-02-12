@@ -12,7 +12,7 @@ void print_cad_local_scores_to_pdb_file(const auxiliaries::CommandLineOptions& c
 	clo.check_allowed_options("--mode:");
 
 	auxiliaries::assert_file_header(std::cin, "local_scores");
-	const std::map<protein::ResidueID, double> local_scores=auxiliaries::read_map<protein::ResidueID, double>();
+	const std::map<protein::ResidueID, double> local_scores=auxiliaries::read_map<protein::ResidueID, double>(std::cin);
 
 	std::vector<protein::PDBParsing::AtomRecord> atom_records=protein::PDBParsing::read_PDB_atom_records_from_PDB_file_stream(std::cin);
 

@@ -18,7 +18,7 @@ void print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOp
 
 	auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >();
+			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
 
 	std::map<protein::ResidueID, std::size_t> sequence_map;
 	for(std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
