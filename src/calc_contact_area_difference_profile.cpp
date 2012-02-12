@@ -16,11 +16,11 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 
 	const int scoring_mode=clo.isopt("--type") ? clo.arg_in_interval<int>("--type", 0, 2) : 0;
 
-	auxiliaries::assert_file_header("combined_residue_contacts");
+	auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
 	const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
 			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >();
 
-	auxiliaries::assert_file_header("residue_ids");
+	auxiliaries::assert_file_header(std::cin, "residue_ids");
 	const std::set<protein::ResidueID> residue_ids_1=auxiliaries::read_set<protein::ResidueID>();
 
 	std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile;
@@ -44,7 +44,7 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 		throw std::runtime_error("Invalid profile type");
 	}
 
-	auxiliaries::print_file_header("cad_profile");
+	auxiliaries::print_file_header(std::cout, "cad_profile");
 	auxiliaries::print_map(residue_contact_area_difference_profile);
 }
 

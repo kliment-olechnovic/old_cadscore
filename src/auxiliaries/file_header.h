@@ -8,21 +8,21 @@
 namespace auxiliaries
 {
 
-inline void print_file_header(const std::string& header)
+inline void print_file_header(std::ostream& out, const std::string& header)
 {
-	std::cout << header << "\n";
+	out << header << "\n";
 }
 
-inline bool check_file_header(const std::string& header)
+inline bool check_file_header(std::istream& in, const std::string& header)
 {
 	std::string value;
-	std::cin >> value;
+	in >> value;
 	return (header==value);
 }
 
-inline void assert_file_header(const std::string& header)
+inline void assert_file_header(std::istream& in, const std::string& header)
 {
-	if(!check_file_header(header))
+	if(!check_file_header(in, header))
 	{
 		throw std::runtime_error(std::string("Missing file header: ")+header);
 	}

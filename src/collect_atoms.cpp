@@ -74,7 +74,7 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 
 	protein::AtomsClassification::classify_atoms(atoms);
 
-	auxiliaries::print_file_header("atoms");
+	auxiliaries::print_file_header(std::cout, "atoms");
 	auxiliaries::print_vector(atoms);
 }
 
@@ -82,10 +82,10 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--mode:");
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
 	const std::set<protein::ResidueID> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
-	auxiliaries::print_file_header("residue_ids");
+	auxiliaries::print_file_header(std::cout, "residue_ids");
 	auxiliaries::print_set(residue_ids);
 }
 
@@ -93,10 +93,10 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--mode:");
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>();
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>();
 	std::set<protein::ResidueID> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
 
@@ -111,6 +111,6 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	auxiliaries::print_file_header("atoms");
+	auxiliaries::print_file_header(std::cout, "atoms");
 	auxiliaries::print_vector(result);
 }

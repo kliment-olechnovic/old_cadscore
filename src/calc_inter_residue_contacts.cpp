@@ -28,10 +28,10 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--mode: --interface-only");
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>();
 
-	auxiliaries::assert_file_header("contacts");
+	auxiliaries::assert_file_header(std::cin, "contacts");
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>();
 
 	std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
@@ -41,7 +41,7 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 		inter_residue_contacts=filter_interface_contacts(inter_residue_contacts);
 	}
 
-	auxiliaries::print_file_header("residue_contacts");
+	auxiliaries::print_file_header(std::cout, "residue_contacts");
 	auxiliaries::print_map(inter_residue_contacts);
 }
 
@@ -49,16 +49,16 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 {
 	clo.check_allowed_options("--mode: --interface-only");
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>();
 
-	auxiliaries::assert_file_header("contacts");
+	auxiliaries::assert_file_header(std::cin, "contacts");
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>();
 
-	auxiliaries::assert_file_header("atoms");
+	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>();
 
-	auxiliaries::assert_file_header("contacts");
+	auxiliaries::assert_file_header(std::cin, "contacts");
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>();
 
 	std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
@@ -70,6 +70,6 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		combined_inter_residue_contacts=filter_interface_contacts(combined_inter_residue_contacts);
 	}
 
-	auxiliaries::print_file_header("combined_residue_contacts");
+	auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
 	auxiliaries::print_map(combined_inter_residue_contacts);
 }
