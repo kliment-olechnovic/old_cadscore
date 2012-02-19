@@ -7,3 +7,19 @@ syntax: regexp
 ^speedtest/summary$
 syntax: regexp
 ^speedtest/parametrization$
+syntax: regexp
+^casp_analysis/final_version/correlation_analysis/correlation_plots$
+syntax: regexp
+^casp_analysis/final_version/correlation_analysis/interfaces_correlation_plots$
+syntax: regexp
+^casp_analysis/final_version/domains_analysis/combination$
+syntax: regexp
+^casp_analysis/final_version/domains_analysis/expectations$
+syntax: regexp
+^casp_analysis/final_version/molprobity_analysis/distribution$
+syntax: regexp
+^casp_analysis/final_version/molprobity_analysis/judging_from_0$
+syntax: regexp
+^casp_analysis/final_version/molprobity_analysis/judging_from_1$
+syntax: regexp
+^casp_analysis/final_version/molprobity_analysis/judging_from_sd$
