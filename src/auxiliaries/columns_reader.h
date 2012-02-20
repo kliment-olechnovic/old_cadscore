@@ -12,8 +12,13 @@ namespace auxiliaries
 class ColumnsReader
 {
 public:
-	ColumnsReader(std::istream& input)
+	ColumnsReader()
 	{
+	}
+
+	void init(std::istream& input)
+	{
+		columns_.clear();
 		std::vector<std::string> header=read_row(input);
 		while(input.good())
 		{
@@ -26,6 +31,16 @@ public:
 				}
 			}
 		}
+	}
+
+	bool empty() const
+	{
+		return (columns_.empty() || columns_.begin()->second.empty());
+	}
+
+	std::size_t height() const
+	{
+		return (columns_.empty() ? 0 : columns_.begin()->second.size());
 	}
 
 	template<typename T>
@@ -45,7 +60,7 @@ public:
 	}
 
 	template<typename T>
-	std::vector<T> get_values(const std::string& column, std::vector<T>& values) const
+	bool get_values(const std::string& column, std::vector<T>& values) const
 	{
 		std::map< std::string, std::vector<std::string> >::const_iterator it=columns_.find(column);
 		if(it!=columns_.end())
