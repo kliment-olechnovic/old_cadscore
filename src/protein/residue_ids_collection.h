@@ -2,8 +2,8 @@
 #define PROTEIN_RESIDUE_IDS_COLLECTION_H_
 
 #include <vector>
-#include <set>
 #include <map>
+#include <string>
 
 #include "residue_id.h"
 
@@ -11,13 +11,13 @@ namespace protein
 {
 
 template<typename AtomType>
-std::set<ResidueID> collect_residue_ids_from_atoms(const std::vector<AtomType>& atoms)
+std::map<ResidueID, std::string> collect_residue_ids_from_atoms(const std::vector<AtomType>& atoms)
 {
-	std::set<ResidueID> result;
-	std::set<ResidueID>::iterator prev=result.begin();
+	std::map<ResidueID, std::string> result;
+	std::map<ResidueID, std::string>::iterator prev=result.begin();
 	for(std::size_t i=0;i<atoms.size();i++)
 	{
-		prev=result.insert(prev, ResidueID::from_atom(atoms[i]));
+		prev=result.insert(prev, std::make_pair(ResidueID::from_atom(atoms[i]), atoms[i].residue_name));
 	}
 	return result;
 }
