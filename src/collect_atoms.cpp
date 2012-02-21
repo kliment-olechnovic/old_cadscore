@@ -10,7 +10,7 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
-#include "auxiliaries/set_io.h"
+#include "auxiliaries/map_io.h"
 
 #include "resources/vdwr.h"
 
@@ -84,9 +84,9 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-	const std::set<protein::ResidueID> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
+	const std::map<protein::ResidueID, std::string> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
 	auxiliaries::print_file_header(std::cout, "residue_ids");
-	auxiliaries::print_set(std::cout, residue_ids);
+	auxiliaries::print_map(std::cout, residue_ids, false);
 }
 
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
@@ -98,7 +98,7 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin);
-	std::set<protein::ResidueID> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
+	std::map<protein::ResidueID, std::string> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms_of_model.size());
