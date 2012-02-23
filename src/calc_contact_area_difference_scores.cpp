@@ -42,6 +42,6 @@ void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOp
 		const contacto::ResidueContactAreaDifferenceScore::Ratio ratio=global_score.ratio(the_class);
 		std::cout << the_class << "_diff " << ratio.difference << "\n";
 		std::cout << the_class << "_ref " << ratio.reference << "\n";
-		std::cout << the_class << " " << (1-(ratio.difference/ratio.reference)) << "\n";
+		std::cout << the_class << " " << (ratio.reference>0.0 ? (1-(ratio.difference/ratio.reference)) : 0.0) << "\n";
 	}
 }
