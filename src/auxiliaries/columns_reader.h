@@ -33,6 +33,32 @@ public:
 		}
 	}
 
+	void exclude(const std::string& column, const std::string& string_value)
+	{
+		std::map< std::string, std::vector<std::string> >::const_iterator it=columns_.find(column);
+		if(it!=columns_.end())
+		{
+			const std::vector<std::string>& string_values=it->second;
+			if(!string_values.empty())
+			{
+				for(std::map< std::string, std::vector<std::string> >::iterator jt=columns_.begin();jt!=columns_.end();++jt)
+				{
+					const std::vector<std::string>& old_values=jt->second;
+					std::vector<std::string> new_values;
+					new_values.reserve(old_values.size());
+					for(std::size_t i=0;i<old_values.size();i++)
+					{
+						if(string_values[i]!=string_value)
+						{
+							new_values.push_back(old_values[i]);
+						}
+					}
+					jt->second=new_values;
+				}
+			}
+		}
+	}
+
 	bool empty() const
 	{
 		return (columns_.empty() || columns_.begin()->second.empty());
