@@ -83,7 +83,15 @@ bool read_residue_ids_intervals(std::istream& input, std::vector< std::vector< s
 
 bool read_residue_ids_intervals(const std::string input_str, std::vector< std::vector< std::pair<ResidueID, ResidueID> > >& result)
 {
-	std::istringstream input(input_str);
+	std::string prepared_input_str=input_str;
+	for(std::size_t i=0;i<prepared_input_str.size();i++)
+	{
+		if(prepared_input_str[i]=='_')
+		{
+			prepared_input_str[i]=' ';
+		}
+	}
+	std::istringstream input(prepared_input_str);
 	return read_residue_ids_intervals(input, result);
 }
 
