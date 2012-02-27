@@ -11,6 +11,7 @@ $0 options:
   -t    path to target file in PBD format
   -m    path to model file in PBD format
   -l    flag to include heteroatoms (optional)
+  -f    flag to force one chain name (optional)
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
   -o    max timeout (optional)
@@ -38,11 +39,12 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 HETATM_FLAG=""
+FORCE_ONE_CHAIN_FLAG=""
 INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
 
-while getopts "hD:t:m:lci:o:" OPTION
+while getopts "hD:t:m:lfci:o:" OPTION
 do
   case $OPTION in
     h)
@@ -60,6 +62,9 @@ do
       ;;
     l)
       HETATM_FLAG="--HETATM"
+      ;;
+    f)
+      FORCE_ONE_CHAIN_FLAG="--force-one-chain"
       ;;
     c)
       INTER_CHAIN_FLAG="--inter-chain"
@@ -121,13 +126,13 @@ LOGS_FILE="$MODEL_DIR/logs"
 mkdir -p "$TARGET_DIR"
 mkdir -p "$MODEL_DIR"
 
-test -f $TARGET_ATOMS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG > $TARGET_ATOMS_FILE 2> "$TARGET_ATOMS_FILE.log"
+test -f $TARGET_ATOMS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $FORCE_ONE_CHAIN_FLAG > $TARGET_ATOMS_FILE 2> "$TARGET_ATOMS_FILE.log"
 test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_ATOMS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE 2> "$TARGET_RESIDUE_IDS_FILE.log"
 test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_ATOMS_FILE | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE 2> "$TARGET_INTER_ATOM_CONTACTS_FILE.log"
 
 if [ ! -f "$MODEL_ATOMS_FILE" ]
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG > $MODEL_ATOMS_FILE 2> "$MODEL_ATOMS_FILE.log"
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $FORCE_ONE_CHAIN_FLAG > $MODEL_ATOMS_FILE 2> "$MODEL_ATOMS_FILE.log"
   cat $MODEL_ATOMS_FILE $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode filter-atoms-by-target > "$MODEL_ATOMS_FILE.filtered" 2>> "$MODEL_ATOMS_FILE.log"
   mv "$MODEL_ATOMS_FILE.filtered" $MODEL_ATOMS_FILE
 fi
