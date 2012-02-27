@@ -70,7 +70,7 @@ do
       INTER_CHAIN_FLAG="--inter-chain"
       ;;
     i)
-      INTER_INTERVAL_OPTION='--inter-interval "'$OPTARG'"'
+      INTER_INTERVAL_OPTION="--inter-interval "$OPTARG
       ;;
     o)
       TIMEOUT=$OPTARG
