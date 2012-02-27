@@ -84,7 +84,7 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--inter-interval"))
 	{
-		inter_residue_contacts=filter_inter_interval_contacts(inter_residue_contacts, clo.arg<std::string>("--inter-intervals"));
+		inter_residue_contacts=filter_inter_interval_contacts(inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
 	}
 
 	auxiliaries::print_file_header(std::cout, "residue_contacts");
@@ -118,7 +118,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 
 	if(clo.isopt("--inter-interval"))
 	{
-		combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-intervals"));
+		combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
 	}
 
 	auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
