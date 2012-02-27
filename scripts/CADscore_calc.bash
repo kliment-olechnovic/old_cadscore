@@ -11,7 +11,7 @@ $0 options:
   -t    path to target file in PBD format
   -m    path to model file in PBD format
   -l    flag to include heteroatoms (optional)
-  -i    flag to consider only interface contacts (optional)
+  -i    flag to consider only inter-chain contacts (optional)
   -o    max timeout (optional)
 
 EOF
@@ -37,7 +37,7 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 HETATM_FLAG=""
-INTERFACE_ONLY_FLAG=""
+INTER_CHAIN_ONLY_FLAG=""
 TIMEOUT="300s"
 
 while getopts "hD:t:m:lio:" OPTION
@@ -60,7 +60,7 @@ do
       HETATM_FLAG="--HETATM"
       ;;
     i)
-      INTERFACE_ONLY_FLAG="--interface-only"
+      INTER_CHAIN_ONLY_FLAG="--inter-chain-only"
       ;;
     o)
       TIMEOUT=$OPTARG
@@ -129,7 +129,7 @@ fi
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_ATOMS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE 2> "$MODEL_RESIDUE_IDS_FILE.log"
 test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_ATOMS_FILE | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE 2> "$MODEL_INTER_ATOM_CONTACTS_FILE.log"
 
-test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTERFACE_ONLY_FLAG > $COMBINED_INTER_RESIDUE_CONTACTS_FILE 2> "$COMBINED_INTER_RESIDUE_CONTACTS_FILE.log"
+test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_ONLY_FLAG > $COMBINED_INTER_RESIDUE_CONTACTS_FILE 2> "$COMBINED_INTER_RESIDUE_CONTACTS_FILE.log"
 test -f $CAD_PROFILE_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode calc-CAD-profile > $CAD_PROFILE_FILE 2> "$CAD_PROFILE_FILE.log"
 test -f $CAD_GLOBAL_SCORES_FILE || cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-global-scores > $CAD_GLOBAL_SCORES_FILE 2> "$CAD_GLOBAL_SCORES_FILE.log"
 

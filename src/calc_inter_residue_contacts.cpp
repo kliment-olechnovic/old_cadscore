@@ -10,7 +10,7 @@
 #include "auxiliaries/map_io.h"
 
 template<typename ContactsMap>
-ContactsMap filter_interface_contacts(const ContactsMap& all_contacts)
+ContactsMap filter_inter_chain_contacts(const ContactsMap& all_contacts)
 {
 	ContactsMap interface_contacts;
 	typename ContactsMap::iterator prev=interface_contacts.begin();
@@ -36,9 +36,9 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 
 	std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
 
-	if(clo.isopt("--interface-only"))
+	if(clo.isopt("--inter-chain-only"))
 	{
-		inter_residue_contacts=filter_interface_contacts(inter_residue_contacts);
+		inter_residue_contacts=filter_inter_chain_contacts(inter_residue_contacts);
 	}
 
 	auxiliaries::print_file_header(std::cout, "residue_contacts");
@@ -65,9 +65,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1),
 			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2));
 
-	if(clo.isopt("--interface-only"))
+	if(clo.isopt("--inter-chain-only"))
 	{
-		combined_inter_residue_contacts=filter_interface_contacts(combined_inter_residue_contacts);
+		combined_inter_residue_contacts=filter_inter_chain_contacts(combined_inter_residue_contacts);
 	}
 
 	auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
