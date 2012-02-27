@@ -21,15 +21,11 @@ bool read_residue_ids_intervals(std::istream& input, std::vector< std::vector< s
 		if(command=="range")
 		{
 			ResidueID a;
-			ResidueID b;
+			int b;
 			input >> a >> b;
-			if(!input.fail() &&
-					a.chain_id.size()==1 &&
-					b.chain_id.size()==1 &&
-					a.chain_id==b.chain_id &&
-					a.residue_number<=b.residue_number)
+			if(!input.fail() && a.chain_id.size()==1 && a.residue_number<=b)
 			{
-				intervals.back().push_back(std::make_pair(a, b));
+				intervals.back().push_back(std::make_pair(a, ResidueID(a.chain_id, b)));
 			}
 			else
 			{
@@ -62,7 +58,7 @@ bool read_residue_ids_intervals(std::istream& input, std::vector< std::vector< s
 				return false;
 			}
 		}
-		else if(command=="separate")
+		else if(command=="with")
 		{
 			if(!intervals.back().empty())
 			{
