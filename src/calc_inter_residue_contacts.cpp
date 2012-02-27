@@ -51,7 +51,7 @@ ContactsMap filter_inter_interval_contacts(const ContactsMap& all_contacts, cons
 				{
 					a_group=i;
 				}
-				if(b_group<0 && b.chain_id==r1.chain_id && b.residue_number>=r1.residue_number && b.residue_number<=r2.residue_number)
+				else if(b_group<0 && b.chain_id==r1.chain_id && b.residue_number>=r1.residue_number && b.residue_number<=r2.residue_number)
 				{
 					b_group=i;
 				}
