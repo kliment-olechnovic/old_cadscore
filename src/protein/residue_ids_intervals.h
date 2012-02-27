@@ -69,7 +69,7 @@ bool read_residue_ids_intervals(std::istream& input, std::vector< std::vector< s
 				intervals.push_back(std::vector< std::pair<ResidueID, ResidueID> >());
 			}
 		}
-		else
+		else if(!command.empty())
 		{
 			return false;
 		}
