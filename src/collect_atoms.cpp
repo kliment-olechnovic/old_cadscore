@@ -68,7 +68,7 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 	{
 		for(std::size_t i=0;i<atoms.size();i++)
 		{
-			atoms[i].chain_id="X";
+			atoms[i].chain_id=".";
 		}
 	}
 
