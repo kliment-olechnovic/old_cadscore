@@ -23,3 +23,5 @@ syntax: regexp
 ^casp_analysis/final_version/molprobity_analysis/judging_from_1$
 syntax: regexp
 ^casp_analysis/final_version/molprobity_analysis/judging_from_sd$
+syntax: regexp
+^casp_analysis/final_version/correlation_analysis/correlation_anomalies$
