@@ -29,7 +29,7 @@ template<typename ContactsMap>
 ContactsMap filter_inter_interval_contacts(const ContactsMap& all_contacts, const std::string& intervals_string)
 {
 	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals;
-	if(!protein::read_residue_ids_intervals(intervals_string, intervals) || intervals.size()<2)
+	if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(intervals_string, intervals) || intervals.size()<2)
 	{
 		throw std::runtime_error(std::string("Invalid intervals string: ")+intervals_string);
 	}

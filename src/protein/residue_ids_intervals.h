@@ -10,90 +10,195 @@
 namespace protein
 {
 
-bool read_residue_ids_intervals(std::istream& input, std::vector< std::vector< std::pair<ResidueID, ResidueID> > >& result)
+class ResidueIDsIntervalsReader
 {
-	std::vector< std::vector< std::pair<ResidueID, ResidueID> > > intervals;
-	intervals.push_back(std::vector< std::pair<ResidueID, ResidueID> >());
-	while(input.good())
+public:
+	static bool read_residue_ids_intervals(const std::string input, std::vector< std::vector< std::pair<ResidueID, ResidueID> > >& result)
 	{
-		std::string command;
-		input >> command;
-		if(command=="range")
+		std::vector< std::vector< std::pair<ResidueID, ResidueID> > > intervals;
+		std::string::size_type a=input.find('(', 0);
+		std::string::size_type b=input.find(')', 0);
+		while(a<input.size() && b<input.size())
 		{
-			ResidueID a;
-			int b;
-			input >> a >> b;
-			if(!input.fail() && a.chain_id.size()==1 && a.residue_number<=b)
-			{
-				intervals.back().push_back(std::make_pair(a, ResidueID(a.chain_id, b)));
-			}
-			else
+			a++;
+			if(a>=b)
 			{
 				return false;
 			}
-		}
-		else if(command=="single")
-		{
-			ResidueID a;
-			input >> a;
-			if(!input.fail() && a.chain_id.size()==1)
-			{
-				intervals.back().push_back(std::make_pair(a, a));
-			}
 			else
 			{
-				return false;
+				const std::string block=input.substr(a, b-a);
+				std::vector< std::pair<ResidueID, ResidueID> > block_intervals;
+				if(!read_residue_ids_intervals(block, block_intervals))
+				{
+					return false;
+				}
+				else
+				{
+					intervals.push_back(block_intervals);
+					a=input.find('(', b+1);
+					b=input.find(')', b+1);
+				}
 			}
 		}
-		else if(command=="chain")
-		{
-			std::string chain_name;
-			input >> chain_name;
-			if(chain_name.size()==1)
-			{
-				intervals.back().push_back(std::make_pair(ResidueID(chain_name, std::numeric_limits<int>::min()), ResidueID(chain_name, std::numeric_limits<int>::max())));
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else if(command=="with")
-		{
-			if(!intervals.back().empty())
-			{
-				intervals.push_back(std::vector< std::pair<ResidueID, ResidueID> >());
-			}
-		}
-		else if(!command.empty())
+		if(intervals.empty())
 		{
 			return false;
 		}
-	}
-	result.clear();
-	for(std::size_t i=0;i<intervals.size();i++)
-	{
-		if(!intervals[i].empty())
+		else
 		{
-			result.push_back(intervals[i]);
+			result=intervals;
+			return true;
 		}
 	}
-	return (!result.empty());
-}
 
-bool read_residue_ids_intervals(const std::string input_str, std::vector< std::vector< std::pair<ResidueID, ResidueID> > >& result)
-{
-	std::string prepared_input_str=input_str;
-	for(std::size_t i=0;i<prepared_input_str.size();i++)
+private:
+	static bool read_residue_id(const std::string input, ResidueID& result)
 	{
-		if(prepared_input_str[i]=='_')
+		std::cerr << "r: " << input << "\n";
+		std::string filtered_input;
+		filtered_input.reserve(input.size());
+		for(std::string::size_type i=0;i<input.size();i++)
 		{
-			prepared_input_str[i]=' ';
+			const char v=input[i];
+			if(v!=' ' && v!='\t' && v!='\n' && v!='\r')
+			{
+				filtered_input.push_back(v);
+			}
+		}
+
+		if(filtered_input.empty())
+		{
+			return false;
+		}
+		else
+		{
+			std::string chain_id_str;
+			std::string residue_number_str;
+			if(filtered_input.substr(0,1).find_first_of("123456789")==0)
+			{
+				chain_id_str="?";
+				residue_number_str=filtered_input;
+			}
+			else
+			{
+				chain_id_str=filtered_input.substr(0,1);
+				if(filtered_input.size()>1)
+				{
+					residue_number_str=filtered_input.substr(1);
+				}
+			}
+
+			int residue_number=std::numeric_limits<int>::min();
+			if(!residue_number_str.empty())
+			{
+				std::istringstream num_stream(residue_number_str);
+				num_stream >> residue_number;
+				if(num_stream.fail())
+				{
+					return false;
+				}
+			}
+
+			result.chain_id=chain_id_str;
+			result.residue_number=residue_number;
+			return true;
 		}
 	}
-	std::istringstream input(prepared_input_str);
-	return read_residue_ids_intervals(input, result);
-}
+
+	static bool read_residue_ids_interval(const std::string input, std::pair<ResidueID, ResidueID>& result)
+	{
+		std::cerr << "ir: " << input << "\n";
+		std::string::size_type a=input.find('-', 0);
+		if(a<input.size())
+		{
+			ResidueID rid1;
+			ResidueID rid2;
+			if(read_residue_id(input.substr(0, a), rid1) && read_residue_id(input.substr(a+1), rid2))
+			{
+				if(rid1.chain_id!=rid2.chain_id || rid1.residue_number==std::numeric_limits<int>::min() || rid2.residue_number==std::numeric_limits<int>::min())
+				{
+					return false;
+				}
+				else
+				{
+					result=std::make_pair(rid1, rid2);
+					return true;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			ResidueID rid;
+			if(read_residue_id(input, rid))
+			{
+				if(rid.residue_number==std::numeric_limits<int>::min())
+				{
+					result=std::make_pair(rid, ResidueID(rid.chain_id, std::numeric_limits<int>::max()));
+				}
+				else
+				{
+					result=std::make_pair(rid, rid);
+				}
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+
+	static bool read_residue_ids_intervals(const std::string input, std::vector< std::pair<ResidueID, ResidueID> >& result)
+	{
+		std::cerr << "vir: " << input << "\n";
+		std::vector< std::pair<ResidueID, ResidueID> > intervals;
+		std::string::size_type a=0;
+		std::string::size_type b=input.find(',', 0);
+		while(a<input.size())
+		{
+			if(a>=b)
+			{
+				return false;
+			}
+			else
+			{
+				const std::string block=input.substr(a, b-a);
+				std::pair<ResidueID, ResidueID> block_interval;
+				if(read_residue_ids_interval(block, block_interval))
+				{
+					intervals.push_back(block_interval);
+					if(b<input.size())
+					{
+						a=b+1;
+						b=input.find(',', b+1);
+					}
+					else
+					{
+						a=b;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+		if(intervals.empty())
+		{
+			return false;
+		}
+		else
+		{
+			result=intervals;
+			return true;
+		}
+	}
+};
 
 }
 
