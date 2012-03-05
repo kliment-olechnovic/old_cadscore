@@ -49,7 +49,7 @@ public:
 			}
 			if(chain_name.empty())
 			{
-				chain_name=".";
+				chain_name="?";
 			}
 		}
 
