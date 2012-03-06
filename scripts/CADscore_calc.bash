@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Help printing
+
 print_help()
 {
 cat << EOF 1>&2
@@ -11,13 +14,15 @@ $0 options:
   -t    path to target file in PBD format
   -m    path to model file in PBD format
   -l    flag to include heteroatoms (optional)
-  -f    flag to force one chain name (optional)
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
   -o    max timeout (optional)
 
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
 VOROPROT="$SCRIPT_DIRECTORY/voroprot2"
@@ -39,12 +44,11 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 HETATM_FLAG=""
-FORCE_ONE_CHAIN_FLAG=""
 INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
 
-while getopts "hD:t:m:lfci:o:" OPTION
+while getopts "hD:t:m:lci:o:" OPTION
 do
   case $OPTION in
     h)
@@ -62,9 +66,6 @@ do
       ;;
     l)
       HETATM_FLAG="--HETATM"
-      ;;
-    f)
-      FORCE_ONE_CHAIN_FLAG="--force-one-chain"
       ;;
     c)
       INTER_CHAIN_FLAG="--inter-chain"
@@ -91,7 +92,7 @@ if [ -f "$TARGET_FILE" ]
 then
   TARGET_NAME=$(basename $TARGET_FILE)
 else
-  echo "Target file \"$TARGET_FILE\" does not exist" 1>&2
+  echo "Fatal error: target file \"$TARGET_FILE\" does not exist" 1>&2
   exit 1
 fi
 
@@ -99,11 +100,12 @@ if [ -f "$MODEL_FILE" ]
 then
   MODEL_NAME=$(basename $MODEL_FILE)
 else
-  echo "Model file \"$MODEL_FILE\" does not exist" 1>&2
+  echo "Fatal error: model file \"$MODEL_FILE\" does not exist" 1>&2
   exit 1
 fi
 
-TARGET_PARAMETERS="$HETATM_FLAG $FORCE_ONE_CHAIN_FLAG $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
+##################################################
+### Preparing and checking environment
 
 TARGET_DIR="$DATABASE/$TARGET_NAME"
 TARGET_PARAMETERS_FILE="$TARGET_DIR/parameters"
@@ -111,24 +113,20 @@ TARGET_ATOMS_FILE="$TARGET_DIR/atoms"
 TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
 TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
 TARGET_INTER_RESIDUE_CONTACTS_FILE="$TARGET_DIR/inter_residue_contacts"
-
 MODEL_DIR="$DATABASE/$TARGET_NAME/$MODEL_NAME"
 MODEL_ATOMS_FILE="$MODEL_DIR/atoms"
 MODEL_RESIDUE_IDS_FILE="$MODEL_DIR/residue_ids"
 MODEL_INTER_ATOM_CONTACTS_FILE="$MODEL_DIR/inter_atom_contacts"
-
 COMBINED_INTER_RESIDUE_CONTACTS_FILE="$MODEL_DIR/combined_inter_residue_contacts"
 CAD_PROFILE_FILE="$MODEL_DIR/cad_profile"
 CAD_GLOBAL_SCORES_FILE="$MODEL_DIR/cad_global_scores"
-
 TMSCORE_PROFILE_FILE="$MODEL_DIR/tmscore_profile"
 TMSCORE_GLOBAL_SCORES_FILE="$MODEL_DIR/tmscore_global_scores"
-
 SUMMARY_FILE="$MODEL_DIR/summary"
-
 TARGET_LOGS_FILE="$TARGET_DIR/target_logs"
 MODEL_LOGS_FILE="$MODEL_DIR/model_logs"
 
+TARGET_PARAMETERS="$HETATM_FLAG $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 if [ -f "$TARGET_PARAMETERS_FILE" ]
 then
   CURRENT_TARGET_PARAMETERS_FILE="$TARGET_PARAMETERS_FILE.current"
@@ -137,67 +135,88 @@ then
   then
     rm "$CURRENT_TARGET_PARAMETERS_FILE"
   else
-    echo "Current parameters do not match the initial parameters" 1>&2
+    echo "Fatal error: current parameters ($TARGET_PARAMETERS) do not match the initial parameters" 1>&2
+    rm "$CURRENT_TARGET_PARAMETERS_FILE"
     exit 1
   fi
 fi
 
 mkdir -p "$TARGET_DIR"
 mkdir -p "$MODEL_DIR"
-
 echo "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 
-test -f $TARGET_ATOMS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $FORCE_ONE_CHAIN_FLAG > $TARGET_ATOMS_FILE 2> "$TARGET_ATOMS_FILE.log"
+##################################################
+### Preprocessing target
+
+true > $TARGET_LOGS_FILE
+
+test -f $TARGET_ATOMS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG > $TARGET_ATOMS_FILE 2> "$TARGET_ATOMS_FILE.log"
+if [ ! -s "$TARGET_ATOMS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_ATOMS_FILE)" -gt "0" ] ; then echo "Fatal error: no atoms in the target" >> $TARGET_LOGS_FILE ; exit 1 ; fi
+
 test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_ATOMS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE 2> "$TARGET_RESIDUE_IDS_FILE.log"
+if [ ! -s "$TARGET_RESIDUE_IDS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_RESIDUE_IDS_FILE)" -gt "0" ] ; then echo "Fatal error: no residues in the target" >> $TARGET_LOGS_FILE ; exit 1 ; fi
+
 test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_ATOMS_FILE | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE 2> "$TARGET_INTER_ATOM_CONTACTS_FILE.log"
+if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_INTER_ATOM_CONTACTS_FILE)" -gt "0" ] ; then echo "Fatal error: no inter-atom contacts in the target" >> $TARGET_LOGS_FILE ; exit 1 ; fi
+
 test -f $TARGET_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE 2> "$TARGET_INTER_RESIDUE_CONTACTS_FILE.log"
+if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_INTER_RESIDUE_CONTACTS_FILE)" -gt "0" ] ; then echo "Fatal error: no inter-residue contacts in the target" >> $TARGET_LOGS_FILE ; exit 1 ; fi
 
 cat "$TARGET_ATOMS_FILE.log" "$TARGET_RESIDUE_IDS_FILE.log" "$TARGET_INTER_ATOM_CONTACTS_FILE.log" "$TARGET_INTER_RESIDUE_CONTACTS_FILE.log" > $TARGET_LOGS_FILE
 
-TARGET_INTER_RESIDUE_CONTACTS_COUNT=$(sed -n '2p' $TARGET_INTER_RESIDUE_CONTACTS_FILE)
-if [ ! "$TARGET_INTER_RESIDUE_CONTACTS_COUNT" -gt "0" ]
-then
-  echo "No inter-residue contacts in the target" >> $TARGET_LOGS_FILE
-  exit 1
-fi
+##################################################
+### Preprocessing model
+
+true > $MODEL_LOGS_FILE
 
 if [ ! -f "$MODEL_ATOMS_FILE" ]
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $FORCE_ONE_CHAIN_FLAG > $MODEL_ATOMS_FILE 2> "$MODEL_ATOMS_FILE.log"
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG > $MODEL_ATOMS_FILE 2> "$MODEL_ATOMS_FILE.log"
+  if [ ! -s "$MODEL_ATOMS_FILE" ] || [ ! "$(sed -n '2p' $MODEL_ATOMS_FILE)" -gt "0" ] ; then echo "Fatal error: no atoms in the model" >> $MODEL_LOGS_FILE ; exit 1 ; fi
   cat $MODEL_ATOMS_FILE $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode filter-atoms-by-target > "$MODEL_ATOMS_FILE.filtered" 2>> "$MODEL_ATOMS_FILE.log"
   mv "$MODEL_ATOMS_FILE.filtered" $MODEL_ATOMS_FILE
 fi
+if [ ! -s "$MODEL_ATOMS_FILE" ] || [ ! "$(sed -n '2p' $MODEL_ATOMS_FILE)" -gt "0" ] ; then echo "Fatal error: no valid atoms in the model" >> $MODEL_LOGS_FILE ; exit 1 ; fi
+
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_ATOMS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE 2> "$MODEL_RESIDUE_IDS_FILE.log"
+if [ ! -s "$MODEL_RESIDUE_IDS_FILE" ] || [ ! "$(sed -n '2p' $MODEL_RESIDUE_IDS_FILE)" -gt "0" ] ; then echo "Fatal error: no valid residues in the model" >> $MODEL_LOGS_FILE ; exit 1 ; fi
+
 test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_ATOMS_FILE | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE 2> "$MODEL_INTER_ATOM_CONTACTS_FILE.log"
+if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] || [ ! "$(sed -n '2p' $MODEL_INTER_ATOM_CONTACTS_FILE)" -gt "0" ] ; then echo "Fatal error: no inter-atom contacts in the model" >> $MODEL_LOGS_FILE ; exit 1 ; fi
 
 cat "$MODEL_ATOMS_FILE.log" "$MODEL_RESIDUE_IDS_FILE.log" "$MODEL_INTER_ATOM_CONTACTS_FILE.log" > $MODEL_LOGS_FILE
 
-MODEL_INTER_ATOM_CONTACTS_COUNT=$(sed -n '2p' $MODEL_INTER_ATOM_CONTACTS_FILE)
-if [ ! "$MODEL_INTER_ATOM_CONTACTS_COUNT" -gt "0" ]
-then
-  echo "No inter-atom contacts in the model" >> $MODEL_LOGS_FILE
-  exit 1
-fi
+##################################################
+### Comparing target and model
 
 test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $COMBINED_INTER_RESIDUE_CONTACTS_FILE 2> "$COMBINED_INTER_RESIDUE_CONTACTS_FILE.log"
+if [ ! -s "$COMBINED_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: combined inter-residue contacts file is empty" >> $MODEL_LOGS_FILE ; exit 1 ; fi
+	
 test -f $CAD_PROFILE_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode calc-CAD-profile > $CAD_PROFILE_FILE 2> "$CAD_PROFILE_FILE.log"
+if [ ! -s "$CAD_PROFILE_FILE" ] ; then echo "Fatal error: CAD profile file is empty" >> $MODEL_LOGS_FILE ; exit 1 ; fi
+
 test -f $CAD_GLOBAL_SCORES_FILE || cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-global-scores > $CAD_GLOBAL_SCORES_FILE 2> "$CAD_GLOBAL_SCORES_FILE.log"
+if [ ! -s "$CAD_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: CAD global scores file is empty" >> $MODEL_LOGS_FILE ; exit 1 ; fi
 
 cat "$COMBINED_INTER_RESIDUE_CONTACTS_FILE.log" "$CAD_PROFILE_FILE.log" "$CAD_GLOBAL_SCORES_FILE.log" >> $MODEL_LOGS_FILE
 
 test -f $TMSCORE_GLOBAL_SCORES_FILE || $TMSCORE_CALC -m $MODEL_FILE -t $TARGET_FILE -p $TMSCORE_PROFILE_FILE -s $TMSCORE_GLOBAL_SCORES_FILE
+if [ ! -s "$TMSCORE_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: TM-score scores file is empty" >> $MODEL_LOGS_FILE ; exit 1 ; fi
 
 cat "$TMSCORE_PROFILE_FILE.log" >> $MODEL_LOGS_FILE
+
+##################################################
+### Writing global results
 
 if [ -s "$CAD_GLOBAL_SCORES_FILE" ] && [ -s "$TMSCORE_GLOBAL_SCORES_FILE" ] && [ -s "$TARGET_ATOMS_FILE" ] && [ -s "$MODEL_ATOMS_FILE" ] && [ -s "$TARGET_RESIDUE_IDS_FILE" ] && [ -s "$MODEL_RESIDUE_IDS_FILE" ]
 then
   echo target $TARGET_NAME > $SUMMARY_FILE
   echo model $MODEL_NAME >> $SUMMARY_FILE
-  echo target_atoms_count `sed -n '2p' $TARGET_ATOMS_FILE` >> $SUMMARY_FILE
-  echo model_atoms_count `sed -n '2p' $MODEL_ATOMS_FILE` >> $SUMMARY_FILE
-  echo target_residues_count `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
-  echo model_residues_count `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
-  cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" >> $SUMMARY_FILE
+  echo target_atoms `sed -n '2p' $TARGET_ATOMS_FILE` >> $SUMMARY_FILE
+  echo model_atoms `sed -n '2p' $MODEL_ATOMS_FILE` >> $SUMMARY_FILE
+  echo target_residues `sed -n '2p' $TARGET_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
+  echo model_residues `sed -n '2p' $MODEL_RESIDUE_IDS_FILE` >> $SUMMARY_FILE
+  cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" | grep -v "W" >> $SUMMARY_FILE
   cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE
 else
   if [ -f "$SUMMARY_FILE" ]
