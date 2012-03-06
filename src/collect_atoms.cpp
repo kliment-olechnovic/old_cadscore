@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 #include "protein/atoms_reading.h"
 #include "protein/atoms_classification.h"
@@ -46,7 +47,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 
 void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --radius-classes: --radius-members: --HETATM --HOH --force-one-chain");
+	clo.check_allowed_options("--mode: --radius-classes: --radius-members: --HETATM --HOH");
 
 	std::string radius_classes_file_name="";
 	std::string radius_members_file_name="";
@@ -58,19 +59,10 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 
 	const bool include_heteroatoms=clo.isopt("--HETATM");
 	const bool include_water=clo.isopt("--HOH");
-	const bool force_one_chain=clo.isopt("--force-one-chain");
 
 	const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner(radius_classes_file_name, radius_members_file_name);
 
 	std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, include_heteroatoms, include_water);
-
-	if(force_one_chain)
-	{
-		for(std::size_t i=0;i<atoms.size();i++)
-		{
-			atoms[i].chain_id="?";
-		}
-	}
 
 	protein::AtomsClassification::classify_atoms(atoms);
 
@@ -98,16 +90,26 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin);
-	std::map<protein::ResidueID, std::string> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
+	const std::map<protein::ResidueID, std::string> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms_of_model.size());
 	for(std::size_t i=0;i<atoms_of_model.size();i++)
 	{
 		const protein::Atom& atom=atoms_of_model[i];
-		if(residue_ids_of_target.count(protein::ResidueID::from_atom(atom))>0)
+		std::map<protein::ResidueID, std::string>::const_iterator it=residue_ids_of_target.find(protein::ResidueID::from_atom(atom));
+		if(it!=residue_ids_of_target.end())
 		{
-			result.push_back(atom);
+			if(atom.residue_name==it->second)
+			{
+				result.push_back(atom);
+			}
+			else
+			{
+				std::ostringstream output;
+				output << "Model atom chain name and residue number matched the target, but model atom residue name did not: " << atom;
+				throw std::runtime_error(output.str());
+			}
 		}
 	}
 
