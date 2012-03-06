@@ -75,7 +75,7 @@ private:
 		{
 			std::string chain_id_str;
 			std::string residue_number_str;
-			if(filtered_input.substr(0,1).find_first_of("123456789")==0)
+			if(filtered_input.substr(0,1).find_first_of("0123456789")==0)
 			{
 				chain_id_str="?";
 				residue_number_str=filtered_input;
@@ -92,6 +92,13 @@ private:
 			int residue_number=std::numeric_limits<int>::min();
 			if(!residue_number_str.empty())
 			{
+				for(std::string::size_type i=0;i<residue_number_str.size();i++)
+				{
+					if(std::string("0123456789").find(residue_number_str[i], 0)==std::string::npos)
+					{
+						return false;
+					}
+				}
 				std::istringstream num_stream(residue_number_str);
 				num_stream >> residue_number;
 				if(num_stream.fail())
