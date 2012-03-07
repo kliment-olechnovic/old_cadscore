@@ -1,6 +1,7 @@
 #include <iostream>
 #include <functional>
 #include <exception>
+#include <limits>
 
 #include "auxiliaries/command_line_options.h"
 
@@ -69,6 +70,8 @@ int main(const int argc, const char** argv)
 		std::cerr << "Unknown exception caught" << std::endl;
 		return 1;
 	}
+
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max());
 
 	return 0;
 }
