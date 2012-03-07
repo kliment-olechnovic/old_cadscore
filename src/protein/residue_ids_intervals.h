@@ -55,7 +55,6 @@ public:
 private:
 	static bool read_residue_id(const std::string input, ResidueID& result)
 	{
-		std::cerr << "r: " << input << "\n";
 		std::string filtered_input;
 		filtered_input.reserve(input.size());
 		for(std::string::size_type i=0;i<input.size();i++)
@@ -115,7 +114,6 @@ private:
 
 	static bool read_residue_ids_interval(const std::string input, std::pair<ResidueID, ResidueID>& result)
 	{
-		std::cerr << "ir: " << input << "\n";
 		std::string::size_type a=input.find('-', 0);
 		if(a<input.size())
 		{
@@ -162,7 +160,6 @@ private:
 
 	static bool read_residue_ids_intervals(const std::string input, std::vector< std::pair<ResidueID, ResidueID> >& result)
 	{
-		std::cerr << "vir: " << input << "\n";
 		std::vector< std::pair<ResidueID, ResidueID> > intervals;
 		std::string::size_type a=0;
 		std::string::size_type b=input.find(',', 0);
