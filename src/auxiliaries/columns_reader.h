@@ -69,6 +69,11 @@ public:
 		return (columns_.empty() ? 0 : columns_.begin()->second.size());
 	}
 
+	bool column_exists(const std::string& column) const
+	{
+		return (columns_.count(column)==1);
+	}
+
 	template<typename T>
 	bool get_value(const std::string& column, const std::size_t index, T& value) const
 	{
