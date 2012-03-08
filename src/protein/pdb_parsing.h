@@ -61,7 +61,7 @@ public:
 			insert_string_to_PDB_file_line(name, 13, 16, false, line);
 			insert_string_to_PDB_file_line(alternate_location_indicator, 17, 17, false, line);
 			insert_string_to_PDB_file_line(residue_name, 18, 20, false, line);
-			insert_string_to_PDB_file_line(chain_name, 22, 22, false, line);
+			insert_string_to_PDB_file_line((chain_name=="?" ? std::string(" ") : chain_name), 22, 22, false, line);
 			insert_string_to_PDB_file_line(convert_int_to_string(residue_sequence_number), 23, 26, true, line);
 			insert_string_to_PDB_file_line(insertion_code, 27, 27, false, line);
 			insert_string_to_PDB_file_line(convert_double_to_string(x, 3), 31, 38, true, line);
@@ -77,7 +77,7 @@ public:
 			insert_string_to_PDB_file_line("TER", 1, 6, false, line);
 			insert_string_to_PDB_file_line(convert_int_to_string(atom_serial_number+1), 7, 11, true, line);
 			insert_string_to_PDB_file_line(residue_name, 18, 20, false, line);
-			insert_string_to_PDB_file_line(chain_name, 22, 22, false, line);
+			insert_string_to_PDB_file_line((chain_name=="?" ? std::string(" ") : chain_name), 22, 22, false, line);
 			insert_string_to_PDB_file_line(convert_int_to_string(residue_sequence_number), 23, 26, true, line);
 			return line;
 		}
