@@ -58,7 +58,7 @@ public:
 			std::string line(80, ' ');
 			insert_string_to_PDB_file_line(label, 1, 6, false, line);
 			insert_string_to_PDB_file_line(convert_int_to_string(atom_serial_number), 7, 11, true, line);
-			insert_string_to_PDB_file_line(name, 13, 16, false, line);
+			insert_string_to_PDB_file_line(name, (name.size()>3 ? 13 : 14), 16, false, line);
 			insert_string_to_PDB_file_line(alternate_location_indicator, 17, 17, false, line);
 			insert_string_to_PDB_file_line(residue_name, 18, 20, false, line);
 			insert_string_to_PDB_file_line((chain_name=="?" ? std::string(" ") : chain_name), 22, 22, false, line);
