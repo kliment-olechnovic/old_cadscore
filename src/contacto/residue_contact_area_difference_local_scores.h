@@ -28,14 +28,17 @@ std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<R
 			{
 				for(int i=prev_residue_id.residue_number+1;i<residue_id.residue_number;i++)
 				{
-					local_scores[ResidueID(prev_residue_id.chain_id, i)]=-1;
 					insertion_it=local_scores.insert(insertion_it, std::make_pair(ResidueID(prev_residue_id.chain_id, i), -1));
 				}
+			}
+			else if(residue_id.chain_id!=prev_residue_id.chain_id)
+			{
+				insertion_it=local_scores.insert(insertion_it, std::make_pair(ResidueID(residue_id.chain_id, 0), -2));
 			}
 		}
 
 		contacto::ResidueContactAreaDifferenceScore::Ratio ratio=residue_score.ratio(category);
-		insertion_it=local_scores.insert(insertion_it, std::make_pair(residue_id, ((ratio.reference>0) ? (ratio.difference/ratio.reference) : -2)));
+		insertion_it=local_scores.insert(insertion_it, std::make_pair(residue_id, ((ratio.reference>0) ? (ratio.difference/ratio.reference) : -3)));
 	}
 	return local_scores;
 }
