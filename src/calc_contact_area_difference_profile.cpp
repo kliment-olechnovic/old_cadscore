@@ -1,5 +1,6 @@
 #include "protein/atom.h"
 #include "protein/residue_id.h"
+#include "protein/residue_summary.h"
 
 #include "contacto/inter_residue_contact_dual_areas.h"
 #include "contacto/residue_contact_area_difference_profile.h"
@@ -20,23 +21,23 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 			auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
 
 	auxiliaries::assert_file_header(std::cin, "residue_ids");
-	const std::map<protein::ResidueID, std::string> residue_ids_1=auxiliaries::read_map<protein::ResidueID, std::string>(std::cin);
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin);
 
 	std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile;
 	if(scoring_mode==0)
 	{
 		residue_contact_area_difference_profile=
-				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, contacto::BoundedDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
+				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, protein::ResidueSummary, contacto::BoundedDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
 	}
 	else if(scoring_mode==1)
 	{
 		residue_contact_area_difference_profile=
-				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, contacto::SimpleDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
+				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, protein::ResidueSummary, contacto::SimpleDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
 	}
 	else if(scoring_mode==2)
 	{
 		residue_contact_area_difference_profile=
-				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, contacto::SimpleDifferenceProducer, contacto::SummingReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
+				contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, protein::ResidueSummary, contacto::SimpleDifferenceProducer, contacto::SummingReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
 	}
 	else
 	{
