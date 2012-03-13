@@ -15,6 +15,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo);
+void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOptions& clo);
 void print_combined_inter_residue_contacts_plot(const auxiliaries::CommandLineOptions& clo);
 void print_cad_local_scores_plot(const auxiliaries::CommandLineOptions& clo);
 void print_cad_local_scores_to_pdb_file(const auxiliaries::CommandLineOptions& clo);
@@ -42,6 +43,7 @@ int main(const int argc, const char** argv)
 		modes_map["calc-CAD-profile"]=ModeFunctionPointer(calc_contact_area_difference_profile);
 		modes_map["calc-CAD-local-scores"]=ModeFunctionPointer(calc_contact_area_difference_local_scores);
 		modes_map["calc-CAD-global-scores"]=ModeFunctionPointer(calc_contact_area_difference_global_scores);
+		modes_map["calc-CAD-size-scores"]=ModeFunctionPointer(calc_contact_area_difference_size_scores);
 		modes_map["print-combined-inter-residue-contacts-plot"]=ModeFunctionPointer(print_combined_inter_residue_contacts_plot);
 		modes_map["print-CAD-local-scores-plot"]=ModeFunctionPointer(print_cad_local_scores_plot);
 		modes_map["print-CAD-local-scores-to-PDB-file"]=ModeFunctionPointer(print_cad_local_scores_to_pdb_file);

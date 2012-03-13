@@ -1,4 +1,7 @@
+#include <set>
+
 #include "protein/residue_id.h"
+#include "protein/residue_summary.h"
 
 #include "contacto/residue_contact_area_difference_local_scores.h"
 #include "contacto/residue_contact_area_difference_profile.h"
@@ -44,4 +47,68 @@ void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOp
 		std::cout << the_class << "_ref " << ratio.reference << "\n";
 		std::cout << the_class << " " << (ratio.reference>0.0 ? (1-(ratio.difference/ratio.reference)) : 0.0) << "\n";
 	}
+}
+
+void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--mode:");
+
+	auxiliaries::assert_file_header(std::cin, "cad_profile");
+	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>(std::cin);
+
+	auxiliaries::assert_file_header(std::cin, "residue_ids");
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_of_target=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin);
+
+	auxiliaries::assert_file_header(std::cin, "residue_ids");
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_of_model=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin);
+
+	std::set<protein::ResidueID> filled_set;
+	for(std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>::const_iterator it=profile.begin();it!=profile.end();++it)
+	{
+		if(it->second.ratio("AA").reference>0.0)
+		{
+			filled_set.insert(it->first);
+		}
+	}
+
+	int target_residues_count=0;
+	int target_atoms_count=0;
+	int target_used_residues_count=0;
+	int target_used_atoms_count=0;
+
+	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids_of_target.begin();it!=residue_ids_of_target.end();++it)
+	{
+		target_residues_count++;
+		target_atoms_count+=it->second.atoms_count;
+		if(filled_set.count(it->first)>0)
+		{
+			target_used_residues_count++;
+			target_used_atoms_count+=it->second.atoms_count;
+		}
+	}
+
+	int model_residues_count=0;
+	int model_atoms_count=0;
+	int model_used_residues_count=0;
+	int model_used_atoms_count=0;
+
+	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids_of_model.begin();it!=residue_ids_of_model.end();++it)
+	{
+		model_residues_count++;
+		model_atoms_count+=it->second.atoms_count;
+		if(filled_set.count(it->first)>0)
+		{
+			model_used_residues_count++;
+			model_used_atoms_count+=it->second.atoms_count;
+		}
+	}
+
+	std::cout << "t_res " << target_residues_count << "\n";
+	std::cout << "t_res_u " << target_used_residues_count << "\n";
+	std::cout << "t_atoms " << target_atoms_count << "\n";
+	std::cout << "t_atoms_u " << target_used_atoms_count << "\n";
+	std::cout << "m_res " << model_residues_count << "\n";
+	std::cout << "m_res_u " << model_used_residues_count << "\n";
+	std::cout << "m_atoms " << model_atoms_count << "\n";
+	std::cout << "m_atoms_u " << model_used_atoms_count << "\n";
 }
