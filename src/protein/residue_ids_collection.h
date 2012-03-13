@@ -6,18 +6,20 @@
 #include <string>
 
 #include "residue_id.h"
+#include "residue_summary.h"
 
 namespace protein
 {
 
 template<typename AtomType>
-std::map<ResidueID, std::string> collect_residue_ids_from_atoms(const std::vector<AtomType>& atoms)
+std::map<ResidueID, ResidueSummary> collect_residue_ids_from_atoms(const std::vector<AtomType>& atoms)
 {
-	std::map<ResidueID, std::string> result;
-	std::map<ResidueID, std::string>::iterator prev=result.begin();
+	std::map<ResidueID, ResidueSummary> result;
 	for(std::size_t i=0;i<atoms.size();i++)
 	{
-		prev=result.insert(prev, std::make_pair(ResidueID::from_atom(atoms[i]), atoms[i].residue_name));
+		ResidueSummary& rs=result[ResidueID::from_atom(atoms[i])];
+		rs.name=atoms[i].residue_name;
+		rs.atoms_count++;
 	}
 	return result;
 }

@@ -11,15 +11,15 @@
 namespace contacto
 {
 
-template<typename ResidueID, typename DifferenceProducer, typename ReferenceProducer>
+template<typename ResidueID, typename ResidueSummary, typename DifferenceProducer, typename ReferenceProducer>
 std::map<ResidueID, ResidueContactAreaDifferenceScore> construct_residue_contact_area_difference_profile(
 		const std::map<InterResidueContactID<ResidueID>, InterResidueContactDualAreas>& combined_inter_residue_contacts,
-		const std::map<ResidueID, std::string>& residue_ids)
+		const std::map<ResidueID, ResidueSummary>& residue_ids)
 {
 	std::map<ResidueID, ResidueContactAreaDifferenceScore> profile;
 	{
 		typename std::map<ResidueID, ResidueContactAreaDifferenceScore>::iterator prev=profile.begin();
-		for(typename std::map<ResidueID, std::string>::const_iterator it=residue_ids.begin();it!=residue_ids.end();++it)
+		for(typename std::map<ResidueID, ResidueSummary>::const_iterator it=residue_ids.begin();it!=residue_ids.end();++it)
 		{
 			prev=profile.insert(prev, std::make_pair(it->first, ResidueContactAreaDifferenceScore()));
 		}

@@ -76,7 +76,7 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-	const std::map<protein::ResidueID, std::string> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
 	auxiliaries::print_file_header(std::cout, "residue_ids");
 	auxiliaries::print_map(std::cout, residue_ids, false);
 }
@@ -90,17 +90,17 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin);
-	const std::map<protein::ResidueID, std::string> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms_of_model.size());
 	for(std::size_t i=0;i<atoms_of_model.size();i++)
 	{
 		const protein::Atom& atom=atoms_of_model[i];
-		std::map<protein::ResidueID, std::string>::const_iterator it=residue_ids_of_target.find(protein::ResidueID::from_atom(atom));
+		std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids_of_target.find(protein::ResidueID::from_atom(atom));
 		if(it!=residue_ids_of_target.end())
 		{
-			if(atom.residue_name==it->second)
+			if(atom.residue_name==it->second.name)
 			{
 				result.push_back(atom);
 			}
