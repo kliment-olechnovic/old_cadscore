@@ -5,7 +5,7 @@ t=read.table(paste(working_directory, "/agreement_table", sep=""), header=TRUE, 
 tresholds_GDT_TS=c("GDT_TS_60", "GDT_TS_70", "GDT_TS_80");
 for(treshold in tresholds_GDT_TS)
 {
-  cadscore_names=c("AA", "SA", "SS");
+  cadscore_names=c("AA", "AS", "SS");
   for(cadscore_name in cadscore_names)
   {
     n00=paste("MP without GDT without ", cadscore_name, sep="");
