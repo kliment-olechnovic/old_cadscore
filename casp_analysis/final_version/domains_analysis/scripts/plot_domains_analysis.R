@@ -6,7 +6,7 @@ dir.create(combination_output_directory);
 expectations_output_directory="expectations";
 dir.create(expectations_output_directory);
 
-score_names=c("LGA_GDT_TS", "AA", "SA", "SS");
+score_names=c("LGA_GDT_TS", "AA", "AS", "SS");
 for(score_name in score_names)
 {
 
@@ -64,8 +64,8 @@ for(target in targets_set)
   }
 }
 
-png(paste(combination_output_directory, "/", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
-plot(x=full_scores, y=combined_scores, xlim=c(0, 1), ylim=c(0, 1), col="black", cex=0.5, xlab="Full model score", ylab="Combined domains score", main=score_name);
+png(paste(combination_output_directory, "/", score_name, ".png", sep=""), height=4, width=3.7, units="in", res=300);
+plot(x=full_scores, y=combined_scores, xlim=c(0, 1), ylim=c(0, 1), col="black", cex=0.5, pch=16, xlab="", ylab="", main="");
 points(x=c(0, 1), y=c(0, 1), type="l", lwd=1);
 dev.off();
 
@@ -85,19 +85,19 @@ for(treshold in tresholds_GDT_TS)
   orientation_values=orientation_values[global_order];
   difference_values=difference_values[global_order];
   
-  plot_height=5;
-  y_max=0.1;
+  plot_height=4;
+  y_max=0.08;
   if(score_name=="LGA_GDT_TS")
   {
-    plot_height=15;
+    plot_height=9;
     y_max=0.4;
   }
 
-  png(paste(expectations_output_directory, "/", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=plot_height, width=7.5, units="in", res=200);
-  plot(x=orientation_values, y=difference_values, xlim=c(0, 0.08), ylim=c(0, y_max), type="n", xlab="Expected absolute difference", ylab="abs((Full model score)-(Combined domains score))", main=paste(score_name, ", GDT_TS>", treshold, sep=""));
-  points(x=orientation_values, y=difference_values, col="black", cex=0.5);
+  png(paste(expectations_output_directory, "/", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=plot_height, width=3.7, units="in", res=300);
+  plot(x=orientation_values, y=difference_values, xlim=c(0, 0.08), ylim=c(0, y_max), type="n", xlab="", ylab="", main="");
+  points(x=orientation_values, y=difference_values, col="#555555", cex=0.5, pch=16);
   smoothing_spline = smooth.spline(orientation_values, difference_values, spar=1.3)
-  lines(smoothing_spline, lwd=3, col="blue")
+  lines(smoothing_spline, lwd=3, col="black")
   dev.off();
 }
 
