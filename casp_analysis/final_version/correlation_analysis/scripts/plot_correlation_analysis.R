@@ -9,9 +9,9 @@ cadscore_names=c("AA", "AM", "AS", "MA", "MM", "MS", "SA", "SM", "SS");
 
 cor_table=c();
 
-red_spectrum=c("#FF8888", "#FF6666", "#FF4444", "#FF3333", "#FF1111", "#FF0000");
-green_spectrum=c("#88FF88", "#66FF66", "#44FF44", "#33FF33", "#11FF11", "#00FF00");
-blue_spectrum=c("#8888FF", "#6666FF", "#4444FF", "#3333FF", "#1111FF", "#0000FF");
+red_spectrum=c("#FF7777", "#FF6666", "#FF4747", "#FF3333", "#FF1717", "#FF0000");
+green_spectrum=c("#77FF77", "#66FF66", "#47FF47", "#33FF33", "#17FF17", "#00FF00");
+blue_spectrum=c("#7777FF", "#6666FF", "#4747FF", "#3333FF", "#1717FF", "#0000FF");
 
 for(refscore_name in refscore_names)
 {
@@ -29,15 +29,13 @@ for(score_name in cadscore_names)
     fm_selection=which(t$target_class=="FM");
     fm_tbm_selection=which(t$target_class=="FM_TBM");
     
-    png(paste(output_directory, "/", "correlation_", refscore_name, "_vs_", score_name, ".png", sep=""), height=7, width=7, units="in", res=200);
+    png(paste(output_directory, "/", "correlation_", refscore_name, "_vs_", score_name, ".png", sep=""), height=4.8, width=4.4, units="in", res=300);
     
-    plot(x=x[tbm_selection], y=y[tbm_selection], xlim=c(0, 1), ylim=c(0, 1), col=blue_density_colors[tbm_selection], pch=16, cex=0.5, xlab=refscore_name, ylab=score_name, main=paste(score_name, " correlation with ", refscore_name, sep=""));
+    plot(x=x[tbm_selection], y=y[tbm_selection], xlim=c(0, 1), ylim=c(0, 1), col=blue_density_colors[tbm_selection], pch=16, cex=0.4, xlab="", ylab="", main="");
 
-    points(x=x[fm_selection], y=y[fm_selection], col=red_density_colors[fm_selection], pch=16, cex=0.5);
+    points(x=x[fm_selection], y=y[fm_selection], col=red_density_colors[fm_selection], pch=16, cex=0.4);
     
-    points(x=x[fm_tbm_selection], y=y[fm_tbm_selection], col=green_density_colors[fm_tbm_selection], pch=16, cex=0.5);
-
-    legend(0, 1, c(paste("Pearson k =", format(cor(x, y, method="pearson"), digits=3)), paste("Spearman k =", format(cor(x, y, method="spearman"), digits=3))));
+    points(x=x[fm_tbm_selection], y=y[fm_tbm_selection], col=green_density_colors[fm_tbm_selection], pch=16, cex=0.4);
     
     dev.off();
     
