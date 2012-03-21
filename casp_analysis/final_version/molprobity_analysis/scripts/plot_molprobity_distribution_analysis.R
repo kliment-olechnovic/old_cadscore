@@ -5,7 +5,7 @@ t=t[which(t$domain>0),];
 output_directory="distribution";
 dir.create(output_directory);
 
-score_names=c("CASP_GDT_TS", "AA", "SA", "SS");
+score_names=c("CASP_GDT_TS", "AA", "AS", "SS");
 for(score_name in score_names)
 {
   x=t[, score_name];
