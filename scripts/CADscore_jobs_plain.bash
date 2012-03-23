@@ -29,4 +29,4 @@ do
   done
 done
 
-$CADSCORE_SCRIPTS_DIR/CADscore_read_table.bash -D "$DATABASE_DIR" | column -t > "$DATABASE_DIR/table"
+$CADSCORE_SCRIPTS_DIR/CADscore_read_global_scores.bash -D "$DATABASE_DIR" | column -t > "$DATABASE_DIR/global_scores"

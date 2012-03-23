@@ -17,7 +17,7 @@ $0 options:
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
   -o    max timeout (optional)
-  -g    flag to use TM-score
+  -g    flag to use TM-score (optional)
 
 EOF
 }
