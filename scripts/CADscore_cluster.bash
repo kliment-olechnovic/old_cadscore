@@ -83,6 +83,9 @@ then
   exit 1
 fi
 
+##################################################
+### Calculating inter-atom contacts
+
 find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read TARGET_FILE
 do
   TARGET_NAME=$(basename $TARGET_FILE)
@@ -98,6 +101,9 @@ do
   test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE 2> $TARGET_RESIDUE_IDS_FILE.log
   if [ ! -s "$TARGET_RESIDUE_IDS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_RESIDUE_IDS_FILE)" -gt "0" ] ; then echo "Fatal error: no residues in the target" 1>&2 ; exit 1 ; fi
 done
+
+##################################################
+### Calculating scores
 
 find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read TARGET_FILE
 do
