@@ -11,7 +11,7 @@ $0 options:
 
   -h    show this message and exit
   -I    path to input directory
-  -D    path to writable output directory
+  -O    path to writable output directory
   -l    flag to include heteroatoms (optional)
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
@@ -40,7 +40,7 @@ INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
 USE_TMSCORE=false
 
-while getopts "hI:D:lci:o:" OPTION
+while getopts "hI:O:lci:o:" OPTION
 do
   case $OPTION in
     h)
@@ -50,7 +50,7 @@ do
     I)
       INPUT_DIR=$OPTARG
       ;;
-    D)
+    O)
       DATABASE=$OPTARG
       ;;
     l)
@@ -105,20 +105,57 @@ done
 ##################################################
 ### Calculating scores
 
-find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read TARGET_FILE
-do
-  TARGET_NAME=$(basename $TARGET_FILE)
-  TARGET_DIR="$DATABASE/$TARGET_NAME"
-  TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
-  TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
-  
-  find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read MODEL_FILE
+SCORES_LIST_FILE="$DATABASE/scores_list"
+
+if [ ! -f "$SCORES_LIST_FILE" ]
+then
+  find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read TARGET_FILE
   do
-  	MODEL_NAME=$(basename $MODEL_FILE)
-  	MODEL_INTER_ATOM_CONTACTS_FILE="$DATABASE/$MODEL_NAME/inter_atom_contacts"
+    TARGET_NAME=$(basename $TARGET_FILE)
+    TARGET_DIR="$DATABASE/$TARGET_NAME"
+    TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
+    TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
+  
+    find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read MODEL_FILE
+    do
+  	  MODEL_NAME=$(basename $MODEL_FILE)
+  	  MODEL_INTER_ATOM_CONTACTS_FILE="$DATABASE/$MODEL_NAME/inter_atom_contacts"
   	
-  	echo target $TARGET_NAME
-    echo model $MODEL_NAME
-  	( cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION ; cat $TARGET_RESIDUE_IDS_FILE ) | $VOROPROT --mode calc-CAD-profile | $VOROPROT --mode calc-CAD-global-scores | grep -v "_diff" | grep -v "_ref"
-  done
+  	  echo target $TARGET_NAME >> $SCORES_LIST_FILE
+      echo model $MODEL_NAME >> $SCORES_LIST_FILE
+  	  ( cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION ; cat $TARGET_RESIDUE_IDS_FILE ) | $VOROPROT --mode calc-CAD-profile | $VOROPROT --mode calc-CAD-global-scores | grep -v "_diff" | grep -v "_ref" >> $SCORES_LIST_FILE
+    done
+ done
+fi
+
+##################################################
+### Forming scores matrix
+
+CATEGORIES=("AA" "AS" "SS" "AW")
+
+for CATEGORY in "${CATEGORIES[@]}"
+do
+  SCORES_MATRIX_FILE="$DATABASE/scores_matrix_$CATEGORY"
+  if [ ! -f "$SCORES_MATRIX_FILE" ]
+  then
+    cat $SCORES_LIST_FILE | grep "model" | cut --delimiter " " --fields 2 | awk 'BEGIN {RS="";FS="\n";ORS=" "}{ dim=sqrt(NF); for (i=0; i<dim; i++) { print $(i+1); } }' >> $SCORES_MATRIX_FILE
+    echo "" >> $SCORES_MATRIX_FILE
+    cat $SCORES_LIST_FILE | grep "$CATEGORY" | cut --delimiter " " --fields 2 | awk 'BEGIN {RS="";FS="\n";ORS=" "}{ dim=sqrt(NF); for (i=0; i<= NF; i++) { print $(i+1); if(((i+1)%dim )==0) { printf "\n"; } } }' >> $SCORES_MATRIX_FILE
+  fi
+  
+HEATMAP_IMAGE_FILE="$SCORES_MATRIX_FILE.png"
+  
+if [ ! -f "$HEATMAP_IMAGE_FILE" ]
+then
+R --vanilla << EOF
+dt=read.table("$SCORES_MATRIX_FILE", header=TRUE);
+dt=1-dt;
+dm=as.matrix(dt);
+row.names(dm)=colnames(dt);
+png("$HEATMAP_IMAGE_FILE")
+heatmap(dm, margins=c(15,15));
+dev.off()
+EOF
+fi
+
 done
