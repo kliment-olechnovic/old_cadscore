@@ -85,8 +85,8 @@ for(treshold in tresholds_GDT_TS)
   orientation_values=orientation_values[global_order];
   difference_values=difference_values[global_order];
   
-  plot_height=4;
-  y_max=0.08;
+  plot_height=3;
+  y_max=0.06;
   if(score_name=="LGA_GDT_TS")
   {
     plot_height=9;
@@ -94,6 +94,7 @@ for(treshold in tresholds_GDT_TS)
   }
 
   png(paste(expectations_output_directory, "/", score_name, "_treshold_", (treshold*100), ".png", sep=""), height=plot_height, width=3.7, units="in", res=300);
+  par(mai=c(0.6, 0.6, 0.6, 0.6));
   plot(x=orientation_values, y=difference_values, xlim=c(0, 0.08), ylim=c(0, y_max), type="n", xlab="", ylab="", main="");
   points(x=orientation_values, y=difference_values, col="#555555", cex=0.5, pch=16);
   smoothing_spline = smooth.spline(orientation_values, difference_values, spar=1.3)
