@@ -9,10 +9,10 @@ $0 options:
   -h    show this message and exit
   -f    path to input file in PBD format
   -l    flag to include heteroatoms (optional)
-  -a    flag to print atoms
-  -q    flag to print quadruples
-  -c    flag to print inter-atom contacts
-  -r    flag to print inter-residue contacts
+  -a    flag to print atoms (optional)
+  -q    flag to print quadruples (optional)
+  -c    flag to print inter-atom contacts (optional)
+  -r    flag to print inter-residue contacts (optional)
 
 EOF
 }

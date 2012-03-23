@@ -12,9 +12,6 @@ $0 options:
   -m    model name in the database
   -c    contacts category
   -w    bluring window size (optional)
-  -s    flag to simply print local scores (optional)
-  -i    flag to print local scores plot (optional)
-  -p    path to file in the PDB format to inject in (optional)
 
 EOF
 }
@@ -33,11 +30,8 @@ TARGET_NAME=""
 MODEL_NAME=""
 CATEGORY=""
 WINDOW="0"
-SIMPLE_PRINTING=false
-IMAGE_PRINTING=false
-PDB_FILE=""
 
-while getopts "hD:t:m:c:w:sip:" OPTION
+while getopts "hD:t:m:c:w:" OPTION
 do
   case $OPTION in
     h)
@@ -59,15 +53,6 @@ do
     w)
       WINDOW=$OPTARG
       ;;
-    s)
-      SIMPLE_PRINTING=true
-      ;;
-    i)
-      IMAGE_PRINTING=true
-      ;;
-    p)
-      PDB_FILE=$OPTARG
-      ;;
     ?)
       exit 1
       ;;
@@ -88,17 +73,4 @@ then
   exit 1
 fi
 
-if $SIMPLE_PRINTING
-then
-  cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-local-scores --category $CATEGORY --window $WINDOW
-fi
-
-if $IMAGE_PRINTING
-then
-  cat $CAD_PROFILE_FILE | $VOROPROT --mode print-CAD-local-scores-plot --category $CATEGORY --max-window $WINDOW
-fi
-
-if [ -n "$PDB_FILE" ]
-then
-  (cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-local-scores --category $CATEGORY --window $WINDOW ; cat $PDB_FILE) | $VOROPROT --mode print-CAD-local-scores-to-PDB-file
-fi
+cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-local-scores --category $CATEGORY --window $WINDOW
