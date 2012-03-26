@@ -85,3 +85,12 @@ output_directory=paste("judging_from_", constraint_mode, sep="")
 dir.create(output_directory);
 
 write.table(llt, paste(output_directory, "/agreement_table", sep=""), quote=TRUE, row.names=FALSE);
+
+#######################################
+
+t=rt[which(rt$min_GDT_TS>=0.6),];
+ids=1:length(t[[1]]);
+M=sign(t$MolProbity)*ids;
+G=sign(t$GDT_TS)*ids;
+AA=sign(t$AA)*ids;
+write.table(t[abs(setdiff(intersect(M, G), AA)),], paste(output_directory, "/unsupportive_pairs_differences", sep=""), quote=TRUE, row.names=FALSE);
