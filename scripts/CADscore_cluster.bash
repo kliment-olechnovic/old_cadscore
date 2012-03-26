@@ -16,6 +16,7 @@ $0 options:
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
   -o    max timeout (optional)
+  -d    flag to produce dendrograms with R (optional)
 
 EOF
 }
@@ -38,9 +39,9 @@ HETATM_FLAG=""
 INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
-USE_TMSCORE=false
+CREATE_DENDROGRAMS=false
 
-while getopts "hI:O:lci:o:" OPTION
+while getopts "hI:O:lci:o:d" OPTION
 do
   case $OPTION in
     h)
@@ -64,6 +65,9 @@ do
       ;;
     o)
       TIMEOUT=$OPTARG
+      ;;
+    d)
+      CREATE_DENDROGRAMS=true
       ;;
     ?)
       exit 1
@@ -143,10 +147,9 @@ do
     cat $SCORES_LIST_FILE | grep "$CATEGORY" | cut --delimiter " " --fields 2 | awk 'BEGIN {RS="";FS="\n";ORS=" "}{ dim=sqrt(NF); for (i=0; i<= NF; i++) { print $(i+1); if(((i+1)%dim )==0) { printf "\n"; } } }' >> $SCORES_MATRIX_FILE
   fi
   
-HEATMAP_IMAGE_FILE="$SCORES_MATRIX_FILE.png"
-  
-if [ ! -f "$HEATMAP_IMAGE_FILE" ]
+if $CREATE_DENDROGRAMS
 then
+HEATMAP_IMAGE_FILE="$SCORES_MATRIX_FILE.png"
 R --vanilla << EOF
 dt=read.table("$SCORES_MATRIX_FILE", header=TRUE);
 dt=1-dt;
