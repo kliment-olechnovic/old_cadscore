@@ -44,8 +44,11 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 		throw std::runtime_error("Invalid profile type");
 	}
 
-	auxiliaries::print_file_header(std::cout, "cad_profile");
-	auxiliaries::print_map(std::cout, residue_contact_area_difference_profile);
+	if(!residue_contact_area_difference_profile.empty())
+	{
+		auxiliaries::print_file_header(std::cout, "cad_profile");
+		auxiliaries::print_map(std::cout, residue_contact_area_difference_profile);
+	}
 }
 
 

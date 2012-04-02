@@ -1,4 +1,5 @@
 #include <set>
+#include <sstream>
 
 #include "protein/residue_id.h"
 #include "protein/residue_summary.h"
@@ -23,8 +24,29 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 
 	const std::map<protein::ResidueID, double> local_scores=contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category), window_size);
 
-	auxiliaries::print_file_header(std::cout, "local_scores");
-	auxiliaries::print_map(std::cout, local_scores, false);
+	if(!local_scores.empty())
+	{
+		auxiliaries::print_file_comment(std::cout, "This file contains contact area differences for each residue.");
+		auxiliaries::print_file_comment(std::cout, "");
+		auxiliaries::print_file_comment(std::cout, "Each line contains residue chain name, residue number and the difference value.");
+		auxiliaries::print_file_comment(std::cout, "Each difference value is in the range [0, 1]. 0 means no difference.");
+		auxiliaries::print_file_comment(std::cout, "");
+		auxiliaries::print_file_comment(std::cout, category+" contact category was used");
+		if(window_size==0)
+		{
+			auxiliaries::print_file_comment(std::cout, "No smoothing window was used.");
+		}
+		else
+		{
+			std::ostringstream outstr;
+			outstr << "Smoothing window " << window_size << " was used.";
+			auxiliaries::print_file_comment(std::cout, outstr.str());
+		}
+		std::cout << "\n";
+
+		auxiliaries::print_file_header(std::cout, "local_scores");
+		auxiliaries::print_map(std::cout, local_scores, false);
+	}
 }
 
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo)
@@ -104,11 +126,11 @@ void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOpti
 	}
 
 	std::cout << "t_res " << target_residues_count << "\n";
-	std::cout << "t_res_u " << target_used_residues_count << "\n";
+	std::cout << "t_res_used " << target_used_residues_count << "\n";
 	std::cout << "t_atoms " << target_atoms_count << "\n";
-	std::cout << "t_atoms_u " << target_used_atoms_count << "\n";
+	std::cout << "t_atoms_used " << target_used_atoms_count << "\n";
 	std::cout << "m_res " << model_residues_count << "\n";
-	std::cout << "m_res_u " << model_used_residues_count << "\n";
+	std::cout << "m_res_used " << model_used_residues_count << "\n";
 	std::cout << "m_atoms " << model_atoms_count << "\n";
-	std::cout << "m_atoms_u " << model_used_atoms_count << "\n";
+	std::cout << "m_atoms_used " << model_used_atoms_count << "\n";
 }
