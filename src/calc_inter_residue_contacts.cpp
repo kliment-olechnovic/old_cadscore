@@ -121,6 +121,27 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
 	}
 
+	auxiliaries::print_file_comment(std::cout, "This file contains combined inter-residue contact areas.");
+	auxiliaries::print_file_comment(std::cout, "These areas were calculated by accumulating inter-residue contact areas.");
+	auxiliaries::print_file_comment(std::cout, "");
+	auxiliaries::print_file_comment(std::cout, "Brief format description:");
+	auxiliaries::print_file_comment(std::cout, "  'file header'");
+	auxiliaries::print_file_comment(std::cout, "  'the number of inter-residue contacts (N)'");
+	auxiliaries::print_file_comment(std::cout, "  'contact record 1'");
+	auxiliaries::print_file_comment(std::cout, "  'contact record 2'");
+	auxiliaries::print_file_comment(std::cout, "  ...");
+	auxiliaries::print_file_comment(std::cout, "  'contact record N'");
+	auxiliaries::print_file_comment(std::cout, "");
+	auxiliaries::print_file_comment(std::cout, "Each contact record has the following format:");
+	auxiliaries::print_file_comment(std::cout, "  chain_1 residue_number_1 chain_2 residue_number_2");
+	auxiliaries::print_file_comment(std::cout, "  'the number of contact types (M)'");
+	auxiliaries::print_file_comment(std::cout, "  type_1 area_in_target area_in_model");
+	auxiliaries::print_file_comment(std::cout, "  type_2 area_in_target area_in_model");
+	auxiliaries::print_file_comment(std::cout, "  ...");
+	auxiliaries::print_file_comment(std::cout, "  type_M area_in_target area_in_model");
+	auxiliaries::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
+	std::cout << "\n";
+
 	auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
 	auxiliaries::print_map(std::cout, combined_inter_residue_contacts);
 }

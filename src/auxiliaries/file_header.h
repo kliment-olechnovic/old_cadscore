@@ -8,6 +8,11 @@
 namespace auxiliaries
 {
 
+inline void print_file_comment(std::ostream& out, const std::string& comment)
+{
+	out << "# " << comment << "\n";
+}
+
 inline void print_file_header(std::ostream& out, const std::string& header)
 {
 	out << header << "\n";
@@ -16,7 +21,12 @@ inline void print_file_header(std::ostream& out, const std::string& header)
 inline bool check_file_header(std::istream& in, const std::string& header)
 {
 	std::string value;
-	in >> value;
+	getline(in, value);
+	while(in.good() && (value.empty() || value[0]=='#'))
+	{
+		value.clear();
+		getline(in, value);
+	}
 	return (header==value);
 }
 
