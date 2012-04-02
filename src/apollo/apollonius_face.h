@@ -61,13 +61,13 @@ public:
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
 
-		if(!has_valid_tangency_information_)
-		{
-			std::clog << "Failed to aquire valid tangency information for the following 3 spheres:\n";
-			std::clog << "SPHERE " << a_->r << " " << a_->x << " " << a_->y << " " << a_->z << "\n";
-			std::clog << "SPHERE " << b_->r << " " << b_->x << " " << b_->y << " " << b_->z << "\n";
-			std::clog << "SPHERE " << c_->r << " " << c_->x << " " << c_->y << " " << c_->z << "\n";
-		}
+//		if(!has_valid_tangency_information_)
+//		{
+//			std::clog << "Failed to aquire valid tangency information for the following 3 spheres:\n";
+//			std::clog << "SPHERE " << a_->r << " " << a_->x << " " << a_->y << " " << a_->z << "\n";
+//			std::clog << "SPHERE " << b_->r << " " << b_->x << " " << b_->y << " " << b_->z << "\n";
+//			std::clog << "SPHERE " << c_->r << " " << c_->x << " " << c_->y << " " << c_->z << "\n";
+//		}
 	}
 
 	const Triple& abc_ids() const

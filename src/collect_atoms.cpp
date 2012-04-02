@@ -107,7 +107,7 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 			else
 			{
 				std::ostringstream output;
-				output << "Model atom chain name and residue number matched the target, but model atom residue name did not: " << atom;
+				output << "Model atom chain name and residue number matched the target, but model atom residue name did not: " << atom.string_for_human_reading();
 				throw std::runtime_error(output.str());
 			}
 		}
