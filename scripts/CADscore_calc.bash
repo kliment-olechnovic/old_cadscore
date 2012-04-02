@@ -146,22 +146,22 @@ echo "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 ### Preprocessing target
 
 test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE
-if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_INTER_ATOM_CONTACTS_FILE)" -gt "0" ] ; then echo "Fatal error: no inter-atom contacts in the target" 1>&2 ; exit 1 ; fi
+if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the target" 1>&2 ; exit 1 ; fi
 
 test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE
-if [ ! -s "$TARGET_RESIDUE_IDS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_RESIDUE_IDS_FILE)" -gt "0" ] ; then echo "Fatal error: no residues in the target" 1>&2 ; exit 1 ; fi
+if [ ! -s "$TARGET_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no residues in the target" 1>&2 ; exit 1 ; fi
 
 test -f $TARGET_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE
-if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] || [ ! "$(sed -n '2p' $TARGET_INTER_RESIDUE_CONTACTS_FILE)" -gt "0" ] ; then echo "Fatal error: no inter-residue contacts in the target" 1>&2 ; exit 1 ; fi
+if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-residue contacts in the target" 1>&2 ; exit 1 ; fi
 
 ##################################################
 ### Preprocessing model
 
 test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
-if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] || [ ! "$(sed -n '2p' $MODEL_INTER_ATOM_CONTACTS_FILE)" -gt "0" ] ; then echo "Fatal error: no inter-atom contacts in the model" 1>&2 ; exit 1 ; fi
+if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the model" 1>&2 ; exit 1 ; fi
 
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
-if [ ! -s "$MODEL_RESIDUE_IDS_FILE" ] || [ ! "$(sed -n '2p' $MODEL_RESIDUE_IDS_FILE)" -gt "0" ] ; then echo "Fatal error: no filtered residues in the model" 1>&2 ; exit 1 ; fi
+if [ ! -s "$MODEL_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no filtered residues in the model" 1>&2 ; exit 1 ; fi
 
 ##################################################
 ### Comparing target and model
