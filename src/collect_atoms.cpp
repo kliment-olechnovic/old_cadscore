@@ -66,8 +66,11 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 
 	protein::AtomsClassification::classify_atoms(atoms);
 
-	auxiliaries::print_file_header(std::cout, "atoms");
-	auxiliaries::print_vector(std::cout, atoms);
+	if(!atoms.empty())
+	{
+		auxiliaries::print_file_header(std::cout, "atoms");
+		auxiliaries::print_vector(std::cout, atoms);
+	}
 }
 
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
@@ -77,8 +80,12 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
-	auxiliaries::print_file_header(std::cout, "residue_ids");
-	auxiliaries::print_map(std::cout, residue_ids, false);
+
+	if(!residue_ids.empty())
+	{
+		auxiliaries::print_file_header(std::cout, "residue_ids");
+		auxiliaries::print_map(std::cout, residue_ids, false);
+	}
 }
 
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
@@ -113,6 +120,9 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	auxiliaries::print_file_header(std::cout, "atoms");
-	auxiliaries::print_vector(std::cout, result);
+	if(!result.empty())
+	{
+		auxiliaries::print_file_header(std::cout, "atoms");
+		auxiliaries::print_vector(std::cout, result);
+	}
 }
