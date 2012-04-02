@@ -24,7 +24,7 @@ std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > co
 
 	for(std::set<std::size_t>::const_iterator it=hidden_spheres.begin();it!=hidden_spheres.end();++it)
 	{
-		std::clog << "Sphere is fully inside some other sphere: " << unrefined_spheres[*it] << "\n";
+		std::clog << "Sphere was ignored because it is fully inside some other sphere: " << unrefined_spheres[*it].string_for_human_reading() << "\n";
 	}
 
 	if(hidden_spheres.empty())
@@ -68,7 +68,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 	{
 		if(graph[i].empty())
 		{
-			std::clog << "Atom has no neighbours in the Apollonius graph: " << atoms[i] << "\n";
+			std::clog << "Sphere was not included into the Voronoi diagram: " << atoms[i].string_for_human_reading() << "\n";
 		}
 	}
 

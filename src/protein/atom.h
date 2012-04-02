@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 namespace protein
 {
@@ -83,6 +84,21 @@ struct Atom
 		input >> atom.molecule_class;
 		input >> atom.location_class;
 		return input;
+	}
+
+	std::string string_for_human_reading() const
+	{
+		std::ostringstream output;
+		output << "atom number = " << atom_number << ", ";
+		output << "chain = " << chain_id << ", ";
+		output << "residue number = " << residue_number << ", ";
+		output << "residue name = " << residue_name << ", ";
+		output << "atom name = " << atom_name << ", ";
+		output << "x = " << x << ", ";
+		output << "y = " << y << ", ";
+		output << "z = " << z << ", ";
+		output << "radius = " << r;
+		return output.str();
 	}
 };
 
