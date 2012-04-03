@@ -140,7 +140,7 @@ fi
 ##################################################
 ### Forming scores matrix
 
-CATEGORIES=("AA" "AS" "SS" "AW")
+CATEGORIES=("AA" "AS" "SS")
 
 for CATEGORY in "${CATEGORIES[@]}"
 do
