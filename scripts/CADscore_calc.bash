@@ -26,12 +26,17 @@ EOF
 ### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
-
-VOROPROT="$SCRIPT_DIRECTORY/voroprot2"
+VOROPROT_NAME="voroprot2"
+VOROPROT="$SCRIPT_DIRECTORY/$VOROPROT_NAME"
 if [ ! -f "$VOROPROT" ]
 then
-  echo "$VOROPROT does not exist" 1>&2
-  exit 1
+  if which $VOROPROT_NAME &> /dev/null
+  then
+    VOROPROT=$VOROPROT_NAME
+  else
+    echo "Fatal error: '$VOROPROT_NAME' executable not found" 1>&2
+    exit 1
+  fi
 fi
 
 DATABASE=""
@@ -180,8 +185,18 @@ if [ ! -s "$CAD_SIZE_SCORES_FILE" ] ; then echo "Fatal error: CAD size scores fi
 
 if $USE_TMSCORE
 then
-  TMSCORE_CALC="$SCRIPT_DIRECTORY/TMscore_calc.bash"
-  if [ ! -f "$TMSCORE_CALC" ] ; then echo "$TMSCORE_CALC does not exist" 1>&2 ; exit 1 ; fi
+  TMSCORE_CALC_NAME="TMscore_calc.bash"
+  TMSCORE_CALC="$SCRIPT_DIRECTORY/$TMSCORE_CALC_NAME"
+  if [ ! -f "$TMSCORE_CALC" ]
+  then
+    if which $TMSCORE_CALC_NAME &> /dev/null
+    then
+      TMSCORE_CALC=$TMSCORE_CALC_NAME
+    else
+      echo "Fatal error: '$TMSCORE_CALC_NAME' script not found" 1>&2
+      exit 1
+    fi
+  fi
   test -f $TMSCORE_GLOBAL_SCORES_FILE || $TMSCORE_CALC -m $MODEL_FILE -t $TARGET_FILE -p $TMSCORE_PROFILE_FILE -s $TMSCORE_GLOBAL_SCORES_FILE
   if [ ! -s "$TMSCORE_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: TM-score scores file is empty" 1>&2 ; exit 1 ; fi
 fi
