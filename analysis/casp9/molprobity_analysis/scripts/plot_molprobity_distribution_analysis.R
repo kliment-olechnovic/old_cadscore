@@ -1,21 +1,17 @@
-t=read.table("../prepared_data/enhanced_table", header=TRUE, stringsAsFactors=FALSE);
-t=t[which(t$MolProbityScore>(0-1)),];
-t=t[which(t$domain>0),];
+t=read.table("pairs_differences_table", header=TRUE, stringsAsFactors=FALSE);
+t=t[which(t$MolProbity!=0),];
+t=t[which(t$GDT_TS!=0),];
+t=t[which(t$SS!=0),];
 
 output_directory="distribution";
 dir.create(output_directory);
 
-score_names=c("CASP_GDT_TS", "AA", "AS", "SS");
-for(score_name in score_names)
-{
-  x=t[, score_name];
-  y=t$MolProbityScore;
-  blue_density_colors=densCols(x, y);
-  png(paste(output_directory, "/", "correlation_", score_name, "_with_MolProbity", ".png", sep=""), height=5, width=5, units="in", res=200);
-  plot(x=x, y=y, xlim=c(0, 1), col=blue_density_colors, pch=16, cex=0.5, xlab=score_name, ylab="MolProbityScore", main=paste(score_name, " correlation with MolProbity", sep=""));
-  dev.off();
-}
-
-png(paste(output_directory, "/histogram_of_MolProbity.png", sep=""), height=5, width=5, units="in", res=200);
-hist(t$MolProbityScore);
+png(paste(output_directory, "/histogram_of_MolProbity_differences.png", sep=""), height=5, width=5, units="in", res=200);
+hist(t$MolProbity, breaks=100, col="red", main="", xlab="", ylab="");
+usr=par("usr");
+clip(usr[1], (0-sd(t$MolProbity)), usr[3], usr[4]);
+hist(t$MolProbity, breaks=100, col="green", add=TRUE);
+clip(sd(t$MolProbity), usr[2], usr[3], usr[4]);
+hist(t$MolProbity, breaks=100, col="green", add=TRUE);
+do.call("clip", as.list(usr))
 dev.off();
