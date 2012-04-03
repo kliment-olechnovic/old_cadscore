@@ -161,7 +161,8 @@ dt=1-dt;
 dm=as.matrix(dt);
 row.names(dm)=colnames(dt);
 png("$HEATMAP_IMAGE_FILE", height=15, width=15, units="in", res=200)
-heatmap(dm, col=topo.colors(length(dt[[1]])), margins=c(15,15));
+#heatmap(dm, col=topo.colors(length(dt[[1]])), margins=c(15,15));
+heatmap(dm, margins=c(15,15));
 dev.off()
 EOF
 fi
