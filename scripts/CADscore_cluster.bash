@@ -25,12 +25,17 @@ EOF
 ### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
-
-VOROPROT="$SCRIPT_DIRECTORY/voroprot2"
+VOROPROT_NAME="voroprot2"
+VOROPROT="$SCRIPT_DIRECTORY/$VOROPROT_NAME"
 if [ ! -f "$VOROPROT" ]
 then
-  echo "$VOROPROT does not exist" 1>&2
-  exit 1
+  if which $VOROPROT_NAME &> /dev/null
+  then
+    VOROPROT=$VOROPROT_NAME
+  else
+    echo "Fatal error: '$VOROPROT_NAME' executable not found" 1>&2
+    exit 1
+  fi
 fi
 
 INPUT_DIR=""
