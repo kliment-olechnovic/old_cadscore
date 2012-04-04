@@ -145,6 +145,11 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		auxiliaries::print_file_comment(std::cout, "  ...");
 		auxiliaries::print_file_comment(std::cout, "  contact_type[M] corresponding_area_in_target corresponding_area_in_model");
 		auxiliaries::print_file_comment(std::cout, "");
+		auxiliaries::print_file_comment(std::cout, "Contact types are two-letter strings indicating what residue parts are in contact.");
+		auxiliaries::print_file_comment(std::cout, "Each residue part is coded as a single letter:");
+		auxiliaries::print_file_comment(std::cout, "  A - all residue atoms");
+		auxiliaries::print_file_comment(std::cout, "  M - main chain");
+		auxiliaries::print_file_comment(std::cout, "  S - side chain");
 		auxiliaries::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
 		std::cout << "\n";
 
