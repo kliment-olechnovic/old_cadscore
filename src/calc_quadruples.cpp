@@ -23,7 +23,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	}
 
 	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
-	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<double>("--bsi-min-count", 1) : 1;
+	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<std::size_t>("--bsi-min-count", 1) : 1;
 	const bool as_points=clo.isopt("--as-points");
 	const bool search_for_d3=!clo.isopt("--skip-inner");
 
