@@ -130,8 +130,8 @@ then
   	  MODEL_NAME=$(basename $MODEL_FILE)
   	  MODEL_INTER_ATOM_CONTACTS_FILE="$DATABASE/$MODEL_NAME/inter_atom_contacts"
   	
-  	  echo target $TARGET_NAME >> $SCORES_LIST_FILE
-      echo model $MODEL_NAME >> $SCORES_LIST_FILE
+  	  echo TARGET_ROLE $TARGET_NAME >> $SCORES_LIST_FILE
+      echo MODEL_ROLE $MODEL_NAME >> $SCORES_LIST_FILE
   	  ( cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION ; cat $TARGET_RESIDUE_IDS_FILE ) | $VOROPROT --mode calc-CAD-profile | $VOROPROT --mode calc-CAD-global-scores | grep -v "_diff" | grep -v "_ref" >> $SCORES_LIST_FILE
     done
  done
@@ -147,7 +147,7 @@ do
   SCORES_MATRIX_FILE="$DATABASE/scores_matrix_$CATEGORY"
   if [ ! -f "$SCORES_MATRIX_FILE" ]
   then
-    cat $SCORES_LIST_FILE | grep "model" | cut --delimiter " " --fields 2 | awk 'BEGIN {RS="";FS="\n";ORS=" "}{ dim=sqrt(NF); for (i=0; i<dim; i++) { print $(i+1); } }' >> $SCORES_MATRIX_FILE
+    cat $SCORES_LIST_FILE | grep "MODEL_ROLE" | cut --delimiter " " --fields 2 | awk 'BEGIN {RS="";FS="\n";ORS=" "}{ dim=sqrt(NF); for (i=0; i<dim; i++) { print $(i+1); } }' >> $SCORES_MATRIX_FILE
     echo "" >> $SCORES_MATRIX_FILE
     cat $SCORES_LIST_FILE | grep "$CATEGORY" | cut --delimiter " " --fields 2 | awk 'BEGIN {RS="";FS="\n";ORS=" "}{ dim=sqrt(NF); for (i=0; i<= NF; i++) { print $(i+1); if(((i+1)%dim )==0) { printf "\n"; } } }' >> $SCORES_MATRIX_FILE
   fi
