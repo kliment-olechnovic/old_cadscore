@@ -11,6 +11,11 @@ $0 options:
   -m    path to model file in PBD format
   -p    profile output file
   -s    summary output file
+  
+Note: $0 needs TMscore application
+      (http://zhanglab.ccmb.med.umich.edu/TM-score/)
+      to be available either in the same directory as this script
+      or in your system binary path
 
 EOF
 }
