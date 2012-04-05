@@ -29,7 +29,8 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 		auxiliaries::print_file_comment(std::cout, "This file contains contact area differences for each residue.");
 		auxiliaries::print_file_comment(std::cout, "");
 		auxiliaries::print_file_comment(std::cout, "Each line contains residue chain name, residue number and the difference value.");
-		auxiliaries::print_file_comment(std::cout, "Each difference value is in the range [0, 1]. 0 means no difference.");
+		auxiliaries::print_file_comment(std::cout, "Each non-negative difference value is in the range [0, 1]. 0 means no difference.");
+		auxiliaries::print_file_comment(std::cout, "Negative difference values mean that contacts are undefined.");
 		auxiliaries::print_file_comment(std::cout, "");
 		auxiliaries::print_file_comment(std::cout, category+" contact category was used");
 		if(window_size==0)
