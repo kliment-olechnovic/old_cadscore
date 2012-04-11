@@ -41,6 +41,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	const Hierarchy hierarchy(atoms, radius, low_count);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3 && !as_points);
 
+	std::cout << "Atoms count: " << atoms.size() << "\n";
 	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
 
 	{
