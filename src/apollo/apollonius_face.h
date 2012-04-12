@@ -72,6 +72,11 @@ public:
 		return abc_ids_;
 	}
 
+	bool defined_tangent_planes() const
+	{
+		return (tangent_planes_.size()==2);
+	}
+
 	std::size_t d1_id() const
 	{
 		return d1_id_;
@@ -80,6 +85,16 @@ public:
 	const SimpleSphere& d1_tangent_sphere() const
 	{
 		return d1_tangent_sphere_;
+	}
+
+	bool defined_free_tangent_plane() const
+	{
+		return (free_tangent_plane_id_!=npos);
+	}
+
+	bool rejectable() const
+	{
+		return (defined_tangent_planes() && !defined_free_tangent_plane());
 	}
 
 	const bool can_have_d2() const
@@ -253,10 +268,14 @@ public:
 		{
 			for(int i=0;i<3;i++)
 			{
-				children.push_back(ApolloniusFace(*spheres_,
+				const ApolloniusFace child(*spheres_,
 						Triple(abc_ids_.exclude(i), d2_id_),
 						abc_ids_.get(i),
-						d2_tangent_sphere_));
+						d2_tangent_sphere_);
+				if(!child.rejectable())
+				{
+					children.push_back(child);
+				}
 			}
 		}
 		for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
@@ -265,13 +284,13 @@ public:
 			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
 			for(int i=0;i<3;i++)
 			{
-				children.push_back(ApolloniusFace(*spheres_,
+				ApolloniusFace child(*spheres_,
 						Triple(abc_ids_.exclude(i), d3_id),
 						abc_ids_.get(i),
-						d3_tangent_spheres.front()));
-				if(d3_tangent_spheres.size()>1)
+						d3_tangent_spheres.front());
+				if(!child.rejectable())
 				{
-					children.back().set_d2_and_unset_d3(abc_ids_.get(i), d3_tangent_spheres.back());
+					children.push_back(child);
 				}
 			}
 		}
