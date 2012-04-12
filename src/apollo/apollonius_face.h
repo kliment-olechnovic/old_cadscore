@@ -37,8 +37,8 @@ public:
 				d1_(&(spheres_->at(d1_id_))),
 				d1_tangent_sphere_(d1_tangent_sphere),
 				tangent_planes_(construct_spheres_tangent_planes(*a_, *b_, *c_)),
-				can_have_d2_(tangent_planes_.size()==2),
 				free_tangent_plane_id_(select_free_tangent_plane_id(*a_, *b_, *c_, tangent_planes_, *d1_, d1_tangent_sphere_)),
+				can_have_d2_(tangent_planes_.size()==2 && free_tangent_plane_id_!=npos),
 				can_have_d3_(!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0)),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
@@ -115,7 +115,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d2(const InputSphereType& x) const
 	{
-		return (can_have_d2_ && (free_tangent_plane_id_!=npos ? sphere_is_on_free_plane(x) : !sphere_is_inner(x)));
+		return (can_have_d2_ && sphere_is_on_free_plane(x));
 	}
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d2(const std::size_t d2_id) const
@@ -301,6 +301,13 @@ private:
 			}
 			else if(h0==-1 && h1==-1)
 			{
+//				std::clog << "color 1 1 0\n";
+//				std::clog << "sphere radius " << a.r << " center " << a.x << " " << a.y << " " << a.z << " quality 3\n";
+//				std::clog << "sphere radius " << b.r << " center " << b.x << " " << b.y << " " << b.z << " quality 3\n";
+//				std::clog << "sphere radius " << c.r << " center " << c.x << " " << c.y << " " << c.z << " quality 3\n";
+//				std::clog << "color 1 0 0\n";
+//				std::clog << "sphere radius " << d1.r << " center " << d1.x << " " << d1.y << " " << d1.z << " quality 3\n";
+//				std::clog << "scale " << d1.x << " " << d1.y << " " << d1.z << " 2\n\n";
 				return npos;
 			}
 			else
@@ -329,7 +336,15 @@ private:
 	template<typename InputSphereType>
 	bool sphere_is_on_free_plane(const InputSphereType& x) const
 	{
-		return (free_tangent_plane_id_==npos || halfspace_of_sphere(tangent_planes_[free_tangent_plane_id_].first, tangent_planes_[free_tangent_plane_id_].second, x)>-1);
+		if(free_tangent_plane_id_!=npos)
+		{
+			return (halfspace_of_sphere(tangent_planes_[free_tangent_plane_id_].first, tangent_planes_[free_tangent_plane_id_].second, x)>-1);
+		}
+		else
+		{
+			throw std::logic_error("Inappropriate checking if sphere is on free plane");
+			return false;
+		}
 	}
 
 	template<typename InputSphereType>
@@ -533,8 +548,8 @@ private:
 	SimpleSphere d1_tangent_sphere_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	bool has_valid_tangency_information_;
-	bool can_have_d2_;
 	std::size_t free_tangent_plane_id_;
+	bool can_have_d2_;
 	bool can_have_d3_;
 
 	std::size_t d2_id_;
