@@ -11,7 +11,6 @@
 #include "spheres_basic_operations.h"
 #include "spheres_tangent_plane.h"
 #include "spheres_tangent_sphere.h"
-#include "spheres_tangent_stick.h"
 
 namespace apollo
 {
@@ -38,11 +37,9 @@ public:
 				d1_(&(spheres_->at(d1_id_))),
 				d1_tangent_sphere_(d1_tangent_sphere),
 				tangent_planes_(construct_spheres_tangent_planes(*a_, *b_, *c_)),
-				tangent_stick_(tangent_planes_.empty() ? select_tangent_stick(*a_, *b_, *c_) : std::pair<const Sphere*, const Sphere*>(NULL, NULL)),
-				has_valid_tangency_information_(tangent_planes_.size()==2 || (tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)),
-				can_have_d2_(has_valid_tangency_information_),
+				can_have_d2_(tangent_planes_.size()==2),
 				free_tangent_plane_id_(select_free_tangent_plane_id(*a_, *b_, *c_, tangent_planes_, *d1_, d1_tangent_sphere_)),
-				can_have_d3_(has_valid_tangency_information_ && (!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0))),
+				can_have_d3_(!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0)),
 				d2_id_(npos),
 				d2_tangent_sphere_(SimpleSphere())
 	{
@@ -61,13 +58,13 @@ public:
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
 
-		if(!has_valid_tangency_information_)
-		{
-			std::clog << "Failed to aquire valid tangency information for the following 3 spheres:\n";
-			std::clog << "sphere radius " << a_->r << " center " << a_->x << " " << a_->y << " " << a_->z << "\n";
-			std::clog << "sphere radius " << b_->r << " center " << b_->x << " " << b_->y << " " << b_->z << "\n";
-			std::clog << "sphere radius " << c_->r << " center " << c_->x << " " << c_->y << " " << c_->z << "\n";
-		}
+//		if(tangent_planes_.size()!=2)
+//		{
+//			std::clog << "Failed to calculate valid tangent planes for the following 3 spheres:\n";
+//			std::clog << "sphere radius " << a_->r << " center " << a_->x << " " << a_->y << " " << a_->z << "\n";
+//			std::clog << "sphere radius " << b_->r << " center " << b_->x << " " << b_->y << " " << b_->z << "\n";
+//			std::clog << "sphere radius " << c_->r << " center " << c_->x << " " << c_->y << " " << c_->z << "\n";
+//		}
 	}
 
 	const Triple& abc_ids() const
@@ -348,21 +345,8 @@ private:
 					return false;
 				}
 			}
-			return true;
 		}
-		else if(tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)
-		{
-			if(!stick_intersects_sphere(*tangent_stick_.first, *tangent_stick_.second, x))
-			{
-				return false;
-			}
-			return true;
-		}
-		else
-		{
-			throw std::logic_error("Missing face tangency information");
-			return false;
-		}
+		return true;
 	}
 
 	template<typename InputSphereType>
@@ -379,35 +363,34 @@ private:
 			}
 			return true;
 		}
-		else if(tangent_stick_.first!=NULL && tangent_stick_.second!=NULL)
-		{
-			return stick_contains_sphere(*tangent_stick_.first, *tangent_stick_.second, x);
-		}
-		else
-		{
-			throw std::logic_error("Missing face tangency information");
-			return false;
-		}
+		return true;
 	}
 
 	template<typename InputSphereType>
 	bool sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(const InputSphereType& x) const
 	{
-		const double expansion_radius=std::max(a_->r, std::max(b_->r, c_->r))*((d2_id_==npos) ? 2 : 1);
-		const SimpleSphere expanded_d1_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d1_tangent_sphere_, d1_tangent_sphere_.r+expansion_radius);
-		if(sphere_intersects_sphere(x, expanded_d1_tangent_sphere))
+		if(can_have_d2_)
 		{
-			if(d2_id_==npos)
+			const double expansion_radius=std::max(a_->r, std::max(b_->r, c_->r))*((d2_id_==npos) ? 2 : 1);
+			const SimpleSphere expanded_d1_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d1_tangent_sphere_, d1_tangent_sphere_.r+expansion_radius);
+			if(sphere_intersects_sphere(x, expanded_d1_tangent_sphere))
 			{
-				return true;
+				if(d2_id_==npos)
+				{
+					return true;
+				}
+				else
+				{
+					const SimpleSphere expanded_d2_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d2_tangent_sphere_, d2_tangent_sphere_.r+expansion_radius);
+					return sphere_intersects_sphere(x, expanded_d2_tangent_sphere);
+				}
 			}
-			else
-			{
-				const SimpleSphere expanded_d2_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d2_tangent_sphere_, d2_tangent_sphere_.r+expansion_radius);
-				return sphere_intersects_sphere(x, expanded_d2_tangent_sphere);
-			}
+			return false;
 		}
-		return false;
+		else
+		{
+			return true;
+		}
 	}
 
 	void die_if_invalid_d2()
@@ -540,7 +523,6 @@ private:
 	const Sphere* d1_;
 	SimpleSphere d1_tangent_sphere_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
-	std::pair<const Sphere*, const Sphere*> tangent_stick_;
 	bool has_valid_tangency_information_;
 	bool can_have_d2_;
 	std::size_t free_tangent_plane_id_;
