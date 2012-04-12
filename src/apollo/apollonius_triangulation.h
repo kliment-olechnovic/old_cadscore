@@ -360,17 +360,24 @@ private:
 					{
 						Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 						std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-						if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
+						if(!tangents.empty() && hierarchy.find_any_collision(tangents.front()).empty())
 						{
 							for(int i=0;i<4;i++)
 							{
-								result.push_back(Face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front()));
+								const Face face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front());
+								if(!face.rejectable())
+								{
+									result.push_back(face);
+								}
 							}
-							if(MonitoringLevel==1)
+							if(!result.empty())
 							{
-								std::clog << "brute " << tries_before_success << "\n";
+								if(MonitoringLevel==1)
+								{
+									std::clog << "brute " << tries_before_success << "\n";
+								}
+								return result;
 							}
-							return result;
 						}
 						else
 						{
