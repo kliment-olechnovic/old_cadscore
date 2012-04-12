@@ -83,10 +83,14 @@ public:
 								else
 								{
 									const std::size_t candidate_id=produced_face.d1_id();
-									const std::pair<bool, SimpleSphere> candidate_tangent_sphere=stack[sm_it->second].check_candidate_for_d2(candidate_id);
-									if(candidate_tangent_sphere.first)
+									Face& stacked_face=stack[sm_it->second];
+									if(candidate_id!=stacked_face.d1_id())
 									{
-										stack[sm_it->second].set_d2_and_unset_d3(candidate_id, candidate_tangent_sphere.second);
+										const std::pair<bool, SimpleSphere> candidate_tangent_sphere=stacked_face.check_candidate_for_d2(candidate_id);
+										if(candidate_tangent_sphere.first)
+										{
+											stacked_face.set_d2_and_unset_d3(candidate_id, candidate_tangent_sphere.second);
+										}
 									}
 								}
 							}
