@@ -151,7 +151,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d3(const InputSphereType& x) const
 	{
-		return (can_have_d3_ && sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(x) && sphere_may_contain_inner_sphere(x));
+		return (can_have_d3_ && (!can_have_d2_ || (sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(x) && sphere_may_contain_inner_sphere(x))));
 	}
 
 	std::pair<bool, std::vector<SimpleSphere> > check_candidate_for_d3(const std::size_t d3_id) const
@@ -159,8 +159,7 @@ public:
 		if(can_have_d3_ && d3_id!=npos && d3_id!=d1_id_ && d3_id!=d2_id_ && !abc_ids_.contains(d3_id))
 		{
 			const Sphere& d3=spheres_->at(d3_id);
-			if(sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(d3)
-					&& sphere_is_inner(d3)
+			if((!can_have_d2_ || (sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(d3) && sphere_is_inner(d3)))
 					&& !sphere_intersects_sphere(d1_tangent_sphere_, d3)
 					&& (d2_id_==npos || !sphere_intersects_sphere(d2_tangent_sphere_, d3)))
 			{
@@ -345,8 +344,13 @@ private:
 					return false;
 				}
 			}
+			return true;
 		}
-		return true;
+		else
+		{
+			throw std::logic_error("Inappropriate checking if sphere may contain inner sphere");
+			return false;
+		}
 	}
 
 	template<typename InputSphereType>
@@ -363,13 +367,17 @@ private:
 			}
 			return true;
 		}
-		return true;
+		else
+		{
+			throw std::logic_error("Inappropriate checking if sphere is inner");
+			return false;
+		}
 	}
 
 	template<typename InputSphereType>
 	bool sphere_intersects_the_expanded_d1_and_d2_tangent_spheres(const InputSphereType& x) const
 	{
-		if(can_have_d2_)
+		if(tangent_planes_.size()==2)
 		{
 			const double expansion_radius=std::max(a_->r, std::max(b_->r, c_->r))*((d2_id_==npos) ? 2 : 1);
 			const SimpleSphere expanded_d1_tangent_sphere=custom_sphere_from_point<SimpleSphere>(d1_tangent_sphere_, d1_tangent_sphere_.r+expansion_radius);
@@ -389,7 +397,8 @@ private:
 		}
 		else
 		{
-			return true;
+			throw std::logic_error("Inappropriate checking if sphere intersects the expanded d1 and d2 tangent spheres");
+			return false;
 		}
 	}
 
