@@ -84,7 +84,7 @@ public:
 								{
 									const std::size_t candidate_id=produced_face.d1_id();
 									Face& stacked_face=stack[sm_it->second];
-									if(candidate_id!=stacked_face.d1_id())
+									if(candidate_id!=stacked_face.d1_id() && stacked_face.d2_id()==Face::npos)
 									{
 										const std::pair<bool, SimpleSphere> candidate_tangent_sphere=stacked_face.check_candidate_for_d2(candidate_id);
 										if(candidate_tangent_sphere.first)
