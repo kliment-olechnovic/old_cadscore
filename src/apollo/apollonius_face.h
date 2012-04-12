@@ -33,10 +33,10 @@ public:
 				a_(&(spheres_->at(abc_ids_.get(0)))),
 				b_(&(spheres_->at(abc_ids_.get(1)))),
 				c_(&(spheres_->at(abc_ids_.get(2)))),
+				tangent_planes_(construct_spheres_tangent_planes(*a_, *b_, *c_)),
 				d1_id_(d1_id),
 				d1_(&(spheres_->at(d1_id_))),
 				d1_tangent_sphere_(d1_tangent_sphere),
-				tangent_planes_(construct_spheres_tangent_planes(*a_, *b_, *c_)),
 				free_tangent_plane_id_(select_free_tangent_plane_id(*a_, *b_, *c_, tangent_planes_, *d1_, d1_tangent_sphere_)),
 				can_have_d2_(tangent_planes_.size()==2 && free_tangent_plane_id_!=npos),
 				can_have_d3_(!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0)),
@@ -543,11 +543,10 @@ private:
 	const Sphere* a_;
 	const Sphere* b_;
 	const Sphere* c_;
+	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	std::size_t d1_id_;
 	const Sphere* d1_;
 	SimpleSphere d1_tangent_sphere_;
-	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
-	bool has_valid_tangency_information_;
 	std::size_t free_tangent_plane_id_;
 	bool can_have_d2_;
 	bool can_have_d3_;
