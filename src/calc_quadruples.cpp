@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 #include "protein/atom.h"
 
@@ -53,7 +54,14 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 		std::cout << "Tangent spheres count: " << tangent_spheres_count << "\n";
 	}
 
+	typedef std::map< Apollo::QuadruplesMap::key_type, Apollo::QuadruplesMap::mapped_type > QuadruplesSortedMap;
+	QuadruplesSortedMap quadruples_sorted_map;
 	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+	{
+		quadruples_sorted_map.insert(*it);
+	}
+
+	for(QuadruplesSortedMap::const_iterator it=quadruples_sorted_map.begin();it!=quadruples_sorted_map.end();++it)
 	{
 		std::cout << "\n";
 		const apollo::Quadruple& q=it->first;
