@@ -369,7 +369,7 @@ private:
 							for(int i=0;i<4;i++)
 							{
 								const Face face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front());
-								if(!face.rejectable())
+								if(face.valid())
 								{
 									result.push_back(face);
 								}
