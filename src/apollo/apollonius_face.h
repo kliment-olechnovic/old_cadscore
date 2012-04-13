@@ -41,32 +41,19 @@ public:
 				can_have_d2_(tangent_planes_.size()==2 && free_tangent_plane_id_!=npos),
 				can_have_d3_(!equal(a_->r, 0) || !equal(b_->r, 0) || !equal(c_->r, 0)),
 				d2_id_(npos),
-				d2_tangent_sphere_(SimpleSphere())
+				d2_tangent_sphere_(SimpleSphere()),
+				valid_(!(tangent_planes_.size()==2 && free_tangent_plane_id_==npos))
 	{
-		if(abc_ids_.has_repetetions())
-		{
-			throw std::logic_error("Invalid abc IDs");
-		}
+	}
 
-		if(abc_ids_.contains(d1_id_))
-		{
-			throw std::logic_error("Invalid d1 ID");
-		}
-
-		if(!check_spheres_tangent(*a_, *b_, *c_, *d1_, d1_tangent_sphere_))
-		{
-			throw std::logic_error("Invalid d1 tangent sphere");
-		}
+	const bool valid() const
+	{
+		return valid_;
 	}
 
 	const Triple& abc_ids() const
 	{
 		return abc_ids_;
-	}
-
-	bool defined_tangent_planes() const
-	{
-		return (tangent_planes_.size()==2);
 	}
 
 	std::size_t d1_id() const
@@ -77,16 +64,6 @@ public:
 	const SimpleSphere& d1_tangent_sphere() const
 	{
 		return d1_tangent_sphere_;
-	}
-
-	bool defined_free_tangent_plane() const
-	{
-		return (free_tangent_plane_id_!=npos);
-	}
-
-	bool rejectable() const
-	{
-		return (defined_tangent_planes() && !defined_free_tangent_plane());
 	}
 
 	const bool can_have_d2() const
@@ -264,7 +241,7 @@ public:
 						Triple(abc_ids_.exclude(i), d2_id_),
 						abc_ids_.get(i),
 						d2_tangent_sphere_);
-				if(!child.rejectable())
+				if(child.valid())
 				{
 					children.push_back(child);
 				}
@@ -280,7 +257,7 @@ public:
 						Triple(abc_ids_.exclude(i), d3_id),
 						abc_ids_.get(i),
 						d3_tangent_spheres.front());
-				if(!child.rejectable())
+				if(child.valid())
 				{
 					children.push_back(child);
 				}
@@ -558,6 +535,8 @@ private:
 	std::size_t d2_id_;
 	SimpleSphere d2_tangent_sphere_;
 	std::map< std::size_t, std::vector<SimpleSphere> > d3_ids_and_tangent_spheres_;
+
+	bool valid_;
 };
 
 }
