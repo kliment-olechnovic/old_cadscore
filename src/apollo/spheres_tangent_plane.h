@@ -17,7 +17,7 @@ inline bool check_spheres_tangent_plane(const InputSphereTypeA& s1, const InputS
 	const SimplePoint sp3=custom_point_from_object<SimplePoint>(s3);
 	const SimplePoint t=custom_point_from_object<SimplePoint>(tangent_plane_normal);
 	return (equal( (((sp2+t*s2.r)-(sp1+t*s1.r)) * t), 0 ) &&
-			equal( (((sp3+t*s3.r)-(sp1+t*s1.r)) * t), 0));
+			equal( (((sp3+t*s3.r)-(sp1+t*s1.r)) * t), 0 ));
 }
 
 template<typename OutputPointType, typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
@@ -78,7 +78,7 @@ inline std::vector<OutputPointType> construct_spheres_tangent_planes_normals(con
 		const double z=zs[i];
 		const double permuted_candidate[3]={c0+z*cz, b0+z*bz, z};
 		const OutputPointType candidate=custom_point<OutputPointType>(permuted_candidate[reverse_permutation[0]], permuted_candidate[reverse_permutation[1]], permuted_candidate[reverse_permutation[2]]);
-//		if(check_spheres_tangent_plane(sm, s1, s2, candidate))
+		if(check_spheres_tangent_plane(sm, s1, s2, candidate))
 		{
 			results.push_back(candidate);
 		}
