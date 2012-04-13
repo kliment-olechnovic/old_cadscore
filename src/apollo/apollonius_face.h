@@ -57,14 +57,6 @@ public:
 		{
 			throw std::logic_error("Invalid d1 tangent sphere");
 		}
-
-//		if(tangent_planes_.size()!=2)
-//		{
-//			std::clog << "Failed to calculate valid tangent planes for the following 3 spheres:\n";
-//			std::clog << "sphere radius " << a_->r << " center " << a_->x << " " << a_->y << " " << a_->z << "\n";
-//			std::clog << "sphere radius " << b_->r << " center " << b_->x << " " << b_->y << " " << b_->z << "\n";
-//			std::clog << "sphere radius " << c_->r << " center " << c_->x << " " << c_->y << " " << c_->z << "\n";
-//		}
 	}
 
 	const Triple& abc_ids() const
@@ -320,13 +312,6 @@ private:
 			}
 			else if(h0==-1 && h1==-1)
 			{
-//				std::clog << "color 1 1 0\n";
-//				std::clog << "sphere radius " << a.r << " center " << a.x << " " << a.y << " " << a.z << " quality 3\n";
-//				std::clog << "sphere radius " << b.r << " center " << b.x << " " << b.y << " " << b.z << " quality 3\n";
-//				std::clog << "sphere radius " << c.r << " center " << c.x << " " << c.y << " " << c.z << " quality 3\n";
-//				std::clog << "color 1 0 0\n";
-//				std::clog << "sphere radius " << d1.r << " center " << d1.x << " " << d1.y << " " << d1.z << " quality 3\n";
-//				std::clog << "scale " << d1.x << " " << d1.y << " " << d1.z << " 2\n\n";
 				return npos;
 			}
 			else
