@@ -53,8 +53,8 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 	std::string radius_members_file_name="";
 	if(clo.isopt("--radius-classes") || clo.isopt("--radius-members"))
 	{
-		std::string radius_classes_file_name=clo.arg<std::string>("--radius-classes");
-		std::string radius_members_file_name=clo.arg<std::string>("--radius-members");
+		radius_classes_file_name=clo.arg<std::string>("--radius-classes");
+		radius_members_file_name=clo.arg<std::string>("--radius-members");
 	}
 
 	const bool include_heteroatoms=clo.isopt("--HETATM");
