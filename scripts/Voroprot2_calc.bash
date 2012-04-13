@@ -9,6 +9,7 @@ $0 options:
   -h    show this message and exit
   -f    path to input file in PBD format
   -l    flag to include heteroatoms (optional)
+  -v    path to atomic radii files directory (optional)
   -a    flag to print atoms (optional)
   -q    flag to print quadruples (optional)
   -c    flag to print inter-atom contacts (optional)
@@ -33,12 +34,13 @@ fi
 
 MODEL_FILE=""
 HETATM_FLAG=""
+RADII_OPTION=""
 PRINT_ATOMS=false
 QUADRUPLES=false
 INTER_ATOM_CONTACTS=false
 INTER_RESIDUE_CONTACTS=false
 
-while getopts "hf:laqcr" OPTION
+while getopts "hf:lv:aqcr" OPTION
 do
   case $OPTION in
     h)
@@ -50,6 +52,9 @@ do
       ;;
     l)
       HETATM_FLAG="--HETATM"
+      ;;
+    v)
+      RADII_OPTION="--radius-classes $OPTARG/vdwr_classes.txt --radius-members $OPTARG/vdwr_members.txt"
       ;;
     a)
       PRINT_ATOMS=true
@@ -83,20 +88,20 @@ fi
 
 if $PRINT_ATOMS
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION
 fi
 
 if $QUADRUPLES
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | $VOROPROT --mode calc-quadruples
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-quadruples
 fi
 
 if $INTER_ATOM_CONTACTS
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | $VOROPROT --mode calc-inter-atom-contacts
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts
 fi
 
 if $INTER_RESIDUE_CONTACTS
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode calc-inter-residue-contacts
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode calc-inter-residue-contacts
 fi
