@@ -54,7 +54,7 @@ do
       HETATM_FLAG="--HETATM"
       ;;
     v)
-      RADII_OPTION="--radius-classes $OPTARG/vdwr_classes.txt --radius-members $OPTARG/vdwr_members.txt"
+      RADII_OPTION="--radius-classes $OPTARG/vdwr_classes --radius-members $OPTARG/vdwr_members"
       ;;
     a)
       PRINT_ATOMS=true

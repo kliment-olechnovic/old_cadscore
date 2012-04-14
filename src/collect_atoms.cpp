@@ -20,7 +20,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 	std::istream* radius_classes_stream=0;
 	if(radius_classes_file_name.empty())
 	{
-		radius_classes_stream=new std::istringstream(std::string(reinterpret_cast<const char*>(vdwr_classes_txt), vdwr_classes_txt_len));
+		radius_classes_stream=new std::istringstream(std::string(reinterpret_cast<const char*>(vdwr_classes), vdwr_classes_len));
 	}
 	else
 	{
@@ -30,7 +30,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 	std::istream* radius_members_stream=0;
 	if(radius_members_file_name.empty())
 	{
-		radius_members_stream=new std::istringstream(std::string(reinterpret_cast<const char*>(vdwr_members_txt), vdwr_members_txt_len));
+		radius_members_stream=new std::istringstream(std::string(reinterpret_cast<const char*>(vdwr_members), vdwr_members_len));
 	}
 	else
 	{
