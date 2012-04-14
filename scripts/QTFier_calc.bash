@@ -8,6 +8,7 @@ $0 options:
 
   -h    show this message and exit
   -f    path to input file in PBD format
+  -l    flag to include heteroatoms (optional)
   
 Note: $0 needs QTFier application
       (http://voronoi.hanyang.ac.kr/software.htm#QTfier)
@@ -32,8 +33,9 @@ then
 fi
 
 INPUT_FILE=""
+LINES_PATTERN='^ATOM'
 
-while getopts "hf:" OPTION
+while getopts "hf:l" OPTION
 do
   case $OPTION in
     h)
@@ -42,6 +44,9 @@ do
       ;;
     f)
       INPUT_FILE=$OPTARG
+      ;;
+    l)
+      LINES_PATTERN='^ATOM|^HETATM'
       ;;
     ?)
       exit 1
@@ -59,7 +64,7 @@ TEMP_FILE=$(mktemp)
 rm $TEMP_FILE
 TEMP_INPUT_FILE="$TEMP_FILE.pdb"
 TEMP_INPUT_FILE_BASE=$(basename $TEMP_INPUT_FILE .pdb)
-cat $INPUT_FILE | egrep '^ATOM' > $TEMP_INPUT_FILE
+cat $INPUT_FILE | egrep $LINES_PATTERN > $TEMP_INPUT_FILE
 
 TEMP_OUTPUT_DIR="$(mktemp -d)/"
 TEMP_OUTPUT_FILE="$TEMP_OUTPUT_DIR$TEMP_INPUT_FILE_BASE.a.qtf"
