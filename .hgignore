@@ -3,3 +3,5 @@ syntax: regexp
 ^Release$
 syntax: regexp
 ^scripts/voroprot2$
+syntax: regexp
+^scripts/QTFier$
