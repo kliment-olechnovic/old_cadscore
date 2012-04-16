@@ -36,12 +36,13 @@ MODEL_FILE=""
 HETATM_FLAG=""
 RADII_OPTION=""
 EPSILON_OPTION=""
+BSI_OPTION=""
 PRINT_ATOMS=false
 QUADRUPLES=false
 INTER_ATOM_CONTACTS=false
 INTER_RESIDUE_CONTACTS=false
 
-while getopts "hf:lv:e:aqcr" OPTION
+while getopts "hf:lv:e:b:aqcr" OPTION
 do
   case $OPTION in
     h)
@@ -59,6 +60,9 @@ do
       ;;
     e)
       EPSILON_OPTION="--epsilon $OPTARG"
+      ;;
+    b)
+      BSI_OPTION="--bsi-radius $OPTARG"
       ;;
     a)
       PRINT_ATOMS=true
@@ -97,7 +101,7 @@ fi
 
 if $QUADRUPLES
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-quadruples $EPSILON_OPTION
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-quadruples $EPSILON_OPTION $BSI_OPTION
 fi
 
 if $INTER_ATOM_CONTACTS
