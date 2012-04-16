@@ -5,3 +5,5 @@ syntax: regexp
 ^scripts/voroprot2$
 syntax: regexp
 ^scripts/QTFier$
+syntax: regexp
+^cadscore\.tar\.gz$
