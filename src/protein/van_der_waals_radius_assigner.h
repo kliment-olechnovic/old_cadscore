@@ -38,7 +38,7 @@ public:
 
 		std::vector<std::string> atom_patterns;
 		atom_patterns.push_back(atom);
-		for(std::size_t i=0;i<atom.size();i++)//TODO decide if i should start from 1
+		for(std::size_t i=0;i<atom.size();i++)
 		{
 			atom_patterns.push_back(atom.substr(0, atom.size()-i)+any);
 		}
