@@ -14,7 +14,7 @@ EOF
 
 SCRIPT_DIRECTORY=$(dirname $0)
 
-VOROPROT_CALC_SCRIPT="$SCRIPT_DIRECTORY/Voroprot2_calc.bash"
+VOROPROT_CALC_SCRIPT="$SCRIPT_DIRECTORY/../../../scripts/Voroprot2_calc.bash"
 if [ ! -f "$VOROPROT_CALC_SCRIPT" ]
 then
   echo "Fatal error: '$VOROPROT_CALC_SCRIPT' executable not found" 1>&2
@@ -67,7 +67,7 @@ DATA_FILE_NAME="$TEMP_FILE_NAME.data"
 TIME_FILE_NAME="$TEMP_FILE_NAME.time"
 LOG_FILE_NAME="$TEMP_FILE_NAME.log"
 
-( time -p ( ( $VOROPROT_CALC_SCRIPT -f "$MODEL_FILE" -q -v $SCRIPT_DIRECTORY/../resources/simplified 2> $LOG_FILE_NAME | head -3 ) > $DATA_FILE_NAME ) ) 2> $TIME_FILE_NAME
+( time -p ( ( $VOROPROT_CALC_SCRIPT -f "$MODEL_FILE" -q -v $SCRIPT_DIRECTORY/../resources 2> $LOG_FILE_NAME | head -3 ) > $DATA_FILE_NAME ) ) 2> $TIME_FILE_NAME
 cat $DATA_FILE_NAME | egrep '^Atoms|^Tangent' | sed 's/Atoms count:/voroprot2_atoms/' | sed 's/Tangent spheres count:/voroprot2_vertices/'
 cat $TIME_FILE_NAME | egrep '^user' | sed 's/user/voroprot2_time/'
 cat $LOG_FILE_NAME | sed 's/^/#voroprot2_log /'
