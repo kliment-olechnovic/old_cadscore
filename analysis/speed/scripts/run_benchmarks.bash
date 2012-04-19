@@ -28,6 +28,9 @@ fi
 cat $INPUT_IDS_LIST_FILE | while read PDB_ID
 do
   INPUT_FILE="$PDB_DIR/pdb$PDB_ID.ent"
-  OUTPUT_FILE="$OUTPUT_DIR/$PDB_ID"
-  timeout 300s $BENCHMARK_CALC_SCRIPT -f "$INPUT_FILE" > "$OUTPUT_FILE"
+  if [ -f "$INPUT_FILE" ]
+  then
+    OUTPUT_FILE="$OUTPUT_DIR/$PDB_ID"
+    timeout 300s $BENCHMARK_CALC_SCRIPT -f "$INPUT_FILE" > "$OUTPUT_FILE"
+  fi
 done
