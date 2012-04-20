@@ -9,3 +9,5 @@ syntax: regexp
 ^analysis/speed/scripts/QTFier$
 syntax: regexp
 ^analysis/speed/output$
+syntax: regexp
+^analysis/speed/plots$
