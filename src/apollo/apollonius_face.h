@@ -209,13 +209,19 @@ public:
 		d3_ids_and_tangent_spheres_.clear();
 	}
 
-	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples() const
+	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruple_with_d2() const
 	{
 		std::vector< std::pair<Quadruple, SimpleSphere> > children;
 		if(d2_id_!=npos)
 		{
 			children.push_back(std::make_pair(Quadruple(abc_ids_, d2_id_), d2_tangent_sphere_));
 		}
+		return children;
+	}
+
+	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples_with_d3() const
+	{
+		std::vector< std::pair<Quadruple, SimpleSphere> > children;
 		for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
 		{
 			const std::size_t d3_id=it->first;
@@ -228,7 +234,7 @@ public:
 		return children;
 	}
 
-	std::vector<ApolloniusFace> produce_faces() const
+	std::vector<ApolloniusFace> produce_faces_with_d2() const
 	{
 		std::vector<ApolloniusFace> children;
 		if(d2_id_!=npos)
@@ -245,6 +251,12 @@ public:
 				}
 			}
 		}
+		return children;
+	}
+
+	std::vector<ApolloniusFace> produce_faces_with_d3() const
+	{
+		std::vector<ApolloniusFace> children;
 		for(ContainerForD3::const_iterator it=d3_ids_and_tangent_spheres_.begin();it!=d3_ids_and_tangent_spheres_.end();it++)
 		{
 			const std::size_t d3_id=it->first;
