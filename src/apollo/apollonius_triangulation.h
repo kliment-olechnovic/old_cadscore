@@ -46,50 +46,75 @@ public:
 				stack_map.erase(face.abc_ids());
 				{
 					const bool found_d2=(face.d2_id()==Face::npos) && face.can_have_d2() && find_valid_d2(hierarchy, face);
-					const bool found_d3=enable_searching_for_d3 && face.can_have_d3() && find_valid_d3(hierarchy, face);
+					const bool found_d3=enable_searching_for_d3 && face.d3_ids_and_tangent_spheres().empty() && face.can_have_d3() && find_valid_d3(hierarchy, face);
 					if(found_d2 || found_d3)
 					{
-						const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples();
-						for(std::size_t i=0;i<produced_quadruples.size();i++)
+						std::vector< std::vector< std::pair<Quadruple, SimpleSphere> > > all_produced_quadruples;
+						if(found_d2)
 						{
-							const Quadruple& quadruple=produced_quadruples[i].first;
-							const SimpleSphere& quadruple_tangent_sphere=produced_quadruples[i].second;
-							QuadruplesMap::iterator qm_it=quadruples_map.find(quadruple);
-							if(qm_it==quadruples_map.end())
-							{
-								quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
-							}
-							else
-							{
-								std::vector<SimpleSphere>& quadruple_tangent_spheres_list=qm_it->second;
-								if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere))
-								{
-									quadruple_tangent_spheres_list.push_back(quadruple_tangent_sphere);
-								}
-							}
+							all_produced_quadruples.push_back(face.produce_quadruple_with_d2());
 						}
-						const std::vector<Face> produced_faces=face.produce_faces();
-						for(std::size_t i=0;i<produced_faces.size();i++)
+						if(found_d3)
 						{
-							const Face& produced_face=produced_faces[i];
-							if(processed_triples.count(produced_face.abc_ids())==0)
+							all_produced_quadruples.push_back(face.produce_quadruples_with_d3());
+						}
+						for(std::size_t l=0;l<all_produced_quadruples.size();l++)
+						{
+							const std::vector< std::pair<Quadruple, SimpleSphere> >& produced_quadruples=all_produced_quadruples[l];
+							for(std::size_t i=0;i<produced_quadruples.size();i++)
 							{
-								std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor>::const_iterator sm_it=stack_map.find(produced_faces[i].abc_ids());
-								if(sm_it==stack_map.end())
+								const Quadruple& quadruple=produced_quadruples[i].first;
+								const SimpleSphere& quadruple_tangent_sphere=produced_quadruples[i].second;
+								QuadruplesMap::iterator qm_it=quadruples_map.find(quadruple);
+								if(qm_it==quadruples_map.end())
 								{
-									stack_map[produced_face.abc_ids()]=stack.size();
-									stack.push_back(produced_face);
+									quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
 								}
 								else
 								{
-									const std::size_t candidate_id=produced_face.d1_id();
-									Face& stacked_face=stack[sm_it->second];
-									if(candidate_id!=stacked_face.d1_id() && stacked_face.d2_id()==Face::npos)
+									std::vector<SimpleSphere>& quadruple_tangent_spheres_list=qm_it->second;
+									if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere))
 									{
-										const std::pair<bool, SimpleSphere> candidate_tangent_sphere=stacked_face.check_candidate_for_d2(candidate_id);
-										if(candidate_tangent_sphere.first)
+										quadruple_tangent_spheres_list.push_back(quadruple_tangent_sphere);
+									}
+								}
+							}
+						}
+
+						std::vector< std::vector<Face> > all_produced_faces;
+						if(found_d2)
+						{
+							all_produced_faces.push_back(face.produce_faces_with_d2());
+						}
+						if(found_d3)
+						{
+							all_produced_faces.push_back(face.produce_faces_with_d3());
+						}
+						for(std::size_t l=0;l<all_produced_faces.size();l++)
+						{
+							const std::vector<Face>& produced_faces=all_produced_faces[l];
+							for(std::size_t i=0;i<produced_faces.size();i++)
+							{
+								const Face& produced_face=produced_faces[i];
+								if(processed_triples.count(produced_face.abc_ids())==0)
+								{
+									std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor>::const_iterator sm_it=stack_map.find(produced_faces[i].abc_ids());
+									if(sm_it==stack_map.end())
+									{
+										stack_map[produced_face.abc_ids()]=stack.size();
+										stack.push_back(produced_face);
+									}
+									else
+									{
+										const std::size_t candidate_id=produced_face.d1_id();
+										Face& stacked_face=stack[sm_it->second];
+										if(candidate_id!=stacked_face.d1_id() && stacked_face.d2_id()==Face::npos)
 										{
-											stacked_face.set_d2_and_unset_d3(candidate_id, candidate_tangent_sphere.second);
+											const std::pair<bool, SimpleSphere> candidate_tangent_sphere=stacked_face.check_candidate_for_d2(candidate_id);
+											if(candidate_tangent_sphere.first)
+											{
+												stacked_face.set_d2_and_unset_d3(candidate_id, candidate_tangent_sphere.second);
+											}
 										}
 									}
 								}
