@@ -248,12 +248,25 @@ private:
 		struct NodeChecker
 		{
 			const Face& face;
+			const bool constrained;
+			const SimpleSphere constraint_sphere;
 
-			NodeChecker(const Face& target) : face(target) {}
+			NodeChecker(const Face& target) :
+				face(target),
+				constrained(false)
+			{
+			}
+
+			NodeChecker(const Face& target, const double constraint_radius) :
+				face(target),
+				constrained(true),
+				constraint_sphere(constrained ? custom_sphere_from_point<SimpleSphere>(face.d1_tangent_sphere(), constraint_radius) : SimpleSphere())
+			{
+			}
 
 			bool operator()(const SimpleSphere& sphere) const
 			{
-				return face.sphere_may_contain_candidate_for_d2(sphere);
+				return ((!constrained || sphere_intersects_sphere(constraint_sphere, sphere)) && face.sphere_may_contain_candidate_for_d2(sphere));
 			}
 		};
 
@@ -423,9 +436,14 @@ private:
 	{
 		if(face.d2_id()==Face::npos)
 		{
-			typename checkers_for_any_d2::NodeChecker node_checker(face);
 			typename checkers_for_any_d2::LeafChecker leaf_checker(face);
-			hierarchy.search(node_checker, leaf_checker);
+			typename checkers_for_any_d2::NodeChecker node_checker_with_constraint(face, 0-face.d2_tangent_sphere().r);
+			hierarchy.search(node_checker_with_constraint, leaf_checker);
+			if(node_checker_with_constraint.constrained && face.d2_id()==Face::npos)
+			{
+				typename checkers_for_any_d2::NodeChecker node_checker_without_constraint(face);
+				hierarchy.search(node_checker_without_constraint, leaf_checker);
+			}
 		}
 		return (face.d2_id()!=Face::npos);
 	}
