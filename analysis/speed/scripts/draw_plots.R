@@ -1,17 +1,20 @@
 t=read.table("summary_table", header=TRUE, stringsAsFactors=FALSE);
-t=t[which(t$voroprot2_atoms==t$qtfier_atoms),];
+t=t[which(abs(t$voroprot2_atoms-t$qtfier_atoms)<30),];
 
 output_directory="plots";
 dir.create(output_directory);
 
-png(paste(output_directory, "/running_times.png", sep=""), height=5, width=7, units="in", res=600);
+ps=c(95, 100);
+qs=quantile(t$voroprot2_atoms, probs=ps/100, names=FALSE);
 
-qtfier_sel=order(t$qtfier_atoms);
-plot(x=t$qtfier_atoms[qtfier_sel], y=t$qtfier_time[qtfier_sel], type="p", lwd=1.5, pch=0, col="red", main="Running times", xlab="Atoms", ylab="Seconds");
-
-voroprot2_sel=order(t$voroprot2_atoms);
-points(x=t$voroprot2_atoms[voroprot2_sel], y=t$voroprot2_time[voroprot2_sel], type="p", lwd=1.5, pch=1, col="blue");
-
-legend(0, 200, c("Our algorithm", "QTFier"), pch=c(1,0), col=c("blue", "red"));
-
-dev.off();
+for(i in 1:length(ps))
+{
+	pv=ps[i];
+	qv=qs[i];
+	sel=which(t$voroprot2_atoms<=qv);
+	png(paste(output_directory, paste("/running_times_", length(sel), ".png", sep=""), sep=""), height=5, width=7, units="in", res=600);
+	plot(x=t$qtfier_atoms[sel], y=t$qtfier_time[sel], type="p", lwd=1.5, pch=0, col="red", main="", xlab="Atoms", ylab="Seconds");
+	points(x=t$voroprot2_atoms[sel], y=t$voroprot2_time[sel], type="p", lwd=1.5, pch=1, col="blue");
+	legend(0, max(t$qtfier_time[sel]), c("Our algorithm", "QTFier"), pch=c(1,0), col=c("blue", "red"));
+	dev.off();
+}
