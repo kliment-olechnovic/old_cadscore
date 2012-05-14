@@ -14,6 +14,7 @@ $0 options:
   -t    path to target file in PBD format
   -m    path to model file in PBD format
   -l    flag to include heteroatoms (optional)
+  -v    path to atomic radii files directory (optional)
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
   -o    max timeout (optional)
@@ -43,12 +44,13 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 HETATM_FLAG=""
+RADII_OPTION=""
 INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
 USE_TMSCORE=false
 
-while getopts "hD:t:m:lci:o:g" OPTION
+while getopts "hD:t:m:lv:ci:o:g" OPTION
 do
   case $OPTION in
     h)
@@ -66,6 +68,9 @@ do
       ;;
     l)
       HETATM_FLAG="--HETATM"
+      ;;
+    v)
+      RADII_OPTION="--radius-classes $OPTARG/vdwr_classes --radius-members $OPTARG/vdwr_members"
       ;;
     c)
       INTER_CHAIN_FLAG="--inter-chain"
@@ -128,7 +133,7 @@ SUMMARY_FILE="$MODEL_DIR/summary"
 TARGET_LOGS_FILE="$TARGET_DIR/target_logs"
 MODEL_LOGS_FILE="$MODEL_DIR/model_logs"
 
-TARGET_PARAMETERS="$HETATM_FLAG $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
+TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 if [ -f "$TARGET_PARAMETERS_FILE" ]
 then
   CURRENT_TARGET_PARAMETERS_FILE="$TARGET_PARAMETERS_FILE.current"
@@ -150,7 +155,7 @@ echo "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 ##################################################
 ### Preprocessing target
 
-test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE
+test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE
 if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the target" 1>&2 ; exit 1 ; fi
 
 test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE
@@ -162,7 +167,7 @@ if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no i
 ##################################################
 ### Preprocessing model
 
-test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
 if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the model" 1>&2 ; exit 1 ; fi
 
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
