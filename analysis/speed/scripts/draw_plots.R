@@ -31,14 +31,16 @@ vdsr=vds/t$voroprot2_vertices;
 
 options(scipen=5);
 
-png(paste(output_directory, "/vertices_differences.png", sep=""), height=3, width=10, units="in", res=600);
-par(mfrow=c(1,3));
+png(paste(output_directory, "/vertices_differences.png", sep=""), height=8, width=8, units="in", res=600);
+par(mfrow=c(2,2));
 plot(x=t$voroprot2_vertices, log="x", y=vds, ylim=c(0-60, 60), type="p", lwd=1.5, pch=19, cex=0.5, col=densCols(t$voroprot2_vertices, vdsr), main="", xlab="Voronoi vertices (logarithmic scale)", ylab="Difference");
 title(main="A", cex.main=2.5);
-plot(x=t$voroprot2_vertices, y=vdsr, ylim=c(0-0.005, 0.005), type="p", lwd=1.5, pch=19, cex=0.5, col=densCols(t$voroprot2_vertices, vdsr), main="", xlab="Voronoi vertices", ylab="Relative difference");
+hist(vds, breaks=seq(-86, 86, 4), xlim=c(0-60, 60), main="", xlab="Difference", col="red");
 title(main="B", cex.main=2.5);
-hist(vdsr, breaks=seq(-0.009, 0.009, 0.002/27), xlim=c(0-0.0015, 0.0015), main="", xlab="Relative difference", col="red");
+plot(x=t$voroprot2_vertices, y=vdsr, ylim=c(0-0.005, 0.005), type="p", lwd=1.5, pch=19, cex=0.5, col=densCols(t$voroprot2_vertices, vdsr), main="", xlab="Voronoi vertices", ylab="Relative difference");
 title(main="C", cex.main=2.5);
+hist(vdsr, breaks=seq(-0.009, 0.009, 0.002/27), xlim=c(0-0.0015, 0.0015), main="", xlab="Relative difference", col="red");
+title(main="D", cex.main=2.5);
 dev.off();
 
 png(paste(output_directory, "/vertices_differences_density.png", sep=""), height=5, width=7, units="in", res=600);
