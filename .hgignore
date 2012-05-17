@@ -4,10 +4,4 @@ syntax: regexp
 syntax: regexp
 ^scripts/voroprot2$
 syntax: regexp
-^cadscore\.tar\.gz$
-syntax: regexp
 ^analysis/speed/scripts/QTFier$
-syntax: regexp
-^analysis/speed/output$
-syntax: regexp
-^analysis/speed/plots$
