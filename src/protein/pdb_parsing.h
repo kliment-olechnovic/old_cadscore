@@ -1,6 +1,8 @@
 #ifndef PROTEIN_PDBPARSING_H_
 #define PROTEIN_PDBPARSING_H_
 
+#include <vector>
+
 #include "basic_parsing.h"
 #include "pdb_atom_record.h"
 
