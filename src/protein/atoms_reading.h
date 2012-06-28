@@ -22,7 +22,7 @@ public:
 			const bool include_water)
 	{
 		return collect_atoms_from_PDB_atom_records(
-				PDBParsing::read_PDB_atom_records_from_PDB_file_stream(pdb_file_stream),
+				read_PDB_atom_records_from_PDB_file_stream(pdb_file_stream),
 				include_heteroatoms,
 				include_water,
 				vdwr_assigner);
@@ -33,7 +33,7 @@ private:
 	{
 	}
 
-	static Atom atom_from_PDB_atom_record(const PDBParsing::AtomRecord& record, const VanDerWaalsRadiusAssigner& vdwr_assigner)
+	static Atom atom_from_PDB_atom_record(const PDBAtomRecord& record, const VanDerWaalsRadiusAssigner& vdwr_assigner)
 	{
 		Atom atom;
 		atom.chain_id=record.chain_name;
@@ -49,7 +49,7 @@ private:
 	}
 
 	static std::vector<Atom> collect_atoms_from_PDB_atom_records(
-			const std::vector<PDBParsing::AtomRecord>& PDB_atom_records,
+			const std::vector<PDBAtomRecord>& PDB_atom_records,
 			const bool include_heteroatoms,
 			const bool include_water,
 			const VanDerWaalsRadiusAssigner& vdwr_assigner)
@@ -57,7 +57,7 @@ private:
 		std::vector<Atom> atoms;
 		for(std::size_t i=0;i<PDB_atom_records.size();i++)
 		{
-			const PDBParsing::AtomRecord& record=PDB_atom_records[i];
+			const PDBAtomRecord& record=PDB_atom_records[i];
 			if(!record.name.empty() &&
 					record.name.find("H")!=0 &&
 					record.name.find("1H")!=0 &&
