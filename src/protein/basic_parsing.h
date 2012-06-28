@@ -2,7 +2,6 @@
 #define PROTEIN_BASIC_PARSING_H_
 
 #include <string>
-#include <vector>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -37,21 +36,21 @@ T safe_convert_string(const std::string& str, const T default_value)
 	}
 }
 
-std::string convert_int_to_string(const int value)
+inline std::string convert_int_to_string(const int value)
 {
 	std::ostringstream output;
 	output << value;
 	return output.str();
 }
 
-std::string convert_double_to_string(const double value, const int precision)
+inline std::string convert_double_to_string(const double value, const int precision)
 {
 	std::ostringstream output;
 	output << std::fixed << std::setprecision(precision) << value;
 	return output.str();
 }
 
-std::string substring_of_columned_file_line(const std::string& line, const int start, const int end)
+inline std::string substring_of_columned_file_line(const std::string& line, const int start, const int end)
 {
 	std::string extraction;
 	int line_length=static_cast<int>(line.size());
@@ -62,7 +61,7 @@ std::string substring_of_columned_file_line(const std::string& line, const int s
 	return extraction;
 }
 
-bool insert_string_to_columned_file_line(const std::string& str, const std::size_t start, const std::size_t end, const bool shift_right, std::string& line)
+inline bool insert_string_to_columned_file_line(const std::string& str, const std::size_t start, const std::size_t end, const bool shift_right, std::string& line)
 {
 	if(!str.empty() && start>=1 && start<=end && end<=line.size())
 	{
