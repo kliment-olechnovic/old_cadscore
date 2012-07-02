@@ -15,20 +15,27 @@ if(constraint_mode=="sd")
 {
   rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
 }
-if(constraint_mode=="sdall")
+if(constraint_mode=="sd_or")
 {
 	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
 	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
 	selection=union(selection, which(abs(rt$AA)>=sd(rt$AA)));
 	rt=rt[selection,];
 }
-if(constraint_mode=="sdgdt")
+if(constraint_mode=="sd_and")
+{
+	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
+	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
+	selection=intersect(selection, which(abs(rt$AA)>=sd(rt$AA)));
+	rt=rt[selection,];
+}
+if(constraint_mode=="sd_gdt")
 {
 	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
 	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
 	rt=rt[selection,];
 }
-if(constraint_mode=="sdcad")
+if(constraint_mode=="sd_cad")
 {
 	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
 	selection=which(abs(rt$AA)>=sd(rt$AA));
