@@ -11,21 +11,37 @@ rt=rt[which(rt$MolProbity!=0),];
 rt=rt[which(rt$GDT_TS!=0),];
 rt=rt[which(rt$SS!=0),];
 
-constraint_value=0;
 if(constraint_mode=="sd")
 {
-  constraint_value=sd(rt$MolProbity);
+  rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
+}
+if(constraint_mode=="sdall")
+{
+	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
+	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
+	selection=union(selection, which(abs(rt$AA)>=sd(rt$AA)));
+	rt=rt[selection,];
+}
+if(constraint_mode=="sdgdt")
+{
+	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
+	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
+	rt=rt[selection,];
+}
+if(constraint_mode=="sdcad")
+{
+	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
+	selection=which(abs(rt$AA)>=sd(rt$AA));
+	rt=rt[selection,];
 }
 if(constraint_mode=="0")
 {
-  constraint_value=0;
+  rt=rt[which(abs(rt$MolProbity)>=0),];
 }
 if(constraint_mode=="1")
 {
-  constraint_value=1;
+  rt=rt[which(abs(rt$MolProbity)>=1),];
 }
-
-rt=rt[which(abs(rt$MolProbity)>=constraint_value),];
 
 names=c("MP", "GDT", "AA", "AS", "SS");
 names=c(names, "MP and GDT", "MP and AA", "MP and AS", "MP and SS");
