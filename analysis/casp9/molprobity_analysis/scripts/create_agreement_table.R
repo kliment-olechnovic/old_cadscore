@@ -11,34 +11,38 @@ rt=rt[which(rt$MolProbity!=0),];
 rt=rt[which(rt$GDT_TS!=0),];
 rt=rt[which(rt$SS!=0),];
 
+sd_mp=sd(rt$MolProbity);
+sd_gdt=sd(rt$GDT_TS);
+sd_aa=sd(rt$AA);
+
 if(constraint_mode=="sd")
 {
-  rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
+  rt=rt[which(abs(rt$MolProbity)>=sd_mp),];
 }
 if(constraint_mode=="sd_or")
 {
-	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
-	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
-	selection=union(selection, which(abs(rt$AA)>=sd(rt$AA)));
+	rt=rt[which(abs(rt$MolProbity)>=sd_mp),];
+	selection=which(abs(rt$GDT_TS)>=sd_gdt);
+	selection=union(selection, which(abs(rt$AA)>=sd_aa));
 	rt=rt[selection,];
 }
 if(constraint_mode=="sd_and")
 {
-	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
-	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
-	selection=intersect(selection, which(abs(rt$AA)>=sd(rt$AA)));
+	rt=rt[which(abs(rt$MolProbity)>=sd_mp),];
+	selection=which(abs(rt$GDT_TS)>=sd_gdt);
+	selection=intersect(selection, which(abs(rt$AA)>=sd_aa));
 	rt=rt[selection,];
 }
 if(constraint_mode=="sd_gdt")
 {
-	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
-	selection=which(abs(rt$GDT_TS)>=sd(rt$GDT_TS));
+	rt=rt[which(abs(rt$MolProbity)>=sd_mp),];
+	selection=which(abs(rt$GDT_TS)>=sd_gdt);
 	rt=rt[selection,];
 }
 if(constraint_mode=="sd_cad")
 {
-	rt=rt[which(abs(rt$MolProbity)>=sd(rt$MolProbity)),];
-	selection=which(abs(rt$AA)>=sd(rt$AA));
+	rt=rt[which(abs(rt$MolProbity)>=sd_mp),];
+	selection=which(abs(rt$AA)>=sd_aa);
 	rt=rt[selection,];
 }
 if(constraint_mode=="0")
