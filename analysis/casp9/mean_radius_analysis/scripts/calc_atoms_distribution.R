@@ -1,5 +1,5 @@
 t=read.table("casp9_targets_atoms", header=FALSE, stringsAsFactors=FALSE);
-names=t[[5]];
+names=t[[2]];
 
 ss_sel=which(names!="N");
 ss_sel=intersect(ss_sel, which(names!="O"));
