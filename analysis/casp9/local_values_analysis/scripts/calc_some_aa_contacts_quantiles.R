@@ -1,4 +1,4 @@
-t=read.table("casp9_combined_contacts", header=FALSE);
+t=read.table("some_combined_aa_contacts", header=FALSE);
 
 ta=t[[2]];
 ma=t[[3]];
