@@ -16,6 +16,7 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOptions& clo);
+void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo);
 void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
@@ -42,6 +43,7 @@ int main(const int argc, const char** argv)
 		modes_map["calc-CAD-local-scores"]=ModeFunctionPointer(calc_contact_area_difference_local_scores);
 		modes_map["calc-CAD-global-scores"]=ModeFunctionPointer(calc_contact_area_difference_global_scores);
 		modes_map["calc-CAD-size-scores"]=ModeFunctionPointer(calc_contact_area_difference_size_scores);
+		modes_map["calc-hyperbolic-cells-faces"]=ModeFunctionPointer(calc_hyperbolic_cells_faces);
 		modes_map["summarize-dssp-file"]=ModeFunctionPointer(summarize_dssp_file);
 
 		if(modes_map.count(mode)==1)
