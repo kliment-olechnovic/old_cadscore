@@ -86,6 +86,18 @@ OutputPointType spheres_touching_point(const InputSphereTypeA& a, const InputSph
 	return custom_point_from_object<OutputPointType>(ap+((bp-ap).unit()*a.r));
 }
 
+template<typename OutputSphereType, typename InputSphereTypeA, typename InputSphereTypeB>
+OutputSphereType spheres_intersection_circle(const InputSphereTypeA& a, const InputSphereTypeB& b)
+{
+	const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
+	const SimplePoint bp=custom_point_from_object<SimplePoint>(b);
+	const SimplePoint cv=bp-ap;
+	const double cm=cv.module();
+	const double cos_g=(a.r*a.r+cm*cm-b.r*b.r)/(2*a.r*cm);
+	const double sin_g=sqrt(1-cos_g*cos_g);
+	return custom_sphere_from_point<OutputSphereType>(ap+(cv.unit()*(a.r*cos_g)), a.r*sin_g);
+}
+
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputSphereTypeC>
 int halfspace_of_sphere(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputSphereTypeC& x)
 {
