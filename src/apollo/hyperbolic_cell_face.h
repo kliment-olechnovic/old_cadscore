@@ -28,7 +28,8 @@ public:
 			const SphereType& b,
 			std::vector<const SphereType*> list_of_c,
 			const double probe,
-			const double step)
+			const double step,
+			const int projections)
 	{
 		intersection_circle_=SimpleSphere();
 		contour_.clear();
@@ -51,7 +52,7 @@ public:
 
 			for(std::size_t i=0;i<list_of_c.size() && !contour_.empty();i++)
 			{
-				update_contour(a, b, (*(list_of_c[i])), step, contour_);
+				update_contour(a, b, (*(list_of_c[i])), step, projections, contour_);
 			}
 		}
 		return (!contour_.empty());
@@ -75,6 +76,7 @@ private:
 			const SphereType& b,
 			const SphereType& c,
 			const double step,
+			const int projections,
 			Contour& contour)
 	{
 		{
@@ -153,7 +155,7 @@ private:
 				for(std::size_t j=0;j<intersection_iterators.size();j++)
 				{
 					SimplePoint& point=*(intersection_iterators[j].first);
-					for(int i=0;i<10;i++)
+					for(int i=0;i<projections;i++)
 					{
 						point=project_point_on_hyperboloid(point, b, c);
 						point=project_point_on_hyperboloid(point, a, c);
@@ -191,7 +193,7 @@ private:
 						for(double pos=step;pos<distance;pos+=step)
 						{
 							SimplePoint p=left_point+(direction*pos);
-							for(int i=0;i<10;i++)
+							for(int i=0;i<projections;i++)
 							{
 								p=project_point_on_hyperboloid(p, a, c);
 								p=project_point_on_hyperboloid(p, a, b);

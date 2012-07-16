@@ -71,6 +71,7 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
+	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--step", 5) : 5;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -95,7 +96,7 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 		}
 
 		CellFace cell_face;
-		cell_face.construct_contour(a, b, cs, probe_radius, step_length);
+		cell_face.construct_contour(a, b, cs, probe_radius, step_length, projections_count);
 		cells_faces.push_back(cell_face);
 
 		cells[it->first.get(0)].push_back(cells_faces.size()-1);
@@ -104,14 +105,13 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 
 	for(std::map<std::size_t, std::vector<std::size_t> >::const_iterator it=cells.begin();it!=cells.end();++it)
 	{
-		std::cout << "$" << it->first << "\n";
 		const protein::Atom& a=atoms[it->first];
+		std::cout << "$" << it->first << "\n";
+		print_sphere(a);
 		const std::vector<std::size_t>& faces=it->second;
 		for(std::size_t i=0;i<faces.size();i++)
 		{
 			print_contour(cells_faces[faces[i]].contour());
 		}
-		print_sphere(a);
-		print_sphere_scale(a);
 	}
 }
