@@ -29,16 +29,19 @@ void print_segment(const PointType& a, const PointType& b)
 template<typename ListOfPointsType>
 void print_contour(const ListOfPointsType& contour)
 {
-	for(typename ListOfPointsType::const_iterator it=contour.begin();it!=contour.end();++it)
+	if(!contour.empty())
 	{
-		typename ListOfPointsType::const_iterator jt=it;
-		++jt;
-		if(jt!=contour.end())
+		for(typename ListOfPointsType::const_iterator it=contour.begin();it!=contour.end();++it)
 		{
-			print_segment(*it, *jt);
+			typename ListOfPointsType::const_iterator jt=it;
+			++jt;
+			if(jt!=contour.end())
+			{
+				print_segment(*it, *jt);
+			}
 		}
+		print_segment(contour.back(), contour.front());
 	}
-	print_segment(contour.back(), contour.front());
 }
 
 template<typename SphereType>
@@ -76,6 +79,9 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
 	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
 
+	std::vector<CellFace> cells_faces;
+	std::map<std::size_t, std::vector<std::size_t> > cells;
+	cells_faces.reserve(pairs_neighbours_map.size());
 	for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const protein::Atom& a=atoms[it->first.get(0)];
@@ -88,15 +94,24 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 			cs.push_back(&(atoms[*jt]));
 		}
 
-		CellFace::Contour contour=CellFace::construct_contour(a, b, cs, probe_radius, step_length);
+		CellFace cell_face;
+		cell_face.construct_contour(a, b, cs, probe_radius, step_length);
+		cells_faces.push_back(cell_face);
 
-		if(!contour.empty())
+		cells[it->first.get(0)].push_back(cells_faces.size()-1);
+		cells[it->first.get(1)].push_back(cells_faces.size()-1);
+	}
+
+	for(std::map<std::size_t, std::vector<std::size_t> >::const_iterator it=cells.begin();it!=cells.end();++it)
+	{
+		std::cout << "$" << it->first << "\n";
+		const protein::Atom& a=atoms[it->first];
+		const std::vector<std::size_t>& faces=it->second;
+		for(std::size_t i=0;i<faces.size();i++)
 		{
-			std::cout << "$" << it->first.get(0) << "<->" << it->first.get(1) << "\n";
-			print_sphere(a);
-			print_sphere(b);
-			print_contour(contour);
-			print_sphere_scale(a);
+			print_contour(cells_faces[faces[i]].contour());
 		}
+		print_sphere(a);
+		print_sphere_scale(a);
 	}
 }
