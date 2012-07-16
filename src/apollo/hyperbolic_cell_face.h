@@ -77,6 +77,26 @@ private:
 			const double step,
 			Contour& contour)
 	{
+		{
+			std::size_t out_count=0;
+			for(Contour::const_iterator it=contour.begin();it!=contour.end();++it)
+			{
+				if(less(minimal_distance_from_point_to_sphere(*it, c), minimal_distance_from_point_to_sphere(*it, a)))
+				{
+					out_count++;
+				}
+			}
+			if(out_count==contour.size())
+			{
+				contour.clear();
+			}
+		}
+
+		if(contour.empty())
+		{
+			return;
+		}
+
 		std::deque< std::pair<Contour::iterator, bool> > intersection_iterators;
 
 		{
