@@ -16,8 +16,6 @@ namespace apollo
 class HyperbolicCellFace
 {
 public:
-	typedef std::list<SimplePoint> Contour;
-
 	HyperbolicCellFace()
 	{
 	}
@@ -32,79 +30,79 @@ public:
 			const int projections)
 	{
 		HyperbolicCellFace hcf;
-
+		std::list<SimplePoint> contour;
 		const SimpleSphere a_expanded=custom_sphere_from_point<SimpleSphere>(a, a.r+probe);
 		const SimpleSphere b_expanded=custom_sphere_from_point<SimpleSphere>(b, b.r+probe);
 		if(sphere_intersects_sphere(a_expanded, b_expanded))
 		{
 			hcf.intersection_circle_=spheres_intersection_circle<SimpleSphere>(a_expanded, b_expanded);
-
 			{
 				Rotation rotation(sub_of_points<SimplePoint>(b, a).unit(), 0);
-				const SimplePoint first_point=any_normal_of_vector(rotation.axis)*hcf.intersection_circle_.r;
+				const SimplePoint first_point=any_normal_of_vector<SimplePoint>(rotation.axis)*hcf.intersection_circle_.r;
 				const double angle_step=std::max(std::min(360*(step/(2*PI*hcf.intersection_circle_.r)), 60.0), 5.0);
 				for(;rotation.angle<360;rotation.angle+=angle_step)
 				{
-					hcf.contour_.push_back(custom_point_from_object<SimplePoint>(hcf.intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
+					contour.push_back(custom_point_from_object<SimplePoint>(hcf.intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
 				}
 			}
-
-			for(std::size_t i=0;i<list_of_c.size() && !hcf.contour_.empty();i++)
+			for(std::size_t i=0;i<list_of_c.size() && !contour.empty();i++)
 			{
-				update_contour(a, b, (*(list_of_c[i])), step, projections, hcf.contour_);
+				update_contour(a, b, (*(list_of_c[i])), step, projections, contour);
+			}
+			if(!contour.empty())
+			{
+				hcf.contour_points_.reserve(contour.size());
+				for(std::list<SimplePoint>::const_iterator it=contour.begin();it!=contour.end();++it)
+				{
+					hcf.contour_points_.push_back(*it);
+				}
 			}
 		}
 		return hcf;
 	}
 
-	Contour contour() const
+	std::vector<SimplePoint> contour_points() const
 	{
-		return contour_;
+		return contour_points_;
 	}
 
 private:
-	static SimplePoint any_normal_of_vector(const SimplePoint& a)
-	{
-		SimplePoint b=a;
-		if(!equal(b.x, 0.0)) { b.x=0.0-b.x; } else if(!equal(b.y, 0.0)) { b.y=0.0-b.y; } else { b.z=0.0-b.z; }
-		return (a&b).unit();
-	}
-
 	template<typename SphereType>
 	static void update_contour(const SphereType& a,
 			const SphereType& b,
 			const SphereType& c,
 			const double step,
 			const int projections,
-			Contour& contour)
+			std::list<SimplePoint>& contour)
 	{
+		if(contour.empty())
 		{
-			std::size_t out_count=0;
-			for(Contour::const_iterator it=contour.begin();it!=contour.end();++it)
+			return;
+		}
+
+		std::size_t out_count=0;
+		{
+			for(std::list<SimplePoint>::const_iterator it=contour.begin();it!=contour.end();++it)
 			{
 				if(less(minimal_distance_from_point_to_sphere(*it, c), minimal_distance_from_point_to_sphere(*it, a)))
 				{
 					out_count++;
 				}
 			}
-			if(out_count==contour.size())
-			{
-				contour.clear();
-			}
 		}
 
-		if(contour.empty())
+		if(out_count==contour.size())
 		{
+			contour.clear();
 			return;
 		}
 
-		std::deque< std::pair<Contour::iterator, bool> > intersection_iterators;
-
+		std::deque< std::pair<std::list<SimplePoint>::iterator, bool> > intersection_iterators;
 		{
-			Contour::iterator left_it=contour.begin();
+			std::list<SimplePoint>::iterator left_it=contour.begin();
 			while(left_it!=contour.end())
 			{
-				Contour::iterator right_it=left_it;
+				std::list<SimplePoint>::iterator right_it=left_it;
 				++right_it;
 				if(right_it==contour.end())
 				{
@@ -120,7 +118,7 @@ private:
 					if(pos>0.0)
 					{
 						const SimplePoint intersection_point=left_point+((right_point-left_point).unit()*pos);
-						Contour::iterator intersection_iterator=contour.insert(right_it, intersection_point);
+						std::list<SimplePoint>::iterator intersection_iterator=contour.insert(right_it, intersection_point);
 						intersection_iterators.push_back(std::make_pair(intersection_iterator, right_halfspace));
 					}
 				}
@@ -164,11 +162,11 @@ private:
 
 				for(std::size_t k=0;k<intersection_iterators.size();k+=2)
 				{
-					Contour::iterator first_intersection=intersection_iterators[k].first;
-					Contour::iterator second_intersection=intersection_iterators[k+1].first;
+					std::list<SimplePoint>::iterator first_intersection=intersection_iterators[k].first;
+					std::list<SimplePoint>::iterator second_intersection=intersection_iterators[k+1].first;
 
 					{
-						Contour::iterator it=first_intersection;
+						std::list<SimplePoint>::iterator it=first_intersection;
 						++it;
 						while(it!=second_intersection && it!=contour.end())
 						{
@@ -207,7 +205,7 @@ private:
 	}
 
 	SimpleSphere intersection_circle_;
-	Contour contour_;
+	std::vector<SimplePoint> contour_points_;
 };
 
 }

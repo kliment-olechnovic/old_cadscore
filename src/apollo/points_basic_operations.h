@@ -173,6 +173,15 @@ OutputPointType plane_normal_from_three_points(const InputPointTypeA& a, const I
 	return custom_point_from_object<OutputPointType>((ab&ac).unit());
 }
 
+template<typename OutputPointType, typename InputPointType>
+OutputPointType any_normal_of_vector(const InputPointType& p)
+{
+	SimplePoint a=custom_point_from_object<SimplePoint>(p);
+	SimplePoint b=a;
+	if(!equal(b.x, 0.0)) { b.x=0.0-b.x; } else if(!equal(b.y, 0.0)) { b.y=0.0-b.y; } else { b.z=0.0-b.z; }
+	return custom_point_from_object<OutputPointType>((a&b).unit());
+}
+
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
 double signed_distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
 {

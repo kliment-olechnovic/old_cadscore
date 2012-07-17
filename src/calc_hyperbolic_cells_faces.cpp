@@ -109,7 +109,7 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 		const std::vector<std::size_t>& faces=it->second;
 		for(std::size_t i=0;i<faces.size();i++)
 		{
-			print_contour(cells_faces[faces[i]].contour());
+			print_contour(cells_faces[faces[i]].contour_points());
 		}
 	}
 	print_sphere_scale(atoms[atoms.size()/2]);
