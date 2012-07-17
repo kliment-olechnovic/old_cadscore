@@ -67,11 +67,11 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--mode: --probe: --step:");
+	clo.check_allowed_options("--mode: --probe: --step: --projections:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
-	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--step", 5) : 5;
+	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -114,4 +114,5 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 			print_contour(cells_faces[faces[i]].contour());
 		}
 	}
+	print_sphere_scale(atoms[atoms.size()/2]);
 }
