@@ -23,7 +23,7 @@ public:
 	}
 
 	template<typename SphereType>
-	bool construct_contour(
+	static HyperbolicCellFace construct(
 			const SphereType& a,
 			const SphereType& b,
 			std::vector<const SphereType*> list_of_c,
@@ -31,31 +31,30 @@ public:
 			const double step,
 			const int projections)
 	{
-		intersection_circle_=SimpleSphere();
-		contour_.clear();
+		HyperbolicCellFace hcf;
 
 		const SimpleSphere a_expanded=custom_sphere_from_point<SimpleSphere>(a, a.r+probe);
 		const SimpleSphere b_expanded=custom_sphere_from_point<SimpleSphere>(b, b.r+probe);
 		if(sphere_intersects_sphere(a_expanded, b_expanded))
 		{
-			intersection_circle_=spheres_intersection_circle<SimpleSphere>(a_expanded, b_expanded);
+			hcf.intersection_circle_=spheres_intersection_circle<SimpleSphere>(a_expanded, b_expanded);
 
 			{
 				Rotation rotation(sub_of_points<SimplePoint>(b, a).unit(), 0);
-				const SimplePoint first_point=any_normal_of_vector(rotation.axis)*intersection_circle_.r;
-				const double angle_step=std::max(std::min(360*(step/(2*PI*intersection_circle_.r)), 60.0), 5.0);
+				const SimplePoint first_point=any_normal_of_vector(rotation.axis)*hcf.intersection_circle_.r;
+				const double angle_step=std::max(std::min(360*(step/(2*PI*hcf.intersection_circle_.r)), 60.0), 5.0);
 				for(;rotation.angle<360;rotation.angle+=angle_step)
 				{
-					contour_.push_back(custom_point_from_object<SimplePoint>(intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
+					hcf.contour_.push_back(custom_point_from_object<SimplePoint>(hcf.intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
 				}
 			}
 
-			for(std::size_t i=0;i<list_of_c.size() && !contour_.empty();i++)
+			for(std::size_t i=0;i<list_of_c.size() && !hcf.contour_.empty();i++)
 			{
-				update_contour(a, b, (*(list_of_c[i])), step, projections, contour_);
+				update_contour(a, b, (*(list_of_c[i])), step, projections, hcf.contour_);
 			}
 		}
-		return (!contour_.empty());
+		return hcf;
 	}
 
 	Contour contour() const

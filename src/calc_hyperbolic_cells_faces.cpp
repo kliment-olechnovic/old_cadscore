@@ -95,9 +95,7 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 			cs.push_back(&(atoms[*jt]));
 		}
 
-		CellFace cell_face;
-		cell_face.construct_contour(a, b, cs, probe_radius, step_length, projections_count);
-		cells_faces.push_back(cell_face);
+		cells_faces.push_back(CellFace::construct(a, b, cs, probe_radius, step_length, projections_count));
 
 		cells[it->first.get(0)].push_back(cells_faces.size()-1);
 		cells[it->first.get(1)].push_back(cells_faces.size()-1);
