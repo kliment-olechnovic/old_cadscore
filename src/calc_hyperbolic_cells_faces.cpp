@@ -11,19 +11,29 @@
 #include "auxiliaries/vector_io.h"
 
 template<typename PointType>
-void print_point(const PointType& a)
+std::string point_to_string(const PointType& a)
 {
-	std::cout << a.x << " " << a.y << " " << a.z << " ";
+	std::ostringstream output;
+	output << a.x << " " << a.y << " " << a.z;
+	return output.str();
+}
+
+template<typename SphereType>
+void print_sphere(const SphereType& a)
+{
+	std::cout << "sphere center " << point_to_string(a) << " radius " << a.r << " quality 3\n";
+}
+
+template<typename SphereType>
+void print_sphere_scale(const SphereType& a)
+{
+	std::cout << "scale " << point_to_string(a) << " " << (a.r*2) << "\n";
 }
 
 template<typename PointType>
 void print_segment(const PointType& a, const PointType& b)
 {
-	std::cout << "stick start ";
-	print_point(a);
-	std::cout << "end ";
-	print_point(b);
-	std::cout << "radius 0.1 quality 1\n";
+	std::cout << "stick start " << point_to_string(a) << " end " << point_to_string(b) << " radius 0.05 quality 1\n";
 }
 
 template<typename ListOfPointsType>
@@ -33,6 +43,7 @@ void print_contour(const ListOfPointsType& contour)
 	{
 		for(typename ListOfPointsType::const_iterator it=contour.begin();it!=contour.end();++it)
 		{
+			print_sphere(apollo::custom_sphere_from_point<apollo::SimpleSphere>(*it, 0.05));
 			typename ListOfPointsType::const_iterator jt=it;
 			++jt;
 			if(jt!=contour.end())
@@ -44,21 +55,42 @@ void print_contour(const ListOfPointsType& contour)
 	}
 }
 
-template<typename SphereType>
-void print_sphere(const SphereType& a)
+void print_mesh(const std::vector<apollo::SimplePoint>& mesh_vertices, const std::vector<apollo::Triple>& mesh_triples, const apollo::SimplePoint& normal)
 {
-	std::cout << "sphere center ";
-	print_point(a);
-	std::cout << "radius " << a.r << " ";
-	std::cout << "quality 3\n";
+	for(std::size_t i=0;i<mesh_triples.size();i++)
+	{
+		const apollo::Triple& t=mesh_triples[i];
+		std::cout << "triangle a " << point_to_string(mesh_vertices[t.get(0)])
+				<< " b " << point_to_string(mesh_vertices[t.get(1)])
+				<< " c " << point_to_string(mesh_vertices[t.get(2)])
+				<< " normal " << point_to_string(normal)
+				<< "\n";
+	}
 }
 
 template<typename SphereType>
-void print_sphere_scale(const SphereType& a)
+void print_cell(
+		const SphereType& a,
+		const std::vector<apollo::HyperbolicCellFace>& cells_faces,
+		const std::vector<std::size_t>& faces)
 {
-	std::cout << "scale ";
-	print_point(a);
-	std::cout << (a.r*2) << "\n";
+	for(std::size_t i=0;i<faces.size();i++)
+	{
+		const apollo::HyperbolicCellFace& cf=cells_faces[faces[i]];
+
+		std::cout << "ncolor 1\n";
+		print_contour(cf.contour_points());
+
+		apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(cf.s2(), cf.s1()).unit();
+		if(apollo::spheres_equal(cf.s2(), a))
+		{
+			normal=apollo::inverted_point<apollo::SimplePoint>(normal);
+		}
+
+		std::cout << "ncolor 2\n";
+		print_mesh(cf.mesh_vertices(), cf.mesh_triples(), normal);
+	}
+	print_sphere_scale(a);
 }
 
 void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
@@ -67,14 +99,22 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--mode: --probe: --step: --projections:");
+	clo.check_allowed_options("--mode: --probe: --step: --projections: --atom-number:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
+	const std::size_t atom_number=clo.arg<std::size_t>("--atom-number");
+
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+
+	if(atom_number>=atoms.size())
+	{
+		std::cerr << "Invalid atom number!\n";
+		return;
+	}
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
@@ -101,16 +141,5 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 		cells[it->first.get(1)].push_back(cells_faces.size()-1);
 	}
 
-	for(std::map<std::size_t, std::vector<std::size_t> >::const_iterator it=cells.begin();it!=cells.end();++it)
-	{
-		const protein::Atom& a=atoms[it->first];
-		std::cout << "$" << it->first << "\n";
-		print_sphere(a);
-		const std::vector<std::size_t>& faces=it->second;
-		for(std::size_t i=0;i<faces.size();i++)
-		{
-			print_contour(cells_faces[faces[i]].contour_points());
-		}
-	}
-	print_sphere_scale(atoms[atoms.size()/2]);
+	print_cell(atoms[atom_number], cells_faces, cells[atom_number]);
 }
