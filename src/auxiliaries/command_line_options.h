@@ -5,6 +5,7 @@
 #include <map>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 namespace auxiliaries
 {
@@ -96,6 +97,23 @@ public:
 		{
 			return default_value;
 		}
+	}
+
+	template<typename T>
+	std::vector<T> arg_vector(const std::string& name) const
+	{
+		std::vector<T> result;
+		if(isarg(name))
+		{
+			std::istringstream input(options_.find(name)->second);
+			while(input.good())
+			{
+				T val;
+				input >> val;
+				result.push_back(val);
+			}
+		}
+		return result;
 	}
 
 	void check_allowed_options(const std::string& allowed_options) const
