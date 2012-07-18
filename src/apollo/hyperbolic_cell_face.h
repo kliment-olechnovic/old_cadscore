@@ -30,12 +30,14 @@ public:
 			const int projections)
 	{
 		HyperbolicCellFace hcf;
-		std::list<SimplePoint> contour;
+		hcf.s1_=custom_sphere_from_object<SimpleSphere>(a);
+		hcf.s2_=custom_sphere_from_object<SimpleSphere>(b);
 		const SimpleSphere a_expanded=custom_sphere_from_point<SimpleSphere>(a, a.r+probe);
 		const SimpleSphere b_expanded=custom_sphere_from_point<SimpleSphere>(b, b.r+probe);
 		if(sphere_intersects_sphere(a_expanded, b_expanded))
 		{
 			hcf.intersection_circle_=spheres_intersection_circle<SimpleSphere>(a_expanded, b_expanded);
+			std::list<SimplePoint> contour;
 			{
 				Rotation rotation(sub_of_points<SimplePoint>(b, a).unit(), 0);
 				const SimplePoint first_point=any_normal_of_vector<SimplePoint>(rotation.axis)*hcf.intersection_circle_.r;
@@ -56,19 +58,46 @@ public:
 				{
 					hcf.contour_points_.push_back(*it);
 				}
+				init_mesh(a, b, hcf.contour_points_, hcf.mesh_vertices_, hcf.mesh_triples_);
 			}
 		}
 		return hcf;
 	}
 
-	std::vector<SimplePoint> contour_points() const
+	const SimpleSphere& s1() const
+	{
+		return s1_;
+	}
+
+	const SimpleSphere& s2() const
+	{
+		return s2_;
+	}
+
+	const SimpleSphere& intersection_circle() const
+	{
+		return intersection_circle_;
+	}
+
+	const std::vector<SimplePoint>& contour_points() const
 	{
 		return contour_points_;
 	}
 
+	const std::vector<SimplePoint>& mesh_vertices() const
+	{
+		return mesh_vertices_;
+	}
+
+	const std::vector<Triple>& mesh_triples() const
+	{
+		return mesh_triples_;
+	}
+
 private:
 	template<typename SphereType>
-	static void update_contour(const SphereType& a,
+	static void update_contour(
+			const SphereType& a,
 			const SphereType& b,
 			const SphereType& c,
 			const double step,
@@ -94,6 +123,10 @@ private:
 		if(out_count==contour.size())
 		{
 			contour.clear();
+			return;
+		}
+		else if(out_count==0)
+		{
 			return;
 		}
 
@@ -204,8 +237,42 @@ private:
 		}
 	}
 
+	template<typename SphereType>
+	static void init_mesh(
+			const SphereType& a,
+			const SphereType& b,
+			const std::vector<SimplePoint>& contour_points,
+			std::vector<SimplePoint>& mesh_vertices,
+			std::vector<Triple>& mesh_triples)
+	{
+		if(contour_points.empty())
+		{
+			return;
+		}
+
+		mesh_vertices=contour_points;
+		SimplePoint mass_center=mesh_vertices.front();
+		for(std::size_t i=1;i<mesh_vertices.size();i++)
+		{
+			mass_center=mass_center+mesh_vertices[i];
+		}
+		mass_center=mass_center/mesh_vertices.size();
+		mesh_vertices.push_back(project_point_on_hyperboloid(mass_center, a, b));
+
+		mesh_triples.reserve(contour_points.size());
+		for(std::size_t i=0;i+1<contour_points.size();i++)
+		{
+			mesh_triples.push_back(make_triple(i, i+1, contour_points.size()));
+		}
+		mesh_triples.push_back(make_triple(0, contour_points.size()-1, contour_points.size()));
+	}
+
+	SimpleSphere s1_;
+	SimpleSphere s2_;
 	SimpleSphere intersection_circle_;
 	std::vector<SimplePoint> contour_points_;
+	std::vector<SimplePoint> mesh_vertices_;
+	std::vector<Triple> mesh_triples_;
 };
 
 }
