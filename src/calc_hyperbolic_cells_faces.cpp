@@ -99,22 +99,15 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--mode: --probe: --step: --projections: --atom-number:");
+	clo.check_allowed_options("--mode: --probe: --step: --projections: --atoms-selection:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
-
-	const std::size_t atom_number=clo.arg<std::size_t>("--atom-number");
+	const std::vector<std::size_t> atoms_selection=clo.arg_vector<std::size_t>("--atoms-selection");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-
-	if(atom_number>=atoms.size())
-	{
-		std::cerr << "Invalid atom number!\n";
-		return;
-	}
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
@@ -141,5 +134,13 @@ void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
 		cells[it->first.get(1)].push_back(cells_faces.size()-1);
 	}
 
-	print_cell(atoms[atom_number], cells_faces, cells[atom_number]);
+	for(std::size_t i=0;i<atoms_selection.size();i++)
+	{
+		std::size_t atom_number=atoms_selection[i];
+		if(atom_number>=atoms.size())
+		{
+			std::cerr << "Invalid atom number: " << atom_number << "\n";
+		}
+		print_cell(atoms[atom_number], cells_faces, cells[atom_number]);
+	}
 }
