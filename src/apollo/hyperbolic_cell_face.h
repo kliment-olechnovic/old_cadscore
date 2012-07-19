@@ -94,6 +94,17 @@ public:
 		return mesh_triples_;
 	}
 
+	double area() const
+	{
+		double val=0.0;
+		for(std::size_t i=0;i<mesh_triples_.size();i++)
+		{
+			const Triple& t=mesh_triples_[i];
+			val+=triangle_area(mesh_vertices_[t.get(0)], mesh_vertices_[t.get(1)], mesh_vertices_[t.get(2)]);
+		}
+		return val;
+	}
+
 private:
 	template<typename SphereType>
 	static void update_contour(
