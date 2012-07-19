@@ -95,7 +95,7 @@ void print_cell(
 	print_sphere_scale(a);
 }
 
-void calc_hyperbolic_cells_faces(const auxiliaries::CommandLineOptions& clo)
+void print_some_hyperbolic_cells(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
