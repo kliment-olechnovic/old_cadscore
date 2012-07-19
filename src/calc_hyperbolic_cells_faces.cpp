@@ -33,7 +33,7 @@ void print_sphere_scale(const SphereType& a)
 template<typename PointType>
 void print_segment(const PointType& a, const PointType& b)
 {
-	std::cout << "stick start " << point_to_string(a) << " end " << point_to_string(b) << " radius 0.05 quality 1\n";
+	std::cout << "line start " << point_to_string(a) << " end " << point_to_string(b) << "\n";
 }
 
 template<typename ListOfPointsType>
@@ -43,7 +43,6 @@ void print_contour(const ListOfPointsType& contour)
 	{
 		for(typename ListOfPointsType::const_iterator it=contour.begin();it!=contour.end();++it)
 		{
-			print_sphere(apollo::custom_sphere_from_point<apollo::SimpleSphere>(*it, 0.05));
 			typename ListOfPointsType::const_iterator jt=it;
 			++jt;
 			if(jt!=contour.end())
@@ -78,7 +77,10 @@ void print_cell(
 	{
 		const apollo::HyperbolicCellFace& cf=cells_faces[faces[i]];
 
-		std::cout << "ncolor 1\n";
+		std::cout << "ncolor 100\n";
+		print_sphere(a);
+
+		std::cout << "ncolor 200\n";
 		print_contour(cf.contour_points());
 
 		apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(cf.s2(), cf.s1()).unit();
@@ -87,7 +89,7 @@ void print_cell(
 			normal=apollo::inverted_point<apollo::SimplePoint>(normal);
 		}
 
-		std::cout << "ncolor 2\n";
+		std::cout << "ncolor 300\n";
 		print_mesh(cf.mesh_vertices(), cf.mesh_triples(), normal);
 	}
 	print_sphere_scale(a);
