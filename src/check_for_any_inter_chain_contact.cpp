@@ -21,7 +21,12 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	while(auxiliaries::check_file_header(std::cin, "atoms"))
+	{
+		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
+	}
 
 	ChainsMap chains;
 	for(std::size_t i=0;i<atoms.size();i++)
