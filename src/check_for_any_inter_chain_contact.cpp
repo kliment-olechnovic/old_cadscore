@@ -55,7 +55,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 				}
 				for(std::size_t i=0;i<(a->spheres().size());i++)
 				{
-					if(!(b->find_any_collision(a->spheres()[i]).empty()));
+					if(!(b->find_any_collision(a->spheres()[i]).empty()))
 					{
 						std::cout << "yes\n";
 						return;
