@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$(hg branches -a | awk '{print $2}' | tr ':' '_')
+VERSION=$(hg branches -a | awk '{print $2}' | head -1 | tr ':' '_')
 PACKAGE_NAME="cadscore_$VERSION"
 
 rm $PACKAGE_NAME.tar.gz
