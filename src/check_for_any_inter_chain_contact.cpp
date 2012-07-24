@@ -36,29 +36,58 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 
 	if(chains.size()>1)
 	{
+		std::map<std::string, apollo::SimpleSphere> bounding_spheres;
+		for(ChainsMap::const_iterator it=chains.begin();it!=chains.end();++it)
+		{
+			apollo::SimplePoint center;
+			for(std::size_t i=0;i<it->second.size();i++)
+			{
+				center=center+apollo::custom_point_from_object<apollo::SimplePoint>(it->second[i]);
+			}
+			center=center/it->second.size();
+			apollo::SimpleSphere bounding_sphere=apollo::custom_sphere_from_point<apollo::SimpleSphere>(center, 0.0);
+			for(std::size_t i=0;i<it->second.size();i++)
+			{
+				bounding_sphere.r=std::max(bounding_sphere.r, apollo::maximal_distance_from_point_to_sphere(center, it->second[i])+probe_radius);
+			}
+			bounding_spheres[it->first]=bounding_sphere;
+		}
+
 		HierarchiesMap hierarchies;
 		for(ChainsMap::const_iterator it=chains.begin();it!=chains.end();++it)
 		{
-			hierarchies[it->first].reset(new Hierarchy(it->second, 5.6, 1));
-		}
-		for(HierarchiesMap::const_iterator it=hierarchies.begin();it!=hierarchies.end();++it)
-		{
-			HierarchiesMap::const_iterator jt=it;
+			ChainsMap::const_iterator jt=it;
 			++jt;
-			if(jt!=hierarchies.end())
+			if(jt!=chains.end())
 			{
-				const Hierarchy* a=it->second.get();
-				const Hierarchy* b=jt->second.get();
-				if((b->spheres().size())<(a->spheres().size()))
+				if(apollo::sphere_intersects_sphere(bounding_spheres[it->first], bounding_spheres[jt->first]))
 				{
-					std::swap(a, b);
-				}
-				for(std::size_t i=0;i<(a->spheres().size());i++)
-				{
-					if(!(b->find_any_collision(a->spheres()[i]).empty()))
+					HierarchyPtr& a_ptr=hierarchies[it->first];
+					if(a_ptr.get()==0)
 					{
-						std::cout << "yes\n";
-						return;
+						a_ptr.reset(new Hierarchy(it->second, 5.6, 1));
+					}
+					const Hierarchy* a=a_ptr.get();
+
+					HierarchyPtr& b_ptr=hierarchies[jt->first];
+					if(b_ptr.get()==0)
+					{
+						b_ptr.reset(new Hierarchy(jt->second, 5.6, 1));
+					}
+					const Hierarchy* b=b_ptr.get();
+
+					if((b->spheres().size())<(a->spheres().size()))
+					{
+						std::swap(a, b);
+					}
+
+					for(std::size_t i=0;i<(a->spheres().size());i++)
+					{
+						if(!(b->find_any_collision(a->spheres()[i]).empty()))
+						{
+							std::cout << "yes\n";
+							return;
+						}
 					}
 				}
 			}
