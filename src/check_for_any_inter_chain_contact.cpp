@@ -23,11 +23,10 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
 
-
 	ChainsMap chains;
 	for(std::size_t i=0;i<atoms.size();i++)
 	{
-		chains[atoms[i].chain_id].push_back(apollo::custom_sphere_from_object<apollo::SimpleSphere>(atoms[i]));
+		chains[atoms[i].chain_id].push_back(apollo::custom_sphere_from_point<apollo::SimpleSphere>(atoms[i], atoms[i].r+probe_radius));
 	}
 
 	if(chains.size()>1)
@@ -35,7 +34,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 		HierarchiesMap hierarchies;
 		for(ChainsMap::const_iterator it=chains.begin();it!=chains.end();++it)
 		{
-			hierarchies[it->first].reset(new Hierarchy(it->second, 4.2, 1));
+			hierarchies[it->first].reset(new Hierarchy(it->second, 5.6, 1));
 		}
 		for(HierarchiesMap::const_iterator it=hierarchies.begin();it!=hierarchies.end();++it)
 		{
@@ -51,7 +50,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 				}
 				for(std::size_t i=0;i<(a->spheres().size());i++)
 				{
-					if(!(b->find_any_collision(apollo::custom_sphere_from_point<apollo::SimpleSphere>(a->spheres()[i], a->spheres()[i].r+probe_radius*2)).empty()));
+					if(!(b->find_any_collision(a->spheres()[i]).empty()));
 					{
 						std::cout << "yes\n";
 						return;
