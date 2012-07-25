@@ -9,7 +9,7 @@
 namespace protein
 {
 
-std::vector<PDBAtomRecord> read_PDB_atom_records_from_PDB_file_stream(std::istream& pdb_file_stream)
+inline std::vector<PDBAtomRecord> read_PDB_atom_records_from_PDB_file_stream(std::istream& pdb_file_stream)
 {
 	std::vector<PDBAtomRecord> records;
 	while(pdb_file_stream.good())
