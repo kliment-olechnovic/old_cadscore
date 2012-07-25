@@ -64,4 +64,4 @@ then
   exit 1
 fi
 
-($VOROPROT --mode collect-atoms --no-classification --rename-chain A < "$MODEL_FILE_A" ; $VOROPROT --mode collect-atoms --no-classification --rename-chain B < "$MODEL_FILE_B") | $VOROPROT --mode check-for-any-inter-chain-contact
+echo "$MODEL_FILE_A $MODEL_FILE_B" | $VOROPROT --mode check-for-any-inter-chain-contact --direct-reading
