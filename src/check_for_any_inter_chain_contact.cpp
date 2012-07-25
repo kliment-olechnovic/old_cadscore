@@ -60,30 +60,25 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 			++jt;
 			if(jt!=chains.end())
 			{
-				if(apollo::sphere_intersects_sphere(bounding_spheres[it->first], bounding_spheres[jt->first]))
+				const std::pair<std::string, std::string> chains_names=((it->second.size())<=(jt->second.size()) ? std::make_pair(it->first, jt->first) : std::make_pair(jt->first, it->first));
+				const apollo::SimpleSphere& boinding_sphere_first=bounding_spheres[chains_names.first];
+				const apollo::SimpleSphere& boinding_sphere_second=bounding_spheres[chains_names.second];
+				if(apollo::sphere_intersects_sphere(boinding_sphere_first, boinding_sphere_second))
 				{
-					HierarchyPtr& a_ptr=hierarchies[it->first];
-					if(a_ptr.get()==0)
-					{
-						a_ptr.reset(new Hierarchy(it->second, 5.6, 1));
-					}
-					const Hierarchy* a=a_ptr.get();
+					const std::vector<apollo::SimpleSphere>& checkable_spheres=chains[chains_names.first];
+					const std::vector<apollo::SimpleSphere>& reference_spheres=chains[chains_names.second];
 
-					HierarchyPtr& b_ptr=hierarchies[jt->first];
-					if(b_ptr.get()==0)
+					HierarchyPtr& hierarchy_ptr_handle=hierarchies[chains_names.second];
+					if(hierarchy_ptr_handle.get()==0)
 					{
-						b_ptr.reset(new Hierarchy(jt->second, 5.6, 1));
+						hierarchy_ptr_handle.reset(new Hierarchy(reference_spheres, 4.2+probe_radius, 1));
 					}
-					const Hierarchy* b=b_ptr.get();
+					const Hierarchy* hierarchy_ptr=hierarchy_ptr_handle.get();
 
-					if((b->spheres().size())<(a->spheres().size()))
+					for(std::size_t i=0;i<checkable_spheres.size();i++)
 					{
-						std::swap(a, b);
-					}
-
-					for(std::size_t i=0;i<(a->spheres().size());i++)
-					{
-						if(!(b->find_any_collision(a->spheres()[i]).empty()))
+						const apollo::SimpleSphere& checkable_sphere=checkable_spheres[i];
+						if(apollo::sphere_intersects_sphere(checkable_sphere, boinding_sphere_second) && (!(hierarchy_ptr->find_any_collision(checkable_sphere).empty())))
 						{
 							std::cout << "yes\n";
 							return;
