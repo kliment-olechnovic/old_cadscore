@@ -96,7 +96,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 		{
 			ChainsMap::const_iterator jt=it;
 			++jt;
-			if(jt!=chains.end())
+			for(;jt!=chains.end();++jt)
 			{
 				const std::pair<std::string, std::string> chains_names=((it->second.size())>=(jt->second.size()) ? std::make_pair(it->first, jt->first) : std::make_pair(jt->first, it->first));
 				const apollo::SimpleSphere& boinding_sphere_first=bounding_spheres[chains_names.first];
