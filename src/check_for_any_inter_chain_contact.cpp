@@ -43,14 +43,12 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 					if(!atoms.empty())
 					{
 						std::string chain_name(1, chain_id++);
-						std::vector<apollo::SimpleSphere> chain_spheres;
+						std::vector<apollo::SimpleSphere>& chain_spheres=chains[chain_name];
 						chain_spheres.reserve(atoms.size());
 						for(std::size_t i=0;i<atoms.size();i++)
 						{
 							chain_spheres.push_back(apollo::custom_sphere_from_point<apollo::SimpleSphere>(atoms[i], atoms[i].r+probe_radius));
 						}
-						chains[chain_name]=chain_spheres;
-						std::cout << filename << " " << chain_name << " " << chain_spheres.size() << " stat\n";
 					}
 				}
 			}
