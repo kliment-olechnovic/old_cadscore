@@ -85,7 +85,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 			apollo::SimpleSphere bounding_sphere=apollo::custom_sphere_from_point<apollo::SimpleSphere>(center, 0.0);
 			for(std::size_t i=0;i<it->second.size();i++)
 			{
-				bounding_sphere.r=std::max(bounding_sphere.r, apollo::maximal_distance_from_point_to_sphere(center, it->second[i])+probe_radius);
+				bounding_sphere.r=std::max(bounding_sphere.r, apollo::maximal_distance_from_point_to_sphere(center, it->second[i]));
 			}
 			bounding_spheres[it->first]=bounding_sphere;
 		}
