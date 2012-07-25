@@ -154,8 +154,8 @@ private:
 				}
 				const SimplePoint& left_point=*left_it;
 				const SimplePoint& right_point=*right_it;
-				const bool left_halfspace=less(minimal_distance_from_point_to_sphere(left_point, c), minimal_distance_from_point_to_sphere(left_point, a));
-				const bool right_halfspace=less(minimal_distance_from_point_to_sphere(right_point, c), minimal_distance_from_point_to_sphere(right_point, a));
+				const bool left_halfspace=minimal_distance_from_point_to_sphere(left_point, c)<minimal_distance_from_point_to_sphere(left_point, a);
+				const bool right_halfspace=minimal_distance_from_point_to_sphere(right_point, c)<minimal_distance_from_point_to_sphere(right_point, a);
 				if(left_halfspace!=right_halfspace)
 				{
 					const double pos=intersect_vector_with_hyperboloid(left_point, right_point, a, c);
