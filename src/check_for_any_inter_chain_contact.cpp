@@ -29,7 +29,6 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	if(clo.isopt("--direct-reading"))
 	{
 		const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner("", "");
-		char chain_id='A';
 		while(std::cin.good())
 		{
 			std::string filename;
@@ -42,8 +41,8 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 					const std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(input, radius_assigner, false, false);
 					if(!atoms.empty())
 					{
-						std::string chain_name(1, chain_id++);
-						std::vector<apollo::SimpleSphere>& chain_spheres=chains[chain_name];
+						std::vector<apollo::SimpleSphere>& chain_spheres=chains[filename];
+						chain_spheres.clear();
 						chain_spheres.reserve(atoms.size());
 						for(std::size_t i=0;i<atoms.size();i++)
 						{
@@ -70,6 +69,8 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 			chains[atoms[i].chain_id].push_back(apollo::custom_sphere_from_point<apollo::SimpleSphere>(atoms[i], atoms[i].r+probe_radius));
 		}
 	}
+
+	std::vector< std::pair<std::string, std::string> > pairs_of_interacting_chains;
 
 	if(chains.size()>1)
 	{
@@ -112,14 +113,15 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 					}
 					const Hierarchy* hierarchy_ptr=hierarchy_ptr_handle.get();
 
-					for(std::size_t i=0;i<checkable_spheres.size();i++)
+					bool found_interaction=false;
+					for(std::size_t i=0;i<checkable_spheres.size() && !found_interaction;i++)
 					{
 						const apollo::SimpleSphere& checkable_sphere=checkable_spheres[i];
 						if(apollo::sphere_intersects_sphere(checkable_sphere, boinding_sphere_second) &&
 								(!(hierarchy_ptr->find_any_collision(checkable_sphere).empty())))
 						{
-							std::cout << "yes\n";
-							return;
+							pairs_of_interacting_chains.push_back(std::make_pair(it->first, jt->first));
+							found_interaction=true;
 						}
 					}
 				}
@@ -127,5 +129,10 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 		}
 	}
 
-	std::cout << "no\n";
+	std::cout << "pairs_of_interacting_structures\n";
+	std::cout << pairs_of_interacting_chains.size() << "\n";
+	for(std::size_t i=0;i<pairs_of_interacting_chains.size();i++)
+	{
+		std::cout << pairs_of_interacting_chains[i].first << " " << pairs_of_interacting_chains[i].second << "\n";
+	}
 }
