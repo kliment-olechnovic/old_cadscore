@@ -25,6 +25,7 @@ int main(const int argc, const char** argv)
 {
 	std::cin.exceptions(std::istream::badbit);
 	std::cout.exceptions(std::ostream::badbit);
+	std::ios_base::sync_with_stdio(false);
 
 	try
 	{
