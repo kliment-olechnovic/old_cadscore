@@ -74,7 +74,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			}
 
 			const CellFace cell_face=CellFace::construct(a, b, cs, probe_radius, step_length, projections_count);
-			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(a, b).unit();
+			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
 			print_tringle_fan(cell_face.mesh_vertices(), normal);
 
 		}
