@@ -14,56 +14,31 @@ template<typename PointType>
 std::string point_to_string(const PointType& a)
 {
 	std::ostringstream output;
-	output << a.x << " " << a.y << " " << a.z;
+	output << a.x << ", " << a.y << ", " << a.z;
 	return output.str();
 }
 
-template<typename SphereType>
-void print_sphere(const SphereType& a)
+void print_mesh(const std::vector<apollo::SimplePoint>& mesh_vertices, const apollo::SimplePoint& basic_normal)
 {
-	std::cout << "sphere center " << point_to_string(a) << " radius " << a.r << " quality 3\n";
-}
-
-template<typename SphereType>
-void print_sphere_scale(const SphereType& a)
-{
-	std::cout << "scale " << point_to_string(a) << " " << (a.r*2) << "\n";
-}
-
-template<typename PointType>
-void print_segment(const PointType& a, const PointType& b)
-{
-	std::cout << "line start " << point_to_string(a) << " end " << point_to_string(b) << "\n";
-}
-
-template<typename ListOfPointsType>
-void print_contour(const ListOfPointsType& contour)
-{
-	if(!contour.empty())
+	if(!mesh_vertices.empty())
 	{
-		for(typename ListOfPointsType::const_iterator it=contour.begin();it!=contour.end();++it)
+		for(int j=0;j<2;j++)
 		{
-			typename ListOfPointsType::const_iterator jt=it;
-			++jt;
-			if(jt!=contour.end())
+			const apollo::SimplePoint normal=(j==0 ? basic_normal : apollo::inverted_point<apollo::SimplePoint>(basic_normal));
+			const apollo::SimplePoint shift=(normal*0.01);
+			std::cout << "    BEGIN, TRIANGLE_FAN,\n";
+			std::cout << "    COLOR, 1.0, 1.0, 0.0,\n";
+			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+			std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
+			for(std::size_t i=0;i+1<mesh_vertices.size();i++)
 			{
-				print_segment(*it, *jt);
+				std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+				std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
 			}
+			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+			std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
+			std::cout << "    END,\n";
 		}
-		print_segment(contour.back(), contour.front());
-	}
-}
-
-void print_mesh(const std::vector<apollo::SimplePoint>& mesh_vertices, const std::vector<apollo::Triple>& mesh_triples, const apollo::SimplePoint& normal)
-{
-	for(std::size_t i=0;i<mesh_triples.size();i++)
-	{
-		const apollo::Triple& t=mesh_triples[i];
-		std::cout << "triangle a " << point_to_string(mesh_vertices[t.get(0)])
-				<< " b " << point_to_string(mesh_vertices[t.get(1)])
-				<< " c " << point_to_string(mesh_vertices[t.get(2)])
-				<< " normal " << point_to_string(normal)
-				<< "\n";
 	}
 }
 
@@ -77,22 +52,14 @@ void print_cell(
 	{
 		const apollo::HyperbolicCellFace& cf=cells_faces[faces[i]];
 
-		std::cout << "ncolor 100\n";
-		print_sphere(a);
-
-		std::cout << "ncolor 200\n";
-		print_contour(cf.contour_points());
-
 		apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(cf.s2(), cf.s1()).unit();
 		if(apollo::spheres_equal(cf.s2(), a))
 		{
 			normal=apollo::inverted_point<apollo::SimplePoint>(normal);
 		}
 
-		std::cout << "ncolor 300\n";
-		print_mesh(cf.mesh_vertices(), cf.mesh_triples(), normal);
+		print_mesh(cf.mesh_vertices(), normal);
 	}
-	print_sphere_scale(a);
 }
 
 void print_some_hyperbolic_cells(const auxiliaries::CommandLineOptions& clo)
@@ -136,6 +103,7 @@ void print_some_hyperbolic_cells(const auxiliaries::CommandLineOptions& clo)
 		cells[it->first.get(1)].push_back(cells_faces.size()-1);
 	}
 
+	std::cout << "from pymol.cgo import *\nfrom pymol import cmd\nobj = [\n";
 	for(std::size_t i=0;i<atoms_selection.size();i++)
 	{
 		std::size_t atom_number=atoms_selection[i];
@@ -145,4 +113,6 @@ void print_some_hyperbolic_cells(const auxiliaries::CommandLineOptions& clo)
 		}
 		print_cell(atoms[atom_number], cells_faces, cells[atom_number]);
 	}
+	std::cout << "]\n";
+	std::cout << "cmd.load_cgo(obj, 'cgo01')\n";
 }
