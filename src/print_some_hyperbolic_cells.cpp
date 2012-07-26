@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 
 #include "protein/atom.h"
 
@@ -14,31 +15,27 @@ template<typename PointType>
 std::string point_to_string(const PointType& a)
 {
 	std::ostringstream output;
-	output << a.x << ", " << a.y << ", " << a.z;
+	output.precision(std::numeric_limits<double>::digits10);
+	output << std::fixed << a.x << ", " << a.y << ", " << a.z;
 	return output.str();
 }
 
-void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, const apollo::SimplePoint& basic_normal)
+void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, const apollo::SimplePoint& normal)
 {
 	if(!mesh_vertices.empty())
 	{
-		for(int j=0;j<2;j++)
+		std::cout << "    BEGIN, TRIANGLE_FAN,\n";
+		std::cout << "    COLOR, 1.0, 1.0, 0.0,\n";
+		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()) << ",\n";
+		for(std::size_t i=0;i+1<mesh_vertices.size();i++)
 		{
-			const apollo::SimplePoint normal=(j==0 ? basic_normal : apollo::inverted_point<apollo::SimplePoint>(basic_normal));
-			const apollo::SimplePoint shift=(normal*0.01);
-			std::cout << "    BEGIN, TRIANGLE_FAN,\n";
-			std::cout << "    COLOR, 1.0, 1.0, 0.0,\n";
 			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-			std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
-			for(std::size_t i=0;i+1<mesh_vertices.size();i++)
-			{
-				std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-				std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
-			}
-			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-			std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
-			std::cout << "    END,\n";
+			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]) << ",\n";
 		}
+		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()) << ",\n";
+		std::cout << "    END,\n";
 	}
 }
 
