@@ -39,7 +39,7 @@ void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, co
 	}
 }
 
-void print_some_hyperbolic_cells(const auxiliaries::CommandLineOptions& clo)
+void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
