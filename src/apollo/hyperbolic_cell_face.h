@@ -38,18 +38,38 @@ public:
 		{
 			hcf.intersection_circle_=spheres_intersection_circle<SimpleSphere>(a_expanded, b_expanded);
 			std::list<SimplePoint> contour;
+			bool rerun=false;
+			double using_step=step;
+			for(int j=0;j<5 && (j==0 || rerun);j++)
 			{
-				Rotation rotation(sub_of_points<SimplePoint>(b, a).unit(), 0);
-				const SimplePoint first_point=any_normal_of_vector<SimplePoint>(rotation.axis)*hcf.intersection_circle_.r;
-				const double angle_step=std::max(std::min(360*(step/(2*PI*hcf.intersection_circle_.r)), 60.0), 5.0);
-				for(;rotation.angle<360;rotation.angle+=angle_step)
+				if(j>0)
 				{
-					contour.push_back(custom_point_from_object<SimplePoint>(hcf.intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
+					using_step*=1.1;
+				}
+				contour.clear();
+				{
+					Rotation rotation(sub_of_points<SimplePoint>(b, a).unit(), 0);
+					const SimplePoint first_point=any_normal_of_vector<SimplePoint>(rotation.axis)*hcf.intersection_circle_.r;
+					const double angle_step=std::max(std::min(360*(using_step/(2*PI*hcf.intersection_circle_.r)), 60.0), 5.0);
+					for(rotation.angle=1.0*j;rotation.angle<360;rotation.angle+=angle_step)
+					{
+						contour.push_back(custom_point_from_object<SimplePoint>(hcf.intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
+					}
+				}
+				rerun=false;
+				for(std::size_t i=0;i<list_of_c.size() && !contour.empty();i++)
+				{
+					const std::size_t intersections_count=update_contour(a, b, (*(list_of_c[i])), using_step, projections, contour);
+					if(intersections_count>0 && (intersections_count%2)!=0)
+					{
+						rerun=true;
+					}
 				}
 			}
-			for(std::size_t i=0;i<list_of_c.size() && !contour.empty();i++)
+			if(rerun)
 			{
-				update_contour(a, b, (*(list_of_c[i])), step, projections, contour);
+				std::cerr << "rerun did not help:\n";
+				std::cerr << a.x << " " << a.y << " " << a.z << "\n";
 			}
 			if(!contour.empty())
 			{
@@ -107,7 +127,7 @@ public:
 
 private:
 	template<typename SphereType>
-	static void update_contour(
+	static std::size_t update_contour(
 			const SphereType& a,
 			const SphereType& b,
 			const SphereType& c,
@@ -117,7 +137,7 @@ private:
 	{
 		if(contour.empty())
 		{
-			return;
+			return 0;
 		}
 
 		std::size_t out_count=0;
@@ -134,11 +154,11 @@ private:
 		if(out_count==contour.size())
 		{
 			contour.clear();
-			return;
+			return 0;
 		}
 		else if(out_count==0)
 		{
-			return;
+			return 0;
 		}
 
 		std::deque< std::pair<std::list<SimplePoint>::iterator, bool> > intersection_iterators;
@@ -246,6 +266,7 @@ private:
 				}
 			}
 		}
+		return intersection_iterators.size();
 	}
 
 	template<typename SphereType>
