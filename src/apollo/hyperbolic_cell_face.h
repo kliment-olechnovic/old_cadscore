@@ -300,7 +300,7 @@ private:
 			mass_center=mass_center+mesh_vertices[i];
 		}
 		mass_center=mass_center/mesh_vertices.size();
-		mesh_vertices.push_back(project_point_on_hyperboloid(mass_center, a, b));
+		mesh_vertices.push_back(mass_center);
 
 		mesh_triples.reserve(contour_points.size());
 		for(std::size_t i=0;i+1<contour_points.size();i++)
