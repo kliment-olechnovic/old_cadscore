@@ -40,7 +40,7 @@ public:
 			std::list<SimplePoint> contour;
 			bool rerun=false;
 			double using_step=step;
-			for(int j=0;j<5 && (j==0 || rerun);j++)
+			for(int j=0;j<9 && (j==0 || rerun);j++)
 			{
 				if(j>0)
 				{
@@ -59,7 +59,17 @@ public:
 				rerun=false;
 				for(std::size_t i=0;i<list_of_c.size() && !contour.empty();i++)
 				{
-					const std::size_t intersections_count=update_contour(a, b, (*(list_of_c[i])), using_step, projections, contour);
+					std::size_t intersections_count=update_contour(a, b, (*(list_of_c[i])), using_step, projections, contour);
+					if(j>=3 && intersections_count>0 && (intersections_count%2)!=0)
+					{
+						for(std::list<SimplePoint>::iterator it=contour.begin();it!=contour.end();++it)
+						{
+							const double delta=epsilon()*j;
+							double* coord_ptr=(j%3==0 ? &(it->x) : (j%3==1 ? &(it->y) : &(it->z)));
+							(*coord_ptr)+=delta;
+						}
+						intersections_count=update_contour(a, b, (*(list_of_c[i])), using_step, projections, contour);
+					}
 					if(intersections_count>0 && (intersections_count%2)!=0)
 					{
 						rerun=true;
@@ -68,8 +78,9 @@ public:
 			}
 			if(rerun)
 			{
-				std::cerr << "rerun did not help:\n";
-				std::cerr << a.x << " " << a.y << " " << a.z << "\n";
+				std::cerr << "Incomplete face between two spheres:\n";
+				std::cerr << "   " << a.x << " " << a.y << " " << a.z << "\n";
+				std::cerr << "   " << b.x << " " << b.y << " " << b.z << "\n";
 			}
 			if(!contour.empty())
 			{
