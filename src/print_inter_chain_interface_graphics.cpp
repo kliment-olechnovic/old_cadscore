@@ -161,6 +161,9 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 
 	std::cout << "cmd.do('color green')\n\n";
+	std::cout << "cmd.do('hide lines')\n\n";
+	std::cout << "cmd.do('hide nonbonded')\n\n";
+
 	list_residue_colors_by_hydropathy_index();
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
@@ -190,5 +193,9 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			std::cout << "cmd.do('color custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
 		}
 		std::cout << "\n";
+
+		std::cout << "cmd.do('show sticks, " << selection_name << "')\n\n";
 	}
+
+	std::cout << "cmd.do('deselect')\n\n";
 }
