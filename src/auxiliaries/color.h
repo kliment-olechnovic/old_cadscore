@@ -72,6 +72,21 @@ struct Color
 		}
 		return c;
 	}
+
+	double r_double() const
+	{
+		return (static_cast<double>(r)/255.0);
+	}
+
+	double g_double() const
+	{
+		return (static_cast<double>(g)/255.0);
+	}
+
+	double b_double() const
+	{
+		return (static_cast<double>(b)/255.0);
+	}
 };
 
 }
