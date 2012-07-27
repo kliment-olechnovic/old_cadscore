@@ -74,10 +74,12 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			}
 
 			const CellFace cell_face=CellFace::construct(a, b, cs, probe_radius, step_length, projections_count);
-			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
-			print_tringle_fan(cell_face.mesh_vertices(), normal);
-
+			if(!cell_face.mesh_vertices().empty())
+			{
+				const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
+				print_tringle_fan(cell_face.mesh_vertices(), normal);
+			}
 		}
 	}
-	std::cout << "]\ncmd.load_cgo(obj, 'cgo01')\n";
+	std::cout << "]\ncmd.load_cgo(obj, 'cgo01')\ncmd.do('set two_sided_lighting, on')\n";
 }
