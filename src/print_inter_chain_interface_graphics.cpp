@@ -140,6 +140,11 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 	}
 
+	if(inter_chain_interfaces.empty())
+	{
+		std::cerr << "No interfaces found.\n";
+	}
+
 	std::cout << "from pymol.cgo import *\n";
 	std::cout << "from pymol import cmd\n\n";
 
