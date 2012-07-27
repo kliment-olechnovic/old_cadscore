@@ -46,6 +46,19 @@ inline auxiliaries::Color residue_color_by_hydropathy_index(const std::string& r
 	return auxiliaries::Color::from_temperature_to_blue_white_red((1+hi/4.5)/2);
 }
 
+inline void list_residue_colors_by_hydropathy_index()
+{
+	std::map<std::string, double> map_of_hidropathy_indices=map_of_hydropathy_indices_of_residues();
+	map_of_hidropathy_indices["undefined"]=0.0;
+	for(std::map<std::string, double>::const_iterator it=map_of_hidropathy_indices.begin();it!=map_of_hidropathy_indices.end();++it)
+	{
+		const auxiliaries::Color color=residue_color_by_hydropathy_index(it->first);
+		std::cout << "cmd.do('set_color custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b) << ", ";
+		std::cout << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]')\n";
+	}
+	std::cout << "\n";
+}
+
 template<typename PointType>
 std::string point_to_string(const PointType& a)
 {
@@ -148,24 +161,34 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 
 	std::cout << "cmd.do('color green')\n\n";
+	list_residue_colors_by_hydropathy_index();
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
-		std::set<int> sequence_numbers;
+		std::map<int, std::string> sequence_numbers;
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
-			sequence_numbers.insert(atoms[it->second[i].first].residue_number);
+			const protein::Atom& a=atoms[it->second[i].first];
+			sequence_numbers[a.residue_number]=a.residue_name;
 		}
+
 		std::cout << "cmd.do('select " << selection_name << ", resi ";
-		for(std::set<int>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
 		{
 			if(jt!=sequence_numbers.begin())
 			{
 				std::cout << "+";
 			}
-			std::cout << (*jt);
+			std::cout << jt->first;
 		}
 		std::cout << " and chain " << it->first.first << "')\n\n";
+
+		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		{
+			const auxiliaries::Color color=residue_color_by_hydropathy_index(jt->second);
+			std::cout << "cmd.do('color custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
+		}
+		std::cout << "\n";
 	}
 }
