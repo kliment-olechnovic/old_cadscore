@@ -72,18 +72,30 @@ void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, co
 {
 	if(!mesh_vertices.empty())
 	{
+		const apollo::SimplePoint shift=normal*0.001;
+
 		std::cout << "    BEGIN, TRIANGLE_FAN,\n";
 		std::cout << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
 		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()) << ",\n";
+		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
 		for(std::size_t i=0;i+1<mesh_vertices.size();i++)
 		{
 			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]) << ",\n";
+			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
 		}
 		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()) << ",\n";
+		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
 		std::cout << "    END,\n";
+
+//		std::cout << "    BEGIN, LINE_LOOP,\n";
+//		std::cout << "    COLOR, 1.0, 1.0, 0.0,\n";
+//		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+//		for(std::size_t i=0;i+1<mesh_vertices.size();i++)
+//		{
+//			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
+//			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
+//		}
+//		std::cout << "    END,\n";
 	}
 }
 
