@@ -130,11 +130,12 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 
 	std::cout << "from pymol.cgo import *\n";
-	std::cout << "from pymol import cmd\n";
+	std::cout << "from pymol import cmd\n\n";
+
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string obj_name=std::string("obj_")+it->first.first+"_"+it->first.second;
-		const std::string cgo_name=std::string("interface_")+it->first.first+"_"+it->first.second;
+		const std::string cgo_name=std::string("iface_")+it->first.first+"_"+it->first.second;
 		std::cout << obj_name << " = [\n";
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
@@ -145,6 +146,26 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
 			print_tringle_fan(cell_face.mesh_vertices(), normal, color_from_hydropathy_index(a.residue_name));
 		}
-		std::cout << "]\ncmd.load_cgo(" << obj_name << ", '" << cgo_name << "')\n";
+		std::cout << "]\ncmd.load_cgo(" << obj_name << ", '" << cgo_name << "')\n\n";
+	}
+
+	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
+	{
+		const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
+		std::set<int> sequence_numbers;
+		for(std::size_t i=0;i<it->second.size();++i)
+		{
+			sequence_numbers.insert(atoms[it->second[i].first].residue_number);
+		}
+		std::cout << "cmd.do('select " << selection_name << ", resi ";
+		for(std::set<int>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		{
+			if(jt!=sequence_numbers.begin())
+			{
+				std::cout << "+";
+			}
+			std::cout << (*jt);
+		}
+		std::cout << " and chain " << it->first.first << "')\n\n";
 	}
 }
