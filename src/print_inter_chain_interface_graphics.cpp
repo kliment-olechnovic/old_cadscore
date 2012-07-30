@@ -15,18 +15,26 @@
 class Colorizer
 {
 public:
-	Colorizer()
+	Colorizer(const std::string& mode)
 	{
+		if(mode=="hydroph")
+		{
+			map_of_colors_=create_map_of_residue_colors_by_hydropathy_indices();
+		}
+		else if(mode=="type")
+		{
+			map_of_colors_=create_map_of_residue_colors_by_type();
+		}
 	}
 
 	auxiliaries::Color residue_color(const std::string& residue_name) const
 	{
-		return residue_color_from_map(map_of_residue_colors_by_hydropathy_indices(), residue_name);
+		return residue_color_from_map(map_of_colors_, residue_name);
 	}
 
 	void list_colors() const
 	{
-		list_colors_from_map(map_of_residue_colors_by_hydropathy_indices());
+		list_colors_from_map(map_of_colors_);
 	}
 
 	static std::string color_to_string(const auxiliaries::Color& color)
@@ -57,6 +65,22 @@ private:
 	static auxiliaries::Color default_color()
 	{
 		return auxiliaries::Color::from_code(0xFFFFFF);
+	}
+
+	static auxiliaries::Color residue_color_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors, const std::string& residue_name)
+	{
+		std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(residue_name);
+		return (it==map_of_colors.end() ? default_color() : it->second);
+	}
+
+	static void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
+	{
+		for(std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
+		{
+			list_color(it->second);
+		}
+		list_color(default_color());
+		std::cout << "\n";
 	}
 
 	static auxiliaries::Color color_from_hydropathy_index(const double hi)
@@ -90,27 +114,43 @@ private:
 		return m;
 	}
 
-	static const std::map<std::string, auxiliaries::Color>& map_of_residue_colors_by_hydropathy_indices()
+	static std::map<std::string, auxiliaries::Color> create_map_of_residue_colors_by_type()
 	{
-		static const std::map<std::string, auxiliaries::Color> map_of_colors=create_map_of_residue_colors_by_hydropathy_indices();
-		return map_of_colors;
+		const auxiliaries::Color nonpolar(255, 255, 0.0);
+		const auxiliaries::Color acidic(0.0, 0.0, 255);
+		const auxiliaries::Color basic(255, 0.0, 0.0);
+		const auxiliaries::Color uncharged(0.0, 255, 0.0);
+
+		std::map<std::string, auxiliaries::Color> m;
+
+		m["LEU"]=nonpolar;
+		m["VAL"]=nonpolar;
+		m["ILE"]=nonpolar;
+		m["ALA"]=nonpolar;
+		m["PHE"]=nonpolar;
+		m["TRP"]=nonpolar;
+		m["MET"]=nonpolar;
+		m["PRO"]=nonpolar;
+
+		m["ASP"]=acidic;
+		m["GLU"]=acidic;
+
+		m["LYS"]=basic;
+		m["ARG"]=basic;
+		m["HIS"]=basic;
+
+		m["CYS"]=uncharged;
+		m["SER"]=uncharged;
+		m["THR"]=uncharged;
+		m["TYR"]=uncharged;
+		m["ASN"]=uncharged;
+		m["GLN"]=uncharged;
+		m["GLY"]=uncharged;
+
+		return m;
 	}
 
-	static auxiliaries::Color residue_color_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors, const std::string& residue_name)
-	{
-		std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(residue_name);
-		return (it==map_of_colors.end() ? default_color() : it->second);
-	}
-
-	static void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
-	{
-		for(std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
-		{
-			list_color(it->second);
-		}
-		list_color(default_color());
-		std::cout << "\n";
-	}
+	std::map<std::string, auxiliaries::Color> map_of_colors_;
 };
 
 template<typename PointType>
@@ -149,13 +189,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--mode: --probe: --step: --projections:");
+	clo.check_allowed_options("--mode: --probe: --step: --projections: --coloring:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
-	const Colorizer colorizer;
+	const Colorizer colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
