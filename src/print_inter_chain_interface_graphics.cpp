@@ -12,50 +12,75 @@
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/color.h"
 
-inline std::map<std::string, double> map_of_hydropathy_indices_of_residues()
+inline std::string color_to_string(const auxiliaries::Color& color, const bool as_name)
 {
-	std::map<std::string, double> m;
-	m["ASP"]=(-3.5);
-	m["GLU"]=(-3.5);
-	m["CYS"]=(2.5);
-	m["MET"]=(1.9);
-	m["LYS"]=(-3.9);
-	m["ARG"]=(-4.5);
-	m["SER"]=(-0.8);
-	m["THR"]=(-0.7);
-	m["PHE"]=(2.8);
-	m["TYR"]=(-1.3);
-	m["ASN"]=(-3.5);
-	m["GLN"]=(-3.5);
-	m["GLY"]=(-0.4);
-	m["LEU"]=(3.8);
-	m["VAL"]=(4.2);
-	m["ILE"]=(4.5);
-	m["ALA"]=(1.8);
-	m["TRP"]=(-0.9);
-	m["HIS"]=(-3.2);
-	m["PRO"]=(-1.6);
+	std::ostringstream output;
+	if(as_name)
+	{
+		output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
+	}
+	else
+	{
+		output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
+	}
+	return output.str();
+}
+
+inline void list_color(const auxiliaries::Color& color)
+{
+	std::cout << "cmd.do('set_color " << color_to_string(color, true) << ", " << color_to_string(color, false) << "')\n";
+}
+
+inline auxiliaries::Color default_color()
+{
+	return auxiliaries::Color::from_code(0xFFFFFF);
+}
+
+inline auxiliaries::Color color_from_hydropathy_index(const double hi)
+{
+	return auxiliaries::Color::from_temperature_to_blue_white_red((1+hi/4.5)/2);
+}
+
+inline std::map<std::string, auxiliaries::Color> map_of_residue_colors_by_hydropathy_indices()
+{
+	std::map<std::string, auxiliaries::Color> m;
+	m["ASP"]=color_from_hydropathy_index(-3.5);
+	m["GLU"]=color_from_hydropathy_index(-3.5);
+	m["CYS"]=color_from_hydropathy_index(2.5);
+	m["MET"]=color_from_hydropathy_index(1.9);
+	m["LYS"]=color_from_hydropathy_index(-3.9);
+	m["ARG"]=color_from_hydropathy_index(-4.5);
+	m["SER"]=color_from_hydropathy_index(-0.8);
+	m["THR"]=color_from_hydropathy_index(-0.7);
+	m["PHE"]=color_from_hydropathy_index(2.8);
+	m["TYR"]=color_from_hydropathy_index(-1.3);
+	m["ASN"]=color_from_hydropathy_index(-3.5);
+	m["GLN"]=color_from_hydropathy_index(-3.5);
+	m["GLY"]=color_from_hydropathy_index(-0.4);
+	m["LEU"]=color_from_hydropathy_index(3.8);
+	m["VAL"]=color_from_hydropathy_index(4.2);
+	m["ILE"]=color_from_hydropathy_index(4.5);
+	m["ALA"]=color_from_hydropathy_index(1.8);
+	m["TRP"]=color_from_hydropathy_index(-0.9);
+	m["HIS"]=color_from_hydropathy_index(-3.2);
+	m["PRO"]=color_from_hydropathy_index(-1.6);
 	return m;
 }
 
 inline auxiliaries::Color residue_color_by_hydropathy_index(const std::string& residue_name)
 {
-	static const std::map<std::string, double> map_of_hidropathy_indices=map_of_hydropathy_indices_of_residues();
-	std::map<std::string, double>::const_iterator it=map_of_hidropathy_indices.find(residue_name);
-	const double hi=(it==map_of_hidropathy_indices.end() ? 0.0 : it->second);
-	return auxiliaries::Color::from_temperature_to_blue_white_red((1+hi/4.5)/2);
+	static const std::map<std::string, auxiliaries::Color> map_of_colors=map_of_residue_colors_by_hydropathy_indices();
+	std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(residue_name);
+	return (it==map_of_colors.end() ? default_color() : it->second);
 }
 
-inline void list_residue_colors_by_hydropathy_index()
+inline void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
 {
-	std::map<std::string, double> map_of_hidropathy_indices=map_of_hydropathy_indices_of_residues();
-	map_of_hidropathy_indices["undefined"]=0.0;
-	for(std::map<std::string, double>::const_iterator it=map_of_hidropathy_indices.begin();it!=map_of_hidropathy_indices.end();++it)
+	for(std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
 	{
-		const auxiliaries::Color color=residue_color_by_hydropathy_index(it->first);
-		std::cout << "cmd.do('set_color custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b) << ", ";
-		std::cout << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]')\n";
+		list_color(it->second);
 	}
+	list_color(default_color());
 	std::cout << "\n";
 }
 
@@ -86,16 +111,6 @@ void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, co
 		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
 		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
 		std::cout << "    END,\n";
-
-//		std::cout << "    BEGIN, LINE_LOOP,\n";
-//		std::cout << "    COLOR, 1.0, 1.0, 0.0,\n";
-//		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-//		for(std::size_t i=0;i+1<mesh_vertices.size();i++)
-//		{
-//			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-//			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
-//		}
-//		std::cout << "    END,\n";
 	}
 }
 
@@ -185,7 +200,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	std::cout << "cmd.do('util.cbc')\n\n";
 	std::cout << "cmd.do('hide nonbonded')\n\n";
 
-	list_residue_colors_by_hydropathy_index();
+	list_colors_from_map(map_of_residue_colors_by_hydropathy_indices());
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
@@ -211,7 +226,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
 		{
 			const auxiliaries::Color color=residue_color_by_hydropathy_index(jt->second);
-			std::cout << "cmd.do('color custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
+			std::cout << "cmd.do('color " << color_to_string(color, true) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
 		}
 		std::cout << "\n";
 
