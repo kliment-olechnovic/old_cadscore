@@ -116,10 +116,10 @@ private:
 
 	static std::map<std::string, auxiliaries::Color> create_map_of_residue_colors_by_type()
 	{
-		const auxiliaries::Color nonpolar(255, 255, 0.0);
-		const auxiliaries::Color acidic(0.0, 0.0, 255);
-		const auxiliaries::Color basic(255, 0.0, 0.0);
-		const auxiliaries::Color uncharged(0.0, 255, 0.0);
+		const auxiliaries::Color nonpolar(255, 255, 0);
+		const auxiliaries::Color acidic(255, 0, 0);
+		const auxiliaries::Color basic(0, 0, 255);
+		const auxiliaries::Color uncharged(0, 255, 0);
 
 		std::map<std::string, auxiliaries::Color> m;
 
