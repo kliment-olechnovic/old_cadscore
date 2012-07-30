@@ -178,7 +178,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 
 	std::cout << "cmd.do('color green')\n\n";
-	std::cout << "cmd.do('hide lines')\n\n";
 	std::cout << "cmd.do('hide nonbonded')\n\n";
 
 	list_residue_colors_by_hydropathy_index();
@@ -215,4 +214,5 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 
 	std::cout << "cmd.do('deselect')\n\n";
+	std::cout << "cmd.do('center')\n\n";
 }
