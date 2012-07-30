@@ -112,7 +112,12 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	while(auxiliaries::check_file_header(std::cin, "atoms"))
+	{
+		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
+	}
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
@@ -177,7 +182,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		std::cout << "]\ncmd.load_cgo(" << obj_name << ", '" << cgo_name << "')\n\n";
 	}
 
-	std::cout << "cmd.do('color green')\n\n";
+	std::cout << "cmd.do('util.cbc')\n\n";
 	std::cout << "cmd.do('hide nonbonded')\n\n";
 
 	list_residue_colors_by_hydropathy_index();
