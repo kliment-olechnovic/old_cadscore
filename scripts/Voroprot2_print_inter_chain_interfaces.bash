@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#This script a single PDB filename from the command line
+#This script accepts a single PDB filename from the command line
 
 INPUT_FILE=$1
 
