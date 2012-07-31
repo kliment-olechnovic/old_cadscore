@@ -12,7 +12,7 @@
 
 void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --type:");
+	clo.check_allowed_options("--type:");
 
 	const int scoring_mode=clo.isopt("--type") ? clo.arg_in_interval<int>("--type", 0, 2) : 0;
 

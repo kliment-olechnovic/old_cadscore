@@ -189,7 +189,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--mode: --probe: --step: --projections: --coloring:");
+	clo.check_allowed_options("--probe: --step: --projections: --coloring:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;

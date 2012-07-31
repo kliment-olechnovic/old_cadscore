@@ -6,7 +6,7 @@
 
 void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --use-linux-console-colors");
+	clo.check_allowed_options("--use-linux-console-colors");
 
 	std::vector<protein::DSSPResidueRecord> dssp_records=protein::read_DSSP_atom_records_from_DSSP_file_stream(std::cin);
 

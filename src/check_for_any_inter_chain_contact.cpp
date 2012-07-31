@@ -20,7 +20,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	typedef std::tr1::shared_ptr<Hierarchy> HierarchyPtr;
 	typedef std::map< std::string, HierarchyPtr > HierarchiesMap;
 
-	clo.check_allowed_options("--mode: --probe: --direct-reading");
+	clo.check_allowed_options("--probe: --direct-reading");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 

@@ -15,7 +15,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--mode: --epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
+	clo.check_allowed_options("--epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
 
 	if(clo.isopt("--epsilon"))
 	{
