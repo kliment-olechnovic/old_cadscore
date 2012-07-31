@@ -4,6 +4,7 @@
 #include <limits>
 
 #include "auxiliaries/command_line_options.h"
+#include "auxiliaries/stream_redirector.h"
 
 void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
@@ -36,6 +37,9 @@ int main(const int argc, const char** argv)
 
 		const std::string clog_file=clo.isarg("--clog-file") ? clo.arg<std::string>("--clog-file") : std::string("");
 		clo.remove_option("--clog-file");
+
+		auxiliaries::StreamRedirector stream_redirector;
+		stream_redirector.init(clog_file);
 
 		typedef std::pointer_to_unary_function<const auxiliaries::CommandLineOptions&, void> ModeFunctionPointer;
 		std::map< std::string, ModeFunctionPointer > modes_map;
