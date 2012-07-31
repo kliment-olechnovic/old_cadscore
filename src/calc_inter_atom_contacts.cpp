@@ -52,7 +52,7 @@ std::pair< std::vector<SphereType>, std::vector< std::vector<std::size_t> > > co
 
 void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --depth: --probe:");
+	clo.check_allowed_options("--depth: --probe:");
 
 	const std::size_t subdivision_depth=clo.isopt("--depth") ? clo.arg_in_interval<std::size_t>("--depth", 1, 4) : 3;
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;

@@ -118,14 +118,17 @@ public:
 
 	void check_allowed_options(const std::string& allowed_options) const
 	{
-		std::istringstream input(allowed_options);
 		std::map<std::string, bool> allowed_options_map;
-		while(input.good())
+		if(!allowed_options.empty())
 		{
-			std::string token;
-			input >> token;
-			const std::size_t arg_pos=token.find(":");
-			allowed_options_map[token.substr(0, arg_pos)]=(arg_pos!=std::string::npos);
+			std::istringstream input(allowed_options);
+			while(input.good())
+			{
+				std::string token;
+				input >> token;
+				const std::size_t arg_pos=token.find(":");
+				allowed_options_map[token.substr(0, arg_pos)]=(arg_pos!=std::string::npos);
+			}
 		}
 		for(std::map<std::string, std::string>::const_iterator it=options_.begin();it!=options_.end();++it)
 		{
@@ -147,6 +150,11 @@ public:
 				}
 			}
 		}
+	}
+
+	void remove_option(const std::string& name)
+	{
+		options_.erase(name);
 	}
 
 private:

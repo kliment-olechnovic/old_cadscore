@@ -47,7 +47,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 
 void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --radius-classes: --radius-members: --HETATM --HOH --no-classification --rename-chain:");
+	clo.check_allowed_options("--radius-classes: --radius-members: --HETATM --HOH --no-classification --rename-chain:");
 
 	std::string radius_classes_file_name="";
 	std::string radius_members_file_name="";
@@ -88,7 +88,7 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode:");
+	clo.check_allowed_options("");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -103,7 +103,7 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode:");
+	clo.check_allowed_options("");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>(std::cin);

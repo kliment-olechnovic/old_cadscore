@@ -29,8 +29,13 @@ int main(const int argc, const char** argv)
 
 	try
 	{
-		const auxiliaries::CommandLineOptions clo(argc, argv);
+		auxiliaries::CommandLineOptions clo(argc, argv);
+
 		const std::string mode=clo.arg<std::string>("--mode");
+		clo.remove_option("--mode");
+
+		const std::string clog_file=clo.isarg("--clog-file") ? clo.arg<std::string>("--clog-file") : std::string("");
+		clo.remove_option("--clog-file");
 
 		typedef std::pointer_to_unary_function<const auxiliaries::CommandLineOptions&, void> ModeFunctionPointer;
 		std::map< std::string, ModeFunctionPointer > modes_map;

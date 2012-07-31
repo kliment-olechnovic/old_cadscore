@@ -14,7 +14,7 @@
 
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --category: --window:");
+	clo.check_allowed_options("--category: --window:");
 
 	const std::string category=clo.arg<std::string>("--category");
 	const int window_size=clo.arg_in_interval<int>("--window", 0, 1000);
@@ -52,7 +52,7 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --use-min");
+	clo.check_allowed_options("--use-min");
 
 	const bool use_min=clo.isopt("--use-min");
 
@@ -74,7 +74,7 @@ void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOp
 
 void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode:");
+	clo.check_allowed_options("");
 
 	auxiliaries::assert_file_header(std::cin, "cad_profile");
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>(std::cin);

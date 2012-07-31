@@ -67,7 +67,7 @@ ContactsMap filter_inter_interval_contacts(const ContactsMap& all_contacts, cons
 
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --inter-interval: --inter-chain");
+	clo.check_allowed_options("--inter-interval: --inter-chain");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -96,7 +96,7 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 
 void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--mode: --inter-interval: --inter-chain");
+	clo.check_allowed_options("--inter-interval: --inter-chain");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin);
