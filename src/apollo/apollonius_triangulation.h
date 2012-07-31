@@ -39,12 +39,18 @@ public:
 
 			quadruples_map[stack.front().quadruple_with_d1()].push_back(stack.front().d1_tangent_sphere());
 
+			std::size_t difficult_faces_count=0;
+
 			while(!stack.empty())
 			{
 				Face face=stack.back();
 				stack.pop_back();
 				stack_map.erase(face.abc_ids());
 				{
+					if(MonitoringLevel==1 && !face.can_have_d2())
+					{
+						difficult_faces_count++;
+					}
 					const bool found_d2=(face.d2_id()==Face::npos) && face.can_have_d2() && find_valid_d2(hierarchy, face);
 					const bool found_d3=enable_searching_for_d3 && face.d3_ids_and_tangent_spheres().empty() && face.can_have_d3() && find_valid_d3(hierarchy, face);
 					if(found_d2 || found_d3)
@@ -127,8 +133,18 @@ public:
 
 			if(MonitoringLevel==1)
 			{
+				std::clog << "sheres " << hierarchy.spheres().size() << "\n";
 				std::clog << "quadruples " << quadruples_map.size() << "\n";
 				std::clog << "triples " << processed_triples.size() << "\n";
+				std::clog << "difficulties " << difficult_faces_count << "\n";
+				{
+					std::size_t tangent_spheres_count=0;
+					for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+					{
+						tangent_spheres_count+=it->second.size();
+					}
+					std::clog << "tangents " << tangent_spheres_count << "\n";
+				}
 			}
 		}
 
