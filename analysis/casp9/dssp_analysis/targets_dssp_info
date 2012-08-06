@@ -71,10 +71,6 @@ target 5301
 all_residues_count 80
 helix_residues_count 10
 strand_residues_count 42
-target 5311
-all_residues_count 0
-helix_residues_count 0
-strand_residues_count 0
 target 5321
 all_residues_count 470
 helix_residues_count 251

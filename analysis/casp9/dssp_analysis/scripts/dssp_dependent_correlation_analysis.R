@@ -10,15 +10,22 @@ t_dssp_ids=t_dssp_multimap[which(t_dssp_multimap$key=="target"), 2];
 t_dssp_all_residues_count=t_dssp_multimap[which(t_dssp_multimap$key=="all_residues_count"), 2];
 t_dssp_helix_residues_count=t_dssp_multimap[which(t_dssp_multimap$key=="helix_residues_count"), 2];
 t_dssp_strand_residues_count=t_dssp_multimap[which(t_dssp_multimap$key=="strand_residues_count"), 2];
-t_dssp_helicity=(t_dssp_helix_residues_count-t_dssp_strand_residues_count)/t_dssp_all_residues_count;
+t_dssp_helicity=t_dssp_helix_residues_count/t_dssp_all_residues_count;
+t_dssp_strandity=t_dssp_strand_residues_count/t_dssp_all_residues_count;
 
 png(paste(output_directory, "/targets_helicity.png", sep=""), height=5, width=5, units="in", res=300);
 hist(t_dssp_helicity, breaks=30, xlab="Targets helicity", main="Histogram of targets helicity");
 dev.off();
 
-helicity_threshold=0.0;
+png(paste(output_directory, "/targets_strandity.png", sep=""), height=5, width=5, units="in", res=300);
+hist(t_dssp_strandity, breaks=30, xlab="Targets strandity", main="Histogram of targets strandity");
+dev.off();
+
+probs_list=c(0.1, 0.9);
+helicity_threshold=as.numeric(quantile(t_dssp_helicity, probs=probs_list)[2][1]);
+strandity_threshold=as.numeric(quantile(t_dssp_strandity, probs=probs_list)[2][1]);
 set_helix=t_dssp_ids[which(t_dssp_helicity>helicity_threshold)];
-set_strand=t_dssp_ids[which((0-t_dssp_helicity)>helicity_threshold)];
+set_strand=t_dssp_ids[which(t_dssp_strandity>strandity_threshold)];
 
 targets_ids=t$target*10+t$domain;
 helix_t=t[which(is.element(targets_ids, set_helix)),];
