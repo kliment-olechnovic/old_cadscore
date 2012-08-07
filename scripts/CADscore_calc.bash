@@ -19,6 +19,7 @@ $0 options:
   -i    inter-interval contacts specification (optional)
   -o    max timeout (optional)
   -g    flag to use TM-score (optional)
+  -u    flag to disable model atoms filtering by target atoms (optional)
 
 EOF
 }
@@ -49,8 +50,9 @@ INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
 USE_TMSCORE=false
+DISABLE_MODEL_ATOMS_FILTERING=false
 
-while getopts "hD:t:m:lv:ci:o:g" OPTION
+while getopts "hD:t:m:lv:ci:o:gu" OPTION
 do
   case $OPTION in
     h)
@@ -83,6 +85,9 @@ do
       ;;
     g)
       USE_TMSCORE=true
+      ;;
+    u)
+      DISABLE_MODEL_ATOMS_FILTERING=true
       ;;
     ?)
       exit 1
@@ -167,7 +172,13 @@ if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no i
 ##################################################
 ### Preprocessing model
 
-test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+if $DISABLE_MODEL_ATOMS_FILTERING
+then
+  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+else
+  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+fi
+
 if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the model" 1>&2 ; exit 1 ; fi
 
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
