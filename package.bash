@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION=$(hg branches -a | awk '{print $2}' | head -1 | tr ':' '_')
-PACKAGE_NAME="cadscore_$VERSION"
+VERSION=$(hg branches -a | egrep '^experimental' | awk '{print $2}' | head -1 | tr ':' '_')
+PACKAGE_NAME="cadscore_experimental_$VERSION"
 
 rm $PACKAGE_NAME.tar.gz
 rm -r $PACKAGE_NAME
