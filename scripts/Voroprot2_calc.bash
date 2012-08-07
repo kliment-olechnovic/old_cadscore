@@ -7,7 +7,7 @@ cat << EOF 1>&2
 $0 options:
 
   -h    show this message and exit
-  -f    path to input file in PBD format
+  -f    path to input file in PDB format
   -l    flag to include heteroatoms (optional)
   -v    path to atomic radii files directory (optional)
   -a    flag to print atoms (optional)
