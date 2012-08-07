@@ -11,8 +11,8 @@ $0 options:
 
   -h    show this message and exit
   -D    path to writable database directory
-  -t    path to target file in PBD format
-  -m    path to model file in PBD format
+  -t    path to target file in PDB format
+  -m    path to model file in PDB format
   -l    flag to include heteroatoms (optional)
   -v    path to atomic radii files directory (optional)
   -c    flag to consider only inter-chain contacts (optional)
@@ -20,6 +20,7 @@ $0 options:
   -o    max timeout (optional)
   -g    flag to use TM-score (optional)
   -u    flag to disable model atoms filtering by target atoms (optional)
+  -q    flag to try to rename chains for best possible scores (optional)
 
 EOF
 }
@@ -51,8 +52,9 @@ INTER_INTERVAL_OPTION=""
 TIMEOUT="300s"
 USE_TMSCORE=false
 DISABLE_MODEL_ATOMS_FILTERING=false
+QUATERNARY_CHAINS_RENAMING=false
 
-while getopts "hD:t:m:lv:ci:o:gu" OPTION
+while getopts "hD:t:m:lv:ci:o:guq" OPTION
 do
   case $OPTION in
     h)
@@ -88,6 +90,9 @@ do
       ;;
     u)
       DISABLE_MODEL_ATOMS_FILTERING=true
+      ;;
+    q)
+      QUATERNARY_CHAINS_RENAMING=true
       ;;
     ?)
       exit 1
@@ -187,7 +192,13 @@ if [ ! -s "$MODEL_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no filtered resi
 ##################################################
 ### Comparing target and model
 
-test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
+if $QUATERNARY_CHAINS_RENAMING
+then
+  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts-with-chains-optimally-renamed $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
+else
+  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
+fi
+
 if [ ! -s "$COMBINED_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: combined inter-residue contacts file is empty" 1>&2 ; exit 1 ; fi
 	
 test -f $CAD_PROFILE_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode calc-CAD-profile > $CAD_PROFILE_FILE

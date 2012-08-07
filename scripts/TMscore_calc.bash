@@ -7,8 +7,8 @@ cat << EOF 1>&2
 $0 options:
 
   -h    show this message and exit
-  -t    path to target file in PBD format
-  -m    path to model file in PBD format
+  -t    path to target file in PDB format
+  -m    path to model file in PDB format
   -p    profile output file
   -s    summary output file
   
