@@ -4,7 +4,7 @@ ta=t[[2]];
 ma=t[[3]];
 cad=abs(ta-ma);
 
-probs_list=c(0, 0.05, 0.1, 0.5, 0.9, 0.95, 1.0);
+probs_list=c(0, 0.001, 0.05, 0.1, 0.5, 0.9, 0.95, 0.999, 1.0);
 
 quantile(ta, probs=probs_list);
 
