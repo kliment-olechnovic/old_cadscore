@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$(hg branches -a | awk '{print $2}' | head -1 | tr ':' '_')
+VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' '_')
 PACKAGE_NAME="cadscore_$VERSION"
 
 rm $PACKAGE_NAME.tar.gz
@@ -13,7 +13,7 @@ cp -r src $PACKAGE_NAME/src
 
 mkdir -p $PACKAGE_NAME/bin
 cp Release/voroprot2 $PACKAGE_NAME/bin/voroprot2
-cp scripts/Voroprot2_* $PACKAGE_NAME/bin
+cp scripts/Voroprot2_calc.bash $PACKAGE_NAME/bin
 cp scripts/CADscore_* $PACKAGE_NAME/bin
 
 mkdir -p $PACKAGE_NAME/resources
