@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cp ../Release/voroprot2 ../scripts/voroprot2
+
 rm -r ./output
 mkdir ./output
 
