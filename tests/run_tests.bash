@@ -26,3 +26,12 @@ do
   ../scripts/CADscore_read_local_scores.bash -D ./output/$DBNAME -t ./input/target -m $MODEL -c AA -w 1 > ./output/$DBNAME/local_scores_$(basename $MODEL)
 done
 ../scripts/CADscore_read_global_scores.bash -D ./output/$DBNAME | sort -r | column -t > ./output/$DBNAME/global_scores
+
+
+DBNAME="db_custom_contacts"
+for MODEL in ./input/model*
+do
+  ../scripts/CADscore_calc.bash -D ./output/$DBNAME -t ./input/target -m $MODEL -i "(A40-A60)(B)"
+  ../scripts/CADscore_read_local_scores.bash -D ./output/$DBNAME -t ./input/target -m $MODEL -c AA -w 1 > ./output/$DBNAME/local_scores_$(basename $MODEL)
+done
+../scripts/CADscore_read_global_scores.bash -D ./output/$DBNAME | sort -r | column -t > ./output/$DBNAME/global_scores
