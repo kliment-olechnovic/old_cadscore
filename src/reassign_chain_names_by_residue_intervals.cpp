@@ -12,12 +12,14 @@ void reassign_chain_names_by_residue_intervals(const auxiliaries::CommandLineOpt
 	const std::string intervals_string=clo.arg<std::string>("--intervals");
 
 	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals;
-	if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(intervals_string, intervals) || intervals.size()<2)
+	if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(intervals_string, intervals) || intervals.empty())
 	{
 		throw std::runtime_error(std::string("Invalid intervals string: ")+intervals_string);
 	}
 
 	const std::vector<protein::PDBAtomRecord> pdb_atom_records_records=protein::read_PDB_atom_records_from_PDB_file_stream(std::cin);
+
+	const std::string defaulting_chain_name=(intervals.size()<2 ? std::string(1, 'A'+static_cast<char>(intervals.size())) : std::string("?"));
 
 	for(std::size_t u=0;u<pdb_atom_records_records.size();u++)
 	{
@@ -39,7 +41,7 @@ void reassign_chain_names_by_residue_intervals(const auxiliaries::CommandLineOpt
 		}
 		if(!matched)
 		{
-			record.chain_name="?";
+			record.chain_name=defaulting_chain_name;
 		}
 		std::cout << record.generate_PDB_file_line() << "\n";
 	}

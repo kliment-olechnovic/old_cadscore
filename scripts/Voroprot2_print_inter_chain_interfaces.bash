@@ -1,6 +1,18 @@
 #!/bin/bash
 
-#This script accepts a single PDB filename from the command line
+print_help()
+{
+cat << EOF 1>&2
+
+$0 options:
+
+  -h    show this message and exit
+  -f    path to input file in PDB format
+  -c    coloring mode (hydroph or type) (optional)
+  -g    residue groups (optional)
+
+EOF
+}
 
 SCRIPT_DIRECTORY=$(dirname $0)
 VOROPROT_NAME="voroprot2"
@@ -16,7 +28,31 @@ then
   fi
 fi
 
-INPUT_FILE=$1
+INPUT_FILE=""
+COLORING_MODE=""
+RESIDUE_GROUPS=""
+
+while getopts "hf:c:g:" OPTION
+do
+  case $OPTION in
+    h)
+      print_help
+      exit 0
+      ;;
+    f)
+      INPUT_FILE=$OPTARG
+      ;;
+    c)
+      COLORING_MODE="--coloring "$OPTARG
+      ;;
+    g)
+      RESIDUE_GROUPS=$OPTARG
+      ;;
+    ?)
+      exit 1
+      ;;
+  esac
+done
 
 if [ -z "$INPUT_FILE" ]
 then
@@ -30,17 +66,25 @@ then
   exit 1
 fi
 
-COLORING_MODE=""
-if [ ! -z "$2" ]
+TMP_DIR=$(mktemp -d)
+
+USABLE_INPUT_FILE="$TMP_DIR/"$(basename $INPUT_FILE)
+if [ -z "$RESIDUE_GROUPS" ]
 then
-  COLORING_MODE="--coloring $2"
+  cp "$INPUT_FILE" "$USABLE_INPUT_FILE"
+else
+  $VOROPROT --mode reassign-chain-names-by-residue-intervals --intervals "$RESIDUE_GROUPS" < "$INPUT_FILE" > "$USABLE_INPUT_FILE"
+  if [ ! -s "$USABLE_INPUT_FILE" ]
+  then
+    echo "Failed to reassign chain names by residue groups, check the '-g' parameter" 1>&2
+    rm "$TMP_DIR"
+    exit 1
+  fi 
 fi
 
-TMP_FILE=$(mktemp)
-rm "$TMP_FILE"
-SCRIPT_FILE="$TMP_FILE.py"
+SCRIPT_FILE="$TMP_DIR/script.py"
+$VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $COLORING_MODE > "$SCRIPT_FILE"
 
-$VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $COLORING_MODE > "$SCRIPT_FILE"
+pymol "$USABLE_INPUT_FILE" "$SCRIPT_FILE"
 
-pymol "$INPUT_FILE" "$SCRIPT_FILE"
-rm "$SCRIPT_FILE"
+rm "$TMP_DIR"
