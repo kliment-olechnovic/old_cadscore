@@ -31,10 +31,10 @@ targets_ids=t$target*10+t$domain;
 helix_t=t[which(is.element(targets_ids, set_helix)),];
 strand_t=t[which(is.element(targets_ids, set_strand)),];
 
-png(paste(output_directory, "/dssp_dependent_correlation_GDT_TS_vs_MM.png", sep=""), height=5, width=5, units="in", res=300);
-plot(x=c(0,1), y=c(0,1), type="l", col="black", ylab="MM", xlab="GDT_TS", main="")
-points(y=helix_t$MM, x=helix_t$CASP_GDT_TS, col="red", pch=15, cex=0.5);
-points(y=strand_t$MM, x=strand_t$CASP_GDT_TS, col="green", pch=16, cex=0.5);
+png(paste(output_directory, "/dssp_dependent_correlation_GDT_TS_vs_MM.png", sep=""), height=4.8, width=4.4, units="in", res=600);
+plot(x=c(0,1), y=c(0,1), type="n", col="black", xlab="", ylab="", main="")
+points(y=helix_t$MM, x=helix_t$CASP_GDT_TS, col="darkorange2", pch=0, cex=0.7);
+points(y=strand_t$MM, x=strand_t$CASP_GDT_TS, col="cyan4", pch=1, cex=0.7);
 dev.off();
 
 cor_names=c("all", "helix", "strand");
@@ -44,3 +44,6 @@ cor_values_spearman=c(cor(t$MM, t$CASP_GDT_TS, method="spearman"), cor(helix_t$M
 cor_table=data.frame(type=cor_names, count=counts, cor_pearson=cor_values_pearson, cor_spearman=cor_values_spearman);
 
 write.table(cor_table, "dssp_dependent_correlation_GDT_TS_vs_MM_table", quote=FALSE, row.names=FALSE);
+
+thresholds_table=data.frame(threshold_name=c("helices", "strands"), value=c(helicity_threshold, strandity_threshold));
+write.table(thresholds_table, "used_thresholds", quote=FALSE, row.names=FALSE);

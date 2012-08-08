@@ -14,6 +14,7 @@ $0 options:
   -q    flag to print quadruples (optional)
   -c    flag to print inter-atom contacts (optional)
   -r    flag to print inter-residue contacts (optional)
+  -j    flag to print inter-atom cells faces areas (optional)
 
 EOF
 }
@@ -42,8 +43,9 @@ PRINT_ATOMS=false
 QUADRUPLES=false
 INTER_ATOM_CONTACTS=false
 INTER_RESIDUE_CONTACTS=false
+INTER_ATOM_FACES=false
 
-while getopts "hf:laqcrv:e:b:p" OPTION
+while getopts "hf:laqcrjv:e:b:p" OPTION
 do
   case $OPTION in
     h)
@@ -79,6 +81,9 @@ do
       ;;
     r)
       INTER_RESIDUE_CONTACTS=true
+      ;;
+    j)
+      INTER_ATOM_FACES=true
       ;;
     ?)
       exit 1
@@ -116,4 +121,9 @@ fi
 if $INTER_RESIDUE_CONTACTS
 then
   cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode calc-inter-residue-contacts
+fi
+
+if $INTER_ATOM_FACES
+then
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces
 fi
