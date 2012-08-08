@@ -221,7 +221,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		const protein::Atom& a=atoms[atoms_ids_pair.first];
 		const protein::Atom& b=atoms[atoms_ids_pair.second];
 
-		if(a.chain_id!=b.chain_id)
+		if(a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?")
 		{
 			std::vector<const protein::Atom*> cs;
 			cs.reserve(it->second.size());
@@ -305,4 +305,5 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	std::cout << "cmd.do('deselect')\n\n";
 	std::cout << "cmd.do('center')\n\n";
+	std::cout << "cmd.do('zoom')\n\n";
 }
