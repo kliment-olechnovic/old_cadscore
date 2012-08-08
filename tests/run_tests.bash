@@ -6,6 +6,7 @@ mkdir ./output
 for MODEL in ./input/*
 do
   ../scripts/Voroprot2_calc.bash -f $MODEL -q > ./output/quadruples_$(basename $MODEL)
+  ../scripts/Voroprot2_calc.bash -f $MODEL -j > ./output/hyperfaces_$(basename $MODEL)
 done
 
 
