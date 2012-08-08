@@ -31,8 +31,8 @@ targets_ids=t$target*10+t$domain;
 helix_t=t[which(is.element(targets_ids, set_helix)),];
 strand_t=t[which(is.element(targets_ids, set_strand)),];
 
-png(paste(output_directory, "/dssp_dependent_correlation_GDT_TS_vs_MM.png", sep=""), height=4.8, width=4.4, units="in", res=300);
-plot(x=c(0,1), y=c(0,1), type="l", col="black", xlab="", ylab="", main="")
+png(paste(output_directory, "/dssp_dependent_correlation_GDT_TS_vs_MM.png", sep=""), height=4.8, width=4.4, units="in", res=600);
+plot(x=c(0,1), y=c(0,1), type="n", col="black", xlab="", ylab="", main="")
 points(y=helix_t$MM, x=helix_t$CASP_GDT_TS, col="darkorange2", pch=0, cex=0.7);
 points(y=strand_t$MM, x=strand_t$CASP_GDT_TS, col="cyan4", pch=1, cex=0.7);
 dev.off();
