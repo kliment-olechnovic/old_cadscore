@@ -13,7 +13,7 @@
 #include "auxiliaries/name_colorizing.h"
 #include "auxiliaries/opengl_printer.h"
 
-class ResidueNameColorizer : public auxiliaries::NameColorizerForPymol
+class ResidueNameColorizer : public auxiliaries::NameColorizerForPymol<std::string>
 {
 public:
 	ResidueNameColorizer(const std::string& mode)
