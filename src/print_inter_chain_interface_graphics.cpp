@@ -12,29 +12,26 @@
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/color.h"
 
-class NameColorizer
+class GenericNameColorizer
 {
 public:
-	NameColorizer(const std::string& mode)
+	GenericNameColorizer()
 	{
-		if(mode=="residue_hydrophobicity")
-		{
-			map_of_colors_=create_map_of_residue_colors_by_hydropathy_indices();
-		}
-		else if(mode=="residue_type")
-		{
-			map_of_colors_=create_map_of_residue_colors_by_type();
-		}
 	}
 
-	auxiliaries::Color color(const std::string& name) const
+	void set_map_of_colors(const std::map<std::string, auxiliaries::Color> map_of_colors)
 	{
-		return color_from_map(map_of_colors_, name);
+		map_of_colors_=map_of_colors;
 	}
 
 	const std::map<std::string, auxiliaries::Color>& map_of_colors() const
 	{
 		return map_of_colors_;
+	}
+
+	auxiliaries::Color color(const std::string& name) const
+	{
+		return color_from_map(map_of_colors_, name);
 	}
 
 	static auxiliaries::Color default_color()
@@ -49,6 +46,25 @@ private:
 		return (it==map_of_colors.end() ? default_color() : it->second);
 	}
 
+	std::map<std::string, auxiliaries::Color> map_of_colors_;
+};
+
+class ResidueNameColorizer : public GenericNameColorizer
+{
+public:
+	ResidueNameColorizer(const std::string& mode)
+	{
+		if(mode=="residue_hydrophobicity")
+		{
+			set_map_of_colors(create_map_of_residue_colors_by_hydropathy_indices());
+		}
+		else if(mode=="residue_type")
+		{
+			set_map_of_colors(create_map_of_residue_colors_by_type());
+		}
+	}
+
+private:
 	static auxiliaries::Color color_from_hydropathy_index(const double hi)
 	{
 		return auxiliaries::Color::from_temperature_to_blue_white_red((1+hi/4.5)/2);
@@ -115,25 +131,24 @@ private:
 
 		return m;
 	}
-
-	std::map<std::string, auxiliaries::Color> map_of_colors_;
 };
 
-class NameColorizerForPymol : public NameColorizer
+template<class ParentNameColorizer>
+class NameColorizerForPymol : public ParentNameColorizer
 {
 public:
-	NameColorizerForPymol(const std::string& mode) : NameColorizer(mode)
+	NameColorizerForPymol(const std::string& mode) : ParentNameColorizer(mode)
 	{
 	}
 
 	std::string color_string(const std::string& name) const
 	{
-		return color_to_string_id(color(name));
+		return color_to_string_id(ParentNameColorizer::color(name));
 	}
 
 	void list_colors() const
 	{
-		list_colors_from_map(map_of_colors());
+		list_colors_from_map(ParentNameColorizer::map_of_colors());
 	}
 
 private:
@@ -162,7 +177,7 @@ private:
 		{
 			list_color(it->second);
 		}
-		list_color(default_color());
+		list_color(ParentNameColorizer::default_color());
 		std::cout << "\n";
 	}
 };
@@ -210,7 +225,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
-	const NameColorizerForPymol colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
+	const NameColorizerForPymol<ResidueNameColorizer> colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
