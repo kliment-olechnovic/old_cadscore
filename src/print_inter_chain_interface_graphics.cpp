@@ -12,10 +12,10 @@
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/color.h"
 
-class Colorizer
+class NameColorizer
 {
 public:
-	Colorizer(const std::string& mode)
+	NameColorizer(const std::string& mode)
 	{
 		if(mode=="residue_hydrophobicity")
 		{
@@ -32,34 +32,9 @@ public:
 		return color_from_map(map_of_colors_, name);
 	}
 
-	std::string color_string(const std::string& name) const
+	const std::map<std::string, auxiliaries::Color>& map_of_colors() const
 	{
-		return color_to_string_id(color(name));
-	}
-
-	void list_colors() const
-	{
-		list_colors_from_map(map_of_colors_);
-	}
-
-private:
-	static std::string color_to_string_id(const auxiliaries::Color& color)
-	{
-		std::ostringstream output;
-		output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
-		return output.str();
-	}
-
-	static std::string color_to_string_value(const auxiliaries::Color& color)
-	{
-		std::ostringstream output;
-		output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
-		return output.str();
-	}
-
-	static void list_color(const auxiliaries::Color& color)
-	{
-		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
+		return map_of_colors_;
 	}
 
 	static auxiliaries::Color default_color()
@@ -67,16 +42,7 @@ private:
 		return auxiliaries::Color::from_code(0xFFFFFF);
 	}
 
-	static void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
-	{
-		for(std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
-		{
-			list_color(it->second);
-		}
-		list_color(default_color());
-		std::cout << "\n";
-	}
-
+private:
 	static auxiliaries::Color color_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors, const std::string& name)
 	{
 		std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(name);
@@ -153,6 +119,54 @@ private:
 	std::map<std::string, auxiliaries::Color> map_of_colors_;
 };
 
+class NameColorizerForPymol : public NameColorizer
+{
+public:
+	NameColorizerForPymol(const std::string& mode) : NameColorizer(mode)
+	{
+	}
+
+	std::string color_string(const std::string& name) const
+	{
+		return color_to_string_id(color(name));
+	}
+
+	void list_colors() const
+	{
+		list_colors_from_map(map_of_colors());
+	}
+
+private:
+	static std::string color_to_string_id(const auxiliaries::Color& color)
+	{
+		std::ostringstream output;
+		output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
+		return output.str();
+	}
+
+	static std::string color_to_string_value(const auxiliaries::Color& color)
+	{
+		std::ostringstream output;
+		output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
+		return output.str();
+	}
+
+	static void list_color(const auxiliaries::Color& color)
+	{
+		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
+	}
+
+	static void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
+	{
+		for(std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
+		{
+			list_color(it->second);
+		}
+		list_color(default_color());
+		std::cout << "\n";
+	}
+};
+
 template<typename PointType>
 std::string point_to_string(const PointType& a)
 {
@@ -162,11 +176,12 @@ std::string point_to_string(const PointType& a)
 	return output.str();
 }
 
-void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, const apollo::SimplePoint& normal, const auxiliaries::Color& color)
+template<typename PointType>
+void print_tringle_fan(const std::vector<PointType>& mesh_vertices, const PointType& normal, const auxiliaries::Color& color)
 {
 	if(!mesh_vertices.empty())
 	{
-		const apollo::SimplePoint shift=normal*0.001;
+		const PointType shift=normal*0.001;
 
 		std::cout << "    BEGIN, TRIANGLE_FAN,\n";
 		std::cout << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
@@ -195,7 +210,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
-	const Colorizer colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
+	const NameColorizerForPymol colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
