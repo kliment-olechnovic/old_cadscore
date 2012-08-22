@@ -17,19 +17,24 @@ class Colorizer
 public:
 	Colorizer(const std::string& mode)
 	{
-		if(mode=="hydroph")
+		if(mode=="residue_hydrophobicity")
 		{
 			map_of_colors_=create_map_of_residue_colors_by_hydropathy_indices();
 		}
-		else if(mode=="type")
+		else if(mode=="residue_type")
 		{
 			map_of_colors_=create_map_of_residue_colors_by_type();
 		}
 	}
 
-	auxiliaries::Color residue_color(const std::string& residue_name) const
+	auxiliaries::Color color(const std::string& name) const
 	{
-		return residue_color_from_map(map_of_colors_, residue_name);
+		return color_from_map(map_of_colors_, name);
+	}
+
+	std::string color_string(const std::string& name) const
+	{
+		return color_to_string_id(color(name));
 	}
 
 	void list_colors() const
@@ -37,40 +42,29 @@ public:
 		list_colors_from_map(map_of_colors_);
 	}
 
-	static std::string color_to_string(const auxiliaries::Color& color)
-	{
-		return color_to_string(color, true);
-	}
-
 private:
-	static std::string color_to_string(const auxiliaries::Color& color, const bool as_name)
+	static std::string color_to_string_id(const auxiliaries::Color& color)
 	{
 		std::ostringstream output;
-		if(as_name)
-		{
-			output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
-		}
-		else
-		{
-			output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
-		}
+		output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
+		return output.str();
+	}
+
+	static std::string color_to_string_value(const auxiliaries::Color& color)
+	{
+		std::ostringstream output;
+		output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
 		return output.str();
 	}
 
 	static void list_color(const auxiliaries::Color& color)
 	{
-		std::cout << "cmd.do('set_color " << color_to_string(color, true) << ", " << color_to_string(color, false) << "')\n";
+		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
 	}
 
 	static auxiliaries::Color default_color()
 	{
 		return auxiliaries::Color::from_code(0xFFFFFF);
-	}
-
-	static auxiliaries::Color residue_color_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors, const std::string& residue_name)
-	{
-		std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(residue_name);
-		return (it==map_of_colors.end() ? default_color() : it->second);
 	}
 
 	static void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
@@ -81,6 +75,12 @@ private:
 		}
 		list_color(default_color());
 		std::cout << "\n";
+	}
+
+	static auxiliaries::Color color_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors, const std::string& name)
+	{
+		std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(name);
+		return (it==map_of_colors.end() ? default_color() : it->second);
 	}
 
 	static auxiliaries::Color color_from_hydropathy_index(const double hi)
@@ -263,7 +263,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
 			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
-			print_tringle_fan(cell_face.mesh_vertices(), normal, colorizer.residue_color(a.residue_name));
+			print_tringle_fan(cell_face.mesh_vertices(), normal, colorizer.color(a.residue_name));
 		}
 		std::cout << "]\ncmd.load_cgo(" << obj_name << ", '" << cgo_name << "')\n\n";
 	}
@@ -296,7 +296,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
 		{
-			std::cout << "cmd.do('color " << Colorizer::color_to_string(colorizer.residue_color(jt->second)) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
+			std::cout << "cmd.do('color " << colorizer.color_string(jt->second) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
 		}
 		std::cout << "\n";
 

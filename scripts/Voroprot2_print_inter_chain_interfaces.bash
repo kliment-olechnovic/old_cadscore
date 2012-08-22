@@ -8,7 +8,7 @@ $0 options:
 
   -h    show this message and exit
   -f    path to input file in PDB format
-  -c    coloring mode (hydroph or type) (optional)
+  -c    coloring mode (residue_hydrophobicity or residue_type) (optional)
   -g    residue groups (optional)
 
 EOF
@@ -83,8 +83,10 @@ else
 fi
 
 SCRIPT_FILE="$TMP_DIR/script.py"
-$VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $COLORING_MODE > "$SCRIPT_FILE"
 
-pymol "$USABLE_INPUT_FILE" "$SCRIPT_FILE"
+if $VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $COLORING_MODE > "$SCRIPT_FILE"
+then
+  pymol "$USABLE_INPUT_FILE" "$SCRIPT_FILE"
+fi
 
 rm "$TMP_DIR"
