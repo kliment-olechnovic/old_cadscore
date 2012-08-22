@@ -89,4 +89,4 @@ then
   pymol "$USABLE_INPUT_FILE" "$SCRIPT_FILE"
 fi
 
-rm "$TMP_DIR"
+rm -r "$TMP_DIR"
