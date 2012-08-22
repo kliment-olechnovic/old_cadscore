@@ -108,16 +108,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
-
 	const ResidueNameColorizer colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-	while(auxiliaries::check_file_header(std::cin, "atoms"))
-	{
-		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
-	}
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
@@ -127,7 +121,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	std::map< std::pair<std::size_t, std::size_t>, std::size_t > faces_vector_map;
 	typedef std::map< std::pair<std::string, std::string>, std::vector< std::pair<std::size_t, std::size_t> > > InterfacesMap;
 	InterfacesMap inter_chain_interfaces;
-
 	for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
