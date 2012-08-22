@@ -11,6 +11,7 @@
 #include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/name_colorizing.h"
+#include "auxiliaries/opengl_printer.h"
 
 class ResidueNameColorizer : public auxiliaries::NameColorizerForPymol
 {
@@ -96,37 +97,6 @@ private:
 	}
 };
 
-template<typename PointType>
-std::string point_to_string(const PointType& a)
-{
-	std::ostringstream output;
-	output.precision(std::numeric_limits<double>::digits10);
-	output << std::fixed << a.x << ", " << a.y << ", " << a.z;
-	return output.str();
-}
-
-template<typename PointType>
-void print_tringle_fan(const std::vector<PointType>& mesh_vertices, const PointType& normal, const auxiliaries::Color& color)
-{
-	if(!mesh_vertices.empty())
-	{
-		const PointType shift=normal*0.001;
-
-		std::cout << "    BEGIN, TRIANGLE_FAN,\n";
-		std::cout << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
-		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
-		for(std::size_t i=0;i+1<mesh_vertices.size();i++)
-		{
-			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
-		}
-		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
-		std::cout << "    END,\n";
-	}
-}
-
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
@@ -199,7 +169,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		const std::string obj_name=std::string("obj_")+it->first.first+"_"+it->first.second;
 		const std::string cgo_name=std::string("iface_")+it->first.first+"_"+it->first.second;
-		std::cout << obj_name << " = [\n";
+		const auxiliaries::OpenGLPrinter opengl_printer(obj_name, cgo_name);
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=it->second[i];
@@ -207,9 +177,8 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
 			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
-			print_tringle_fan(cell_face.mesh_vertices(), normal, colorizer.color(a.residue_name));
+			opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal, colorizer.color(a.residue_name));
 		}
-		std::cout << "]\ncmd.load_cgo(" << obj_name << ", '" << cgo_name << "')\n\n";
 	}
 
 	std::cout << "cmd.do('util.cbc')\n\n";
