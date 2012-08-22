@@ -17,7 +17,6 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOptions& clo);
-
 void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo);
 void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
 void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& clo);
