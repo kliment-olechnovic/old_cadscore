@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "protein/atom.h"
+#include "protein/residue_id.h"
 
 #include "apollo/spheres_hierarchy.h"
 #include "apollo/apollonius_triangulation.h"
@@ -16,10 +17,8 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-//	clo.check_allowed_options("--probe: --step: --projections:");
-//	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
-//	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
-//	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
+	clo.check_allowed_options("--probe:");
+	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -32,10 +31,15 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 	pairs_pairs.push_back(std::make_pair(std::make_pair(0, 2), std::make_pair(1, 3)));
 	pairs_pairs.push_back(std::make_pair(std::make_pair(0, 3), std::make_pair(1, 2)));
 
+	typedef std::pair<protein::ResidueID, protein::ResidueID> ResiduePair;
+	typedef std::map< ResiduePair, std::set<ResiduePair> > ResiduePairsNeighboursMap;
 	typedef std::tr1::unordered_set<apollo::Pair, apollo::Pair::HashFunctor> PairsSet;
-	typedef std::tr1::unordered_map<apollo::Pair, PairsSet, apollo::Pair::HashFunctor> PairsNeighbouringPairsMap;
-	PairsSet pairs_set;
-	PairsNeighbouringPairsMap pnp_map;
+	typedef std::map< ResiduePair, PairsSet > ResiduePairsContentsMap;
+
+	std::set<ResiduePair> rp_set;
+	ResiduePairsNeighboursMap rpn_map;
+	ResiduePairsContentsMap rpc_map;
+
 	for(typename Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 	{
 		const apollo::Quadruple& quadruple=it->first;
@@ -47,44 +51,63 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 			const protein::Atom& b=atoms[pair_ab.get(1)];
 			const protein::Atom& c=atoms[pair_cd.get(0)];
 			const protein::Atom& d=atoms[pair_cd.get(1)];
-			if(a.chain_id!=b.chain_id && c.chain_id!=d.chain_id && a.chain_id!="?" && b.chain_id!="?" && c.chain_id!="?" && d.chain_id!="?")
+			if(a.chain_id!=b.chain_id && c.chain_id!=d.chain_id &&
+					a.chain_id!="?" && b.chain_id!="?" && c.chain_id!="?" && d.chain_id!="?" &&
+					apollo::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2 &&
+					apollo::minimal_distance_from_sphere_to_sphere(c, d)<probe_radius*2)
 			{
-				if(pair_ab<pair_cd)
+				ResiduePair residue_pair_ab=std::make_pair(protein::ResidueID::from_atom(a), protein::ResidueID::from_atom(b));
+				if(residue_pair_ab.second<residue_pair_ab.first)
 				{
-					pnp_map[pair_ab].insert(pair_cd);
+					std::swap(residue_pair_ab.second, residue_pair_ab.first);
 				}
-				else
+
+				ResiduePair residue_pair_cd=std::make_pair(protein::ResidueID::from_atom(c), protein::ResidueID::from_atom(d));
+				if(residue_pair_cd.second<residue_pair_cd.first)
 				{
-					pnp_map[pair_cd].insert(pair_ab);
+					std::swap(residue_pair_cd.second, residue_pair_cd.first);
 				}
-				pairs_set.insert(pair_ab);
-				pairs_set.insert(pair_cd);
+
+				if(residue_pair_ab!=residue_pair_cd)
+				{
+					if(residue_pair_ab<residue_pair_cd)
+					{
+						rpn_map[residue_pair_ab].insert(residue_pair_cd);
+					}
+					else
+					{
+						rpn_map[residue_pair_cd].insert(residue_pair_ab);
+					}
+					rp_set.insert(residue_pair_ab);
+					rp_set.insert(residue_pair_cd);
+				}
+
+				rpc_map[residue_pair_ab].insert(pair_ab);
+				rpc_map[residue_pair_cd].insert(pair_cd);
 			}
 		}
 	}
 
 	std::cout << "graph\n{\n";
-	for(PairsSet::const_iterator it=pairs_set.begin();it!=pairs_set.end();++it)
+
+	for(std::set<ResiduePair>::const_iterator it=rp_set.begin();it!=rp_set.end();++it)
 	{
-		const apollo::Pair& pair_ab=(*it);
-		std::cout << "node_" << pair_ab.get(0) << "_" << pair_ab.get(1) << " ";
-		const protein::Atom* a=&atoms[pair_ab.get(0)];
-		const protein::Atom* b=&atoms[pair_ab.get(1)];
-		if(std::make_pair(b->chain_id, b->residue_number)<std::make_pair(a->chain_id, a->residue_number))
-		{
-			std::swap(a, b);
-		}
-		std::cout << "[label=\"" << a->chain_id << "" << a->residue_number << "," << a->residue_name << "," << a->atom_name << " with " << b->chain_id << "" << b->residue_number << "," << b->residue_name << "," << b->atom_name << "\"]\n";
+		const ResiduePair& residue_pair_ab=(*it);
+		std::cout << "node_" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << "_" << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number;
+		std::cout << " [label=\"" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << " with " << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number << "\"]\n";
 	}
 
-	for(PairsNeighbouringPairsMap::const_iterator it=pnp_map.begin();it!=pnp_map.end();++it)
+	for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
 	{
-		const apollo::Pair& pair_ab=it->first;
-		const PairsSet& neighbours=it->second;
-		for(PairsSet::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+		const ResiduePair& residue_pair_ab=it->first;
+		const std::set<ResiduePair>& neighbours=it->second;
+		for(std::set<ResiduePair>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
 		{
-			const apollo::Pair& pair_cd=(*jt);
-			std::cout << "node_" << pair_ab.get(0) << "_" << pair_ab.get(1) << " -- " << "node_" << pair_cd.get(0) << "_" << pair_cd.get(1) << "\n";
+			const ResiduePair& residue_pair_cd=(*jt);
+			std::cout << "node_" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << "_" << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number;
+			std::cout << " -- ";
+			std::cout << "node_" << residue_pair_cd.first.chain_id << residue_pair_cd.first.residue_number << "_" << residue_pair_cd.second.chain_id << residue_pair_cd.second.residue_number;
+			std::cout << "\n";
 		}
 	}
 
