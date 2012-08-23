@@ -36,7 +36,6 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 	typedef std::tr1::unordered_set<apollo::Pair, apollo::Pair::HashFunctor> PairsSet;
 	typedef std::map< ResiduePair, PairsSet > ResiduePairsContentsMap;
 
-	std::set<ResiduePair> rp_set;
 	ResiduePairsNeighboursMap rpn_map;
 	ResiduePairsContentsMap rpc_map;
 
@@ -70,43 +69,54 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 
 				if(residue_pair_ab!=residue_pair_cd)
 				{
-					if(residue_pair_ab<residue_pair_cd)
-					{
-						rpn_map[residue_pair_ab].insert(residue_pair_cd);
-					}
-					else
-					{
-						rpn_map[residue_pair_cd].insert(residue_pair_ab);
-					}
-					rp_set.insert(residue_pair_ab);
-					rp_set.insert(residue_pair_cd);
+					rpn_map[residue_pair_ab].insert(residue_pair_cd);
+					rpn_map[residue_pair_cd].insert(residue_pair_ab);
 				}
+			}
+		}
+	}
 
-				rpc_map[residue_pair_ab].insert(pair_ab);
-				rpc_map[residue_pair_cd].insert(pair_cd);
+	std::map< protein::ResidueID, std::set<protein::ResidueID> > residues_vertical_neighbours_map;
+	std::map< protein::ResidueID, std::set<protein::ResidueID> > residues_horizontal_neighbours_map;
+
+	for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
+	{
+		residues_vertical_neighbours_map[it->first.first].insert(it->first.second);
+		const std::set<ResiduePair>& neighbours=it->second;
+		for(std::set<ResiduePair>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+		{
+			if(it->first.first<jt->first)
+			{
+				residues_horizontal_neighbours_map[it->first.first].insert(jt->first);
 			}
 		}
 	}
 
 	std::cout << "graph\n{\n";
 
-	for(std::set<ResiduePair>::const_iterator it=rp_set.begin();it!=rp_set.end();++it)
+	for(std::map< protein::ResidueID, std::set<protein::ResidueID> >::const_iterator it=residues_vertical_neighbours_map.begin();it!=residues_vertical_neighbours_map.end();++it)
 	{
-		const ResiduePair& residue_pair_ab=(*it);
-		std::cout << "node_" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << "_" << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number;
-		std::cout << " [label=\"" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << " with " << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number << "\"]\n";
+		const std::set<protein::ResidueID>& neighbours=it->second;
+		std::cout << "node_" << it->first.chain_id << it->first.residue_number;
+		std::cout << " [label=\"";
+		std::cout << it->first.chain_id << it->first.residue_number;
+		std::cout << " <-> ( ";
+		for(std::set<protein::ResidueID>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+		{
+			std::cout << jt->chain_id << jt->residue_number << " ";
+		}
+		std::cout << ")";
+		std::cout << "\"]\n";
 	}
 
-	for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
+	for(std::map< protein::ResidueID, std::set<protein::ResidueID> >::const_iterator it=residues_horizontal_neighbours_map.begin();it!=residues_horizontal_neighbours_map.end();++it)
 	{
-		const ResiduePair& residue_pair_ab=it->first;
-		const std::set<ResiduePair>& neighbours=it->second;
-		for(std::set<ResiduePair>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+		const std::set<protein::ResidueID>& neighbours=it->second;
+		for(std::set<protein::ResidueID>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
 		{
-			const ResiduePair& residue_pair_cd=(*jt);
-			std::cout << "node_" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << "_" << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number;
+			std::cout << "node_" << it->first.chain_id << it->first.residue_number;
 			std::cout << " -- ";
-			std::cout << "node_" << residue_pair_cd.first.chain_id << residue_pair_cd.first.residue_number << "_" << residue_pair_cd.second.chain_id << residue_pair_cd.second.residue_number;
+			std::cout << "node_" << jt->chain_id << jt->residue_number;
 			std::cout << "\n";
 		}
 	}
