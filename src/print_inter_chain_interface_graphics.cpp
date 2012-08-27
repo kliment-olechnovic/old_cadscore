@@ -227,7 +227,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 	}
 
-	std::cout << "cmd.do('util.cbc')\n\n";
+	std::cout << "cmd.do('color gray')\n\n";
 	std::cout << "cmd.do('hide nonbonded')\n\n";
 
 	colorizer->list_colors();
@@ -235,16 +235,15 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
-		std::map<int, std::string> sequence_numbers;
+		std::map< int, std::vector< std::pair<std::size_t, std::size_t> > > sequence_numbers;
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
-			const protein::Atom& a=atoms[it->second[i].first];
-			const protein::Atom& b=atoms[it->second[i].second];
-			sequence_numbers[a.residue_number]=colorizer->color_string(a, b);
+			const std::pair<std::size_t, std::size_t>& atoms_ids_pair=it->second[i];
+			sequence_numbers[atoms[atoms_ids_pair.first].residue_number].push_back(atoms_ids_pair);
 		}
 
 		std::cout << "cmd.do('select " << selection_name << ", resi ";
-		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		for(std::map< int, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
 		{
 			if(jt!=sequence_numbers.begin())
 			{
@@ -254,9 +253,14 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 		std::cout << " and chain " << it->first.first << "')\n\n";
 
-		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		for(std::map< int, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
 		{
-			std::cout << "cmd.do('color " << jt->second << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
+			const std::vector< std::pair<std::size_t, std::size_t> >& atoms_ids_pairs=jt->second;
+			for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
+			{
+				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
+				std::cout << "cmd.do('color " << colorizer->color_string(atoms[atoms_ids_pair.first], atoms[atoms_ids_pair.second]) << ", resi " << jt->first << " and name " << (atoms[atoms_ids_pair.first].atom_name) << " and chain " << it->first.first << "')\n";
+			}
 		}
 		std::cout << "\n";
 
