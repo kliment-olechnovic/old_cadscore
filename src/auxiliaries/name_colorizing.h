@@ -9,6 +9,22 @@
 namespace auxiliaries
 {
 
+class ColorManagementForMapping
+{
+public:
+	static auxiliaries::Color default_color()
+	{
+		return auxiliaries::Color::from_code(0xFFFFFF);
+	}
+
+	template<typename T>
+	static auxiliaries::Color color_from_map(const std::map<T, auxiliaries::Color>& map_of_colors, const T& name)
+	{
+		typename std::map<T, auxiliaries::Color>::const_iterator it=map_of_colors.find(name);
+		return (it==map_of_colors.end() ? default_color() : it->second);
+	}
+};
+
 template<typename T>
 class NameColorizer
 {
@@ -29,21 +45,10 @@ public:
 
 	auxiliaries::Color color(const T& name) const
 	{
-		return color_from_map(map_of_colors_, name);
-	}
-
-	static auxiliaries::Color default_color()
-	{
-		return auxiliaries::Color::from_code(0xFFFFFF);
+		return ColorManagementForMapping::color_from_map(map_of_colors_, name);
 	}
 
 private:
-	static auxiliaries::Color color_from_map(const std::map<T, auxiliaries::Color>& map_of_colors, const T& name)
-	{
-		typename std::map<T, auxiliaries::Color>::const_iterator it=map_of_colors.find(name);
-		return (it==map_of_colors.end() ? default_color() : it->second);
-	}
-
 	std::map<T, auxiliaries::Color> map_of_colors_;
 };
 
@@ -68,6 +73,17 @@ public:
 	{
 		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
 	}
+
+	template<typename ColorsMapType>
+	static void list_colors_from_map(const ColorsMapType& map_of_colors)
+	{
+		for(typename ColorsMapType::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
+		{
+			list_color(it->second);
+		}
+		list_color(ColorManagementForMapping::default_color());
+		std::cout << "\n";
+	}
 };
 
 template<typename T>
@@ -85,18 +101,7 @@ public:
 
 	void list_colors() const
 	{
-		list_colors_from_map(NameColorizer<T>::map_of_colors());
-	}
-
-private:
-	static void list_colors_from_map(const std::map<T, auxiliaries::Color>& map_of_colors)
-	{
-		for(typename std::map<T, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
-		{
-			ColorManagementForPymol::list_color(it->second);
-		}
-		ColorManagementForPymol::list_color(NameColorizer<T>::default_color());
-		std::cout << "\n";
+		ColorManagementForPymol::list_colors_from_map(NameColorizer<T>::map_of_colors());
 	}
 };
 
