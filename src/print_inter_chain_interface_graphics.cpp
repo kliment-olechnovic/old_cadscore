@@ -204,7 +204,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
 		color_pymol_selection_at_atomic_level=false;
 	}
-	else if(coloring_mode=="atom_name")
+	else if(coloring_mode=="atom_type")
 	{
 		colorizer.reset(new ContactColorizerByFirstAtomName());
 		color_pymol_selection_at_atomic_level=true;
