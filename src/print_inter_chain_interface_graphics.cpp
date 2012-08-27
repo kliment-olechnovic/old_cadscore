@@ -100,6 +100,29 @@ private:
 	}
 };
 
+class AtomNameColorizerByAtomType : public auxiliaries::NameColorizerForPymol<std::string>
+{
+public:
+	AtomNameColorizerByAtomType()
+	{
+		set_map_of_colors(create_map_of_atom_colors_by_type());
+	}
+
+private:
+	static std::map<std::string, auxiliaries::Color> create_map_of_atom_colors_by_type()
+	{
+		std::map<std::string, auxiliaries::Color> m;
+
+		m["C"]=auxiliaries::Color(0, 255, 0);
+		m["N"]=auxiliaries::Color(0, 0, 255);
+		m["O"]=auxiliaries::Color(255, 0, 0);
+		m["S"]=auxiliaries::Color(255, 255, 0);
+		m["P"]=auxiliaries::Color(255, 0, 255);
+
+		return m;
+	}
+};
+
 class ContactColorizerInterface
 {
 public:
@@ -135,6 +158,27 @@ private:
 	ResidueNameColorizerType name_colorizer_;
 };
 
+class ContactColorizerByFirstAtomName : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByFirstAtomName()
+	{
+	}
+
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return name_colorizer_.color(a.atom_name.substr(0, 1));
+	}
+
+	virtual void list_colors() const
+	{
+		name_colorizer_.list_colors();
+	}
+
+private:
+	AtomNameColorizerByAtomType name_colorizer_;
+};
+
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
@@ -156,6 +200,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else if(coloring_mode=="residue_hydrophobicity")
 	{
 		colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
+	}
+	else if(coloring_mode=="atom_name")
+	{
+		colorizer.reset(new ContactColorizerByFirstAtomName());
 	}
 	else
 	{
