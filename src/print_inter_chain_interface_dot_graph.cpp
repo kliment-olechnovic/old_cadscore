@@ -17,8 +17,9 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--probe:");
+	clo.check_allowed_options("--probe: --grouped");
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
+	const bool grouped_vertices=clo.isopt("--grouped");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -76,50 +77,83 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 		}
 	}
 
-	std::map< protein::ResidueID, std::set<protein::ResidueID> > residues_vertical_neighbours_map;
-	std::map< protein::ResidueID, std::set<protein::ResidueID> > residues_horizontal_neighbours_map;
-
-	for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
+	if(grouped_vertices)
 	{
-		residues_vertical_neighbours_map[it->first.first].insert(it->first.second);
-		const std::set<ResiduePair>& neighbours=it->second;
-		for(std::set<ResiduePair>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+		std::map< protein::ResidueID, std::set<protein::ResidueID> > residues_vertical_neighbours_map;
+		std::map< protein::ResidueID, std::set<protein::ResidueID> > residues_horizontal_neighbours_map;
+
+		for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
 		{
-			if(it->first.first<jt->first)
+			residues_vertical_neighbours_map[it->first.first].insert(it->first.second);
+			const std::set<ResiduePair>& neighbours=it->second;
+			for(std::set<ResiduePair>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
 			{
-				residues_horizontal_neighbours_map[it->first.first].insert(jt->first);
+				if(it->first.first<jt->first)
+				{
+					residues_horizontal_neighbours_map[it->first.first].insert(jt->first);
+				}
 			}
 		}
-	}
 
-	std::cout << "graph\n{\n";
+		std::cout << "graph\n{\n";
 
-	for(std::map< protein::ResidueID, std::set<protein::ResidueID> >::const_iterator it=residues_vertical_neighbours_map.begin();it!=residues_vertical_neighbours_map.end();++it)
-	{
-		const std::set<protein::ResidueID>& neighbours=it->second;
-		std::cout << "node_" << it->first.chain_id << it->first.residue_number;
-		std::cout << " [label=\"";
-		std::cout << it->first.chain_id << it->first.residue_number;
-		std::cout << " <-> ( ";
-		for(std::set<protein::ResidueID>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+		for(std::map< protein::ResidueID, std::set<protein::ResidueID> >::const_iterator it=residues_vertical_neighbours_map.begin();it!=residues_vertical_neighbours_map.end();++it)
 		{
-			std::cout << jt->chain_id << jt->residue_number << " ";
-		}
-		std::cout << ")";
-		std::cout << "\"]\n";
-	}
-
-	for(std::map< protein::ResidueID, std::set<protein::ResidueID> >::const_iterator it=residues_horizontal_neighbours_map.begin();it!=residues_horizontal_neighbours_map.end();++it)
-	{
-		const std::set<protein::ResidueID>& neighbours=it->second;
-		for(std::set<protein::ResidueID>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
-		{
+			const std::set<protein::ResidueID>& neighbours=it->second;
 			std::cout << "node_" << it->first.chain_id << it->first.residue_number;
-			std::cout << " -- ";
-			std::cout << "node_" << jt->chain_id << jt->residue_number;
-			std::cout << "\n";
+			std::cout << " [label=\"";
+			std::cout << it->first.chain_id << it->first.residue_number;
+			std::cout << " <-> ( ";
+			for(std::set<protein::ResidueID>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+			{
+				std::cout << jt->chain_id << jt->residue_number << " ";
+			}
+			std::cout << ")";
+			std::cout << "\"]\n";
 		}
-	}
 
-	std::cout << "}\n";
+		for(std::map< protein::ResidueID, std::set<protein::ResidueID> >::const_iterator it=residues_horizontal_neighbours_map.begin();it!=residues_horizontal_neighbours_map.end();++it)
+		{
+			const std::set<protein::ResidueID>& neighbours=it->second;
+			for(std::set<protein::ResidueID>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+			{
+				std::cout << "node_" << it->first.chain_id << it->first.residue_number;
+				std::cout << " -- ";
+				std::cout << "node_" << jt->chain_id << jt->residue_number;
+				std::cout << "\n";
+			}
+		}
+
+		std::cout << "}\n";
+	}
+	else
+	{
+		std::cout << "graph\n{\n";
+
+		for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
+		{
+			const ResiduePair& residue_pair_ab=it->first;
+			std::cout << "node_" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << "_" << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number;
+			std::cout << " [label=\"" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << " with " << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number << "\"]\n";
+		}
+
+		for(ResiduePairsNeighboursMap::const_iterator it=rpn_map.begin();it!=rpn_map.end();++it)
+		{
+			const ResiduePair& residue_pair_ab=it->first;
+			const std::set<ResiduePair>& neighbours=it->second;
+			for(std::set<ResiduePair>::const_iterator jt=neighbours.begin();jt!=neighbours.end();++jt)
+			{
+				const ResiduePair& residue_pair_cd=(*jt);
+				if(residue_pair_ab<residue_pair_cd)
+				{
+					std::cout << "node_" << residue_pair_ab.first.chain_id << residue_pair_ab.first.residue_number << "_" << residue_pair_ab.second.chain_id << residue_pair_ab.second.residue_number;
+					std::cout << " -- ";
+					std::cout << "node_" << residue_pair_cd.first.chain_id << residue_pair_cd.first.residue_number << "_" << residue_pair_cd.second.chain_id << residue_pair_cd.second.residue_number;
+					std::cout << "\n";
+				}
+			}
+		}
+
+		std::cout << "}\n";
+	}
 }
