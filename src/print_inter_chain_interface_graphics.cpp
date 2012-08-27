@@ -193,21 +193,26 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string coloring_mode=clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string("");
 
 	std::auto_ptr<const ContactColorizerInterface> colorizer;
+	bool color_pymol_selection_at_atomic_level=true;
 	if(coloring_mode=="residue_type")
 	{
 		colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
+		color_pymol_selection_at_atomic_level=false;
 	}
 	else if(coloring_mode=="residue_hydrophobicity")
 	{
 		colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
+		color_pymol_selection_at_atomic_level=false;
 	}
 	else if(coloring_mode=="atom_name")
 	{
 		colorizer.reset(new ContactColorizerByFirstAtomName());
+		color_pymol_selection_at_atomic_level=true;
 	}
 	else
 	{
 		colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
+		color_pymol_selection_at_atomic_level=false;
 	}
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
@@ -304,10 +309,18 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		for(std::map< int, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
 		{
 			const std::vector< std::pair<std::size_t, std::size_t> >& atoms_ids_pairs=jt->second;
-			for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
+			if(color_pymol_selection_at_atomic_level)
 			{
-				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
-				std::cout << "cmd.do('color " << colorizer->color_string(atoms[atoms_ids_pair.first], atoms[atoms_ids_pair.second]) << ", resi " << jt->first << " and name " << (atoms[atoms_ids_pair.first].atom_name) << " and chain " << it->first.first << "')\n";
+				for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
+				{
+					const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
+					std::cout << "cmd.do('color " << colorizer->color_string(atoms[atoms_ids_pair.first], atoms[atoms_ids_pair.second]) << ", resi " << jt->first << " and name " << (atoms[atoms_ids_pair.first].atom_name) << " and chain " << it->first.first << "')\n";
+				}
+			}
+			else if(!atoms_ids_pairs.empty())
+			{
+				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs.front();
+				std::cout << "cmd.do('color " << colorizer->color_string(atoms[atoms_ids_pair.first], atoms[atoms_ids_pair.second]) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
 			}
 		}
 		std::cout << "\n";
