@@ -47,25 +47,9 @@ private:
 	std::map<T, auxiliaries::Color> map_of_colors_;
 };
 
-template<typename T>
-class NameColorizerForPymol : public NameColorizer<T>
+class ColorManagementForPymol
 {
 public:
-	NameColorizerForPymol()
-	{
-	}
-
-	std::string color_string(const T& name) const
-	{
-		return color_to_string_id(color(name));
-	}
-
-	void list_colors() const
-	{
-		list_colors_from_map(NameColorizer<T>::map_of_colors());
-	}
-
-private:
 	static std::string color_to_string_id(const auxiliaries::Color& color)
 	{
 		std::ostringstream output;
@@ -84,14 +68,34 @@ private:
 	{
 		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
 	}
+};
 
+template<typename T>
+class NameColorizerForPymol : public NameColorizer<T>
+{
+public:
+	NameColorizerForPymol()
+	{
+	}
+
+	std::string color_string(const T& name) const
+	{
+		return ColorManagementForPymol::color_to_string_id(color(name));
+	}
+
+	void list_colors() const
+	{
+		list_colors_from_map(NameColorizer<T>::map_of_colors());
+	}
+
+private:
 	static void list_colors_from_map(const std::map<T, auxiliaries::Color>& map_of_colors)
 	{
 		for(typename std::map<T, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
 		{
-			list_color(it->second);
+			ColorManagementForPymol::list_color(it->second);
 		}
-		list_color(NameColorizer<T>::default_color());
+		ColorManagementForPymol::list_color(NameColorizer<T>::default_color());
 		std::cout << "\n";
 	}
 };
