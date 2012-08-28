@@ -8,7 +8,9 @@ $0 options:
 
   -h    show this message and exit
   -f    path to input file in PDB format
-  -c    coloring mode (residue_hydrophobicity or residue_type) (optional)
+  -a    face coloring mode (residue_hydrophobicity, residue_type or atom_type) (optional)
+  -b    selections coloring mode (residue_hydrophobicity, residue_type or atom_type) (optional)
+  -c    path to CAD-score combined inter residue contacts file (optional)
   -g    residue groups (optional)
 
 EOF
@@ -29,10 +31,12 @@ then
 fi
 
 INPUT_FILE=""
-COLORING_MODE=""
+FACE_COLORING_MODE=""
+SELECTION_COLORING_MODE=""
+COMBINED_RESIDUE_CONTACTS_FILE=""
 RESIDUE_GROUPS=""
 
-while getopts "hf:c:g:" OPTION
+while getopts "hf:a:b:c:g:" OPTION
 do
   case $OPTION in
     h)
@@ -42,8 +46,14 @@ do
     f)
       INPUT_FILE=$OPTARG
       ;;
+    a)
+      FACE_COLORING_MODE="--face-coloring "$OPTARG
+      ;;
+    b)
+      SELECTION_COLORING_MODE="--selection-coloring "$OPTARG
+      ;;
     c)
-      COLORING_MODE="--coloring "$OPTARG
+      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
       ;;
     g)
       RESIDUE_GROUPS=$OPTARG
@@ -84,7 +94,14 @@ fi
 
 SCRIPT_FILE="$TMP_DIR/script.py"
 
-if $VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $COLORING_MODE > "$SCRIPT_FILE"
+if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
+then
+  $VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE > "$SCRIPT_FILE"
+else
+  ( $VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE > "$SCRIPT_FILE"
+fi
+
+if [ -s "$SCRIPT_FILE" ]
 then
   pymol "$USABLE_INPUT_FILE" "$SCRIPT_FILE"
 fi
