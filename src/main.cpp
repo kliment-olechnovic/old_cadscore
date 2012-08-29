@@ -17,11 +17,11 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo);
 void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOptions& clo);
-
 void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo);
 void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
 void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& clo);
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo);
+void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions& clo);
 void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
@@ -34,7 +34,7 @@ int main(const int argc, const char** argv)
 	{
 		auxiliaries::CommandLineOptions clo(argc, argv);
 
-		const std::string mode=clo.arg<std::string>("--mode");
+		const std::string mode=clo.isarg("--mode") ? clo.arg<std::string>("--mode") : std::string("");
 		clo.remove_option("--mode");
 
 		const std::string clog_file=clo.isarg("--clog-file") ? clo.arg<std::string>("--clog-file") : std::string("");
@@ -57,11 +57,11 @@ int main(const int argc, const char** argv)
 		modes_map["calc-CAD-local-scores"]=ModeFunctionPointer(calc_contact_area_difference_local_scores);
 		modes_map["calc-CAD-global-scores"]=ModeFunctionPointer(calc_contact_area_difference_global_scores);
 		modes_map["calc-CAD-size-scores"]=ModeFunctionPointer(calc_contact_area_difference_size_scores);
-
 		modes_map["calc-inter-atom-faces"]=ModeFunctionPointer(calc_inter_atom_faces);
 		modes_map["summarize-dssp-file"]=ModeFunctionPointer(summarize_dssp_file);
 		modes_map["check-for-any-inter-chain-contact"]=ModeFunctionPointer(check_for_any_inter_chain_contact);
 		modes_map["print-inter-chain-interface-graphics"]=ModeFunctionPointer(print_inter_chain_interface_graphics);
+		modes_map["print-inter-chain-interface-dot-graph"]=ModeFunctionPointer(print_inter_chain_interface_dot_graph);
 		modes_map["calc-combined-inter-residue-contacts-with-chains-optimally-renamed"]=ModeFunctionPointer(calc_combined_inter_residue_contacts_with_chains_optimally_renamed);
 
 		if(modes_map.count(mode)==1)
@@ -70,10 +70,10 @@ int main(const int argc, const char** argv)
 		}
 		else
 		{
-			std::cerr << "Unknown mode. Available modes are:" << std::endl;
+			std::cerr << "Unspecified running mode. Available modes are:" << std::endl;
 			for(std::map< std::string, ModeFunctionPointer >::const_iterator it=modes_map.begin();it!=modes_map.end();++it)
 			{
-				std::cerr << "--mode " << it->first << std::endl;
+				std::cerr << "  --mode " << it->first << std::endl;
 			}
 			return 1;
 		}
