@@ -466,6 +466,8 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	std::cout << "cmd.do('color gray')\n\n";
 	std::cout << "cmd.do('hide nonbonded')\n\n";
+	std::cout << "cmd.do('hide lines')\n\n";
+	std::cout << "cmd.do('show ribbon')\n\n";
 
 	selection_colorizer->list_colors();
 
@@ -522,4 +524,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	std::cout << "cmd.do('deselect')\n\n";
 	std::cout << "cmd.do('center')\n\n";
 	std::cout << "cmd.do('zoom')\n\n";
+
+	std::cout << "cmd.do('set ray_shadows, off')\n\n";
 }
