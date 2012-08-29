@@ -3,6 +3,7 @@
 
 #include "protein/atom.h"
 #include "protein/residue_id.h"
+#include "protein/residue_ids_intervals.h"
 
 #include "contacto/inter_residue_contact_id.h"
 #include "contacto/inter_residue_contact_dual_areas.h"
@@ -260,25 +261,99 @@ public:
 	}
 };
 
+class ContactAccepterForInterInterval : public ContactAccepterInterface
+{
+public:
+	ContactAccepterForInterInterval(std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals) : intervals_(intervals)
+	{
+	}
+
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		const int a_iid=interval_id(a);
+		const int b_iid=interval_id(b);
+		if(a_iid!=b_iid)
+		{
+			if(a_iid>=0 && b_iid>=0)
+			{
+				return true;
+			}
+			else if(intervals_.size()==1)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		const int iid=interval_id(a);
+		if(iid>=0)
+		{
+			std::ostringstream output;
+			output << iid;
+			return output.str();
+		}
+		else
+		{
+			return "all";
+		}
+	}
+
+private:
+	int interval_id(const protein::Atom& a) const
+	{
+		for(std::size_t i=0;i<intervals_.size();i++)
+		{
+			for(std::size_t j=0;j<intervals_[i].size();j++)
+			{
+				const protein::ResidueID& r1=intervals_[i][j].first;
+				const protein::ResidueID& r2=intervals_[i][j].second;
+				if(a.chain_id==r1.chain_id && a.residue_number>=r1.residue_number && a.residue_number<=r2.residue_number)
+				{
+					return i;
+				}
+			}
+		}
+		return (-1);
+	}
+
+	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals_;
+};
+
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring:");
+	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 	const std::string face_coloring_mode=clo.isopt("--face-coloring") ? clo.arg<std::string>("--face-coloring") : std::string("");
 	const std::string selection_coloring_mode=clo.isopt("--selection-coloring") ? clo.arg<std::string>("--selection-coloring") : std::string("");
+	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
 
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
-	contact_accepter.reset(new ContactAccepterForInterChain());
+	if(groups_option.substr(0,1)=="(")
+	{
+		std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals;
+		if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(groups_option, intervals) || intervals.empty())
+		{
+			throw std::runtime_error(std::string("Invalid intervals string: ")+groups_option);
+		}
+		contact_accepter.reset(new ContactAccepterForInterInterval(intervals));
+	}
+	else
+	{
+		contact_accepter.reset(new ContactAccepterForInterChain());
+	}
 
 	std::auto_ptr<const ContactColorizerInterface> face_colorizer;
 	if(face_coloring_mode=="residue_type")

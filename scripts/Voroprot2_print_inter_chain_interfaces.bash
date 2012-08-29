@@ -56,7 +56,7 @@ do
       COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
       ;;
     g)
-      RESIDUE_GROUPS=$OPTARG
+      RESIDUE_GROUPS="--groups "$OPTARG
       ;;
     ?)
       exit 1
@@ -78,32 +78,18 @@ fi
 
 TMP_DIR=$(mktemp -d)
 
-USABLE_INPUT_FILE="$TMP_DIR/"$(basename $INPUT_FILE)
-if [ -z "$RESIDUE_GROUPS" ]
-then
-  cp "$INPUT_FILE" "$USABLE_INPUT_FILE"
-else
-  $VOROPROT --mode reassign-chain-names-by-residue-intervals --intervals "$RESIDUE_GROUPS" < "$INPUT_FILE" > "$USABLE_INPUT_FILE"
-  if [ ! -s "$USABLE_INPUT_FILE" ]
-  then
-    echo "Failed to reassign chain names by residue groups, check the '-g' parameter" 1>&2
-    rm "$TMP_DIR"
-    exit 1
-  fi 
-fi
-
 SCRIPT_FILE="$TMP_DIR/script.py"
 
 if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
 then
-  $VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE > "$SCRIPT_FILE"
+  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS > "$SCRIPT_FILE"
 else
-  ( $VOROPROT --mode collect-atoms < "$USABLE_INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE > "$SCRIPT_FILE"
+  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS > "$SCRIPT_FILE"
 fi
 
 if [ -s "$SCRIPT_FILE" ]
 then
-  pymol "$USABLE_INPUT_FILE" "$SCRIPT_FILE"
+  pymol "$INPUT_FILE" "$SCRIPT_FILE"
 fi
 
 rm -r "$TMP_DIR"
