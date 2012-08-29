@@ -271,6 +271,32 @@ private:
 	auxiliaries::NameColorizerForPymol<long> name_colorizer_;
 };
 
+class ContactColorizerByFirstAtomID : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByFirstAtomID(const std::vector<protein::Atom>& atoms)
+	{
+		for(std::size_t i=0;i<atoms.size();i++)
+		{
+			const protein::Atom& a=atoms[i];
+			name_colorizer_.add_name_color(a.atom_number, auxiliaries::Color::from_id(a.atom_number));
+		}
+	}
+
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return name_colorizer_.color(a.atom_number);
+	}
+
+	virtual void list_colors() const
+	{
+		name_colorizer_.list_colors();
+	}
+
+private:
+	auxiliaries::NameColorizerForPymol<int> name_colorizer_;
+};
+
 class ContactAccepterInterface
 {
 public:
@@ -410,6 +436,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		face_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
 	}
+	else if(face_coloring_mode=="atom_id")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
+	}
 	else
 	{
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
@@ -435,6 +465,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		selection_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
 		color_pymol_selection_at_atomic_level=false;
+	}
+	else if(selection_coloring_mode=="atom_id")
+	{
+		selection_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
 	}
 	else
 	{
