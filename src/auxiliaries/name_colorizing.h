@@ -12,15 +12,15 @@ namespace auxiliaries
 class ColorManagementForMapping
 {
 public:
-	static auxiliaries::Color default_color()
+	static Color default_color()
 	{
-		return auxiliaries::Color::from_code(0xFFFFFF);
+		return Color::from_code(0xFFFFFF);
 	}
 
 	template<typename T>
-	static auxiliaries::Color color_from_map(const std::map<T, auxiliaries::Color>& map_of_colors, const T& name)
+	static Color color_from_map(const std::map<T, Color>& map_of_colors, const T& name)
 	{
-		typename std::map<T, auxiliaries::Color>::const_iterator it=map_of_colors.find(name);
+		typename std::map<T, Color>::const_iterator it=map_of_colors.find(name);
 		return (it==map_of_colors.end() ? default_color() : it->second);
 	}
 };
@@ -33,43 +33,48 @@ public:
 	{
 	}
 
-	void set_map_of_colors(const std::map<T, auxiliaries::Color> map_of_colors)
-	{
-		map_of_colors_=map_of_colors;
-	}
-
-	const std::map<T, auxiliaries::Color>& map_of_colors() const
+	const std::map<T, Color>& map_of_colors() const
 	{
 		return map_of_colors_;
 	}
 
-	auxiliaries::Color color(const T& name) const
+	Color color(const T& name) const
 	{
 		return ColorManagementForMapping::color_from_map(map_of_colors_, name);
 	}
 
+	void set_map_of_colors(const std::map<T, Color> map_of_colors)
+	{
+		map_of_colors_=map_of_colors;
+	}
+
+	void add_name_color(const T& name, const Color& color)
+	{
+		map_of_colors_[name]=color;
+	}
+
 private:
-	std::map<T, auxiliaries::Color> map_of_colors_;
+	std::map<T, Color> map_of_colors_;
 };
 
 class ColorManagementForPymol
 {
 public:
-	static std::string color_to_string_id(const auxiliaries::Color& color)
+	static std::string color_to_string_id(const Color& color)
 	{
 		std::ostringstream output;
 		output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
 		return output.str();
 	}
 
-	static std::string color_to_string_value(const auxiliaries::Color& color)
+	static std::string color_to_string_value(const Color& color)
 	{
 		std::ostringstream output;
 		output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
 		return output.str();
 	}
 
-	static void list_color(const auxiliaries::Color& color)
+	static void list_color(const Color& color)
 	{
 		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
 	}

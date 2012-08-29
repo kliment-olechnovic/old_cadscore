@@ -240,6 +240,37 @@ private:
 	ValueColorizer name_colorizer_;
 };
 
+class ContactColorizerByFirstResidueID : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByFirstResidueID(const std::vector<protein::Atom>& atoms)
+	{
+		for(std::size_t i=0;i<atoms.size();i++)
+		{
+			const long numeric_rid=numeric_residue_id(protein::ResidueID::from_atom(atoms[i]));
+			name_colorizer_.add_name_color(numeric_rid, auxiliaries::Color::from_id(numeric_rid));
+		}
+	}
+
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return name_colorizer_.color(numeric_residue_id(protein::ResidueID::from_atom(a)));
+	}
+
+	virtual void list_colors() const
+	{
+		name_colorizer_.list_colors();
+	}
+
+private:
+	static long numeric_residue_id(const protein::ResidueID& residue_id)
+	{
+		return static_cast<long>(residue_id.residue_number)+(residue_id.chain_id.empty() ? 0 : static_cast<long>(residue_id.chain_id.c_str()[0])*1000000);
+	}
+
+	auxiliaries::NameColorizerForPymol<long> name_colorizer_;
+};
+
 class ContactAccepterInterface
 {
 public:
@@ -375,6 +406,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 				auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
 		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts));
 	}
+	else if(face_coloring_mode=="residue_id")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
+	}
 	else
 	{
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
@@ -395,6 +430,11 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else if(selection_coloring_mode=="atom_type")
 	{
 		selection_colorizer.reset(new ContactColorizerByFirstAtomName());
+	}
+	else if(selection_coloring_mode=="residue_id")
+	{
+		selection_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
+		color_pymol_selection_at_atomic_level=false;
 	}
 	else
 	{
