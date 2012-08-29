@@ -8,8 +8,8 @@ $0 options:
 
   -h    show this message and exit
   -f    path to input file in PDB format
-  -a    face coloring mode (residue_hydrophobicity, residue_type or atom_type) (optional)
-  -b    selections coloring mode (residue_hydrophobicity, residue_type or atom_type) (optional)
+  -a    face coloring mode (residue_hydrophobicity, residue_type, atom_type or residue_id) (optional)
+  -b    selections coloring mode (residue_hydrophobicity, residue_type, atom_type or residue_id) (optional)
   -c    path to CAD-score combined inter residue contacts file (optional)
   -g    residue groups (optional)
 

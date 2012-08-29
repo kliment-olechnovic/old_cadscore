@@ -73,6 +73,14 @@ struct Color
 		return c;
 	}
 
+	static Color from_id(const long id)
+	{
+		const long generator=1234567;
+		const long limiter=0xFFFFFF;
+		return from_code(static_cast<unsigned int>(((id+1)*generator)%limiter));
+	}
+
+
 	double r_double() const
 	{
 		return (static_cast<double>(r)/255.0);
