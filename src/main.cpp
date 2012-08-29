@@ -23,7 +23,6 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo);
 void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions& clo);
 void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const auxiliaries::CommandLineOptions& clo);
-void reassign_chain_names_by_residue_intervals(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -64,7 +63,6 @@ int main(const int argc, const char** argv)
 		modes_map["print-inter-chain-interface-graphics"]=ModeFunctionPointer(print_inter_chain_interface_graphics);
 		modes_map["print-inter-chain-interface-dot-graph"]=ModeFunctionPointer(print_inter_chain_interface_dot_graph);
 		modes_map["calc-combined-inter-residue-contacts-with-chains-optimally-renamed"]=ModeFunctionPointer(calc_combined_inter_residue_contacts_with_chains_optimally_renamed);
-		modes_map["reassign-chain-names-by-residue-intervals"]=ModeFunctionPointer(reassign_chain_names_by_residue_intervals);
 
 		if(modes_map.count(mode)==1)
 		{
