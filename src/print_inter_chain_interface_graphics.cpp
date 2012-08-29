@@ -237,6 +237,27 @@ private:
 	ValueColorizer name_colorizer_;
 };
 
+class ContactAccepterInterface
+{
+public:
+	virtual bool accept(const protein::Atom& a, const protein::Atom& b) const = 0;
+	virtual std::string assign_group_name(const protein::Atom& a) const = 0;
+};
+
+class ContactAccepterForInterChain : public ContactAccepterInterface
+{
+public:
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return (a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?");
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		return a.chain_id;
+	}
+};
+
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
@@ -253,6 +274,9 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+
+	std::auto_ptr<ContactAccepterInterface> contact_accepter;
+	contact_accepter.reset(new ContactAccepterForInterChain());
 
 	std::auto_ptr<const ContactColorizerInterface> face_colorizer;
 	if(face_coloring_mode=="residue_type")
@@ -317,7 +341,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		const protein::Atom& a=atoms[atoms_ids_pair.first];
 		const protein::Atom& b=atoms[atoms_ids_pair.second];
 
-		if(a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?")
+		if(contact_accepter->accept(a,b))
 		{
 			std::vector<const protein::Atom*> cs;
 			cs.reserve(it->second.size());
@@ -333,8 +357,8 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 				faces_vector.push_back(cell_face);
 				faces_vector_map[atoms_ids_pair]=faces_vector.size()-1;
 				faces_vector_map[reversed_atoms_ids_pair]=faces_vector.size()-1;
-				inter_chain_interfaces[std::make_pair(a.chain_id, b.chain_id)].push_back(atoms_ids_pair);
-				inter_chain_interfaces[std::make_pair(b.chain_id, a.chain_id)].push_back(reversed_atoms_ids_pair);
+				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(a), contact_accepter->assign_group_name(b))].push_back(atoms_ids_pair);
+				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(b), contact_accepter->assign_group_name(a))].push_back(reversed_atoms_ids_pair);
 			}
 		}
 	}
@@ -371,25 +395,28 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
-		std::map< int, std::vector< std::pair<std::size_t, std::size_t> > > sequence_numbers;
+
+		std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > > selectable_residue_ids;
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
 			const std::pair<std::size_t, std::size_t>& atoms_ids_pair=it->second[i];
-			sequence_numbers[atoms[atoms_ids_pair.first].residue_number].push_back(atoms_ids_pair);
+			const protein::Atom& a=atoms[atoms_ids_pair.first];
+			selectable_residue_ids[protein::ResidueID::from_atom(a)].push_back(atoms_ids_pair);
 		}
 
-		std::cout << "cmd.do('select " << selection_name << ", resi ";
-		for(std::map< int, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		std::cout << "cmd.do('select " << selection_name << ", ";
+		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
 		{
-			if(jt!=sequence_numbers.begin())
+			const protein::ResidueID& rid=jt->first;
+			if(jt!=selectable_residue_ids.begin())
 			{
-				std::cout << "+";
+				std::cout << " or ";
 			}
-			std::cout << jt->first;
+			std::cout << "resi " << rid.residue_number << " and chain " << rid.chain_id;
 		}
-		std::cout << " and chain " << it->first.first << "')\n\n";
+		std::cout << "')\n\n";
 
-		for(std::map< int, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
 		{
 			const std::vector< std::pair<std::size_t, std::size_t> >& atoms_ids_pairs=jt->second;
 			if(color_pymol_selection_at_atomic_level)
@@ -397,13 +424,17 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 				for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
 				{
 					const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
-					std::cout << "cmd.do('color " << selection_colorizer->color_string(atoms[atoms_ids_pair.first], atoms[atoms_ids_pair.second]) << ", resi " << jt->first << " and name " << (atoms[atoms_ids_pair.first].atom_name) << " and chain " << it->first.first << "')\n";
+					const protein::Atom& a=atoms[atoms_ids_pair.first];
+					const protein::Atom& b=atoms[atoms_ids_pair.second];
+					std::cout << "cmd.do('color " << selection_colorizer->color_string(a, b) << ", resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
 				}
 			}
 			else if(!atoms_ids_pairs.empty())
 			{
 				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs.front();
-				std::cout << "cmd.do('color " << selection_colorizer->color_string(atoms[atoms_ids_pair.first], atoms[atoms_ids_pair.second]) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
+				const protein::Atom& a=atoms[atoms_ids_pair.first];
+				const protein::Atom& b=atoms[atoms_ids_pair.second];
+				std::cout << "cmd.do('color " << selection_colorizer->color_string(a, b) << ", resi " << a.residue_number << " and chain " << a.chain_id << "')\n";
 			}
 		}
 		std::cout << "\n";
