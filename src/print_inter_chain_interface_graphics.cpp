@@ -1,7 +1,13 @@
 #include <iostream>
-#include <limits>
+#include <memory>
 
 #include "protein/atom.h"
+#include "protein/residue_id.h"
+#include "protein/residue_ids_intervals.h"
+
+#include "contacto/inter_residue_contact_id.h"
+#include "contacto/inter_residue_contact_dual_areas.h"
+#include "contacto/contact_classification.h"
 
 #include "apollo/spheres_hierarchy.h"
 #include "apollo/apollonius_triangulation.h"
@@ -10,110 +16,19 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
-#include "auxiliaries/color.h"
+#include "auxiliaries/map_io.h"
+#include "auxiliaries/name_colorizing.h"
+#include "auxiliaries/opengl_printer.h"
 
-class Colorizer
+class ResidueNameColorizerByResidueType : public auxiliaries::NameColorizerForPymol<std::string>
 {
 public:
-	Colorizer(const std::string& mode)
+	ResidueNameColorizerByResidueType()
 	{
-		if(mode=="hydroph")
-		{
-			map_of_colors_=create_map_of_residue_colors_by_hydropathy_indices();
-		}
-		else if(mode=="type")
-		{
-			map_of_colors_=create_map_of_residue_colors_by_type();
-		}
-	}
-
-	auxiliaries::Color residue_color(const std::string& residue_name) const
-	{
-		return residue_color_from_map(map_of_colors_, residue_name);
-	}
-
-	void list_colors() const
-	{
-		list_colors_from_map(map_of_colors_);
-	}
-
-	static std::string color_to_string(const auxiliaries::Color& color)
-	{
-		return color_to_string(color, true);
+		set_map_of_colors(create_map_of_residue_colors_by_type());
 	}
 
 private:
-	static std::string color_to_string(const auxiliaries::Color& color, const bool as_name)
-	{
-		std::ostringstream output;
-		if(as_name)
-		{
-			output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
-		}
-		else
-		{
-			output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
-		}
-		return output.str();
-	}
-
-	static void list_color(const auxiliaries::Color& color)
-	{
-		std::cout << "cmd.do('set_color " << color_to_string(color, true) << ", " << color_to_string(color, false) << "')\n";
-	}
-
-	static auxiliaries::Color default_color()
-	{
-		return auxiliaries::Color::from_code(0xFFFFFF);
-	}
-
-	static auxiliaries::Color residue_color_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors, const std::string& residue_name)
-	{
-		std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.find(residue_name);
-		return (it==map_of_colors.end() ? default_color() : it->second);
-	}
-
-	static void list_colors_from_map(const std::map<std::string, auxiliaries::Color>& map_of_colors)
-	{
-		for(std::map<std::string, auxiliaries::Color>::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
-		{
-			list_color(it->second);
-		}
-		list_color(default_color());
-		std::cout << "\n";
-	}
-
-	static auxiliaries::Color color_from_hydropathy_index(const double hi)
-	{
-		return auxiliaries::Color::from_temperature_to_blue_white_red((1+hi/4.5)/2);
-	}
-
-	static std::map<std::string, auxiliaries::Color> create_map_of_residue_colors_by_hydropathy_indices()
-	{
-		std::map<std::string, auxiliaries::Color> m;
-		m["ASP"]=color_from_hydropathy_index(-3.5);
-		m["GLU"]=color_from_hydropathy_index(-3.5);
-		m["CYS"]=color_from_hydropathy_index(2.5);
-		m["MET"]=color_from_hydropathy_index(1.9);
-		m["LYS"]=color_from_hydropathy_index(-3.9);
-		m["ARG"]=color_from_hydropathy_index(-4.5);
-		m["SER"]=color_from_hydropathy_index(-0.8);
-		m["THR"]=color_from_hydropathy_index(-0.7);
-		m["PHE"]=color_from_hydropathy_index(2.8);
-		m["TYR"]=color_from_hydropathy_index(-1.3);
-		m["ASN"]=color_from_hydropathy_index(-3.5);
-		m["GLN"]=color_from_hydropathy_index(-3.5);
-		m["GLY"]=color_from_hydropathy_index(-0.4);
-		m["LEU"]=color_from_hydropathy_index(3.8);
-		m["VAL"]=color_from_hydropathy_index(4.2);
-		m["ILE"]=color_from_hydropathy_index(4.5);
-		m["ALA"]=color_from_hydropathy_index(1.8);
-		m["TRP"]=color_from_hydropathy_index(-0.9);
-		m["HIS"]=color_from_hydropathy_index(-3.2);
-		m["PRO"]=color_from_hydropathy_index(-1.6);
-		return m;
-	}
-
 	static std::map<std::string, auxiliaries::Color> create_map_of_residue_colors_by_type()
 	{
 		const auxiliaries::Color nonpolar(255, 255, 0);
@@ -149,39 +64,263 @@ private:
 
 		return m;
 	}
-
-	std::map<std::string, auxiliaries::Color> map_of_colors_;
 };
 
-template<typename PointType>
-std::string point_to_string(const PointType& a)
+class ResidueNameColorizerByResidueHydrophobicity : public auxiliaries::NameColorizerForPymol<std::string>
 {
-	std::ostringstream output;
-	output.precision(std::numeric_limits<double>::digits10);
-	output << std::fixed << a.x << ", " << a.y << ", " << a.z;
-	return output.str();
-}
-
-void print_tringle_fan(const std::vector<apollo::SimplePoint>& mesh_vertices, const apollo::SimplePoint& normal, const auxiliaries::Color& color)
-{
-	if(!mesh_vertices.empty())
+public:
+	ResidueNameColorizerByResidueHydrophobicity()
 	{
-		const apollo::SimplePoint shift=normal*0.001;
-
-		std::cout << "    BEGIN, TRIANGLE_FAN,\n";
-		std::cout << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
-		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
-		for(std::size_t i=0;i+1<mesh_vertices.size();i++)
-		{
-			std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-			std::cout << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
-		}
-		std::cout << "    NORMAL, " << point_to_string(normal) << ",\n";
-		std::cout << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
-		std::cout << "    END,\n";
+		set_map_of_colors(create_map_of_residue_colors_by_hydropathy_indices());
 	}
-}
+
+private:
+	static auxiliaries::Color color_from_hydropathy_index(const double hi)
+	{
+		return auxiliaries::Color::from_temperature_to_blue_white_red((1+hi/4.5)/2);
+	}
+
+	static std::map<std::string, auxiliaries::Color> create_map_of_residue_colors_by_hydropathy_indices()
+	{
+		std::map<std::string, auxiliaries::Color> m;
+		m["ASP"]=color_from_hydropathy_index(-3.5);
+		m["GLU"]=color_from_hydropathy_index(-3.5);
+		m["CYS"]=color_from_hydropathy_index(2.5);
+		m["MET"]=color_from_hydropathy_index(1.9);
+		m["LYS"]=color_from_hydropathy_index(-3.9);
+		m["ARG"]=color_from_hydropathy_index(-4.5);
+		m["SER"]=color_from_hydropathy_index(-0.8);
+		m["THR"]=color_from_hydropathy_index(-0.7);
+		m["PHE"]=color_from_hydropathy_index(2.8);
+		m["TYR"]=color_from_hydropathy_index(-1.3);
+		m["ASN"]=color_from_hydropathy_index(-3.5);
+		m["GLN"]=color_from_hydropathy_index(-3.5);
+		m["GLY"]=color_from_hydropathy_index(-0.4);
+		m["LEU"]=color_from_hydropathy_index(3.8);
+		m["VAL"]=color_from_hydropathy_index(4.2);
+		m["ILE"]=color_from_hydropathy_index(4.5);
+		m["ALA"]=color_from_hydropathy_index(1.8);
+		m["TRP"]=color_from_hydropathy_index(-0.9);
+		m["HIS"]=color_from_hydropathy_index(-3.2);
+		m["PRO"]=color_from_hydropathy_index(-1.6);
+		return m;
+	}
+};
+
+class AtomNameColorizerByAtomType : public auxiliaries::NameColorizerForPymol<std::string>
+{
+public:
+	AtomNameColorizerByAtomType()
+	{
+		set_map_of_colors(create_map_of_atom_colors_by_type());
+	}
+
+private:
+	static std::map<std::string, auxiliaries::Color> create_map_of_atom_colors_by_type()
+	{
+		std::map<std::string, auxiliaries::Color> m;
+
+		m["C"]=auxiliaries::Color(0, 255, 0);
+		m["N"]=auxiliaries::Color(0, 0, 255);
+		m["O"]=auxiliaries::Color(255, 0, 0);
+		m["S"]=auxiliaries::Color(255, 255, 0);
+		m["P"]=auxiliaries::Color(255, 0, 255);
+
+		return m;
+	}
+};
+
+class ValueColorizer : public auxiliaries::NameColorizerForPymol<int>
+{
+public:
+	ValueColorizer()
+	{
+		set_map_of_colors(create_map_of_colors_by_values());
+	}
+
+private:
+	static std::map<int, auxiliaries::Color> create_map_of_colors_by_values()
+	{
+		std::map<int, auxiliaries::Color> m;
+		for(int i=0;i<=100;i++)
+		{
+			m[i]=auxiliaries::Color::from_temperature_to_blue_white_red(static_cast<double>(i)/100.0);
+		}
+		m[-1]=auxiliaries::Color(255, 0, 255);
+		return m;
+	}
+};
+
+class ContactColorizerInterface
+{
+public:
+	virtual auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const = 0;
+
+	std::string color_string(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return auxiliaries::ColorManagementForPymol::color_to_string_id(color(a, b));
+	}
+
+	virtual void list_colors() const = 0;
+};
+
+template<class ResidueNameColorizerType>
+class ContactColorizerByFirstResidueName : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByFirstResidueName()
+	{
+	}
+
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return name_colorizer_.color(a.residue_name);
+	}
+
+	virtual void list_colors() const
+	{
+		name_colorizer_.list_colors();
+	}
+
+private:
+	ResidueNameColorizerType name_colorizer_;
+};
+
+class ContactColorizerByFirstAtomName : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByFirstAtomName()
+	{
+	}
+
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return name_colorizer_.color(a.atom_name.substr(0, 1));
+	}
+
+	virtual void list_colors() const
+	{
+		name_colorizer_.list_colors();
+	}
+
+private:
+	AtomNameColorizerByAtomType name_colorizer_;
+};
+
+class ContactColorizerByInterResidueContactScore : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByInterResidueContactScore(const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >& combined_inter_residue_contacts) : combined_inter_residue_contacts_(combined_inter_residue_contacts)
+	{
+	}
+
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	{
+		const contacto::InterResidueContactID<protein::ResidueID> irc_id(protein::ResidueID::from_atom(a), protein::ResidueID::from_atom(b));
+		std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
+		if(it!=combined_inter_residue_contacts_.end())
+		{
+			const std::string contact_type=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b).front();
+			std::pair<double, double> area=it->second.area(contact_type);
+			if(area.first>0.0)
+			{
+				return name_colorizer_.color(static_cast<int>(floor((std::min(fabs(area.first-area.second), area.first)/area.first)*100.0)));
+			}
+		}
+		return name_colorizer_.color(-1);
+	}
+
+	virtual void list_colors() const
+	{
+		name_colorizer_.list_colors();
+	}
+
+private:
+	std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts_;
+	ValueColorizer name_colorizer_;
+};
+
+class ContactAccepterInterface
+{
+public:
+	virtual bool accept(const protein::Atom& a, const protein::Atom& b) const = 0;
+	virtual std::string assign_group_name(const protein::Atom& a) const = 0;
+};
+
+class ContactAccepterForInterChain : public ContactAccepterInterface
+{
+public:
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return (a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?");
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		return a.chain_id;
+	}
+};
+
+class ContactAccepterForInterInterval : public ContactAccepterInterface
+{
+public:
+	ContactAccepterForInterInterval(std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals) : intervals_(intervals)
+	{
+	}
+
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		const int a_iid=interval_id(a);
+		const int b_iid=interval_id(b);
+		if(a_iid!=b_iid)
+		{
+			if(a_iid>=0 && b_iid>=0)
+			{
+				return true;
+			}
+			else if(intervals_.size()==1)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		const int iid=interval_id(a);
+		if(iid>=0)
+		{
+			std::ostringstream output;
+			output << iid;
+			return output.str();
+		}
+		else
+		{
+			return "all";
+		}
+	}
+
+private:
+	int interval_id(const protein::Atom& a) const
+	{
+		for(std::size_t i=0;i<intervals_.size();i++)
+		{
+			for(std::size_t j=0;j<intervals_[i].size();j++)
+			{
+				const protein::ResidueID& r1=intervals_[i][j].first;
+				const protein::ResidueID& r2=intervals_[i][j].second;
+				if(a.chain_id==r1.chain_id && a.residue_number>=r1.residue_number && a.residue_number<=r2.residue_number)
+				{
+					return i;
+				}
+			}
+		}
+		return (-1);
+	}
+
+	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals_;
+};
 
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
@@ -189,20 +328,78 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--probe: --step: --projections: --coloring:");
+	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
-
-	const Colorizer colorizer(clo.isopt("--coloring") ? clo.arg<std::string>("--coloring") : std::string(""));
+	const std::string face_coloring_mode=clo.isopt("--face-coloring") ? clo.arg<std::string>("--face-coloring") : std::string("");
+	const std::string selection_coloring_mode=clo.isopt("--selection-coloring") ? clo.arg<std::string>("--selection-coloring") : std::string("");
+	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-	while(auxiliaries::check_file_header(std::cin, "atoms"))
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+
+	std::auto_ptr<ContactAccepterInterface> contact_accepter;
+	if(groups_option.substr(0,1)=="(")
 	{
-		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
-		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
+		std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals;
+		if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(groups_option, intervals) || intervals.empty())
+		{
+			throw std::runtime_error(std::string("Invalid intervals string: ")+groups_option);
+		}
+		contact_accepter.reset(new ContactAccepterForInterInterval(intervals));
+	}
+	else
+	{
+		contact_accepter.reset(new ContactAccepterForInterChain());
+	}
+
+	std::auto_ptr<const ContactColorizerInterface> face_colorizer;
+	if(face_coloring_mode=="residue_type")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
+	}
+	else if(face_coloring_mode=="residue_hydrophobicity")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
+	}
+	else if(face_coloring_mode=="atom_type")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstAtomName());
+	}
+	else if(face_coloring_mode=="inter_residue_contact_scores")
+	{
+		auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
+		const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
+				auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
+		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts));
+	}
+	else
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
+	}
+
+	bool color_pymol_selection_at_atomic_level=true;
+	std::auto_ptr<const ContactColorizerInterface> selection_colorizer;
+	if(selection_coloring_mode=="residue_type")
+	{
+		selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
+		color_pymol_selection_at_atomic_level=false;
+	}
+	else if(selection_coloring_mode=="residue_hydrophobicity")
+	{
+		selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
+		color_pymol_selection_at_atomic_level=false;
+	}
+	else if(selection_coloring_mode=="atom_type")
+	{
+		selection_colorizer.reset(new ContactColorizerByFirstAtomName());
+	}
+	else
+	{
+		selection_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
+		color_pymol_selection_at_atomic_level=false;
 	}
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
@@ -221,7 +418,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		const protein::Atom& a=atoms[atoms_ids_pair.first];
 		const protein::Atom& b=atoms[atoms_ids_pair.second];
 
-		if(a.chain_id!=b.chain_id)
+		if(contact_accepter->accept(a,b))
 		{
 			std::vector<const protein::Atom*> cs;
 			cs.reserve(it->second.size());
@@ -237,15 +434,15 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 				faces_vector.push_back(cell_face);
 				faces_vector_map[atoms_ids_pair]=faces_vector.size()-1;
 				faces_vector_map[reversed_atoms_ids_pair]=faces_vector.size()-1;
-				inter_chain_interfaces[std::make_pair(a.chain_id, b.chain_id)].push_back(atoms_ids_pair);
-				inter_chain_interfaces[std::make_pair(b.chain_id, a.chain_id)].push_back(reversed_atoms_ids_pair);
+				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(a), contact_accepter->assign_group_name(b))].push_back(atoms_ids_pair);
+				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(b), contact_accepter->assign_group_name(a))].push_back(reversed_atoms_ids_pair);
 			}
 		}
 	}
 
 	if(inter_chain_interfaces.empty())
 	{
-		std::cerr << "No interfaces found.\n";
+		throw std::runtime_error("No interfaces found");
 	}
 
 	std::cout << "from pymol.cgo import *\n";
@@ -255,7 +452,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		const std::string obj_name=std::string("obj_")+it->first.first+"_"+it->first.second;
 		const std::string cgo_name=std::string("iface_")+it->first.first+"_"+it->first.second;
-		std::cout << obj_name << " = [\n";
+		const auxiliaries::OpenGLPrinter opengl_printer(obj_name, cgo_name);
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=it->second[i];
@@ -263,40 +460,61 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
 			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
-			print_tringle_fan(cell_face.mesh_vertices(), normal, colorizer.residue_color(a.residue_name));
+			opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal, face_colorizer->color(a, b));
 		}
-		std::cout << "]\ncmd.load_cgo(" << obj_name << ", '" << cgo_name << "')\n\n";
 	}
 
-	std::cout << "cmd.do('util.cbc')\n\n";
+	std::cout << "cmd.do('color gray')\n\n";
 	std::cout << "cmd.do('hide nonbonded')\n\n";
+	std::cout << "cmd.do('hide lines')\n\n";
+	std::cout << "cmd.do('show ribbon')\n\n";
 
-	colorizer.list_colors();
+	selection_colorizer->list_colors();
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
-		std::map<int, std::string> sequence_numbers;
+
+		std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > > selectable_residue_ids;
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
-			const protein::Atom& a=atoms[it->second[i].first];
-			sequence_numbers[a.residue_number]=a.residue_name;
+			const std::pair<std::size_t, std::size_t>& atoms_ids_pair=it->second[i];
+			const protein::Atom& a=atoms[atoms_ids_pair.first];
+			selectable_residue_ids[protein::ResidueID::from_atom(a)].push_back(atoms_ids_pair);
 		}
 
-		std::cout << "cmd.do('select " << selection_name << ", resi ";
-		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		std::cout << "cmd.do('select " << selection_name << ", ";
+		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
 		{
-			if(jt!=sequence_numbers.begin())
+			const protein::ResidueID& rid=jt->first;
+			if(jt!=selectable_residue_ids.begin())
 			{
-				std::cout << "+";
+				std::cout << " or ";
 			}
-			std::cout << jt->first;
+			std::cout << "resi " << rid.residue_number << " and chain " << rid.chain_id;
 		}
-		std::cout << " and chain " << it->first.first << "')\n\n";
+		std::cout << "')\n\n";
 
-		for(std::map<int, std::string>::const_iterator jt=sequence_numbers.begin();jt!=sequence_numbers.end();++jt)
+		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
 		{
-			std::cout << "cmd.do('color " << Colorizer::color_to_string(colorizer.residue_color(jt->second)) << ", resi " << jt->first << " and chain " << it->first.first << "')\n";
+			const std::vector< std::pair<std::size_t, std::size_t> >& atoms_ids_pairs=jt->second;
+			if(color_pymol_selection_at_atomic_level)
+			{
+				for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
+				{
+					const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
+					const protein::Atom& a=atoms[atoms_ids_pair.first];
+					const protein::Atom& b=atoms[atoms_ids_pair.second];
+					std::cout << "cmd.do('color " << selection_colorizer->color_string(a, b) << ", resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
+				}
+			}
+			else if(!atoms_ids_pairs.empty())
+			{
+				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs.front();
+				const protein::Atom& a=atoms[atoms_ids_pair.first];
+				const protein::Atom& b=atoms[atoms_ids_pair.second];
+				std::cout << "cmd.do('color " << selection_colorizer->color_string(a, b) << ", resi " << a.residue_number << " and chain " << a.chain_id << "')\n";
+			}
 		}
 		std::cout << "\n";
 
@@ -305,4 +523,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	std::cout << "cmd.do('deselect')\n\n";
 	std::cout << "cmd.do('center')\n\n";
+	std::cout << "cmd.do('zoom')\n\n";
+
+	std::cout << "cmd.do('set ray_shadows, off')\n\n";
 }
