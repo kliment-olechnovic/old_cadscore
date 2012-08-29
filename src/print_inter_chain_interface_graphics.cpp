@@ -6,6 +6,7 @@
 
 #include "contacto/inter_residue_contact_id.h"
 #include "contacto/inter_residue_contact_dual_areas.h"
+#include "contacto/contact_classification.h"
 
 #include "apollo/spheres_hierarchy.h"
 #include "apollo/apollonius_triangulation.h"
@@ -218,7 +219,8 @@ public:
 		std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
 		if(it!=combined_inter_residue_contacts_.end())
 		{
-			std::pair<double, double> area=it->second.area("AA");
+			const std::string contact_type=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b).front();
+			std::pair<double, double> area=it->second.area(contact_type);
 			if(area.first>0.0)
 			{
 				return name_colorizer_.color(static_cast<int>(floor((std::min(fabs(area.first-area.second), area.first)/area.first)*100.0)));
