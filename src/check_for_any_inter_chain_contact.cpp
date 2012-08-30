@@ -49,6 +49,14 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 							chain_spheres.push_back(apollo::custom_sphere_from_point<apollo::SimpleSphere>(atoms[i], atoms[i].r+probe_radius));
 						}
 					}
+					else
+					{
+						std::cerr << "Could not find any atoms in file: " << filename << "\n";
+					}
+				}
+				else
+				{
+					std::cerr << "Could not open input file: " << filename << "\n";
 				}
 			}
 		}
