@@ -76,7 +76,7 @@ public:
 
 	static void list_color(const Color& color)
 	{
-		std::cout << "cmd.do('set_color " << color_to_string_id(color) << ", " << color_to_string_value(color) << "')\n";
+		std::cout << "cmd.set_color('" << color_to_string_id(color) << "', " << color_to_string_value(color) << ")\n";
 	}
 
 	template<typename ColorsMapType>
