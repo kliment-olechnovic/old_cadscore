@@ -445,37 +445,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
 	}
 
-	bool color_pymol_selection_at_atomic_level=true;
-	std::auto_ptr<const ContactColorizerInterface> selection_colorizer;
-	if(selection_coloring_mode=="residue_type")
-	{
-		selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
-		color_pymol_selection_at_atomic_level=false;
-	}
-	else if(selection_coloring_mode=="residue_hydrophobicity")
-	{
-		selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
-		color_pymol_selection_at_atomic_level=false;
-	}
-	else if(selection_coloring_mode=="atom_type")
-	{
-		selection_colorizer.reset(new ContactColorizerByFirstAtomName());
-	}
-	else if(selection_coloring_mode=="residue_id")
-	{
-		selection_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
-		color_pymol_selection_at_atomic_level=false;
-	}
-	else if(selection_coloring_mode=="atom_id")
-	{
-		selection_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
-	}
-	else
-	{
-		selection_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
-		color_pymol_selection_at_atomic_level=false;
-	}
-
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
 	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
@@ -538,66 +507,100 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 	}
 
-	std::cout << "cmd.color('gray')\n\n";
-	std::cout << "cmd.hide('nonbonded')\n\n";
-	std::cout << "cmd.hide('lines')\n\n";
-	std::cout << "cmd.show('ribbon')\n\n";
-
-	selection_colorizer->list_colors();
-
-	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
+	if(!selection_coloring_mode.empty())
 	{
-		const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
-
-		std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > > selectable_residue_ids;
-		for(std::size_t i=0;i<it->second.size();++i)
+		bool color_pymol_selection_at_atomic_level=true;
+		std::auto_ptr<const ContactColorizerInterface> selection_colorizer;
+		if(selection_coloring_mode=="residue_type")
 		{
-			const std::pair<std::size_t, std::size_t>& atoms_ids_pair=it->second[i];
-			const protein::Atom& a=atoms[atoms_ids_pair.first];
-			selectable_residue_ids[protein::ResidueID::from_atom(a)].push_back(atoms_ids_pair);
+			selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
+			color_pymol_selection_at_atomic_level=false;
+		}
+		else if(selection_coloring_mode=="residue_hydrophobicity")
+		{
+			selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
+			color_pymol_selection_at_atomic_level=false;
+		}
+		else if(selection_coloring_mode=="atom_type")
+		{
+			selection_colorizer.reset(new ContactColorizerByFirstAtomName());
+		}
+		else if(selection_coloring_mode=="residue_id")
+		{
+			selection_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
+			color_pymol_selection_at_atomic_level=false;
+		}
+		else if(selection_coloring_mode=="atom_id")
+		{
+			selection_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
+		}
+		else
+		{
+			selection_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
+			color_pymol_selection_at_atomic_level=false;
 		}
 
-		std::cout << "cmd.select('" << selection_name << "', '";
-		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
+		std::cout << "cmd.color('gray')\n\n";
+		std::cout << "cmd.hide('nonbonded')\n\n";
+		std::cout << "cmd.hide('lines')\n\n";
+		std::cout << "cmd.show('ribbon')\n\n";
+
+		selection_colorizer->list_colors();
+
+		for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 		{
-			const protein::ResidueID& rid=jt->first;
-			if(jt!=selectable_residue_ids.begin())
+			const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
+
+			std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > > selectable_residue_ids;
+			for(std::size_t i=0;i<it->second.size();++i)
 			{
-				std::cout << " or ";
+				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=it->second[i];
+				const protein::Atom& a=atoms[atoms_ids_pair.first];
+				selectable_residue_ids[protein::ResidueID::from_atom(a)].push_back(atoms_ids_pair);
 			}
-			std::cout << "resi " << rid.residue_number << " and chain " << rid.chain_id;
-		}
-		std::cout << "')\n\n";
 
-		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
-		{
-			const std::vector< std::pair<std::size_t, std::size_t> >& atoms_ids_pairs=jt->second;
-			if(color_pymol_selection_at_atomic_level)
+			std::cout << "cmd.select('" << selection_name << "', '";
+			for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
 			{
-				for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
+				const protein::ResidueID& rid=jt->first;
+				if(jt!=selectable_residue_ids.begin())
 				{
-					const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
+					std::cout << " or ";
+				}
+				std::cout << "resi " << rid.residue_number << " and chain " << rid.chain_id;
+			}
+			std::cout << "')\n\n";
+
+			for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
+			{
+				const std::vector< std::pair<std::size_t, std::size_t> >& atoms_ids_pairs=jt->second;
+				if(color_pymol_selection_at_atomic_level)
+				{
+					for(std::size_t i=0;i<atoms_ids_pairs.size();i++)
+					{
+						const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
+						const protein::Atom& a=atoms[atoms_ids_pair.first];
+						const protein::Atom& b=atoms[atoms_ids_pair.second];
+						std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
+					}
+				}
+				else if(!atoms_ids_pairs.empty())
+				{
+					const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs.front();
 					const protein::Atom& a=atoms[atoms_ids_pair.first];
 					const protein::Atom& b=atoms[atoms_ids_pair.second];
-					std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
+					std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and chain " << a.chain_id << "')\n";
 				}
 			}
-			else if(!atoms_ids_pairs.empty())
-			{
-				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs.front();
-				const protein::Atom& a=atoms[atoms_ids_pair.first];
-				const protein::Atom& b=atoms[atoms_ids_pair.second];
-				std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and chain " << a.chain_id << "')\n";
-			}
+			std::cout << "\n";
+
+			std::cout << "cmd.show('sticks', '" << selection_name << "')\n\n";
 		}
-		std::cout << "\n";
 
-		std::cout << "cmd.show('sticks', '" << selection_name << "')\n\n";
+		std::cout << "cmd.deselect()\n\n";
+		std::cout << "cmd.center()\n\n";
+		std::cout << "cmd.zoom()\n\n";
+
+		std::cout << "cmd.set('ray_shadows', 'off')\n\n";
 	}
-
-	std::cout << "cmd.deselect()\n\n";
-	std::cout << "cmd.center()\n\n";
-	std::cout << "cmd.zoom()\n\n";
-
-	std::cout << "cmd.set('ray_shadows', 'off')\n\n";
 }
