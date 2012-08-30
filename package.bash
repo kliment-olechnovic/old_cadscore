@@ -1,6 +1,11 @@
 #!/bin/bash
 
 VERSION=$(hg branches -a | egrep '^experimental' | awk '{print $2}' | head -1 | tr ':' '_')
+if [ -z "$VERSION" ]
+then
+  VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' '_')
+fi
+
 PACKAGE_NAME="cadscore_experimental_$VERSION"
 
 rm $PACKAGE_NAME.tar.gz
