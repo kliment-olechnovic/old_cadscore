@@ -8,13 +8,34 @@ $0 options:
 
   -h    show this message and exit
   -i    path to input file in PDB format
-  -f    face coloring mode (optional)
+  -f    face coloring mode
   -s    selections coloring mode (optional)
-  -c    path to CAD-score combined inter residue contacts file (optional)
-  -g    residue groups (optional)
+  -g    residue groups description (optional)
   -p    flag to automatically open pymol and load the input PDB file and the produced sript
+  
+What this script does:
+  It runs CAD-score voroprot2 program to produce a PyMol (http://pymol.org/) API script
+  that draws Voronoi contact faces and, optionally, selects the contacting residues.
+  
+Running example:
+  ./Voroprot2_print_inter_chain_interfaces.bash -i ~/Downloads/2ZSK.pdb -f residue_type -s residue_type -g "(A37-A44)(B37-B44)" -p
+  
+General notes:
+  To run this script you need 'voroprot2' in your binary bath or in the same directory as this script.
+  If '-g' option is not provided, inter-chain contacts are considered.
+  If '-s' option is not provided, selections are not created.
+  To use '-p' option you need 'pymol' in your binary path.
 
-Available coloring modes:
+Describing residue groups:
+  For example, the string "(A1-A99, B130-B170) (C15) (D) (3-81)" describes
+  the contacts between the following four groups of residues:
+    Group (A1-A99, B1-B99) stands for the residues from 1 to 99 in chain A and the residues from 130 to 170 in the chain B
+    Group (C15, C45) stands for the residues 15 and 45 in the chain C
+    Group (D) stands for all the residues in the chain D
+    Group (3-81) stands for the residues from 3 to 81 in the unnamed chain 
+
+Available coloring modes for faces and selections:
+  blank
   residue_hydrophobicity
   residue_type
   atom_type
@@ -103,13 +124,17 @@ if [ -s "$SCRIPT_FILE" ]
 then
   if $OPEN_IN_PYMOL
   then
-    pymol "$INPUT_FILE" "$SCRIPT_FILE"
+    if which pymol &> /dev/null
+    then
+      pymol "$INPUT_FILE" "$SCRIPT_FILE"
+    else
+      echo "'pymol' executable not found" 1>&2
+    fi
   else
     cat $SCRIPT_FILE
   fi
 else
   echo "PyMol script file was not produced" 1>&2
-  exit 1
 fi
 
 rm -r "$TMP_DIR"
