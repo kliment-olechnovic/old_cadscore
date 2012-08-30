@@ -10,7 +10,7 @@ $0 options:
   -p    probe radius (optional, default is 1.4 angstroms)
 
 What this script does:
-  It runs CAD-score voroprot2 program to rapidly detect if there are any interactions between two or more PDB structures
+  It runs CAD-score voroprot2 program to rapidly detect if there are any interactions between two or more PDB structures.
   
 General notes:
   The list of PDB files paths is accepted from the standard input.
