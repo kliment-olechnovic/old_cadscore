@@ -27,7 +27,7 @@ General notes:
   To use '-p' option you need 'pymol' in your binary path.
 
 Describing residue groups:
-  For example, the string "(A1-A99, B130-B170) (C15) (D) (3-81)" describes
+  For example, the string "(A1-A99,B130-B170)(C15)(D)(3-81)" describes
   the contacts between the following four groups of residues:
     Group (A1-A99, B1-B99) stands for the residues from 1 to 99 in chain A and the residues from 130 to 170 in the chain B
     Group (C15, C45) stands for the residues 15 and 45 in the chain C
