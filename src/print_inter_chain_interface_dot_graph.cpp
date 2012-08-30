@@ -40,7 +40,7 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 	ResiduePairsNeighboursMap rpn_map;
 	ResiduePairsContentsMap rpc_map;
 
-	for(typename Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 	{
 		const apollo::Quadruple& quadruple=it->first;
 		for(std::size_t i=0;i<pairs_pairs.size();i++)
