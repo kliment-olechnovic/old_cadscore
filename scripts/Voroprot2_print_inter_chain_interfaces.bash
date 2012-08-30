@@ -7,9 +7,9 @@ cat << EOF 1>&2
 $0 options:
 
   -h    show this message and exit
-  -f    path to input file in PDB format
-  -a    face coloring mode (optional)
-  -b    selections coloring mode (optional)
+  -i    path to input file in PDB format
+  -f    face coloring mode (optional)
+  -s    selections coloring mode (optional)
   -c    path to CAD-score combined inter residue contacts file (optional)
   -g    residue groups (optional)
 
@@ -43,20 +43,20 @@ SELECTION_COLORING_MODE=""
 COMBINED_RESIDUE_CONTACTS_FILE=""
 RESIDUE_GROUPS=""
 
-while getopts "hf:a:b:c:g:" OPTION
+while getopts "hi:f:s:c:g:" OPTION
 do
   case $OPTION in
     h)
       print_help
       exit 0
       ;;
-    f)
+    i)
       INPUT_FILE=$OPTARG
       ;;
-    a)
+    f)
       FACE_COLORING_MODE="--face-coloring "$OPTARG
       ;;
-    b)
+    s)
       SELECTION_COLORING_MODE="--selection-coloring "$OPTARG
       ;;
     c)
