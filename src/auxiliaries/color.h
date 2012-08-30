@@ -37,13 +37,13 @@ struct Color
 		else if(t<=0.5)
 		{
 			c.b=255;
-			c.r=255*(t/0.5);
+			c.r=static_cast<unsigned char>(255*(t/0.5));
 			c.g=c.r;
 		}
 		else if(t>0.5)
 		{
 			c.r=255;
-			c.b=255*(1-(t-0.5)/0.5);
+			c.b=static_cast<unsigned char>(255*(1-(t-0.5)/0.5));
 			c.g=c.b;
 		}
 		return c;
@@ -63,12 +63,12 @@ struct Color
 		else if(t<=0.5)
 		{
 			c.g=255;
-			c.r=255*(t/0.5);
+			c.r=static_cast<unsigned char>(255*(t/0.5));
 		}
 		else if(t>0.5)
 		{
 			c.r=255;
-			c.g=255*(1-(t-0.5)/0.5);
+			c.g=static_cast<unsigned char>(255*(1-(t-0.5)/0.5));
 		}
 		return c;
 	}
