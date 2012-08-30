@@ -12,6 +12,7 @@ $0 options:
   -s    selections coloring mode (optional)
   -c    path to CAD-score combined inter residue contacts file (optional)
   -g    residue groups (optional)
+  -p    flag to automatically open pymol and load the input PDB file and the produced sript
 
 Available coloring modes:
   residue_hydrophobicity
@@ -42,8 +43,9 @@ FACE_COLORING_MODE=""
 SELECTION_COLORING_MODE=""
 COMBINED_RESIDUE_CONTACTS_FILE=""
 RESIDUE_GROUPS=""
+OPEN_IN_PYMOL=false
 
-while getopts "hi:f:s:c:g:" OPTION
+while getopts "hi:f:s:c:g:p" OPTION
 do
   case $OPTION in
     h)
@@ -65,6 +67,9 @@ do
     g)
       RESIDUE_GROUPS="--groups "$OPTARG
       ;;
+    p)
+      OPEN_IN_PYMOL=true
+      ;;
     ?)
       exit 1
       ;;
@@ -73,13 +78,13 @@ done
 
 if [ -z "$INPUT_FILE" ]
 then
-  echo "Input file name not provided" 1>&2
+  echo "Fatal error: input file name not provided" 1>&2
   exit 1
 fi
 
 if [ ! -f "$INPUT_FILE" ]
 then
-  echo "Input file \"$INPUT_FILE\" does not exist" 1>&2
+  echo "Fatal error: input file \"$INPUT_FILE\" does not exist" 1>&2
   exit 1
 fi
 
@@ -96,7 +101,15 @@ fi
 
 if [ -s "$SCRIPT_FILE" ]
 then
-  pymol "$INPUT_FILE" "$SCRIPT_FILE"
+  if $OPEN_IN_PYMOL
+  then
+    pymol "$INPUT_FILE" "$SCRIPT_FILE"
+  else
+    cat $SCRIPT_FILE
+  fi
+else
+  echo "PyMol script file was not produced" 1>&2
+  exit 1
 fi
 
 rm -r "$TMP_DIR"
