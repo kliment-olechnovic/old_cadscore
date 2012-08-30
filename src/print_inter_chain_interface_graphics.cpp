@@ -538,10 +538,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 	}
 
-	std::cout << "cmd.do('color gray')\n\n";
-	std::cout << "cmd.do('hide nonbonded')\n\n";
-	std::cout << "cmd.do('hide lines')\n\n";
-	std::cout << "cmd.do('show ribbon')\n\n";
+	std::cout << "cmd.color('gray')\n\n";
+	std::cout << "cmd.hide('nonbonded')\n\n";
+	std::cout << "cmd.hide('lines')\n\n";
+	std::cout << "cmd.show('ribbon')\n\n";
 
 	selection_colorizer->list_colors();
 
@@ -557,7 +557,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			selectable_residue_ids[protein::ResidueID::from_atom(a)].push_back(atoms_ids_pair);
 		}
 
-		std::cout << "cmd.do('select " << selection_name << ", ";
+		std::cout << "cmd.select('" << selection_name << "', '";
 		for(std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > >::const_iterator jt=selectable_residue_ids.begin();jt!=selectable_residue_ids.end();++jt)
 		{
 			const protein::ResidueID& rid=jt->first;
@@ -579,7 +579,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 					const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
 					const protein::Atom& a=atoms[atoms_ids_pair.first];
 					const protein::Atom& b=atoms[atoms_ids_pair.second];
-					std::cout << "cmd.do('color " << selection_colorizer->color_string(a, b) << ", resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
+					std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
 				}
 			}
 			else if(!atoms_ids_pairs.empty())
@@ -587,17 +587,17 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 				const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs.front();
 				const protein::Atom& a=atoms[atoms_ids_pair.first];
 				const protein::Atom& b=atoms[atoms_ids_pair.second];
-				std::cout << "cmd.do('color " << selection_colorizer->color_string(a, b) << ", resi " << a.residue_number << " and chain " << a.chain_id << "')\n";
+				std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and chain " << a.chain_id << "')\n";
 			}
 		}
 		std::cout << "\n";
 
-		std::cout << "cmd.do('show sticks, " << selection_name << "')\n\n";
+		std::cout << "cmd.show('sticks', '" << selection_name << "')\n\n";
 	}
 
-	std::cout << "cmd.do('deselect')\n\n";
-	std::cout << "cmd.do('center')\n\n";
-	std::cout << "cmd.do('zoom')\n\n";
+	std::cout << "cmd.deselect()\n\n";
+	std::cout << "cmd.center()\n\n";
+	std::cout << "cmd.zoom()\n\n";
 
-	std::cout << "cmd.do('set ray_shadows, off')\n\n";
+	std::cout << "cmd.set('ray_shadows', 'off')\n\n";
 }
