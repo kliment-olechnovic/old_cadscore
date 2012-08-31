@@ -1,6 +1,8 @@
 #ifndef AUXILIARIES_COLOR_H_
 #define AUXILIARIES_COLOR_H_
 
+#include <algorithm>
+
 namespace auxiliaries
 {
 
@@ -69,6 +71,18 @@ struct Color
 		{
 			c.r=255;
 			c.g=static_cast<unsigned char>(255*(1-(t-0.5)/0.5));
+		}
+		return c;
+	}
+
+	static Color from_two_values_to_green_yellow_red(const double a, const double b)
+	{
+		Color c;
+		const double max_val=std::max(a, b);
+		if(max_val>0)
+		{
+			c.r=static_cast<unsigned char>(a/max_val*255);
+			c.g=static_cast<unsigned char>(b/max_val*255);
 		}
 		return c;
 	}

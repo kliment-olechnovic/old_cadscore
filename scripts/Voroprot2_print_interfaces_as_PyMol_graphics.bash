@@ -69,7 +69,7 @@ RESIDUE_GROUPS=""
 OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hi:f:s:c:d:g:n:p" OPTION
+while getopts "hi:f:s:c:d:v:w:g:n:p" OPTION
 do
   case $OPTION in
     h)
@@ -92,6 +92,14 @@ do
     d)
       COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
       COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_AA_scores"
+      ;;
+    v)
+      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
+      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_area_pairs"
+      ;;
+    w)
+      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
+      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_AA_area_pairs"
       ;;
     g)
       RESIDUE_GROUPS="--groups "$OPTARG
