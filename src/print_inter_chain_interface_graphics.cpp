@@ -220,7 +220,8 @@ public:
 		std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
 		if(it!=combined_inter_residue_contacts_.end())
 		{
-			const std::string contact_type=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b).front();
+			//const std::string contact_type=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b).front();
+			const std::string contact_type="AA";
 			std::pair<double, double> area=it->second.area(contact_type);
 			if(area.first>0.0)
 			{
@@ -385,7 +386,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
-	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups:");
+	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
@@ -393,6 +394,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string face_coloring_mode=clo.isopt("--face-coloring") ? clo.arg<std::string>("--face-coloring") : std::string("");
 	const std::string selection_coloring_mode=clo.isopt("--selection-coloring") ? clo.arg<std::string>("--selection-coloring") : std::string("");
 	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
+	const std::string output_names_prefix=clo.isopt("--output-names-prefix") ? clo.arg<std::string>("--output-names-prefix") : std::string("");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -493,8 +495,8 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
-		const std::string obj_name=std::string("obj_")+it->first.first+"_"+it->first.second;
-		const std::string cgo_name=std::string("iface_")+it->first.first+"_"+it->first.second;
+		const std::string obj_name=output_names_prefix+std::string("obj_")+it->first.first+"_"+it->first.second;
+		const std::string cgo_name=output_names_prefix+std::string("iface_")+it->first.first+"_"+it->first.second;
 		const auxiliaries::OpenGLPrinter opengl_printer(obj_name, cgo_name);
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
@@ -549,7 +551,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 		for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 		{
-			const std::string selection_name=std::string("iface_sel_")+it->first.first+"_"+it->first.second;
+			const std::string selection_name=output_names_prefix+std::string("iface_sel_")+it->first.first+"_"+it->first.second;
 
 			std::map< protein::ResidueID, std::vector< std::pair<std::size_t, std::size_t> > > selectable_residue_ids;
 			for(std::size_t i=0;i<it->second.size();++i)
