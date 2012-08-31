@@ -8,6 +8,7 @@ $0 options:
 
   -h    show this message and exit
   -p    probe radius (optional, default is 1.4 angstroms)
+  -a    flag to read heteroatoms (optional)
 
 What this script does:
   It runs CAD-score voroprot2 program to rapidly detect if there are any interactions between two or more PDB structures.
@@ -34,8 +35,9 @@ then
 fi
 
 PROBE_RADIUS=""
+HETATM_FLAG=""
 
-while getopts "hp:" OPTION
+while getopts "hp:a" OPTION
 do
   case $OPTION in
     h)
@@ -45,10 +47,13 @@ do
     p)
       PROBE_RADIUS="--probe "$OPTARG
       ;;
+    a)
+      HETATM_FLAG="--read-heteroatoms"
+      ;;
     ?)
       exit 1
       ;;
   esac
 done
 
-$VOROPROT --mode check-for-any-inter-chain-contact --direct-reading $PROBE_RADIUS
+$VOROPROT --mode check-for-any-inter-chain-contact --direct-reading $HETATM_FLAG $PROBE_RADIUS

@@ -20,7 +20,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	typedef std::tr1::shared_ptr<Hierarchy> HierarchyPtr;
 	typedef std::map< std::string, HierarchyPtr > HierarchiesMap;
 
-	clo.check_allowed_options("--probe: --direct-reading");
+	clo.check_allowed_options("--probe: --direct-reading --read-heteroatoms");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 
@@ -28,6 +28,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 
 	if(clo.isopt("--direct-reading"))
 	{
+		const bool read_heteroatoms=clo.isopt("--read-heteroatoms");
 		const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner("", "");
 		while(std::cin.good())
 		{
@@ -38,7 +39,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 				std::ifstream input(filename.c_str());
 				if(input.good())
 				{
-					const std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(input, radius_assigner, false, false);
+					const std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(input, radius_assigner, read_heteroatoms, false);
 					if(!atoms.empty())
 					{
 						std::vector<apollo::SimpleSphere>& chain_spheres=chains[filename];
