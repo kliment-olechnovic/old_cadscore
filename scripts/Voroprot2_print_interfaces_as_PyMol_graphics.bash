@@ -11,7 +11,8 @@ $0 options:
   -f    face coloring mode
   -s    selections coloring mode (optional)
   -g    residue groups description (optional)
-  -p    flag to automatically open pymol and load the input PDB file and the produced sript
+  -p    flag to automatically open pymol and load the input PDB file and the produced sript (optional)
+  -n    output names prefix (optional)
   
 What this script does:
   It runs CAD-score voroprot2 program to produce a PyMol (http://pymol.org/) API script
@@ -64,9 +65,10 @@ FACE_COLORING_MODE=""
 SELECTION_COLORING_MODE=""
 COMBINED_RESIDUE_CONTACTS_FILE=""
 RESIDUE_GROUPS=""
+OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hi:f:s:c:g:p" OPTION
+while getopts "hi:f:s:c:g:n:p" OPTION
 do
   case $OPTION in
     h)
@@ -87,6 +89,9 @@ do
       ;;
     g)
       RESIDUE_GROUPS="--groups "$OPTARG
+      ;;
+    n)
+      OUTPUT_NAMES_PREFIX="--output-names-prefix "$OPTARG
       ;;
     p)
       OPEN_IN_PYMOL=true
@@ -115,9 +120,9 @@ SCRIPT_FILE="$TMP_DIR/script.py"
 
 if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
 then
-  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS > "$SCRIPT_FILE"
+  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
 else
-  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS > "$SCRIPT_FILE"
+  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
 fi
 
 if [ -s "$SCRIPT_FILE" ]
