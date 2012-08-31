@@ -64,11 +64,12 @@ INPUT_FILE=""
 FACE_COLORING_MODE=""
 SELECTION_COLORING_MODE=""
 COMBINED_RESIDUE_CONTACTS_FILE=""
+COMBINED_RESIDUE_CONTACTS_FILE_USAGE=""
 RESIDUE_GROUPS=""
 OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hi:f:s:c:g:n:p" OPTION
+while getopts "hi:f:s:c:d:g:n:p" OPTION
 do
   case $OPTION in
     h)
@@ -86,6 +87,11 @@ do
       ;;
     c)
       COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
+      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_scores"
+      ;;
+    d)
+      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
+      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_AA_scores"
       ;;
     g)
       RESIDUE_GROUPS="--groups "$OPTARG
@@ -122,7 +128,7 @@ if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
 then
   $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
 else
-  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
+  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring $COMBINED_RESIDUE_CONTACTS_FILE_USAGE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
 fi
 
 if [ -s "$SCRIPT_FILE" ]
