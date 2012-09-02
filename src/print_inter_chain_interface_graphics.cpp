@@ -250,7 +250,15 @@ public:
 		std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
 		if(it!=combined_inter_residue_contacts_.end())
 		{
-			const std::string contact_type=use_only_all_to_all_scores_ ? std::string("AA") : contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b).front();
+			std::string contact_type("AA");
+			if(!use_only_all_to_all_scores_)
+			{
+				const std::vector<std::string> contact_types=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b);
+				if(!contact_types.empty())
+				{
+					contact_type=contact_types.front();
+				}
+			}
 			std::pair<double, double> area=it->second.area(contact_type);
 			if(area.first>0.0)
 			{
