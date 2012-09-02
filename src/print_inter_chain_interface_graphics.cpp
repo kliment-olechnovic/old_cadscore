@@ -388,6 +388,22 @@ public:
 	}
 };
 
+class ContactAccepterForInterResidue : public ContactAccepterInterface
+{
+public:
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return (protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b));
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		std::ostringstream output;
+		output << "r" << a.residue_name;
+		return output.str();
+	}
+};
+
 class ContactAccepterForInterInterval : public ContactAccepterInterface
 {
 public:
@@ -477,6 +493,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			throw std::runtime_error(std::string("Invalid intervals string: ")+groups_option);
 		}
 		contact_accepter.reset(new ContactAccepterForInterInterval(intervals));
+	}
+	else if(groups_option=="inter_residue")
+	{
+		contact_accepter.reset(new ContactAccepterForInterResidue());
 	}
 	else
 	{
