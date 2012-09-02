@@ -391,9 +391,15 @@ public:
 class ContactAccepterForInterResidue : public ContactAccepterInterface
 {
 public:
+	ContactAccepterForInterResidue(bool only_side_chain_contacts) : only_side_chain_contacts_(only_side_chain_contacts)
+	{
+	}
+
 	bool accept(const protein::Atom& a, const protein::Atom& b) const
 	{
-		return (protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b));
+		return (protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b) &&
+				(!only_side_chain_contacts_ ||
+						(a.location_class==protein::Atom::side_chain && b.location_class==protein::Atom::side_chain)));
 	}
 
 	std::string assign_group_name(const protein::Atom& a) const
@@ -402,12 +408,15 @@ public:
 		output << "r" << a.residue_name;
 		return output.str();
 	}
+
+private:
+	bool only_side_chain_contacts_;
 };
 
 class ContactAccepterForInterInterval : public ContactAccepterInterface
 {
 public:
-	ContactAccepterForInterInterval(std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals) : intervals_(intervals)
+	ContactAccepterForInterInterval(const std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > >& intervals) : intervals_(intervals)
 	{
 	}
 
@@ -494,9 +503,9 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 		contact_accepter.reset(new ContactAccepterForInterInterval(intervals));
 	}
-	else if(groups_option=="inter_residue")
+	else if(groups_option=="inter_residue" || groups_option=="inter_residue_SS")
 	{
-		contact_accepter.reset(new ContactAccepterForInterResidue());
+		contact_accepter.reset(new ContactAccepterForInterResidue(groups_option=="inter_residue_SS"));
 	}
 	else
 	{
