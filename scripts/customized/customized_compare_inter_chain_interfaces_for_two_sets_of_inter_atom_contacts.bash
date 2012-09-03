@@ -30,4 +30,4 @@ fi
 ) \
 | $VOROPROT --mode calc-CAD-profile \
 | $VOROPROT --mode calc-CAD-global-scores \
-| egrep -v '_diff|_ref|W'
+| egrep -v 'W'
