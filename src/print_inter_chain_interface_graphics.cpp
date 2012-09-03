@@ -401,40 +401,6 @@ class ContactAccepterForInterResidue : public ContactAccepterInterface
 public:
 	ContactAccepterForInterResidue(bool only_side_chain_contacts) : only_side_chain_contacts_(only_side_chain_contacts)
 	{
-		const std::string nonpolar="np";
-		const std::string acidic="ac";
-		const std::string basic="bs";
-		const std::string uncharged="uc";
-
-		map_of_residue_types_["LEU"]=nonpolar;
-		map_of_residue_types_["VAL"]=nonpolar;
-		map_of_residue_types_["ILE"]=nonpolar;
-		map_of_residue_types_["ALA"]=nonpolar;
-		map_of_residue_types_["PHE"]=nonpolar;
-		map_of_residue_types_["TRP"]=nonpolar;
-		map_of_residue_types_["MET"]=nonpolar;
-		map_of_residue_types_["PRO"]=nonpolar;
-
-		map_of_residue_types_["ASP"]=acidic;
-		map_of_residue_types_["GLU"]=acidic;
-
-		map_of_residue_types_["LYS"]=basic;
-		map_of_residue_types_["ARG"]=basic;
-		map_of_residue_types_["HIS"]=basic;
-
-		map_of_residue_types_["CYS"]=uncharged;
-		map_of_residue_types_["SER"]=uncharged;
-		map_of_residue_types_["THR"]=uncharged;
-		map_of_residue_types_["TYR"]=uncharged;
-		map_of_residue_types_["ASN"]=uncharged;
-		map_of_residue_types_["GLN"]=uncharged;
-		map_of_residue_types_["GLY"]=uncharged;
-
-		map_of_residue_types_["A"]="a";
-		map_of_residue_types_["T"]="t";
-		map_of_residue_types_["G"]="g";
-		map_of_residue_types_["C"]="c";
-		map_of_residue_types_["U"]="u";
 	}
 
 	bool accept(const protein::Atom& a, const protein::Atom& b) const
@@ -446,20 +412,11 @@ public:
 
 	std::string assign_group_name(const protein::Atom& a) const
 	{
-		std::map<std::string, std::string>::const_iterator it=map_of_residue_types_.find(a.residue_name);
-		if(it!=map_of_residue_types_.end())
-		{
-			return it->second;
-		}
-		else
-		{
-			return std::string("r");
-		}
+		return std::string("residues");
 	}
 
 private:
 	bool only_side_chain_contacts_;
-	std::map<std::string, std::string> map_of_residue_types_;
 };
 
 class ContactAccepterForInterInterval : public ContactAccepterInterface
