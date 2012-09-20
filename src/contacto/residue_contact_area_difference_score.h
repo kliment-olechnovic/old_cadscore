@@ -42,6 +42,18 @@ struct ResidueContactAreaDifferenceScore
 	{
 	}
 
+	bool has_valid_ratio() const
+	{
+		for(RatiosMap::const_iterator it=ratios.begin();it!=ratios.end();++it)
+		{
+			if(it->second.reference>0.0)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	Ratio ratio(const std::string& area_class) const
 	{
 		RatiosMap::const_iterator it=ratios.find(area_class);

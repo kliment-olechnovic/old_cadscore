@@ -88,7 +88,7 @@ void calc_contact_area_difference_size_scores(const auxiliaries::CommandLineOpti
 	std::set<protein::ResidueID> filled_set;
 	for(std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>::const_iterator it=profile.begin();it!=profile.end();++it)
 	{
-		if(it->second.ratio("AA").reference>0.0)
+		if(it->second.has_valid_ratio())
 		{
 			filled_set.insert(it->first);
 		}
