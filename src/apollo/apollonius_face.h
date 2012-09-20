@@ -261,15 +261,18 @@ public:
 		{
 			const std::size_t d3_id=it->first;
 			const std::vector<SimpleSphere>& d3_tangent_spheres=it->second;
-			for(int i=0;i<3;i++)
+			if(!d3_tangent_spheres.empty())
 			{
-				ApolloniusFace child(*spheres_,
-						Triple(abc_ids_.exclude(i), d3_id),
-						abc_ids_.get(i),
-						d3_tangent_spheres.front());
-				if(child.valid())
+				for(int i=0;i<3;i++)
 				{
-					children.push_back(child);
+					ApolloniusFace child(*spheres_,
+							Triple(abc_ids_.exclude(i), d3_id),
+							abc_ids_.get(i),
+							d3_tangent_spheres.front());
+					if(child.valid())
+					{
+						children.push_back(child);
+					}
 				}
 			}
 		}
