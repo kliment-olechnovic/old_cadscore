@@ -11,9 +11,10 @@
 
 void rotate_coordinates(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--depth: --output-prefix:");
+	clo.check_allowed_options("--depth: --radius: --output-prefix:");
 
 	const std::size_t subdivision_depth=clo.isopt("--depth") ? clo.arg_in_interval<std::size_t>("--depth", 0, 2) : 0;
+	const double radius=clo.isopt("--radius") ? clo.arg_with_min_value<double>("--radius", 0.0) : 0.0;
 	const std::string output_prefix=clo.arg<std::string>("--output-prefix");
 
 	std::vector<protein::PDBAtomRecord> records=protein::read_PDB_atom_records_from_PDB_file_stream(std::cin);
@@ -38,7 +39,8 @@ void rotate_coordinates(const auxiliaries::CommandLineOptions& clo)
 		apollo::SubdividedIcosahedron sih(subdivision_depth);
 		for(std::size_t j=0;j<sih.vertices().size();j++)
 		{
-			const apollo::Rotation rotation=apollo::Rotation::from_two_points(apollo::SimplePoint(0, 0, 1), sih.vertices()[j]);
+			const apollo::SimplePoint& v=sih.vertices()[j];
+			const apollo::Rotation rotation=apollo::Rotation::from_two_points(apollo::SimplePoint(0, 0, 1), v);
 
 			std::ostringstream output_name_stream;
 			output_name_stream << output_prefix << j;
@@ -50,9 +52,9 @@ void rotate_coordinates(const auxiliaries::CommandLineOptions& clo)
 				protein::PDBAtomRecord r=records[i];
 				const apollo::SimplePoint start(r.x, r.y, r.z);
 				const apollo::SimplePoint end=rotation.rotate<apollo::SimplePoint>(start);
-				r.x=end.x;
-				r.y=end.y;
-				r.z=end.z;
+				r.x=end.x+v.x*radius;
+				r.y=end.y+v.y*radius;
+				r.z=end.z+v.z*radius;
 				output << r.generate_PDB_file_line() << "\n";
 			}
 		}
