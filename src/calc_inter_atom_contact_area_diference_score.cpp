@@ -8,6 +8,7 @@
 #include "contacto/contact_id.h"
 #include "contacto/inter_atom_contact.h"
 #include "contacto/utilities.h"
+#include "contacto/ratio.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
@@ -54,35 +55,35 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 
 	if(print_global)
 	{
-		std::pair<double, double> global_ratio;
+		contacto::Ratio global_ratio;
 		for(CombinedContactsMap::const_iterator it=combined_contacts.begin();it!=combined_contacts.end();++it)
 		{
 			const double t=it->second.first;
 			const double m=it->second.second;
-			global_ratio.first+=std::min(fabs(t-m), t);
-			global_ratio.second+=t;
+			global_ratio.difference+=std::min(fabs(t-m), t);
+			global_ratio.reference+=t;
 		}
-		std::cout << "inter_atom_cad_global_score " << (global_ratio.second>0.0 ? (1-(global_ratio.first/global_ratio.second)) : 0.0) << "\n";
+		std::cout << "inter_atom_cad_global_score " << (global_ratio.reference>0.0 ? (1-(global_ratio.difference/global_ratio.reference)) : 0.0) << "\n";
 	}
 
 	if(print_local)
 	{
-		typedef std::map< protein::AtomID, std::pair<double, double> > LocalRatiosMap;
+		typedef std::map< protein::AtomID, contacto::Ratio > LocalRatiosMap;
 		LocalRatiosMap local_ratios;
 		for(CombinedContactsMap::const_iterator it=combined_contacts.begin();it!=combined_contacts.end();++it)
 		{
 			const double t=it->second.first;
 			const double m=it->second.second;
-			std::pair<double, double>& local_ratio=local_ratios[it->first.a];
-			local_ratio.first+=std::min(fabs(t-m), t);
-			local_ratio.second+=t;
+			contacto::Ratio& local_ratio=local_ratios[it->first.a];
+			local_ratio.difference+=std::min(fabs(t-m), t);
+			local_ratio.reference+=t;
 		}
 		auxiliaries::print_file_header(std::cout, "inter_atom_cad_local_scores");
 		std::cout << local_ratios.size() << "\n";
 		for(LocalRatiosMap::const_iterator it=local_ratios.begin();it!=local_ratios.end();++it)
 		{
-			const std::pair<double, double>& local_ratio=it->second;
-			std::cout << it->first << " " << (local_ratio.second>0.0 ? (1-(local_ratio.first/local_ratio.second)) : 0.0) << "\n";
+			const contacto::Ratio& local_ratio=it->second;
+			std::cout << it->first << " " << (local_ratio.reference>0.0 ? (1-(local_ratio.difference/local_ratio.reference)) : 0.0) << "\n";
 		}
 	}
 }
