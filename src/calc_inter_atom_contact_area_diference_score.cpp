@@ -13,6 +13,7 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
+#include "auxiliaries/map_io.h"
 
 std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts)
 {
@@ -79,11 +80,6 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 			local_ratio.reference+=t;
 		}
 		auxiliaries::print_file_header(std::cout, "inter_atom_cad_local_scores");
-		std::cout << local_ratios.size() << "\n";
-		for(LocalRatiosMap::const_iterator it=local_ratios.begin();it!=local_ratios.end();++it)
-		{
-			const contacto::Ratio& local_ratio=it->second;
-			std::cout << it->first << " " << (local_ratio.reference>0.0 ? (1-(local_ratio.difference/local_ratio.reference)) : 0.0) << "\n";
-		}
+		auxiliaries::print_map(std::cout, local_ratios);
 	}
 }
