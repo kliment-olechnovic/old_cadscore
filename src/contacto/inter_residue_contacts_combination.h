@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "inter_residue_contact_id.h"
+#include "contact_id.h"
 #include "inter_residue_contact_areas.h"
 #include "inter_residue_contact_dual_areas.h"
 #include "utilities.h"
@@ -19,11 +19,11 @@ inline InterResidueContactDualAreas combine_two_contacts(const InterResidueConta
 }
 
 template<typename ResidueID>
-std::map< InterResidueContactID<ResidueID>, InterResidueContactDualAreas > combine_two_inter_residue_contact_maps(const std::map< InterResidueContactID<ResidueID>, InterResidueContactAreas >& contact_map_1, const std::map< InterResidueContactID<ResidueID>, InterResidueContactAreas >& contact_map_2)
+std::map< ContactID<ResidueID>, InterResidueContactDualAreas > combine_two_inter_residue_contact_maps(const std::map< ContactID<ResidueID>, InterResidueContactAreas >& contact_map_1, const std::map< ContactID<ResidueID>, InterResidueContactAreas >& contact_map_2)
 {
-	typedef std::map< InterResidueContactID<ResidueID>, std::pair<InterResidueContactAreas, InterResidueContactAreas> > Combination;
+	typedef std::map< ContactID<ResidueID>, std::pair<InterResidueContactAreas, InterResidueContactAreas> > Combination;
 	const Combination combination=combine_two_maps(contact_map_1, contact_map_2);
-	typedef std::map< InterResidueContactID<ResidueID>, InterResidueContactDualAreas > Result;
+	typedef std::map< ContactID<ResidueID>, InterResidueContactDualAreas > Result;
 	Result result;
 	typename Result::iterator prev=result.begin();
 	for(typename Combination::const_iterator it=combination.begin();it!=combination.end();++it)
