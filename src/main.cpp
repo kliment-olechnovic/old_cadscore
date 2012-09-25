@@ -25,6 +25,7 @@ void print_inter_chain_interface_dot_graph(const auxiliaries::CommandLineOptions
 void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const auxiliaries::CommandLineOptions& clo);
 void merge_atoms(const auxiliaries::CommandLineOptions& clo);
 void rotate_coordinates(const auxiliaries::CommandLineOptions& clo);
+void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -67,6 +68,7 @@ int main(const int argc, const char** argv)
 		modes_map["calc-combined-inter-residue-contacts-with-chains-optimally-renamed"]=ModeFunctionPointer(calc_combined_inter_residue_contacts_with_chains_optimally_renamed);
 		modes_map["merge-atoms"]=ModeFunctionPointer(merge_atoms);
 		modes_map["rotate-coordinates"]=ModeFunctionPointer(rotate_coordinates);
+		modes_map["calc-inter-atom-CAD-score"]=ModeFunctionPointer(calc_inter_atom_contact_area_difference_score);
 
 		if(modes_map.count(mode)==1)
 		{
