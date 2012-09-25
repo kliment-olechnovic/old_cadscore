@@ -245,7 +245,7 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 
 			const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile=contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, protein::ResidueSummary, contacto::BoundedDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
 			const contacto::ResidueContactAreaDifferenceScore global_score=contacto::calculate_global_contact_area_difference_score_from_profile(residue_contact_area_difference_profile, false);
-			const contacto::ResidueContactAreaDifferenceScore::Ratio ratio=global_score.ratio("AA");
+			const contacto::Ratio ratio=global_score.ratio("AA");
 			if(ratio.reference>0.0)
 			{
 				variations[(1-(ratio.difference/ratio.reference))]=combined_inter_residue_contacts;

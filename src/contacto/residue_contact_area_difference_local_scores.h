@@ -37,7 +37,7 @@ std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<R
 			}
 		}
 
-		contacto::ResidueContactAreaDifferenceScore::Ratio ratio=residue_score.ratio(category);
+		contacto::Ratio ratio=residue_score.ratio(category);
 		insertion_it=local_scores.insert(insertion_it, std::make_pair(residue_id, ((ratio.reference>0) ? (ratio.difference/ratio.reference) : -3)));
 	}
 	return local_scores;
