@@ -36,7 +36,7 @@ std::map<ResidueID, ResidueContactAreaDifferenceScore> construct_residue_contact
 			const InterResidueContactDualAreas::AreasMap& areas_map=it->second.areas;
 			for(InterResidueContactDualAreas::AreasMap::const_iterator jt=areas_map.begin();jt!=areas_map.end();++jt)
 			{
-				ResidueContactAreaDifferenceScore::Ratio& ratio=residue_score.ratios[jt->first];
+				Ratio& ratio=residue_score.ratios[jt->first];
 				ratio.difference+=difference_producer(jt->second.first, jt->second.second);
 				ratio.reference+=reference_producer(jt->second.first, jt->second.second);
 			}
@@ -56,7 +56,7 @@ ResidueContactAreaDifferenceScore calculate_global_contact_area_difference_score
 		const ResidueContactAreaDifferenceScore& residue_score=it->second;
 		for(ResidueContactAreaDifferenceScore::RatiosMap::const_iterator jt=residue_score.ratios.begin();jt!=residue_score.ratios.end();++jt)
 		{
-			ResidueContactAreaDifferenceScore::Ratio& ratio=global_score.ratios[jt->first];
+			Ratio& ratio=global_score.ratios[jt->first];
 			ratio.difference+=(use_min ? std::min(jt->second.difference, jt->second.reference) : jt->second.difference);
 			ratio.reference+=jt->second.reference;
 		}
