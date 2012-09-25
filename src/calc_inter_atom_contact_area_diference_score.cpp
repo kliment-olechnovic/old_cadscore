@@ -21,9 +21,11 @@ std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_cont
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
 	{
 		const contacto::InterAtomContact& contact=inter_atom_contacts[i];
-		if(contact.a!=contact.b)
+		const protein::AtomID a_id=protein::AtomID::from_atom(atoms[contact.a]);
+		const protein::AtomID b_id=protein::AtomID::from_atom(atoms[contact.b]);
+		if(a_id.residue_id!=b_id.residue_id)
 		{
-			contacts_map[contacto::ContactID<protein::AtomID>(protein::AtomID::from_atom(atoms[contact.a]), protein::AtomID::from_atom(atoms[contact.b]))]=contact.area;
+			contacts_map[contacto::ContactID<protein::AtomID>(a_id, b_id)]=contact.area;
 		}
 	}
 	return contacts_map;
@@ -80,6 +82,6 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 			local_ratio.reference+=t;
 		}
 		auxiliaries::print_file_header(std::cout, "inter_atom_cad_local_scores");
-		auxiliaries::print_map(std::cout, local_ratios);
+		auxiliaries::print_map(std::cout, local_ratios, false);
 	}
 }
