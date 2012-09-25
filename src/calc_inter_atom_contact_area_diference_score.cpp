@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "protein/atom.h"
-#include "protein/residue_id.h"
+#include "protein/atom_id.h"
 
 #include "contacto/contact_id.h"
 #include "contacto/inter_atom_contact.h"
@@ -13,22 +13,15 @@
 #include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 
-template<typename AtomID>
-inline AtomID atom_id_from_atom(const protein::Atom& a)
+std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts)
 {
-	return AtomID(protein::ResidueID::from_atom(a), a.atom_name);
-}
-
-template<typename AtomID>
-std::map<contacto::ContactID<AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts)
-{
-	std::map<contacto::ContactID<AtomID>, double> contacts_map;
+	std::map<contacto::ContactID<protein::AtomID>, double> contacts_map;
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
 	{
 		const contacto::InterAtomContact& contact=inter_atom_contacts[i];
 		if(contact.a!=contact.b)
 		{
-			contacts_map[contacto::ContactID<AtomID>(atom_id_from_atom<AtomID>(atoms[contact.a]), atom_id_from_atom<AtomID>(atoms[contact.b]))]=contact.area;
+			contacts_map[contacto::ContactID<protein::AtomID>(protein::AtomID::from_atom(atoms[contact.a]), protein::AtomID::from_atom(atoms[contact.b]))]=contact.area;
 		}
 	}
 	return contacts_map;
@@ -50,12 +43,11 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 	auxiliaries::assert_file_header(std::cin, "contacts");
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
 
-	typedef std::pair<protein::ResidueID, std::string> AtomID;
-	typedef std::map< contacto::ContactID<AtomID>, std::pair<double, double> > CombinedContactsMap;
+	typedef std::map< contacto::ContactID<protein::AtomID>, std::pair<double, double> > CombinedContactsMap;
 
 	const CombinedContactsMap combined_contacts=contacto::combine_two_maps(
-			construct_inter_atom_contacts_map<AtomID>(atoms_1, inter_atom_contacts_1),
-			construct_inter_atom_contacts_map<AtomID>(atoms_2, inter_atom_contacts_2));
+			construct_inter_atom_contacts_map(atoms_1, inter_atom_contacts_1),
+			construct_inter_atom_contacts_map(atoms_2, inter_atom_contacts_2));
 
 	double difference=0.0;
 	double reference=0.0;
