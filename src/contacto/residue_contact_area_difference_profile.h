@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 
-#include "inter_residue_contact_id.h"
+#include "contact_id.h"
 #include "inter_residue_contact_dual_areas.h"
 #include "residue_contact_area_difference_score.h"
 
@@ -13,7 +13,7 @@ namespace contacto
 
 template<typename ResidueID, typename ResidueSummary, typename DifferenceProducer, typename ReferenceProducer>
 std::map<ResidueID, ResidueContactAreaDifferenceScore> construct_residue_contact_area_difference_profile(
-		const std::map<InterResidueContactID<ResidueID>, InterResidueContactDualAreas>& combined_inter_residue_contacts,
+		const std::map<ContactID<ResidueID>, InterResidueContactDualAreas>& combined_inter_residue_contacts,
 		const std::map<ResidueID, ResidueSummary>& residue_ids)
 {
 	std::map<ResidueID, ResidueContactAreaDifferenceScore> profile;
@@ -26,7 +26,7 @@ std::map<ResidueID, ResidueContactAreaDifferenceScore> construct_residue_contact
 	}
 	DifferenceProducer difference_producer;
 	ReferenceProducer reference_producer;
-	for(typename std::map<InterResidueContactID<ResidueID>, InterResidueContactDualAreas>::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
+	for(typename std::map<ContactID<ResidueID>, InterResidueContactDualAreas>::const_iterator it=combined_inter_residue_contacts.begin();it!=combined_inter_residue_contacts.end();++it)
 	{
 		const ResidueID& residue_id=it->first.a;
 		typename std::map<ResidueID, ResidueContactAreaDifferenceScore>::iterator profile_it=profile.find(residue_id);

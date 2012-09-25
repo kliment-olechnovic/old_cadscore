@@ -5,6 +5,7 @@
 #include "protein/atom.h"
 #include "protein/residue_id.h"
 
+#include "contacto/contact_id.h"
 #include "contacto/inter_atom_contact.h"
 #include "contacto/utilities.h"
 
@@ -19,15 +20,15 @@ inline AtomID atom_id_from_atom(const protein::Atom& a)
 }
 
 template<typename AtomID>
-std::map<std::pair<AtomID, AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts)
+std::map<contacto::ContactID<AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts)
 {
-	std::map<std::pair<AtomID, AtomID>, double> contacts_map;
+	std::map<contacto::ContactID<AtomID>, double> contacts_map;
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
 	{
 		const contacto::InterAtomContact& contact=inter_atom_contacts[i];
 		if(contact.a!=contact.b)
 		{
-			contacts_map[std::make_pair(atom_id_from_atom<AtomID>(atoms[contact.a]), atom_id_from_atom<AtomID>(atoms[contact.b]))]=contact.area;
+			contacts_map[contacto::ContactID<AtomID>(atom_id_from_atom<AtomID>(atoms[contact.a]), atom_id_from_atom<AtomID>(atoms[contact.b]))]=contact.area;
 		}
 	}
 	return contacts_map;
@@ -50,7 +51,7 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
 
 	typedef std::pair<protein::ResidueID, std::string> AtomID;
-	typedef std::map< std::pair<AtomID, AtomID>, std::pair<double, double> > CombinedContactsMap;
+	typedef std::map< contacto::ContactID<AtomID>, std::pair<double, double> > CombinedContactsMap;
 
 	const CombinedContactsMap combined_contacts=contacto::combine_two_maps(
 			construct_inter_atom_contacts_map<AtomID>(atoms_1, inter_atom_contacts_1),
