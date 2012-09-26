@@ -31,12 +31,39 @@ std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_cont
 	return contacts_map;
 }
 
+void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, const std::map<protein::AtomID, contacto::Ratio>& local_ratios)
+{
+	for(std::size_t i=0;i<atoms.size();i++)
+	{
+		const protein::Atom& a=atoms[i];
+		double value=-1.0;
+		const std::map<protein::AtomID, contacto::Ratio>::const_iterator it=local_ratios.find(protein::AtomID::from_atom(a));
+		if(it!=local_ratios.end())
+		{
+			const contacto::Ratio& local_ratio=it->second;
+			if(local_ratio.reference>0.0)
+			{
+				value=local_ratio.difference;
+			}
+			else
+			{
+				value=-2.0;
+			}
+		}
+		std::cout << a.string_for_PDB_file(value) << "\n";
+	}
+	std::cout << "END\n";
+}
+
 void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--local --global");
+	clo.check_allowed_options("--local --local-as-pdb-of-target --local-as-pdb-of-model --global");
 
 	const bool print_local=clo.isopt("--local");
-	const bool print_global=clo.isopt("--global") || !print_local;
+	const bool print_local_as_pdb_of_target=clo.isopt("--local-as-pdb-of-target");
+	const bool print_local_as_pdb_of_model=clo.isopt("--local-as-pdb-of-model");
+	const bool print_any_local=(print_local || print_local_as_pdb_of_target || print_local_as_pdb_of_model);
+	const bool print_global=clo.isopt("--global") || !print_any_local;
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -69,10 +96,9 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 		std::cout << "inter_atom_cad_global_score " << (global_ratio.reference>0.0 ? (1-(global_ratio.difference/global_ratio.reference)) : 0.0) << "\n";
 	}
 
-	if(print_local)
+	if(print_any_local)
 	{
-		typedef std::map< protein::AtomID, contacto::Ratio > LocalRatiosMap;
-		LocalRatiosMap local_ratios;
+		std::map<protein::AtomID, contacto::Ratio> local_ratios;
 		for(CombinedContactsMap::const_iterator it=combined_contacts.begin();it!=combined_contacts.end();++it)
 		{
 			const double t=it->second.first;
@@ -81,7 +107,21 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 			local_ratio.difference+=std::min(fabs(t-m), t);
 			local_ratio.reference+=t;
 		}
-		auxiliaries::print_file_header(std::cout, "inter_atom_cad_local_scores");
-		auxiliaries::print_map(std::cout, local_ratios, false);
+
+		if(print_local)
+		{
+			auxiliaries::print_file_header(std::cout, "inter_atom_cad_local_scores");
+			auxiliaries::print_map(std::cout, local_ratios, false);
+		}
+
+		if(print_local_as_pdb_of_target)
+		{
+			print_atoms_local_scores_as_pdb(atoms_1, local_ratios);
+		}
+
+		if(print_local_as_pdb_of_model)
+		{
+			print_atoms_local_scores_as_pdb(atoms_2, local_ratios);
+		}
 	}
 }
