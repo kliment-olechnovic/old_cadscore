@@ -37,6 +37,10 @@ void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 				values[std::string("inter_chain_")+a.chain_id+"_"+b.chain_id]+=contact.area;
 			}
 		}
+		else if(a==b)
+		{
+			values["sas"]+=contact.area;
+		}
 	}
 
 	auxiliaries::print_file_header(std::cout, "summary_values");
