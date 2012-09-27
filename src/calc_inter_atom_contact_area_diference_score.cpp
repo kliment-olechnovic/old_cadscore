@@ -31,7 +31,7 @@ std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_cont
 	return contacts_map;
 }
 
-void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, const std::map<protein::AtomID, contacto::Ratio>& local_ratios)
+void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, const std::map<protein::AtomID, contacto::Ratio>& local_ratios, bool normalized)
 {
 	for(std::size_t i=0;i<atoms.size();i++)
 	{
@@ -43,7 +43,14 @@ void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, co
 			const contacto::Ratio& local_ratio=it->second;
 			if(local_ratio.reference>0.0)
 			{
-				value=local_ratio.difference;
+				if(normalized)
+				{
+					value=local_ratio.difference/local_ratio.reference*100.0;
+				}
+				else
+				{
+					value=local_ratio.difference;
+				}
 			}
 			else
 			{
@@ -57,11 +64,12 @@ void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, co
 
 void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--local --local-as-pdb-of-target --local-as-pdb-of-model --global");
+	clo.check_allowed_options("--local --local-as-pdb-of-target --local-as-pdb-of-model --local-normalized-for-pdb --global");
 
 	const bool print_local=clo.isopt("--local");
 	const bool print_local_as_pdb_of_target=clo.isopt("--local-as-pdb-of-target");
 	const bool print_local_as_pdb_of_model=clo.isopt("--local-as-pdb-of-model");
+	const bool local_normalized_for_pdb=clo.isopt("--local-normalized-for-pdb");
 	const bool print_any_local=(print_local || print_local_as_pdb_of_target || print_local_as_pdb_of_model);
 	const bool print_global=clo.isopt("--global") || !print_any_local;
 
@@ -116,12 +124,12 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 
 		if(print_local_as_pdb_of_target)
 		{
-			print_atoms_local_scores_as_pdb(atoms_1, local_ratios);
+			print_atoms_local_scores_as_pdb(atoms_1, local_ratios, local_normalized_for_pdb);
 		}
 
 		if(print_local_as_pdb_of_model)
 		{
-			print_atoms_local_scores_as_pdb(atoms_2, local_ratios);
+			print_atoms_local_scores_as_pdb(atoms_2, local_ratios, local_normalized_for_pdb);
 		}
 	}
 }
