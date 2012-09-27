@@ -404,6 +404,29 @@ public:
 	}
 };
 
+class ContactAccepterForInsideSet : public ContactAccepterInterface
+{
+public:
+	ContactAccepterForInsideSet(const std::set<protein::ResidueID>& allowed_residue_ids) : allowed_residue_ids_(allowed_residue_ids)
+	{
+	}
+
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return (protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b)&&
+				allowed_residue_ids_.count(protein::ResidueID::from_atom(a))>0 &&
+				allowed_residue_ids_.count(protein::ResidueID::from_atom(b))>0);
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		return a.chain_id;
+	}
+
+private:
+	std::set<protein::ResidueID> allowed_residue_ids_;
+};
+
 class ContactAccepterForInterResidue : public ContactAccepterInterface
 {
 public:
@@ -507,6 +530,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
 
+	const Hierarchy hierarchy(atoms, 4.2, 1);
+	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
+	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
+
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
 	{
@@ -521,9 +548,65 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		contact_accepter.reset(new ContactAccepterForInterResidue(groups_option=="inter_residue_SS"));
 	}
+	else if(groups_option=="inter_chain_region")
+	{
+		std::set<protein::ResidueID> region_residue_ids;
+		for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+		{
+			const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
+			const protein::Atom& a=atoms[atoms_ids_pair.first];
+			const protein::Atom& b=atoms[atoms_ids_pair.second];
+			if(a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?" &&
+					apollo::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2)
+			{
+				region_residue_ids.insert(protein::ResidueID::from_atom(a));
+				region_residue_ids.insert(protein::ResidueID::from_atom(b));
+			}
+		}
+		contact_accepter.reset(new ContactAccepterForInsideSet(region_residue_ids));
+	}
 	else
 	{
 		contact_accepter.reset(new ContactAccepterForInterChain());
+	}
+
+	std::vector<CellFace> faces_vector;
+	std::map< std::pair<std::size_t, std::size_t>, std::size_t > faces_vector_map;
+	typedef std::map< std::pair<std::string, std::string>, std::vector< std::pair<std::size_t, std::size_t> > > InterfacesMap;
+	InterfacesMap inter_chain_interfaces;
+
+	for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	{
+		const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
+
+		const protein::Atom& a=atoms[atoms_ids_pair.first];
+		const protein::Atom& b=atoms[atoms_ids_pair.second];
+
+		if(contact_accepter->accept(a,b))
+		{
+			std::vector<const protein::Atom*> cs;
+			cs.reserve(it->second.size());
+			for(Apollo::PairsNeighboursMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+			{
+				cs.push_back(&(atoms[*jt]));
+			}
+
+			const CellFace cell_face=CellFace::construct(a, b, cs, probe_radius, step_length, projections_count);
+			if(!cell_face.mesh_vertices().empty())
+			{
+				const std::pair<std::size_t, std::size_t> reversed_atoms_ids_pair=std::make_pair(atoms_ids_pair.second, atoms_ids_pair.first);
+				faces_vector.push_back(cell_face);
+				faces_vector_map[atoms_ids_pair]=faces_vector.size()-1;
+				faces_vector_map[reversed_atoms_ids_pair]=faces_vector.size()-1;
+				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(a), contact_accepter->assign_group_name(b))].push_back(atoms_ids_pair);
+				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(b), contact_accepter->assign_group_name(a))].push_back(reversed_atoms_ids_pair);
+			}
+		}
+	}
+
+	if(inter_chain_interfaces.empty())
+	{
+		throw std::runtime_error("No interfaces found");
 	}
 
 	std::auto_ptr<const ContactColorizerInterface> face_colorizer;
@@ -564,49 +647,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else
 	{
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
-	}
-
-	const Hierarchy hierarchy(atoms, 4.2, 1);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
-	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
-
-	std::vector<CellFace> faces_vector;
-	std::map< std::pair<std::size_t, std::size_t>, std::size_t > faces_vector_map;
-	typedef std::map< std::pair<std::string, std::string>, std::vector< std::pair<std::size_t, std::size_t> > > InterfacesMap;
-	InterfacesMap inter_chain_interfaces;
-
-	for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
-	{
-		const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
-
-		const protein::Atom& a=atoms[atoms_ids_pair.first];
-		const protein::Atom& b=atoms[atoms_ids_pair.second];
-
-		if(contact_accepter->accept(a,b))
-		{
-			std::vector<const protein::Atom*> cs;
-			cs.reserve(it->second.size());
-			for(Apollo::PairsNeighboursMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
-			{
-				cs.push_back(&(atoms[*jt]));
-			}
-
-			const CellFace cell_face=CellFace::construct(a, b, cs, probe_radius, step_length, projections_count);
-			if(!cell_face.mesh_vertices().empty())
-			{
-				const std::pair<std::size_t, std::size_t> reversed_atoms_ids_pair=std::make_pair(atoms_ids_pair.second, atoms_ids_pair.first);
-				faces_vector.push_back(cell_face);
-				faces_vector_map[atoms_ids_pair]=faces_vector.size()-1;
-				faces_vector_map[reversed_atoms_ids_pair]=faces_vector.size()-1;
-				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(a), contact_accepter->assign_group_name(b))].push_back(atoms_ids_pair);
-				inter_chain_interfaces[std::make_pair(contact_accepter->assign_group_name(b), contact_accepter->assign_group_name(a))].push_back(reversed_atoms_ids_pair);
-			}
-		}
-	}
-
-	if(inter_chain_interfaces.empty())
-	{
-		throw std::runtime_error("No interfaces found");
 	}
 
 	std::cout << "from pymol.cgo import *\n";
