@@ -15,7 +15,7 @@
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/map_io.h"
 
-std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts)
+std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts, bool inter_chain)
 {
 	std::map<contacto::ContactID<protein::AtomID>, double> contacts_map;
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
@@ -25,7 +25,10 @@ std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_cont
 		const protein::AtomID b_id=protein::AtomID::from_atom(atoms[contact.b]);
 		if(a_id.residue_id!=b_id.residue_id)
 		{
-			contacts_map[contacto::ContactID<protein::AtomID>(a_id, b_id)]=contact.area;
+			if(!inter_chain || a_id.residue_id.chain_id!=b_id.residue_id.chain_id)
+			{
+				contacts_map[contacto::ContactID<protein::AtomID>(a_id, b_id)]=contact.area;
+			}
 		}
 	}
 	return contacts_map;
@@ -64,7 +67,7 @@ void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, co
 
 void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--local --local-as-pdb-of-target --local-as-pdb-of-model --local-normalized-for-pdb --global");
+	clo.check_allowed_options("--local --local-as-pdb-of-target --local-as-pdb-of-model --local-normalized-for-pdb --global --inter-chain");
 
 	const bool print_local=clo.isopt("--local");
 	const bool print_local_as_pdb_of_target=clo.isopt("--local-as-pdb-of-target");
@@ -72,6 +75,7 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 	const bool local_normalized_for_pdb=clo.isopt("--local-normalized-for-pdb");
 	const bool print_any_local=(print_local || print_local_as_pdb_of_target || print_local_as_pdb_of_model);
 	const bool print_global=clo.isopt("--global") || !print_any_local;
+	const bool inter_chain=clo.isopt("--inter-chain");
 
 	auxiliaries::assert_file_header(std::cin, "atoms");
 	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin);
@@ -88,8 +92,8 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 	typedef std::map< contacto::ContactID<protein::AtomID>, std::pair<double, double> > CombinedContactsMap;
 
 	const CombinedContactsMap combined_contacts=contacto::combine_two_maps(
-			construct_inter_atom_contacts_map(atoms_1, inter_atom_contacts_1),
-			construct_inter_atom_contacts_map(atoms_2, inter_atom_contacts_2));
+			construct_inter_atom_contacts_map(atoms_1, inter_atom_contacts_1, inter_chain),
+			construct_inter_atom_contacts_map(atoms_2, inter_atom_contacts_2, inter_chain));
 
 	if(print_global)
 	{
