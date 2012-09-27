@@ -136,7 +136,7 @@ public:
 			std::map<std::string, bool>::const_iterator jt=allowed_options_map.find(option);
 			if(jt==allowed_options_map.end())
 			{
-				throw std::runtime_error(std::string("Unrecognized command line option: ")+option);
+				throw std::runtime_error(std::string("Unrecognized command line option: ")+option+" (allowed options: "+allowed_options+")");
 			}
 			else if((!it->second.empty())!=jt->second)
 			{
