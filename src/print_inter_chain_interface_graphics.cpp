@@ -198,7 +198,7 @@ public:
 	{
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(a.residue_name);
 	}
@@ -219,7 +219,7 @@ public:
 	{
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(a.atom_name.substr(0, 1));
 	}
@@ -338,7 +338,7 @@ public:
 		}
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(numeric_residue_id(protein::ResidueID::from_atom(a)));
 	}
@@ -369,7 +369,7 @@ public:
 		}
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(a.atom_number);
 	}
@@ -418,7 +418,7 @@ public:
 						(a.location_class==protein::Atom::side_chain && b.location_class==protein::Atom::side_chain)));
 	}
 
-	std::string assign_group_name(const protein::Atom& a) const
+	std::string assign_group_name(const protein::Atom& /*a*/) const
 	{
 		return std::string("residues");
 	}

@@ -46,7 +46,7 @@ public:
 	{
 	}
 
-	const bool valid() const
+	bool valid() const
 	{
 		return valid_;
 	}
@@ -66,7 +66,7 @@ public:
 		return d1_tangent_sphere_;
 	}
 
-	const bool can_have_d2() const
+	bool can_have_d2() const
 	{
 		return can_have_d2_;
 	}

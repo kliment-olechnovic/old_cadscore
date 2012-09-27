@@ -292,7 +292,7 @@ private:
 
 			LeafChecker(Face& target) : face(target) {}
 
-			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
+			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
 			{
 				std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d2(id);
 				if(check_result.first)
@@ -377,7 +377,7 @@ private:
 
 			LeafChecker(Face& target, const Hierarchy& hierarchy) : face(target), hierarchy(hierarchy) {}
 
-			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
+			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
 			{
 				std::pair<bool, std::vector<SimpleSphere> > check_result=face.check_candidate_for_d3(id);
 				if(check_result.first)
