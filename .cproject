@@ -26,7 +26,9 @@
 								<option id="gnu.cpp.compiler.exe.release.option.optimization.level.1369478411" name="Optimization Level" superClass="gnu.cpp.compiler.exe.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.release.option.debugging.level.1744988653" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.warnings.pedantic.1485086388" name="Pedantic (-pedantic)" superClass="gnu.cpp.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.compiler.option.other.other.864872787" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -Wextra" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.864872787" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -Wextra" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.warnings.pedantic.error.1255247333" superClass="gnu.cpp.compiler.option.warnings.pedantic.error" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.warnings.toerrors.1394705430" superClass="gnu.cpp.compiler.option.warnings.toerrors" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.736714763" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.551934849" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release">
