@@ -89,7 +89,7 @@ public:
 				{
 					hcf.contour_points_.push_back(*it);
 				}
-				init_mesh(a, b, hcf.contour_points_, hcf.mesh_vertices_, hcf.mesh_triples_);
+				init_mesh(hcf.contour_points_, hcf.mesh_vertices_, hcf.mesh_triples_);
 			}
 		}
 		return hcf;
@@ -280,10 +280,7 @@ private:
 		return intersection_iterators.size();
 	}
 
-	template<typename SphereType>
 	static void init_mesh(
-			const SphereType& a,
-			const SphereType& b,
 			const std::vector<SimplePoint>& contour_points,
 			std::vector<SimplePoint>& mesh_vertices,
 			std::vector<Triple>& mesh_triples)
