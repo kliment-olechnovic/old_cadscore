@@ -104,3 +104,31 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 		auxiliaries::print_vector(std::cout, result);
 	}
 }
+
+void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--name:");
+
+	const std::string name=clo.arg<std::string>("--name");
+
+	auxiliaries::assert_file_header(std::cin, "atoms");
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+
+	std::vector<protein::Atom> result;
+	result.reserve(atoms.size());
+
+	for(std::size_t i=0;i<atoms.size();i++)
+	{
+		const protein::Atom& atom=atoms[i];
+		if(atom.atom_name==name)
+		{
+			result.push_back(atom);
+		}
+	}
+
+	if(!result.empty())
+	{
+		auxiliaries::print_file_header(std::cout, "atoms");
+		auxiliaries::print_vector(std::cout, result);
+	}
+}
