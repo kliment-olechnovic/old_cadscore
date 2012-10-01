@@ -27,6 +27,7 @@ void merge_atoms(const auxiliaries::CommandLineOptions& clo);
 void rotate_coordinates(const auxiliaries::CommandLineOptions& clo);
 void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLineOptions& clo);
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
+void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -71,6 +72,7 @@ int main(const int argc, const char** argv)
 		modes_map["rotate-coordinates"]=ModeFunctionPointer(rotate_coordinates);
 		modes_map["calc-inter-atom-CAD-score"]=ModeFunctionPointer(calc_inter_atom_contact_area_difference_score);
 		modes_map["summarize-inter-atom-contacts"]=ModeFunctionPointer(summarize_inter_atom_contacts);
+		modes_map["filter-atoms-by-name"]=ModeFunctionPointer(filter_atoms_by_name);
 
 		if(modes_map.count(mode)==1)
 		{
