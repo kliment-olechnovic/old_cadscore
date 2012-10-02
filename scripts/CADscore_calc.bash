@@ -143,24 +143,21 @@ SUMMARY_FILE="$MODEL_DIR/summary"
 TARGET_LOGS_FILE="$TARGET_DIR/target_logs"
 MODEL_LOGS_FILE="$MODEL_DIR/model_logs"
 
+mkdir -p "$TARGET_DIR"
+mkdir -p "$MODEL_DIR"
+
 TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 if [ -f "$TARGET_PARAMETERS_FILE" ]
 then
-  CURRENT_TARGET_PARAMETERS_FILE="$TARGET_PARAMETERS_FILE.current"
-  echo "$TARGET_PARAMETERS" > "$CURRENT_TARGET_PARAMETERS_FILE"
-  if diff "$TARGET_PARAMETERS_FILE" "$CURRENT_TARGET_PARAMETERS_FILE" > /dev/null
+  CURRENT_TARGET_PARAMETERS=$(cat $TARGET_PARAMETERS_FILE)
+  if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
   then
-    rm "$CURRENT_TARGET_PARAMETERS_FILE"
-  else
     echo "Fatal error: current parameters ($TARGET_PARAMETERS) do not match the initial parameters" 1>&2
-    rm "$CURRENT_TARGET_PARAMETERS_FILE"
     exit 1
   fi
+else
+  echo "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 fi
-
-mkdir -p "$TARGET_DIR"
-mkdir -p "$MODEL_DIR"
-echo "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 
 ##################################################
 ### Preprocessing target
