@@ -149,14 +149,14 @@ mkdir -p "$MODEL_DIR"
 TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 if [ -f "$TARGET_PARAMETERS_FILE" ]
 then
-  CURRENT_TARGET_PARAMETERS=$(cat $TARGET_PARAMETERS_FILE)
+  CURRENT_TARGET_PARAMETERS=$(< $TARGET_PARAMETERS_FILE)
   if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
   then
     echo "Fatal error: current parameters ($TARGET_PARAMETERS) do not match the initial parameters" 1>&2
     exit 1
   fi
 else
-  echo "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
+  echo -n "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 fi
 
 ##################################################
