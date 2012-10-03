@@ -126,6 +126,7 @@ fi
 ### Preparing and checking environment
 
 TARGET_DIR="$DATABASE/$TARGET_NAME"
+TARGET_MUTEX_END="$TARGET_DIR/mutex_closed"
 TARGET_PARAMETERS_FILE="$TARGET_DIR/parameters"
 TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
 TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
@@ -143,36 +144,43 @@ SUMMARY_FILE="$MODEL_DIR/summary"
 TARGET_LOGS_FILE="$TARGET_DIR/target_logs"
 MODEL_LOGS_FILE="$MODEL_DIR/model_logs"
 
-mkdir -p "$TARGET_DIR"
-mkdir -p "$MODEL_DIR"
-
 TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
-if [ -f "$TARGET_PARAMETERS_FILE" ]
+
+mkdir -p $DATABASE
+
+##################################################
+### Preprocessing target
+
+if mkdir $TARGET_DIR &> /dev/null
 then
+  echo -n "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
+  
+  if [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
+  if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_RESIDUE_IDS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE ; fi
+  if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then  cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
+
+  true > $TARGET_MUTEX_END
+else
+  if [ ! -d "$TARGET_DIR" ] ; then echo "Fatal error: could not create target directory ($TARGET_DIR)" 1>&2 ; exit 1 ; fi 
+  
+  while [ ! -f "$TARGET_MUTEX_END" ] ; do false ; done
+  
   CURRENT_TARGET_PARAMETERS=$(< $TARGET_PARAMETERS_FILE)
   if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
   then
     echo "Fatal error: current parameters ($TARGET_PARAMETERS) do not match the initial parameters" 1>&2
     exit 1
   fi
-else
-  echo -n "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
 fi
 
-##################################################
-### Preprocessing target
-
-test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE
 if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the target" 1>&2 ; exit 1 ; fi
-
-test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE
 if [ ! -s "$TARGET_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no residues in the target" 1>&2 ; exit 1 ; fi
-
-test -f $TARGET_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE
 if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-residue contacts in the target" 1>&2 ; exit 1 ; fi
 
 ##################################################
 ### Preprocessing model
+
+mkdir -p $MODEL_DIR
 
 if $DISABLE_MODEL_ATOMS_FILTERING
 then
