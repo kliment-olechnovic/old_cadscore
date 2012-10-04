@@ -18,7 +18,7 @@ struct AtomID
 	{
 	}
 
-	AtomID(const ResidueID& residue_id, std::string atom_name) : residue_id(residue_id), atom_name(atom_name)
+	AtomID(const ResidueID& residue_id, const std::string& atom_name) : residue_id(residue_id), atom_name(canonical_atom_name(atom_name))
 	{
 	}
 
@@ -55,6 +55,17 @@ struct AtomID
 		input >> aid.residue_id;
 		input >> aid.atom_name;
 		return input;
+	}
+
+	static std::string canonical_atom_name(const std::string& atom_name)
+	{
+		std::string fixed_atom_name=atom_name;
+		if(fixed_atom_name.size()==2 && fixed_atom_name[1]=='\'') { fixed_atom_name[1]='*'; }
+		else if(fixed_atom_name.size()==3 && fixed_atom_name[2]=='\'') { fixed_atom_name[2]='*'; }
+		else if(fixed_atom_name=="O1P") { fixed_atom_name="OP1"; }
+		else if(fixed_atom_name=="O2P") { fixed_atom_name="OP2"; }
+		else if(fixed_atom_name=="O3P") { fixed_atom_name="OP3"; }
+		return fixed_atom_name;
 	}
 };
 
