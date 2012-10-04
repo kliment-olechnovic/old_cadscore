@@ -17,7 +17,7 @@ $0 options:
   -v    path to atomic radii files directory (optional)
   -c    flag to consider only inter-chain contacts (optional)
   -i    inter-interval contacts specification (optional)
-  -o    max timeout (optional)
+  -o    max seconds timeout (optional)
   -g    flag to use TM-score (optional)
   -u    flag to disable model atoms filtering by target atoms (optional)
   -q    flag to try to rename chains for best possible scores (optional)
@@ -50,7 +50,7 @@ HETATM_FLAG=""
 RADII_OPTION=""
 INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
-TIMEOUT="300s"
+TIMEOUT="300"
 USE_TMSCORE=false
 DISABLE_MODEL_ATOMS_FILTERING=false
 QUATERNARY_CHAINS_RENAMING=false
@@ -159,7 +159,7 @@ if mkdir $TARGET_DIR &> /dev/null
 then
   echo -n "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
   
-  if [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
+  if [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_RESIDUE_IDS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then  cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
 
@@ -167,7 +167,17 @@ then
 else
   if [ ! -d "$TARGET_DIR" ] ; then echo "Fatal error: could not create target directory ($TARGET_DIR)" 1>&2 ; exit 1 ; fi 
   
-  while [ ! -f "$TARGET_MUTEX_END" ] ; do false ; done
+  WAITING_START_TIME=$(date +%s)
+  while [ ! -f "$TARGET_MUTEX_END" ]
+  do
+  	CURRENT_TIME=$(date +%s)
+  	WAITING_TIME=$((CURRENT_TIME-CURRENT_TIME))
+  	if [ "$WAITING_TIME" -gt "$TIMEOUT" ]
+  	then
+  	  echo "Fatal error: timeout expired when waiting for target processing" 1>&2
+  	  exit 1
+  	fi
+  done
   
   CURRENT_TARGET_PARAMETERS=$(< $TARGET_PARAMETERS_FILE)
   if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
@@ -188,9 +198,9 @@ mkdir -p $MODEL_DIR
 
 if $DISABLE_MODEL_ATOMS_FILTERING
 then
-  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
 else
-  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
 fi
 
 if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the model" 1>&2 ; exit 1 ; fi
