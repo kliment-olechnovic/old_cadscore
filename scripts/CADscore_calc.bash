@@ -21,6 +21,7 @@ $0 options:
   -g    flag to use TM-score (optional)
   -u    flag to disable model atoms filtering by target atoms (optional)
   -q    flag to try to rename chains for best possible scores (optional)
+  -e    extra command to produce additional global scores (optional)
 
 EOF
 }
@@ -53,8 +54,9 @@ TIMEOUT="300s"
 USE_TMSCORE=false
 DISABLE_MODEL_ATOMS_FILTERING=false
 QUATERNARY_CHAINS_RENAMING=false
+EXTRA_COMMAND=""
 
-while getopts "hD:t:m:lv:ci:o:guq" OPTION
+while getopts "hD:t:m:lv:ci:o:guqe:" OPTION
 do
   case $OPTION in
     h)
@@ -93,6 +95,9 @@ do
       ;;
     q)
       QUATERNARY_CHAINS_RENAMING=true
+      ;;
+    e)
+      EXTRA_COMMAND=$OPTARG
       ;;
     ?)
       exit 1
@@ -140,9 +145,8 @@ CAD_GLOBAL_SCORES_FILE="$MODEL_DIR/cad_global_scores"
 CAD_SIZE_SCORES_FILE="$MODEL_DIR/cad_size_scores"
 TMSCORE_PROFILE_FILE="$MODEL_DIR/tmscore_profile"
 TMSCORE_GLOBAL_SCORES_FILE="$MODEL_DIR/tmscore_global_scores"
+EXTRA_COMMAND_GLOBAL_SCORES_FILE="$MODEL_DIR/extra_command_global_scores"
 SUMMARY_FILE="$MODEL_DIR/summary"
-TARGET_LOGS_FILE="$TARGET_DIR/target_logs"
-MODEL_LOGS_FILE="$MODEL_DIR/model_logs"
 
 TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 
@@ -233,6 +237,12 @@ then
   if [ ! -s "$TMSCORE_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: TM-score scores file is empty" 1>&2 ; exit 1 ; fi
 fi
 
+if [ -n "$EXTRA_COMMAND" ]
+then
+  test -f $EXTRA_COMMAND_GLOBAL_SCORES_FILE || $EXTRA_COMMAND $TARGET_FILE $MODEL_FILE > $EXTRA_COMMAND_GLOBAL_SCORES_FILE
+  if [ ! -s "$EXTRA_COMMAND_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: extra command ($EXTRA_COMMAND) scores file is empty" 1>&2 ; exit 1 ; fi
+fi
+
 ##################################################
 ### Writing global results
 
@@ -241,3 +251,4 @@ echo model $MODEL_NAME >> $SUMMARY_FILE
 cat $CAD_SIZE_SCORES_FILE >> $SUMMARY_FILE
 cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" | grep -v "W" >> $SUMMARY_FILE
 if $USE_TMSCORE ; then cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
+if [ -n "$EXTRA_COMMAND" ] ; then cat $EXTRA_COMMAND_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
