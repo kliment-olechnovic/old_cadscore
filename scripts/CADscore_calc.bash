@@ -22,6 +22,7 @@ $0 options:
   -u    flag to disable model atoms filtering by target atoms (optional)
   -q    flag to try to rename chains for best possible scores (optional)
   -e    extra command to produce additional global scores (optional)
+  -a    flag to compute atomic global scores
 
 EOF
 }
@@ -55,8 +56,9 @@ USE_TMSCORE=false
 DISABLE_MODEL_ATOMS_FILTERING=false
 QUATERNARY_CHAINS_RENAMING=false
 EXTRA_COMMAND=""
+USE_ATOMIC_CADSCORE=false
 
-while getopts "hD:t:m:lv:ci:o:guqe:" OPTION
+while getopts "hD:t:m:lv:ci:o:guqe:a" OPTION
 do
   case $OPTION in
     h)
@@ -98,6 +100,9 @@ do
       ;;
     e)
       EXTRA_COMMAND=$OPTARG
+      ;;
+    a)
+      USE_ATOMIC_CADSCORE=true
       ;;
     ?)
       exit 1
@@ -143,6 +148,7 @@ COMBINED_INTER_RESIDUE_CONTACTS_FILE="$MODEL_DIR/combined_inter_residue_contacts
 CAD_PROFILE_FILE="$MODEL_DIR/cad_profile"
 CAD_GLOBAL_SCORES_FILE="$MODEL_DIR/cad_global_scores"
 CAD_SIZE_SCORES_FILE="$MODEL_DIR/cad_size_scores"
+CAD_ATOMIC_GLOBAL_SCORES_FILE="$MODEL_DIR/cad_atomic_global_scores"
 TMSCORE_PROFILE_FILE="$MODEL_DIR/tmscore_profile"
 TMSCORE_GLOBAL_SCORES_FILE="$MODEL_DIR/tmscore_global_scores"
 EXTRA_COMMAND_GLOBAL_SCORES_FILE="$MODEL_DIR/extra_command_global_scores"
@@ -229,6 +235,12 @@ if [ ! -s "$CAD_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: CAD global score
 test -f $CAD_SIZE_SCORES_FILE || cat $CAD_PROFILE_FILE $TARGET_RESIDUE_IDS_FILE $MODEL_RESIDUE_IDS_FILE | $VOROPROT --mode calc-CAD-size-scores > $CAD_SIZE_SCORES_FILE
 if [ ! -s "$CAD_SIZE_SCORES_FILE" ] ; then echo "Fatal error: CAD size scores file is empty" 1>&2 ; exit 1 ; fi
 
+if $USE_ATOMIC_CADSCORE
+then
+  test -f $CAD_ATOMIC_GLOBAL_SCORES_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-atom-CAD-score --global $INTER_CHAIN_FLAG > $CAD_ATOMIC_GLOBAL_SCORES_FILE
+  if [ ! -s "$CAD_ATOMIC_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: CAD atomic global scores file is empty" 1>&2 ; exit 1 ; fi
+fi
+
 if $USE_TMSCORE
 then
   TMSCORE_CALC_NAME="TMscore_calc.bash"
@@ -260,5 +272,6 @@ echo target $TARGET_NAME > $SUMMARY_FILE
 echo model $MODEL_NAME >> $SUMMARY_FILE
 cat $CAD_SIZE_SCORES_FILE >> $SUMMARY_FILE
 cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" | grep -v "W" >> $SUMMARY_FILE
+if $USE_ATOMIC_CADSCORE ; then cat $CAD_ATOMIC_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
 if $USE_TMSCORE ; then cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
 if [ -n "$EXTRA_COMMAND" ] ; then cat $EXTRA_COMMAND_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
