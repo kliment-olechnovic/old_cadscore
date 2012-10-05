@@ -173,17 +173,20 @@ then
 else
   if [ ! -d "$TARGET_DIR" ] ; then echo "Fatal error: could not create target directory ($TARGET_DIR)" 1>&2 ; exit 1 ; fi 
   
-  WAITING_START_TIME=$(date +%s)
-  while [ ! -f "$TARGET_MUTEX_END" ]
-  do
-  	CURRENT_TIME=$(date +%s)
-  	WAITING_TIME=$((CURRENT_TIME-CURRENT_TIME))
-  	if [ "$WAITING_TIME" -gt "$TIMEOUT" ]
-  	then
-  	  echo "Fatal error: timeout expired when waiting for target processing" 1>&2
-  	  exit 1
-  	fi
-  done
+  if [ ! -f "$TARGET_MUTEX_END" ]
+  then
+    WAITING_START_TIME=$(date +%s)
+    while [ ! -f "$TARGET_MUTEX_END" ]
+    do
+  	  CURRENT_TIME=$(date +%s)
+  	  WAITING_TIME=$((CURRENT_TIME-WAITING_START_TIME))
+  	  if [ "$WAITING_TIME" -gt "$TIMEOUT" ]
+  	  then
+  	    echo "Fatal error: timeout expired when waiting for target processing" 1>&2
+  	    exit 1
+  	  fi
+    done
+  fi
   
   CURRENT_TARGET_PARAMETERS=$(< $TARGET_PARAMETERS_FILE)
   if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
