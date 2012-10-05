@@ -9,20 +9,28 @@ cat << EOF 1>&2
 
 $0 options:
 
-  -h    show this message and exit
-  -D    path to writable database directory
-  -t    path to target file in PDB format
-  -m    path to model file in PDB format
-  -l    flag to include heteroatoms (optional)
-  -v    path to atomic radii files directory (optional)
-  -c    flag to consider only inter-chain contacts (optional)
-  -i    inter-interval contacts specification (optional)
-  -o    max seconds timeout (optional)
-  -g    flag to use TM-score (optional)
-  -u    flag to disable model atoms filtering by target atoms (optional)
-  -q    flag to try to rename chains for best possible scores (optional)
-  -e    extra command to produce additional global scores (optional)
-  -a    flag to compute atomic global scores
+  Required:
+    -h    show this message and exit
+    -D    path to writable database directory
+    -t    path to target file in PDB format
+    -m    path to model file in PDB format
+  
+  Optional:
+    -l    flag to include heteroatoms
+    -c    flag to consider only inter-chain contacts
+    -i    inter-interval contacts specification
+    -v    path to atomic radii files directory
+    -o    max heavy operation timeout (seconds)
+    -g    flag to use TM-score
+    -a    flag to compute atomic global scores
+    -q    flag to try to rename chains for best possible scores
+    -u    flag to disable model atoms filtering by target atoms
+    -e    extra command to produce additional global scores
+
+
+A brief tutorial is available from CAD-score site:
+
+  https://bitbucket.org/kliment/cadscore/wiki/Home
 
 EOF
 }
