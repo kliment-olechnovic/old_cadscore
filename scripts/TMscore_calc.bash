@@ -4,13 +4,16 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
-  -h    show this message and exit
-  -t    path to target file in PDB format
-  -m    path to model file in PDB format
-  -p    profile output file
-  -s    summary output file
+  Required:
+    -t    path to target file in PDB format
+    -m    path to model file in PDB format
+    -p    profile output file
+    -s    summary output file
+
+  Other:
+    -h    show this message and exit
   
 Note: $0 needs TMscore application
       (http://zhanglab.ccmb.med.umich.edu/TM-score/)

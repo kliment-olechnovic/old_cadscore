@@ -10,18 +10,17 @@ cat << EOF 1>&2
 $0 parameters:
 
   Required:
-    -h    show this message and exit
     -D    path to writable database directory
     -t    path to target file in PDB format
     -m    path to model file in PDB format
-  
+
   Optional (basic):
     -l    flag to include heteroatoms
     -c    flag to consider only inter-chain contacts
     -i    inter-interval contacts specification
     -q    flag to try to rename chains for best possible scores
     -g    flag to use TM-score
-  
+
   Optional (advanced):  
     -a    flag to compute atomic global scores
     -u    flag to disable model atoms filtering by target atoms
@@ -29,6 +28,9 @@ $0 parameters:
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
     -j    turn off thread-safe mode
+    
+  Other:
+    -h    show this message and exit
 
 
 A brief tutorial is available from CAD-score site:
@@ -127,7 +129,7 @@ done
 
 if [ -z "$DATABASE" ] || [ -z "$TARGET_FILE" ] || [ -z "$MODEL_FILE" ]
 then
-  print_help
+  echo "Fatal error: required parameters were not provided" 1>&2
   exit 1
 fi
 

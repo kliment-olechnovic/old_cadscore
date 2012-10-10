@@ -4,14 +4,19 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
-  -h    show this message and exit
-  -D    path to database directory
-  -t    target name in the database
-  -m    model name in the database
-  -c    contacts category
-  -w    bluring window size (optional)
+  Required:
+    -D    path to database directory
+    -t    target name in the database
+    -m    model name in the database
+    -c    contacts category
+
+  Optional:
+    -w    bluring window size
+
+  Other:
+    -h    show this message and exit
 
 EOF
 }
