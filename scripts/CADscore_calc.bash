@@ -7,7 +7,7 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
   Required:
     -h    show this message and exit
@@ -15,16 +15,18 @@ $0 options:
     -t    path to target file in PDB format
     -m    path to model file in PDB format
   
-  Optional:
+  Optional (basic):
     -l    flag to include heteroatoms
     -c    flag to consider only inter-chain contacts
     -i    inter-interval contacts specification
-    -v    path to atomic radii files directory
-    -o    max heavy operation timeout (seconds)
-    -g    flag to use TM-score
-    -a    flag to compute atomic global scores
     -q    flag to try to rename chains for best possible scores
+    -g    flag to use TM-score
+  
+  Optional (advanced):  
+    -a    flag to compute atomic global scores
     -u    flag to disable model atoms filtering by target atoms
+    -o    max heavy operation timeout (seconds)
+    -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
 
 
