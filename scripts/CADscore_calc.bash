@@ -201,7 +201,7 @@ else
   CURRENT_TARGET_PARAMETERS=$(< $TARGET_PARAMETERS_FILE)
   if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
   then
-    echo "Fatal error: current parameters ($TARGET_PARAMETERS) do not match the initial parameters" 1>&2
+    echo "Fatal error: current script parameters do not match the previous parameters that were used with the same target name and the same database path" 1>&2
     exit 1
   fi
 fi
