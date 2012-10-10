@@ -4,10 +4,13 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
-  -h    show this message and exit
-  -D    path to existing database directory
+  Required:
+    -D    path to existing database directory
+    
+  Other:
+    -h    show this message and exit
   
 EOF
 }

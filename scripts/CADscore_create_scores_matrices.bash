@@ -7,16 +7,21 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
-  -h    show this message and exit
-  -I    path to input directory
-  -O    path to writable output directory
-  -l    flag to include heteroatoms (optional)
-  -c    flag to consider only inter-chain contacts (optional)
-  -i    inter-interval contacts specification (optional)
-  -o    max timeout (optional)
-  -d    flag to produce dendrograms with R (optional)
+  Required:
+    -I    path to input directory
+    -O    path to writable output directory
+
+  Optional:
+    -l    flag to include heteroatoms
+    -c    flag to consider only inter-chain contacts
+    -i    inter-interval contacts specification
+    -o    max timeout
+    -d    flag to produce dendrograms with R
+
+  Other:
+    -h    show this message and exit
 
 EOF
 }

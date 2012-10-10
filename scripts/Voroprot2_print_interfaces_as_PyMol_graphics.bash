@@ -4,16 +4,29 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
-  -h    show this message and exit
-  -i    path to input file in PDB format
-  -f    face coloring mode
-  -s    selections coloring mode (optional)
-  -g    residue groups description (optional)
-  -p    flag to automatically open pymol and load the input PDB file and the produced sript (optional)
-  -n    output names prefix (optional)
+  Required:
+    -i    path to input file in PDB format
   
+  Optional:
+    -p    flag to automatically open pymol and load the input PDB file and the produced sript
+    -g    residue groups description
+    -f    face coloring mode
+    -s    selections coloring mode
+    -n    output names prefix
+
+  Other:
+    -h    show this message and exit
+    -e    show more help and exit
+
+EOF
+}
+
+print_more_help()
+{
+cat << EOF 1>&2
+
 What this script does:
   It runs CAD-score voroprot2 program to produce a PyMol (http://pymol.org/) API script
   that draws Voronoi contact faces and, optionally, selects the contacting residues.
@@ -69,11 +82,16 @@ RESIDUE_GROUPS=""
 OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hi:f:s:c:d:v:w:g:n:p" OPTION
+while getopts "hei:f:s:c:d:v:w:g:n:p" OPTION
 do
   case $OPTION in
     h)
       print_help
+      exit 0
+      ;;
+    e)
+      print_help
+      print_more_help
       exit 0
       ;;
     i)
