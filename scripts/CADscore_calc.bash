@@ -28,6 +28,7 @@ $0 parameters:
     -o    max heavy operation timeout (seconds)
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
+    -j    turn off thread-safe mode
 
 
 A brief tutorial is available from CAD-score site:
@@ -67,8 +68,9 @@ DISABLE_MODEL_ATOMS_FILTERING=false
 QUATERNARY_CHAINS_RENAMING=false
 EXTRA_COMMAND=""
 USE_ATOMIC_CADSCORE=false
+THREAD_SAFE_ON=true
 
-while getopts "hD:t:m:lv:ci:o:guqe:a" OPTION
+while getopts "hD:t:m:lv:ci:o:guqe:aj" OPTION
 do
   case $OPTION in
     h)
@@ -113,6 +115,9 @@ do
       ;;
     a)
       USE_ATOMIC_CADSCORE=true
+      ;;
+    j)
+      THREAD_SAFE_ON=false
       ;;
     ?)
       exit 1
@@ -183,25 +188,28 @@ then
 else
   if [ ! -d "$TARGET_DIR" ] ; then echo "Fatal error: could not create target directory ($TARGET_DIR)" 1>&2 ; exit 1 ; fi 
   
-  if [ ! -f "$TARGET_MUTEX_END" ]
+  if $THREAD_SAFE_ON
   then
-    WAITING_START_TIME=$(date +%s)
-    while [ ! -f "$TARGET_MUTEX_END" ]
-    do
-  	  CURRENT_TIME=$(date +%s)
-  	  WAITING_TIME=$((CURRENT_TIME-WAITING_START_TIME))
-  	  if [ "$WAITING_TIME" -gt "$TIMEOUT" ]
-  	  then
-  	    echo "Fatal error: timeout expired when waiting for target processing" 1>&2
-  	    exit 1
-  	  fi
-    done
+    if [ ! -f "$TARGET_MUTEX_END" ]
+    then
+      WAITING_START_TIME=$(date +%s)
+      while [ ! -f "$TARGET_MUTEX_END" ]
+      do
+  	    CURRENT_TIME=$(date +%s)
+  	    WAITING_TIME=$((CURRENT_TIME-WAITING_START_TIME))
+  	    if [ "$WAITING_TIME" -gt "$TIMEOUT" ]
+  	    then
+  	      echo "Fatal error: timeout expired when waiting for target processing" 1>&2
+  	      exit 1
+  	    fi
+      done
+    fi
   fi
   
   CURRENT_TARGET_PARAMETERS=$(< $TARGET_PARAMETERS_FILE)
   if [ "$TARGET_PARAMETERS" != "$CURRENT_TARGET_PARAMETERS" ]
   then
-    echo "Fatal error: current script parameters do not match the previous parameters that were used with the same target name and the same database path" 1>&2
+    echo "Fatal error: provided script parameters do not match the previous parameters that were used with the same target name and the same database path" 1>&2
     exit 1
   fi
 fi
