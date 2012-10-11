@@ -14,11 +14,9 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 	const bool detailed=clo.isopt("--detailed");
 	const bool print_rejected=clo.isopt("--print-rejected");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms_of_model.size());
@@ -98,10 +96,13 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	if(!result.empty())
+	if(result.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "atoms");
-		auxiliaries::print_vector(std::cout, result);
+		throw std::runtime_error("Sequence and numbering of the model did not match the target, therefore all the model atoms were rejected");
+	}
+	else
+	{
+		auxiliaries::print_vector(std::cout, "atoms", result);
 	}
 }
 
@@ -111,8 +112,7 @@ void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo)
 
 	const std::string name=clo.arg<std::string>("--name");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms.size());
@@ -126,9 +126,12 @@ void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	if(!result.empty())
+	if(result.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "atoms");
-		auxiliaries::print_vector(std::cout, result);
+		throw std::runtime_error("No atoms found for the given name");
+	}
+	else
+	{
+		auxiliaries::print_vector(std::cout, "atoms", result);
 	}
 }

@@ -15,11 +15,9 @@ void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "contacts");
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "inter atom contacts", "contacts", false);
 
 	std::map<std::string, double> values;
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
@@ -43,6 +41,5 @@ void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	auxiliaries::print_file_header(std::cout, "summary_values");
-	auxiliaries::print_map(std::cout, values, false);
+	auxiliaries::print_map(std::cout, "summary_values", values, false);
 }
