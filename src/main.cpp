@@ -98,7 +98,7 @@ int main(const int argc, const char** argv)
 		}
 		else
 		{
-			std::cerr << "Operation '" << mode << "' was not completed because exception was caught: ";
+			std::cerr << "Operation '" << mode << "' was not successful because exception was caught: ";
 		}
 		std::cerr << "[" << (e.what()) << "]" << std::endl;
 		return 1;
