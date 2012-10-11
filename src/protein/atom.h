@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "basic_parsing.h"
+
 namespace protein
 {
 
@@ -99,6 +101,22 @@ struct Atom
 		output << "z = " << z << ", ";
 		output << "radius = " << r;
 		return output.str();
+	}
+
+	std::string string_for_PDB_file(double temperature_factor) const
+	{
+		std::string line(80, ' ');
+		basic_parsing::insert_string_to_columned_file_line("ATOM", 1, 6, false, line);
+		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_int_to_string(atom_number), 7, 11, true, line);
+		basic_parsing::insert_string_to_columned_file_line(atom_name, (atom_name.size()>3 ? 13 : 14), 16, false, line);
+		basic_parsing::insert_string_to_columned_file_line(residue_name, 18, 20, false, line);
+		basic_parsing::insert_string_to_columned_file_line((chain_id=="?" ? std::string(" ") : chain_id), 22, 22, false, line);
+		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_int_to_string(residue_number), 23, 26, true, line);
+		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(x, 3), 31, 38, true, line);
+		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(y, 3), 39, 46, true, line);
+		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(z, 3), 47, 54, true, line);
+		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(temperature_factor, 2), 61, 66, true, line);
+		return line;
 	}
 };
 

@@ -56,7 +56,7 @@ public:
 				const std::size_t current_cluster_id=std::tr1::get<1>(current_position);
 				const std::size_t current_child_id=std::tr1::get<2>(current_position);
 
-				if(current_level>=0 && current_level<clusters_layers_.size()
+				if(current_level<clusters_layers_.size()
 						&& current_cluster_id<clusters_layers_[current_level].size()
 						&& current_child_id<clusters_layers_[current_level][current_cluster_id].second.size())
 				{
@@ -171,7 +171,7 @@ private:
 
 			LeafChecker(const SimpleSphere& target, const bool one_hit_is_enough) : target(target), one_hit_is_enough(one_hit_is_enough) {}
 
-			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere) const
+			std::pair<bool, bool> operator()(const std::size_t /*id*/, const Sphere& sphere) const
 			{
 				if(sphere_intersects_sphere(sphere, target))
 				{

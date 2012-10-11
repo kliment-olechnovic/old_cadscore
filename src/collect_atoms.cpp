@@ -75,10 +75,13 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	if(!atoms.empty())
+	if(atoms.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "atoms");
-		auxiliaries::print_vector(std::cout, atoms);
+		throw std::runtime_error("No atoms were collected from the provided PDB file stream");
+	}
+	else
+	{
+		auxiliaries::print_vector(std::cout, "atoms", atoms);
 	}
 }
 
@@ -86,66 +89,28 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
 
-	if(!residue_ids.empty())
+	if(residue_ids.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "residue_ids");
-		auxiliaries::print_map(std::cout, residue_ids, false);
+		throw std::runtime_error("No residue identifiers were collected from the provided atoms stream");
 	}
-}
-
-void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
-{
-	clo.check_allowed_options("");
-
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>(std::cin);
-
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin);
-	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_of_target=protein::collect_residue_ids_from_atoms(atoms_of_target);
-
-	std::vector<protein::Atom> result;
-	result.reserve(atoms_of_model.size());
-	for(std::size_t i=0;i<atoms_of_model.size();i++)
+	else
 	{
-		const protein::Atom& atom=atoms_of_model[i];
-		std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids_of_target.find(protein::ResidueID::from_atom(atom));
-		if(it!=residue_ids_of_target.end())
-		{
-			if(atom.residue_name==it->second.name)
-			{
-				result.push_back(atom);
-			}
-			else
-			{
-				std::ostringstream output;
-				output << "Model atom chain name and residue number matched the target, but model atom residue name did not: " << atom.string_for_human_reading();
-				throw std::runtime_error(output.str());
-			}
-		}
-	}
-
-	if(!result.empty())
-	{
-		auxiliaries::print_file_header(std::cout, "atoms");
-		auxiliaries::print_vector(std::cout, result);
+		auxiliaries::print_map(std::cout, "residue_ids", residue_ids, false);
 	}
 }
 
 void merge_atoms(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
 	while(auxiliaries::check_file_header(std::cin, "atoms"))
 	{
-		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
 		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
 	}
-	auxiliaries::print_file_header(std::cout, "atoms");
-	auxiliaries::print_vector(std::cout, atoms);
+	auxiliaries::print_vector(std::cout, "atoms", atoms);
 }
