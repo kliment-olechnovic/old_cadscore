@@ -102,11 +102,9 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--inter-interval: --inter-chain");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "contacts");
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "inter-atom contacts", "contacts", false);
 
 	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
 
@@ -120,10 +118,13 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 		inter_residue_contacts=filter_inter_interval_contacts(inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
 	}
 
-	if(!inter_residue_contacts.empty())
+	if(inter_residue_contacts.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "residue_contacts");
-		auxiliaries::print_map(std::cout, inter_residue_contacts);
+		throw std::runtime_error("No inter-residue contacts constructed");
+	}
+	else
+	{
+		auxiliaries::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
 	}
 }
 
@@ -131,17 +132,13 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 {
 	clo.check_allowed_options("--inter-interval: --inter-chain");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "contacts");
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "contacts");
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
 
 	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
 			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1),
@@ -157,11 +154,14 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
 	}
 
-	if(!combined_inter_residue_contacts.empty())
+	if(combined_inter_residue_contacts.empty())
+	{
+		throw std::runtime_error("No combined inter-residue contacts constructed");
+	}
+	else
 	{
 		print_combined_inter_residue_contact_file_comments();
-		auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
-		auxiliaries::print_map(std::cout, combined_inter_residue_contacts);
+		auxiliaries::print_map(std::cout, "combined_residue_contacts", combined_inter_residue_contacts, true);
 	}
 }
 
@@ -183,17 +183,13 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 
 	clo.check_allowed_options("--inter-interval: --inter-chain");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "contacts");
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 
-	auxiliaries::assert_file_header(std::cin, "contacts");
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
 
 	const std::vector<std::string> chain_names_1=collect_chain_names_froms_atoms(atoms_1);
 	const std::vector<std::string> chain_names_2=collect_chain_names_froms_atoms(atoms_2);
@@ -265,11 +261,14 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 		}
 		while(std::next_permutation(chain_names_permutation.begin(), chain_names_permutation.end()));
 
-		if(!variations.empty() && !variations.rbegin()->second.empty())
+		if(variations.empty() || variations.rbegin()->second.empty())
+		{
+			throw std::runtime_error("No combined inter-residue contacts constructed");
+		}
+		else
 		{
 			print_combined_inter_residue_contact_file_comments();
-			auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
-			auxiliaries::print_map(std::cout, variations.rbegin()->second);
+			auxiliaries::print_map(std::cout, "combined_residue_contacts", variations.rbegin()->second, true);
 		}
 	}
 	else
@@ -290,11 +289,14 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 			combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
 		}
 
-		if(!combined_inter_residue_contacts.empty())
+		if(combined_inter_residue_contacts.empty())
+		{
+			throw std::runtime_error("No combined inter-residue contacts constructed");
+		}
+		else
 		{
 			print_combined_inter_residue_contact_file_comments();
-			auxiliaries::print_file_header(std::cout, "combined_residue_contacts");
-			auxiliaries::print_map(std::cout, combined_inter_residue_contacts);
+			auxiliaries::print_map(std::cout, "combined_residue_contacts", combined_inter_residue_contacts, true);
 		}
 	}
 }

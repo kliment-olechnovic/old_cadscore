@@ -64,12 +64,11 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	}
 	else
 	{
-		auxiliaries::assert_file_header(std::cin, "atoms");
-		std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+		std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
 
 		while(auxiliaries::check_file_header(std::cin, "atoms"))
 		{
-			std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+			std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
 			atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
 		}
 

@@ -527,8 +527,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 	const std::string output_names_prefix=clo.isopt("--output-names-prefix") ? clo.arg<std::string>("--output-names-prefix") : std::string("");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
@@ -624,16 +623,14 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 	else if(face_coloring_mode=="inter_residue_contact_scores" || face_coloring_mode=="inter_residue_contact_AA_scores")
 	{
-		auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
 		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
+				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
 		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_scores"));
 	}
 	else if(face_coloring_mode=="inter_residue_contact_area_pairs" || face_coloring_mode=="inter_residue_contact_AA_area_pairs")
 	{
-		auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
 		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
+				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
 		face_colorizer.reset(new ContactColorizerByInterResidueContactAreaPair(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_area_pairs"));
 	}
 	else if(face_coloring_mode=="residue_id")

@@ -75,10 +75,13 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	if(!atoms.empty())
+	if(atoms.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "atoms");
-		auxiliaries::print_vector(std::cout, atoms);
+		throw std::runtime_error("No atoms were collected from the provided PDB file stream");
+	}
+	else
+	{
+		auxiliaries::print_vector(std::cout, "atoms", atoms);
 	}
 }
 
@@ -86,27 +89,28 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
 
-	if(!residue_ids.empty())
+	if(residue_ids.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "residue_ids");
-		auxiliaries::print_map(std::cout, residue_ids, false);
+		throw std::runtime_error("No residue identifiers were collected from the provided atoms stream");
+	}
+	else
+	{
+		auxiliaries::print_map(std::cout, "residue_ids", residue_ids, false);
 	}
 }
 
 void merge_atoms(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
 	while(auxiliaries::check_file_header(std::cin, "atoms"))
 	{
-		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
 		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
 	}
-	auxiliaries::print_file_header(std::cout, "atoms");
-	auxiliaries::print_vector(std::cout, atoms);
+	auxiliaries::print_vector(std::cout, "atoms", atoms);
 }
