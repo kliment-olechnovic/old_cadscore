@@ -24,7 +24,7 @@ struct BoundedDifferenceProducer
 
 struct SimpleReferenceProducer
 {
-	double operator()(const double target_area, const double model_area) const
+	double operator()(const double target_area, const double /*model_area*/) const
 	{
 		return target_area;
 	}

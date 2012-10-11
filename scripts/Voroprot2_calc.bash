@@ -4,17 +4,22 @@ print_help()
 {
 cat << EOF 1>&2
 
-$0 options:
+$0 parameters:
 
-  -h    show this message and exit
-  -f    path to input file in PDB format
-  -l    flag to include heteroatoms (optional)
-  -v    path to atomic radii files directory (optional)
-  -a    flag to print atoms (optional)
-  -q    flag to print quadruples (optional)
-  -c    flag to print inter-atom contacts (optional)
-  -r    flag to print inter-residue contacts (optional)
-  -j    flag to print inter-atom cells faces areas (optional)
+  Required:
+    -f    path to input file in PDB format
+
+  Optional:
+    -l    flag to include heteroatoms
+    -v    path to atomic radii files directory
+    -a    flag to print atoms
+    -q    flag to print quadruples
+    -c    flag to print inter-atom contacts
+    -r    flag to print inter-residue contacts
+    -j    flag to print inter-atom cells faces areas
+  
+  Other:
+    -h    show this message and exit
 
 EOF
 }

@@ -5,7 +5,7 @@
 #include "protein/residue_id.h"
 #include "protein/residue_ids_intervals.h"
 
-#include "contacto/inter_residue_contact_id.h"
+#include "contacto/contact_id.h"
 #include "contacto/inter_residue_contact_dual_areas.h"
 #include "contacto/contact_classification.h"
 
@@ -198,7 +198,7 @@ public:
 	{
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(a.residue_name);
 	}
@@ -219,7 +219,7 @@ public:
 	{
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(a.atom_name.substr(0, 1));
 	}
@@ -237,7 +237,7 @@ class ContactColorizerByInterResidueContactScore : public ContactColorizerInterf
 {
 public:
 	ContactColorizerByInterResidueContactScore(
-			const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >& combined_inter_residue_contacts,
+			const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >& combined_inter_residue_contacts,
 			const bool use_only_all_to_all_scores) :
 				combined_inter_residue_contacts_(combined_inter_residue_contacts),
 				use_only_all_to_all_scores_(use_only_all_to_all_scores)
@@ -246,8 +246,8 @@ public:
 
 	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
 	{
-		const contacto::InterResidueContactID<protein::ResidueID> irc_id(protein::ResidueID::from_atom(a), protein::ResidueID::from_atom(b));
-		std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
+		const contacto::ContactID<protein::ResidueID> irc_id(protein::ResidueID::from_atom(a), protein::ResidueID::from_atom(b));
+		std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
 		if(it!=combined_inter_residue_contacts_.end())
 		{
 			std::string contact_type("AA");
@@ -274,7 +274,7 @@ public:
 	}
 
 private:
-	std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts_;
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts_;
 	bool use_only_all_to_all_scores_;
 	ValueColorizer name_colorizer_;
 };
@@ -283,7 +283,7 @@ class ContactColorizerByInterResidueContactAreaPair : public ContactColorizerInt
 {
 public:
 	ContactColorizerByInterResidueContactAreaPair(
-			const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >& combined_inter_residue_contacts,
+			const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >& combined_inter_residue_contacts,
 			const bool use_only_all_to_all_scores) :
 				combined_inter_residue_contacts_(combined_inter_residue_contacts),
 				use_only_all_to_all_scores_(use_only_all_to_all_scores)
@@ -292,11 +292,19 @@ public:
 
 	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
 	{
-		const contacto::InterResidueContactID<protein::ResidueID> irc_id(protein::ResidueID::from_atom(a), protein::ResidueID::from_atom(b));
-		std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
+		const contacto::ContactID<protein::ResidueID> irc_id(protein::ResidueID::from_atom(a), protein::ResidueID::from_atom(b));
+		std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >::const_iterator it=combined_inter_residue_contacts_.find(irc_id);
 		if(it!=combined_inter_residue_contacts_.end())
 		{
-			const std::string contact_type=use_only_all_to_all_scores_ ? std::string("AA") : contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b).front();
+			std::string contact_type("AA");
+			if(!use_only_all_to_all_scores_)
+			{
+				const std::vector<std::string> contact_types=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b);
+				if(!contact_types.empty())
+				{
+					contact_type=contact_types.front();
+				}
+			}
 			std::pair<double, double> area=it->second.area(contact_type);
 			const double max_area=std::max(area.first, area.second);
 			if(max_area>0)
@@ -313,7 +321,7 @@ public:
 	}
 
 private:
-	std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts_;
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts_;
 	bool use_only_all_to_all_scores_;
 	ValuePairColorizer name_colorizer_;
 };
@@ -330,7 +338,7 @@ public:
 		}
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(numeric_residue_id(protein::ResidueID::from_atom(a)));
 	}
@@ -361,7 +369,7 @@ public:
 		}
 	}
 
-	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& b) const
+	auxiliaries::Color color(const protein::Atom& a, const protein::Atom& /*b*/) const
 	{
 		return name_colorizer_.color(a.atom_number);
 	}
@@ -396,6 +404,29 @@ public:
 	}
 };
 
+class ContactAccepterForInsideSet : public ContactAccepterInterface
+{
+public:
+	ContactAccepterForInsideSet(const std::set<protein::ResidueID>& allowed_residue_ids) : allowed_residue_ids_(allowed_residue_ids)
+	{
+	}
+
+	bool accept(const protein::Atom& a, const protein::Atom& b) const
+	{
+		return (protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b)&&
+				allowed_residue_ids_.count(protein::ResidueID::from_atom(a))>0 &&
+				allowed_residue_ids_.count(protein::ResidueID::from_atom(b))>0);
+	}
+
+	std::string assign_group_name(const protein::Atom& a) const
+	{
+		return a.chain_id;
+	}
+
+private:
+	std::set<protein::ResidueID> allowed_residue_ids_;
+};
+
 class ContactAccepterForInterResidue : public ContactAccepterInterface
 {
 public:
@@ -410,7 +441,7 @@ public:
 						(a.location_class==protein::Atom::side_chain && b.location_class==protein::Atom::side_chain)));
 	}
 
-	std::string assign_group_name(const protein::Atom& a) const
+	std::string assign_group_name(const protein::Atom& /*a*/) const
 	{
 		return std::string("residues");
 	}
@@ -496,8 +527,11 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 	const std::string output_names_prefix=clo.isopt("--output-names-prefix") ? clo.arg<std::string>("--output-names-prefix") : std::string("");
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
+	const Hierarchy hierarchy(atoms, 4.2, 1);
+	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
+	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
 
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
@@ -513,54 +547,27 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		contact_accepter.reset(new ContactAccepterForInterResidue(groups_option=="inter_residue_SS"));
 	}
+	else if(groups_option=="inter_chain_region")
+	{
+		std::set<protein::ResidueID> region_residue_ids;
+		for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+		{
+			const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
+			const protein::Atom& a=atoms[atoms_ids_pair.first];
+			const protein::Atom& b=atoms[atoms_ids_pair.second];
+			if(a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?" &&
+					apollo::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2)
+			{
+				region_residue_ids.insert(protein::ResidueID::from_atom(a));
+				region_residue_ids.insert(protein::ResidueID::from_atom(b));
+			}
+		}
+		contact_accepter.reset(new ContactAccepterForInsideSet(region_residue_ids));
+	}
 	else
 	{
 		contact_accepter.reset(new ContactAccepterForInterChain());
 	}
-
-	std::auto_ptr<const ContactColorizerInterface> face_colorizer;
-	if(face_coloring_mode=="residue_type")
-	{
-		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
-	}
-	else if(face_coloring_mode=="residue_hydrophobicity")
-	{
-		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
-	}
-	else if(face_coloring_mode=="atom_type")
-	{
-		face_colorizer.reset(new ContactColorizerByFirstAtomName());
-	}
-	else if(face_coloring_mode=="inter_residue_contact_scores" || face_coloring_mode=="inter_residue_contact_AA_scores")
-	{
-		auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
-		const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-				auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
-		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_scores"));
-	}
-	else if(face_coloring_mode=="inter_residue_contact_area_pairs" || face_coloring_mode=="inter_residue_contact_AA_area_pairs")
-	{
-		auxiliaries::assert_file_header(std::cin, "combined_residue_contacts");
-		const std::map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-				auxiliaries::read_map< contacto::InterResidueContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin);
-		face_colorizer.reset(new ContactColorizerByInterResidueContactAreaPair(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_area_pairs"));
-	}
-	else if(face_coloring_mode=="residue_id")
-	{
-		face_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
-	}
-	else if(face_coloring_mode=="atom_id")
-	{
-		face_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
-	}
-	else
-	{
-		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
-	}
-
-	const Hierarchy hierarchy(atoms, 4.2, 1);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
-	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
 
 	std::vector<CellFace> faces_vector;
 	std::map< std::pair<std::size_t, std::size_t>, std::size_t > faces_vector_map;
@@ -599,6 +606,44 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	if(inter_chain_interfaces.empty())
 	{
 		throw std::runtime_error("No interfaces found");
+	}
+
+	std::auto_ptr<const ContactColorizerInterface> face_colorizer;
+	if(face_coloring_mode=="residue_type")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
+	}
+	else if(face_coloring_mode=="residue_hydrophobicity")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueHydrophobicity>());
+	}
+	else if(face_coloring_mode=="atom_type")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstAtomName());
+	}
+	else if(face_coloring_mode=="inter_residue_contact_scores" || face_coloring_mode=="inter_residue_contact_AA_scores")
+	{
+		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
+				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
+		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_scores"));
+	}
+	else if(face_coloring_mode=="inter_residue_contact_area_pairs" || face_coloring_mode=="inter_residue_contact_AA_area_pairs")
+	{
+		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
+				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
+		face_colorizer.reset(new ContactColorizerByInterResidueContactAreaPair(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_area_pairs"));
+	}
+	else if(face_coloring_mode=="residue_id")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueID(atoms));
+	}
+	else if(face_coloring_mode=="atom_id")
+	{
+		face_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
+	}
+	else
+	{
+		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
 	}
 
 	std::cout << "from pymol.cgo import *\n";

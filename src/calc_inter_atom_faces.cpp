@@ -25,8 +25,12 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.7;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
-	auxiliaries::assert_file_header(std::cin, "atoms");
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin);
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
+	if(atoms.size()<4)
+	{
+		throw std::runtime_error("Less than 4 atoms provided");
+	}
 
 	const Hierarchy hierarchy(atoms, 4.2, 1);
 	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
@@ -57,12 +61,13 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	if(!atoms.empty() && !inter_atom_contacts.empty())
+	if(atoms.empty() || inter_atom_contacts.empty())
 	{
-		auxiliaries::print_file_header(std::cout, "atoms");
-		auxiliaries::print_vector(std::cout, atoms);
-
-		auxiliaries::print_file_header(std::cout, "contacts");
-		auxiliaries::print_set(std::cout, inter_atom_contacts);
+		throw std::runtime_error("No inter-atom faces constructed");
+	}
+	else
+	{
+		auxiliaries::print_vector(std::cout, "atoms", atoms);
+		auxiliaries::print_set(std::cout, "contacts", inter_atom_contacts);
 	}
 }

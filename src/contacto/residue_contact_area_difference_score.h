@@ -5,41 +5,31 @@
 #include <string>
 #include <iostream>
 
+#include "ratio.h"
+
 namespace contacto
 {
 
 struct ResidueContactAreaDifferenceScore
 {
-	struct Ratio
-	{
-		double difference;
-		double reference;
-
-		Ratio() : difference(0), reference(0)
-		{
-		}
-
-		friend std::ostream& operator<<(std::ostream &output, const Ratio &ratio)
-		{
-			output << ratio.difference << " ";
-			output << ratio.reference;
-			return output;
-		}
-
-		friend std::istream& operator>>(std::istream &input, Ratio &ratio)
-		{
-			input >> ratio.difference;
-			input >> ratio.reference;
-			return input;
-		}
-	};
-
 	typedef std::map<std::string, Ratio> RatiosMap;
 
 	RatiosMap ratios;
 
 	ResidueContactAreaDifferenceScore()
 	{
+	}
+
+	bool has_valid_ratio() const
+	{
+		for(RatiosMap::const_iterator it=ratios.begin();it!=ratios.end();++it)
+		{
+			if(it->second.reference>0.0)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	Ratio ratio(const std::string& area_class) const
