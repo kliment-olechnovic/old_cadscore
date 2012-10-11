@@ -155,10 +155,13 @@ fi
 TARGET_DIR="$DATABASE/$TARGET_NAME"
 TARGET_MUTEX_END="$TARGET_DIR/mutex_closed"
 TARGET_PARAMETERS_FILE="$TARGET_DIR/parameters"
+TARGET_ATOMS_FILE="$TARGET_DIR/atoms"
 TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
 TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
 TARGET_INTER_RESIDUE_CONTACTS_FILE="$TARGET_DIR/inter_residue_contacts"
 MODEL_DIR="$DATABASE/$TARGET_NAME/$MODEL_NAME"
+MODEL_ATOMS_FILE="$MODEL_DIR/atoms"
+MODEL_FILTERED_ATOMS_FILE="$MODEL_DIR/filtered_atoms"
 MODEL_INTER_ATOM_CONTACTS_FILE="$MODEL_DIR/inter_atom_contacts"
 MODEL_RESIDUE_IDS_FILE="$MODEL_DIR/residue_ids"
 COMBINED_INTER_RESIDUE_CONTACTS_FILE="$MODEL_DIR/combined_inter_residue_contacts"
@@ -182,7 +185,8 @@ if mkdir $TARGET_DIR &> /dev/null
 then
   echo -n "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
   
-  if [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
+  if [ ! -f $TARGET_ATOMS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION > $TARGET_ATOMS_FILE ; fi
+  if [ -s "$TARGET_ATOMS_FILE" ] && [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_ATOMS_FILE | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_RESIDUE_IDS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then  cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
 
@@ -216,6 +220,7 @@ else
   fi
 fi
 
+if [ ! -s "$TARGET_ATOMS_FILE" ] ; then echo "Fatal error: no atoms in the target" 1>&2 ; exit 1 ; fi
 if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the target" 1>&2 ; exit 1 ; fi
 if [ ! -s "$TARGET_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no residues in the target" 1>&2 ; exit 1 ; fi
 if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-residue contacts in the target" 1>&2 ; exit 1 ; fi
@@ -225,13 +230,18 @@ if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no i
 
 mkdir -p $MODEL_DIR
 
+test -f $MODEL_ATOMS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION > $MODEL_ATOMS_FILE
+if [ ! -s "$MODEL_ATOMS_FILE" ] ; then echo "Fatal error: no atoms in the model" 1>&2 ; exit 1 ; fi
+
 if $DISABLE_MODEL_ATOMS_FILTERING
 then
-  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
-else
-  test -f $MODEL_INTER_ATOM_CONTACTS_FILE || (cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION ; cat $TARGET_INTER_ATOM_CONTACTS_FILE) | $VOROPROT --mode filter-atoms-by-target | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
+  MODEL_FILTERED_ATOMS_FILE=$MODEL_ATOMS_FILE
 fi
 
+test -f $MODEL_FILTERED_ATOMS_FILE || (cat $MODEL_ATOMS_FILE ; cat $TARGET_ATOMS_FILE) | $VOROPROT --mode filter-atoms-by-target > $MODEL_FILTERED_ATOMS_FILE
+if [ ! -s "$MODEL_FILTERED_ATOMS_FILE" ] ; then echo "Fatal error: no atoms left in the model after filtering by target" 1>&2 ; exit 1 ; fi
+
+test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_FILTERED_ATOMS_FILE | timeout $TIMEOUT"s" $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
 if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the model" 1>&2 ; exit 1 ; fi
 
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
