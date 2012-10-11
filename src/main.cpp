@@ -35,11 +35,13 @@ int main(const int argc, const char** argv)
 	std::cout.exceptions(std::ostream::badbit);
 	std::ios_base::sync_with_stdio(false);
 
+	std::string mode;
+
 	try
 	{
 		auxiliaries::CommandLineOptions clo(argc, argv);
 
-		const std::string mode=clo.isarg("--mode") ? clo.arg<std::string>("--mode") : std::string("");
+		mode=clo.isarg("--mode") ? clo.arg<std::string>("--mode") : std::string("");
 		clo.remove_option("--mode");
 
 		const std::string clog_file=clo.isarg("--clog-file") ? clo.arg<std::string>("--clog-file") : std::string("");
@@ -90,7 +92,15 @@ int main(const int argc, const char** argv)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "STD exception caught: " << (e.what()) << std::endl;
+		if(mode.empty())
+		{
+			std::cerr << "Exception was caught: ";
+		}
+		else
+		{
+			std::cerr << "Operation '" << mode << "' was not completed because exception was caught: ";
+		}
+		std::cerr << "[" << (e.what()) << "]" << std::endl;
 		return 1;
 	}
 	catch(...)
