@@ -17,7 +17,6 @@ $0 parameters:
     -l    flag to include heteroatoms
     -c    flag to consider only inter-chain contacts
     -i    inter-interval contacts specification
-    -o    max timeout
     -d    flag to produce dendrograms with R
 
   Other:
@@ -48,10 +47,9 @@ DATABASE=""
 HETATM_FLAG=""
 INTER_CHAIN_FLAG=""
 INTER_INTERVAL_OPTION=""
-TIMEOUT="300s"
 CREATE_DENDROGRAMS=false
 
-while getopts "hI:O:lci:o:d" OPTION
+while getopts "hI:O:lci:d" OPTION
 do
   case $OPTION in
     h)
@@ -72,9 +70,6 @@ do
       ;;
     i)
       INTER_INTERVAL_OPTION="--inter-interval "$OPTARG
-      ;;
-    o)
-      TIMEOUT=$OPTARG
       ;;
     d)
       CREATE_DENDROGRAMS=true
@@ -109,7 +104,7 @@ do
   
   mkdir -p "$TARGET_DIR"
   
-  test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | timeout $TIMEOUT $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE
+  test -f $TARGET_INTER_ATOM_CONTACTS_FILE || cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG | $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE
   if [ ! -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-atom contacts in the target" 1>&2 ; exit 1 ; fi
 
   test -f $TARGET_RESIDUE_IDS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE
