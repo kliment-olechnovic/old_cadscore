@@ -16,6 +16,7 @@ cp Release/voroprot2 $PACKAGE_NAME/bin/voroprot2
 cp scripts/Voroprot2_calc.bash $PACKAGE_NAME/bin
 cp scripts/Voroprot2_print_interfaces_as_PyMol_graphics.bash $PACKAGE_NAME/bin
 cp scripts/CADscore_* $PACKAGE_NAME/bin
+cp scripts/TMscore_calc.bash $PACKAGE_NAME/bin
 
 mkdir -p $PACKAGE_NAME/resources
 cp resources/vdwr_* $PACKAGE_NAME/resources
