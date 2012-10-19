@@ -59,7 +59,7 @@ public:
 	}
 
 private:
-	PPMImageWriter(const PPMImageWriter& obj)
+	PPMImageWriter(const PPMImageWriter&)
 	{
 	}
 
