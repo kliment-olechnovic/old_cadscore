@@ -47,6 +47,14 @@ public:
 		}
 	}
 
+	template<typename PointType>
+	static void print_cylinder(const PointType& start, const PointType& end, const double radius, const auxiliaries::Color& start_color, const auxiliaries::Color& end_color)
+	{
+		std::cout << "    CYLINDER, " << point_to_string(start) << ", " << point_to_string(end) << ", " << radius << ", ";
+		std::cout << start_color.r_double() << ", " << start_color.g_double() << ", " << start_color.b_double() << ", ";
+		std::cout << end_color.r_double() << ", " << end_color.g_double() << ", " << end_color.b_double() << ",\n";
+	}
+
 private:
 	template<typename PointType>
 	static std::string point_to_string(const PointType& a)
