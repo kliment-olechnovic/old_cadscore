@@ -23,6 +23,7 @@ $0 parameters:
 
   Optional (advanced):  
     -a    flag to compute atomic global scores
+    -r    flag to set all chain names to 'A'
     -u    flag to disable model atoms filtering by target atoms
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
@@ -69,8 +70,9 @@ QUATERNARY_CHAINS_RENAMING=false
 EXTRA_COMMAND=""
 USE_ATOMIC_CADSCORE=false
 THREAD_SAFE_ON=true
+RESETTING_CHAIN_NAMES=""
 
-while getopts "hD:t:m:lv:ci:guqe:aj" OPTION
+while getopts "hD:t:m:lv:ci:guqe:ajr" OPTION
 do
   case $OPTION in
     h)
@@ -115,6 +117,9 @@ do
       ;;
     j)
       THREAD_SAFE_ON=false
+      ;;
+    r)
+      RESETTING_CHAIN_NAMES="--rename-chain A"
       ;;
     ?)
       exit 1
@@ -169,7 +174,7 @@ TMSCORE_GLOBAL_SCORES_FILE="$MODEL_DIR/tmscore_global_scores"
 EXTRA_COMMAND_GLOBAL_SCORES_FILE="$MODEL_DIR/extra_command_global_scores"
 SUMMARY_FILE="$MODEL_DIR/summary"
 
-TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
+TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 
 mkdir -p $DATABASE
 
@@ -180,7 +185,7 @@ if mkdir $TARGET_DIR &> /dev/null
 then
   echo -n "$TARGET_PARAMETERS" > $TARGET_PARAMETERS_FILE
   
-  if [ ! -f $TARGET_ATOMS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION > $TARGET_ATOMS_FILE ; fi
+  if [ ! -f $TARGET_ATOMS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES > $TARGET_ATOMS_FILE ; fi
   if [ -s "$TARGET_ATOMS_FILE" ] && [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_ATOMS_FILE | $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_RESIDUE_IDS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then  cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
@@ -226,7 +231,7 @@ if [ ! -s "$TARGET_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no i
 
 mkdir -p $MODEL_DIR
 
-test -f $MODEL_ATOMS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION > $MODEL_ATOMS_FILE
+test -f $MODEL_ATOMS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES > $MODEL_ATOMS_FILE
 if [ ! -s "$MODEL_ATOMS_FILE" ] ; then echo "Fatal error: no atoms in the model" 1>&2 ; exit 1 ; fi
 
 if $DISABLE_MODEL_ATOMS_FILTERING
