@@ -13,11 +13,12 @@
 
 void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo)
 {
+	typedef protein::NucleotidePlane<apollo::SimplePoint> Plane;
 	clo.check_allowed_options("--graphics");
 
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	const std::map< protein::ResidueID, protein::NucleotidePlane<apollo::SimplePoint> > nucleotides_planes=protein::NucleotidePlane<apollo::SimplePoint>::calc_nucleotides_planes(atoms);
+	const std::map< protein::ResidueID, Plane > nucleotides_planes=Plane::calc_nucleotides_planes(atoms);
 
 	if(nucleotides_planes.empty())
 	{
@@ -29,10 +30,10 @@ void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo)
 		{
 			std::cout << "from pymol.cgo import *\n";
 			const auxiliaries::OpenGLPrinter opengl_printer("obj_np", "cgo_np");
-			for(std::map< protein::ResidueID, protein::NucleotidePlane<apollo::SimplePoint> >::const_iterator it=nucleotides_planes.begin();it!=nucleotides_planes.end();++it)
+			for(std::map< protein::ResidueID, Plane >::const_iterator it=nucleotides_planes.begin();it!=nucleotides_planes.end();++it)
 			{
-				const protein::NucleotidePlane<apollo::SimplePoint>& plane=it->second;
-				opengl_printer.print_cylinder(plane.p, plane.p+plane.n, 3.0, auxiliaries::Color::from_code(0xFF0000), auxiliaries::Color::from_code(0x0000FF));
+				const Plane& plane=it->second;
+				opengl_printer.print_cylinder(plane.point, plane.point+plane.normal, 3.0, auxiliaries::Color::from_code(0xFF0000), auxiliaries::Color::from_code(0x0000FF));
 			}
 		}
 		else

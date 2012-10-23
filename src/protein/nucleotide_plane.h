@@ -10,22 +10,8 @@ namespace protein
 template<typename PointType>
 struct NucleotidePlane
 {
-	PointType p;
-	PointType n;
-
-	friend std::ostream& operator<<(std::ostream &output, const NucleotidePlane& plane)
-	{
-		output << plane.p.x << " " << plane.p.y << " " << plane.p.z << " ";
-		output << plane.n.x << " " << plane.n.y << " " << plane.n.z;
-		return output;
-	}
-
-	friend std::istream& operator>>(std::istream& input, NucleotidePlane& plane)
-	{
-		input >> plane.p.x >> plane.p.y >> plane.p.z;
-		input >> plane.n.x >> plane.n.y >> plane.n.z;
-		return input;
-	}
+	PointType point;
+	PointType normal;
 
 	static std::map<ResidueID, NucleotidePlane> calc_nucleotides_planes(const std::vector<Atom>& atoms)
 	{
@@ -58,13 +44,27 @@ struct NucleotidePlane
 						const PointType pb(b.x, b.y, b.z);
 						const PointType pc(c.x, c.y, c.z);
 						NucleotidePlane& plane=planes[residue_id];
-						plane.p=((pa+pb)+pc)/3.0;
-						plane.n=((pb-pa)&(pc-pa)).unit();
+						plane.point=((pa+pb)+pc)/3.0;
+						plane.normal=((pb-pa)&(pc-pa)).unit();
 					}
 				}
 			}
 		}
 		return planes;
+	}
+
+	friend std::ostream& operator<<(std::ostream &output, const NucleotidePlane& plane)
+	{
+		output << plane.point.x << " " << plane.point.y << " " << plane.point.z << " ";
+		output << plane.normal.x << " " << plane.normal.y << " " << plane.normal.z;
+		return output;
+	}
+
+	friend std::istream& operator>>(std::istream& input, NucleotidePlane& plane)
+	{
+		input >> plane.point.x >> plane.point.y >> plane.point.z;
+		input >> plane.normal.x >> plane.normal.y >> plane.normal.z;
+		return input;
 	}
 };
 
