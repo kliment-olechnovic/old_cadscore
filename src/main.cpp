@@ -32,6 +32,7 @@ void print_quadruples_image(const auxiliaries::CommandLineOptions& clo);
 void print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo);
 void print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo);
 void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo);
+void print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -83,6 +84,7 @@ int main(const int argc, const char** argv)
 		modes_map["print-inter-residue-contacts-map-image"]=ModeFunctionPointer(print_inter_residue_contacts_map_image);
 		modes_map["print-inter-residue-distance-map-image"]=ModeFunctionPointer(print_inter_residue_distance_map_image);
 		modes_map["print-nucleotides-planes"]=ModeFunctionPointer(print_nucleotides_planes);
+		modes_map["print-nucleotides-contacts-graphics"]=ModeFunctionPointer(print_nucleotides_contacts_graphics);
 
 		if(modes_map.count(mode)==1)
 		{
