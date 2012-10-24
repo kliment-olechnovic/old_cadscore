@@ -71,7 +71,10 @@ private:
 					{
 						if(include_water || record.residue_name!="HOH")
 						{
-							atoms.push_back(atom_from_PDB_atom_record(record, vdwr_assigner));
+							if(record.insertion_code.empty())
+							{
+								atoms.push_back(atom_from_PDB_atom_record(record, vdwr_assigner));
+							}
 						}
 					}
 				}
