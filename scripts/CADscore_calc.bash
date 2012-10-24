@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +e
+
 ##################################################
 ### Help printing
 
@@ -191,6 +193,8 @@ then
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then  cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
 
   true > $TARGET_MUTEX_END
+  if [ ! -f "$TARGET_MUTEX_END" ] ; then echo "Fatal error: could not create file ($TARGET_MUTEX_END)" 1>&2 ; exit 1 ; fi
+
 else
   if [ ! -d "$TARGET_DIR" ] ; then echo "Fatal error: could not create target directory ($TARGET_DIR)" 1>&2 ; exit 1 ; fi 
   
