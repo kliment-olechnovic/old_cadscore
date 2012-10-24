@@ -38,7 +38,7 @@ private:
 		Atom atom;
 		atom.chain_id=record.chain_name;
 		atom.atom_number=record.atom_serial_number;
-		atom.residue_number=record.residue_sequence_number;
+		atom.residue_number=(record.insertion_code.empty() ? record.residue_sequence_number : (static_cast<int>(record.insertion_code[0])*10000+record.residue_sequence_number));
 		atom.residue_name=record.residue_name;
 		atom.atom_name=record.name;
 		atom.x=record.x;
