@@ -1,3 +1,3 @@
-target  model   t_res  t_res_used  t_atoms  t_atoms_used  m_res  m_res_used  m_atoms  m_atoms_used  AA        AM        AS        MA        MM        MS        SA        SM       SS
-target  model2  261    55          2095     440           249    55          1989     440           0.610232  0.695812  0.519384  0.695441  0.724634  0.582593  0.501373  0.57967  0.445386
-target  model1  261    55          2095     440           261    55          2095     440           0.477691  0.586142  0.392631  0.571165  0.686629  0.474154  0.387897  0.47622  0.312621
+target  model   t_res  t_res_used  t_atoms  t_atoms_used  m_res  m_res_used  m_atoms  m_atoms_used  AA        AM        AS        MA        MM        MS        SA        SM       SS        inter_atom_cad_global_score
+target  model2  261    55          2095     440           249    55          1989     440           0.610232  0.695812  0.519384  0.695441  0.724634  0.582593  0.501373  0.57967  0.445386  0.396945
+target  model1  261    55          2095     440           261    55          2095     440           0.477691  0.586142  0.392631  0.571165  0.686629  0.474154  0.387897  0.47622  0.312621  0.320436
