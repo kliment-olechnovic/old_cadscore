@@ -20,12 +20,12 @@ $0 parameters:
     -l    flag to include heteroatoms
     -c    flag to consider only inter-chain contacts
     -i    inter-interval contacts specification
-    -q    flag to try to rename chains for best possible scores
+    -q    flag to try to rearrange chain names for best possible scores
     -g    flag to use TM-score
 
   Optional (advanced):  
     -a    flag to compute atomic global scores
-    -r    flag to set all chain names to 'A'
+    -r    flag to reset chain names to 'A', 'B', 'C', etc.
     -u    flag to disable model atoms filtering by target atoms
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
@@ -121,7 +121,7 @@ do
       THREAD_SAFE_ON=false
       ;;
     r)
-      RESETTING_CHAIN_NAMES="--rename-chain A"
+      RESETTING_CHAIN_NAMES="--auto-rename-chains"
       ;;
     ?)
       exit 1

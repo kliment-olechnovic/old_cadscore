@@ -47,7 +47,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 
 void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--radius-classes: --radius-members: --HETATM --HOH --no-classification --rename-chain:");
+	clo.check_allowed_options("--radius-classes: --radius-members: --HETATM --HOH --rename-chain: --auto-rename-chains");
 
 	std::string radius_classes_file_name="";
 	std::string radius_members_file_name="";
@@ -59,7 +59,8 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 
 	const bool include_heteroatoms=clo.isopt("--HETATM");
 	const bool include_water=clo.isopt("--HOH");
-	const std::string chain_renaming=clo.isopt("--rename-chain") ? clo.arg<std::string>("--rename-chain") : std::string("");
+	const std::string simple_chain_renaming=clo.isopt("--rename-chain") ? clo.arg<std::string>("--rename-chain") : std::string("");
+	const bool auto_rename_chains=clo.isopt("--auto-rename-chains");
 
 	const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner(radius_classes_file_name, radius_members_file_name);
 
@@ -67,11 +68,47 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 
 	protein::AtomsClassification::classify_atoms(atoms);
 
-	if(!chain_renaming.empty())
+	if(!simple_chain_renaming.empty())
 	{
 		for(std::size_t i=0;i<atoms.size();i++)
 		{
-			atoms[i].chain_id=chain_renaming;
+			atoms[i].chain_id=simple_chain_renaming;
+		}
+	}
+
+	if(auto_rename_chains)
+	{
+		std::map<std::string, std::string> chain_names_map;
+		for(std::size_t i=0;i<atoms.size();i++)
+		{
+			chain_names_map[atoms[i].chain_id]="";
+		}
+		{
+			const std::string letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			std::size_t letter_id=0;
+			for(std::map<std::string, std::string>::iterator it=chain_names_map.begin();it!=chain_names_map.end();++it)
+			{
+				if(chain_names_map.size()<letters.size())
+				{
+					it->second=letters.substr(letter_id, 1);
+				}
+				else
+				{
+					std::ostringstream number_output;
+					number_output << "n" << letter_id;
+					it->second=number_output.str();
+				}
+				letter_id++;
+			}
+		}
+		for(std::size_t i=0;i<atoms.size();i++)
+		{
+			std::string& atom_chain_id=atoms[i].chain_id;
+			atom_chain_id=chain_names_map[atom_chain_id];
+			if(atom_chain_id.empty())
+			{
+				atom_chain_id="x";
+			}
 		}
 	}
 
