@@ -148,7 +148,9 @@ void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& 
 {
 	typedef protein::NucleotidePlane<apollo::SimplePoint> Plane;
 
-	clo.check_allowed_options("");
+	clo.check_allowed_options("--prefix:");
+
+	const std::string prefix=clo.arg<std::string>("--prefix");
 
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -194,7 +196,7 @@ void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& 
 						}
 						if(one_halfspace)
 						{
-							std::cout << rid_a.chain_id << " " << rid_a.residue_number << " " << rid_b.chain_id << " " << rid_b.residue_number << " " << area << "\n";
+							std::cout << prefix << " " << rid_a.chain_id << " " << rid_a.residue_number << " " << rid_b.chain_id << " " << rid_b.residue_number << " " << area << "\n";
 						}
 					}
 				}
