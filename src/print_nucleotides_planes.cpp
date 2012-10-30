@@ -183,22 +183,16 @@ void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& 
 				if(!sc_atoms_ids_b.empty())
 				{
 					const int first_halfspace=apollo::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[0]]);
-					if(first_halfspace!=0)
+					bool one_halfspace=(first_halfspace!=0);
+					for(std::size_t i=1;i<sc_atoms_ids_b.size() && one_halfspace;i++)
 					{
-						bool one_halfspace=true;
-						for(std::size_t i=1;i<sc_atoms_ids_b.size() && one_halfspace;i++)
+						const int atom_halfspace=apollo::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
+						if(atom_halfspace!=first_halfspace)
 						{
-							const int atom_halfspace=apollo::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
-							if(atom_halfspace!=first_halfspace)
-							{
-								one_halfspace=false;
-							}
-						}
-						if(one_halfspace)
-						{
-							std::cout << prefix << " " << rid_a.chain_id << " " << rid_a.residue_number << " " << rid_b.chain_id << " " << rid_b.residue_number << " " << area << "\n";
+							one_halfspace=false;
 						}
 					}
+					std::cout << prefix << " " << (one_halfspace ? "stack" : "side" ) << " " << rid_a.chain_id << " " << rid_a.residue_number << " " << rid_b.chain_id << " " << rid_b.residue_number << " " << area << "\n";
 				}
 			}
 		}
