@@ -45,7 +45,7 @@ png("plot_of_all_areas_contribution.png", height=4.8, width=4.4, units="in", res
 v=t_a[which(is.element(t_a[[1]], union(stacking_ids_b, siding_ids_b))), 3];
 ds=density(v);
 sel=which(ds$x>0);
-plot(x=ds$x[sel], y=ds$y[sel]*ds$x[sel]*length(v), xlab="Area", ylab="Area * Frequency", main="Plot of all areas contribution", type="l", col="red");
+plot(x=ds$x[sel], y=ds$y[sel]*ds$x[sel]*length(v), xlab="Area", ylab="Area * Frequency", main="Plot of all areas contribution", type="l", col="red", lwd=5.0);
 v=t_a[[3]];
 ds=density(v);
 sel=which(ds$x>0);
@@ -56,7 +56,7 @@ png("plot_of_stacking_areas_contribution.png", height=4.8, width=4.4, units="in"
 v=stacking_t_a[which(is.element(stacking_t_a[[1]], stacking_ids_b)), 3];
 ds=density(v);
 sel=which(ds$x>0);
-plot(x=ds$x[sel], y=ds$y[sel]*ds$x[sel]*length(v), xlab="Area", ylab="Area * Frequency", main="Plot of stacking areas contribution", type="l", col="red");
+plot(x=ds$x[sel], y=ds$y[sel]*ds$x[sel]*length(v), xlab="Area", ylab="Area * Frequency", main="Plot of stacking areas contribution", type="l", col="red", lwd=5.0);
 v=stacking_t_a[[3]];
 ds=density(v);
 sel=which(ds$x>0);
@@ -67,7 +67,7 @@ png("plot_of_siding_areas_contribution.png", height=4.8, width=4.4, units="in", 
 v=siding_t_a[which(is.element(siding_t_a[[1]], siding_ids_b)), 3];
 ds=density(v);
 sel=which(ds$x>0);
-plot(x=ds$x[sel], y=ds$y[sel]*ds$x[sel]*length(v), xlab="Area", ylab="Area * Frequency", main="Plot of siding areas contribution", type="l", col="red");
+plot(x=ds$x[sel], y=ds$y[sel]*ds$x[sel]*length(v), xlab="Area", ylab="Area * Frequency", main="Plot of siding areas contribution", type="l", col="red", lwd=5.0);
 v=siding_t_a[[3]];
 ds=density(v);
 sel=which(ds$x>0);
