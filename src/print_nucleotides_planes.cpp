@@ -160,6 +160,8 @@ void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& 
 
 	const std::map< protein::ResidueID, std::vector<std::size_t> > residue_ids_atoms=protein::group_atoms_indices_by_residue_ids(atoms);
 
+	std::map< contacto::ContactID<protein::ResidueID>, std::pair<bool, double> > statuses;
+
 	for(std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >::const_iterator it=inter_residue_contacts.begin();it!=inter_residue_contacts.end();++it)
 	{
 		const double area=it->second.area("SS");
@@ -167,7 +169,7 @@ void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& 
 		{
 			const protein::ResidueID& rid_a=it->first.a;
 			const protein::ResidueID& rid_b=it->first.b;
-			if(rid_a<rid_b && nucleotides_planes.count(rid_a)==1 && residue_ids_atoms.count(rid_b)==1)
+			if(nucleotides_planes.count(rid_a)==1 && residue_ids_atoms.count(rid_b)==1)
 			{
 				const Plane& plane_a=nucleotides_planes.find(rid_a)->second;
 				const std::vector<std::size_t> atoms_ids_b=residue_ids_atoms.find(rid_b)->second;
@@ -192,8 +194,24 @@ void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& 
 							one_halfspace=false;
 						}
 					}
-					std::cout << prefix << " " << (one_halfspace ? "stack" : "side" ) << " " << rid_a.chain_id << " " << rid_a.residue_number << " " << rid_b.chain_id << " " << rid_b.residue_number << " " << area << "\n";
+					statuses[contacto::ContactID<protein::ResidueID>(rid_a, rid_b)]=std::make_pair(one_halfspace, area);
 				}
+			}
+		}
+	}
+
+	for(std::map< contacto::ContactID<protein::ResidueID>, std::pair<bool, double> >::const_iterator it=statuses.begin();it!=statuses.end();++it)
+	{
+		const protein::ResidueID& rid_a=it->first.a;
+		const protein::ResidueID& rid_b=it->first.b;
+		if(rid_a<rid_b)
+		{
+			const std::pair<bool, double>& status_ab=it->second;
+			std::map< contacto::ContactID<protein::ResidueID>, std::pair<bool, double> >::const_iterator jt=statuses.find(contacto::ContactID<protein::ResidueID>(rid_b, rid_a));
+			if(jt!=statuses.end())
+			{
+				const std::pair<bool, double>& status_ba=jt->second;
+				std::cout << prefix << " " << ((status_ab.first && status_ba.first) ? "stack" : "side" ) << " " << rid_a.chain_id << " " << rid_a.residue_number << " " << rid_b.chain_id << " " << rid_b.residue_number << " " << status_ab.second << "\n";
 			}
 		}
 	}
