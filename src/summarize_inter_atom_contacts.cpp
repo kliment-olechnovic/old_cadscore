@@ -5,6 +5,7 @@
 #include "protein/residue_id.h"
 
 #include "contacto/inter_atom_contact.h"
+#include "contacto/contact_classification.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
@@ -28,11 +29,15 @@ void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 
 		if(protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b))
 		{
-			values["all"]+=contact.area;
-
-			if(a.chain_id!=b.chain_id)
+			const std::vector<std::string> contact_classes=contacto::ContactClassification::classify_atoms_contact<protein::Atom, protein::ResidueID>(a, b);
+			for(std::size_t j=0;j<contact_classes.size();j++)
 			{
-				values[std::string("inter_chain_")+a.chain_id+"_"+b.chain_id]+=contact.area;
+				const std::string& contact_class=contact_classes[j];
+				values[std::string("all_")+contact_class]+=contact.area;
+				if(a.chain_id!=b.chain_id)
+				{
+					values[std::string("inter_chain_")+a.chain_id+"_"+b.chain_id+"_"+contact_class]+=contact.area;
+				}
 			}
 		}
 		else if(a==b)
