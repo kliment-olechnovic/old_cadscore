@@ -1,12 +1,7 @@
 #!/bin/bash
 
-VERSION=$(hg branches -a | egrep '^experimental' | awk '{print $2}' | head -1 | tr ':' '_')
-if [ -z "$VERSION" ]
-then
-  VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' '_')
-fi
-
-PACKAGE_NAME="cadscore_experimental_$VERSION"
+VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' '_')
+PACKAGE_NAME="cadscore_$VERSION"
 
 rm $PACKAGE_NAME.tar.gz
 rm -r $PACKAGE_NAME
@@ -18,10 +13,10 @@ cp -r src $PACKAGE_NAME/src
 
 mkdir -p $PACKAGE_NAME/bin
 cp Release/voroprot2 $PACKAGE_NAME/bin/voroprot2
-cp scripts/Voroprot2_* $PACKAGE_NAME/bin
+cp scripts/Voroprot2_calc.bash $PACKAGE_NAME/bin
+cp scripts/Voroprot2_print_interfaces_as_PyMol_graphics.bash $PACKAGE_NAME/bin
 cp scripts/CADscore_* $PACKAGE_NAME/bin
 cp scripts/TMscore_calc.bash $PACKAGE_NAME/bin
-cp -r scripts/customized $PACKAGE_NAME/bin
 
 mkdir -p $PACKAGE_NAME/resources
 cp resources/vdwr_* $PACKAGE_NAME/resources
