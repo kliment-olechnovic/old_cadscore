@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname "$0")
+
 VERSION=$(hg branches -a | egrep '^experimental' | awk '{print $2}' | head -1 | tr ':' '_')
 if [ -z "$VERSION" ]
 then
