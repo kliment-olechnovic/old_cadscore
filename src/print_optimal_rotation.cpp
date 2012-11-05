@@ -1,4 +1,6 @@
 #include <iostream>
+#include <limits>
+#include <iomanip>
 
 #include "protein/atom.h"
 
@@ -45,64 +47,52 @@ void print_optimal_rotation(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	double max_projection_side=1.0;
+	double max_projection_side=-1.0;
 	{
-		double vertical_sum=0;
+		double low_val=0.0;
+		double high_val=0.0;
+		for(std::size_t i=0;i<atoms.size();i++)
 		{
+			const double val=apollo::project_point_on_vector(center, center+max_projection_vector, atoms[i]);
+			low_val=std::min(low_val, val);
+			high_val=std::max(high_val, val);
+		}
+		if(fabs(low_val)>fabs(high_val))
+		{
+			max_projection_side=0.0-max_projection_side;
+		}
+	}
+
+	apollo::SimplePoint min_vertical_vector=apollo::any_normal_of_vector<apollo::SimplePoint>(max_projection_vector);
+	{
+		const apollo::SimplePoint initial_vertical_vector=min_vertical_vector;
+		const double angle_step=1.0;
+		double min_height=std::numeric_limits<double>::max();
+		for(double angle=angle_step;angle<360.0;angle+=angle_step)
+		{
+			const apollo::SimplePoint v=apollo::Rotation(max_projection_vector, angle).rotate<apollo::SimplePoint>(initial_vertical_vector);
 			double low_val=0.0;
 			double high_val=0.0;
 			for(std::size_t i=0;i<atoms.size();i++)
 			{
-				const double val=apollo::project_point_on_vector(center, center+max_projection_vector, atoms[i]);
+				const double val=apollo::project_point_on_vector(center, center+v, atoms[i]);
 				low_val=std::min(low_val, val);
 				high_val=std::max(high_val, val);
 			}
-			const apollo::SimplePoint median_center=center+(max_projection_vector*((low_val+high_val)/2));
-			for(std::size_t i=0;i<atoms.size();i++)
+			const double height=high_val-low_val;
+			if(height<min_height)
 			{
-				vertical_sum+=apollo::project_point_on_vector(median_center, median_center+max_projection_vector, atoms[i]);
-			}
-		}
-		if(vertical_sum<0.0)
-		{
-			max_projection_side=-1.0;
-		}
-	}
-
-	double max_vertical_angle=0.0;
-	{
-		double max_vertical_sum=0.0;
-		const apollo::SimplePoint initial_vertical_vector=apollo::any_normal_of_vector<apollo::SimplePoint>(max_projection_vector);
-		const double angle_step=1.0;
-		for(double angle=angle_step;angle<360.0;angle+=angle_step)
-		{
-			const apollo::SimplePoint v=apollo::Rotation(max_projection_vector, angle).rotate<apollo::SimplePoint>(initial_vertical_vector);
-			double vertical_sum=0;
-			{
-				double low_val=0.0;
-				double high_val=0.0;
-				for(std::size_t i=0;i<atoms.size();i++)
-				{
-					const double val=apollo::project_point_on_vector(center, center+v, atoms[i]);
-					low_val=std::min(low_val, val);
-					high_val=std::max(high_val, val);
-				}
-				const apollo::SimplePoint median_center=center+(v*((low_val+high_val)/2));
-				for(std::size_t i=0;i<atoms.size();i++)
-				{
-					vertical_sum+=apollo::project_point_on_vector(median_center, median_center+v, atoms[i]);
-				}
-			}
-			if(vertical_sum>max_vertical_sum)
-			{
-				max_vertical_sum=vertical_sum;
-				max_vertical_angle=angle;
+				min_height=height;
+				min_vertical_vector=v;
 			}
 		}
 	}
 
 	const apollo::Rotation max_projection_rotation=apollo::Rotation::from_two_points(max_projection_vector, apollo::SimplePoint(0.0, 0.0, max_projection_side));
 
-	std::cout << "rotate [" << max_projection_vector.x << "," << max_projection_vector.y << "," << max_projection_vector.z << "], " << max_vertical_angle << "\n";
-	std::cout << "rotate [" << max_projection_rotation.axis.unit().x << "," << max_projection_rotation.axis.unit().y << "," << max_projection_rotation.axis.unit().z << "], " << max_projection_rotation.angle << "\n";
+	const apollo::Rotation min_vertical_rotation=apollo::Rotation::from_two_points(max_projection_rotation.rotate<apollo::SimplePoint>(min_vertical_vector), apollo::SimplePoint(0.0, 1.0, 0.0));
+
+	std::cout << std::fixed << "rotate [" << max_projection_rotation.axis.unit().x << "," << max_projection_rotation.axis.unit().y << "," << max_projection_rotation.axis.unit().z << "], " << max_projection_rotation.angle << "\n";
+
+	std::cout << std::fixed << "rotate [" << min_vertical_rotation.axis.unit().x << "," << min_vertical_rotation.axis.unit().y << "," << min_vertical_rotation.axis.unit().z << "], " << min_vertical_rotation.angle << "\n";
 }
