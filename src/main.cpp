@@ -36,6 +36,7 @@ void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo);
 void print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& clo);
 void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo);
 void print_optimal_rotation(const auxiliaries::CommandLineOptions& clo);
+void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -91,6 +92,7 @@ int main(const int argc, const char** argv)
 		modes_map["print-nucleotides-contacts-graphics"]=ModeFunctionPointer(print_nucleotides_contacts_graphics);
 		modes_map["print-stacking-nucleotides-contacts"]=ModeFunctionPointer(print_stacking_nucleotides_contacts);
 		modes_map["print-optimal-rotation"]=ModeFunctionPointer(print_optimal_rotation);
+		modes_map["categorize-inter-nucleotide-side-chain-contacts"]=ModeFunctionPointer(categorize_inter_nucleotide_side_chain_contacts);
 
 		if(modes_map.count(mode)==1)
 		{
