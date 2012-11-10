@@ -166,6 +166,7 @@ MODEL_ATOMS_FILE="$MODEL_DIR/atoms"
 MODEL_FILTERED_ATOMS_FILE="$MODEL_DIR/filtered_atoms"
 MODEL_INTER_ATOM_CONTACTS_FILE="$MODEL_DIR/inter_atom_contacts"
 MODEL_RESIDUE_IDS_FILE="$MODEL_DIR/residue_ids"
+MODEL_INTER_RESIDUE_CONTACTS_FILE="$MODEL_DIR/inter_residue_contacts"
 COMBINED_INTER_RESIDUE_CONTACTS_FILE="$MODEL_DIR/combined_inter_residue_contacts"
 CAD_PROFILE_FILE="$MODEL_DIR/cad_profile"
 CAD_GLOBAL_SCORES_FILE="$MODEL_DIR/cad_global_scores"
@@ -190,7 +191,7 @@ then
   if [ ! -f $TARGET_ATOMS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES > $TARGET_ATOMS_FILE ; fi
   if [ -s "$TARGET_ATOMS_FILE" ] && [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_ATOMS_FILE | $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_RESIDUE_IDS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE ; fi
-  if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then  cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
+  if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
 
   true > $TARGET_MUTEX_END
   if [ ! -f "$TARGET_MUTEX_END" ] ; then echo "Fatal error: could not create file ($TARGET_MUTEX_END)" 1>&2 ; exit 1 ; fi
@@ -251,15 +252,18 @@ if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter
 
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
 if [ ! -s "$MODEL_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no filtered residues in the model" 1>&2 ; exit 1 ; fi
+	
+test -f $MODEL_INTER_RESIDUE_CONTACTS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $MODEL_INTER_RESIDUE_CONTACTS_FILE
+if [ ! -s "$MODEL_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-residue contacts in the model" 1>&2 ; exit 1 ; fi
 
 ##################################################
 ### Comparing target and model
 
 if $QUATERNARY_CHAINS_RENAMING
 then
-  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts-with-chains-optimally-renamed $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
+  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_RESIDUE_CONTACTS_FILE $MODEL_INTER_RESIDUE_CONTACTS_FILE $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts-with-chains-optimally-renamed > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
 else
-  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_ATOM_CONTACTS_FILE $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
+  test -f $COMBINED_INTER_RESIDUE_CONTACTS_FILE || cat $TARGET_INTER_RESIDUE_CONTACTS_FILE $MODEL_INTER_RESIDUE_CONTACTS_FILE | $VOROPROT --mode calc-combined-inter-residue-contacts > $COMBINED_INTER_RESIDUE_CONTACTS_FILE
 fi
 
 if [ ! -s "$COMBINED_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: combined inter-residue contacts file is empty" 1>&2 ; exit 1 ; fi
