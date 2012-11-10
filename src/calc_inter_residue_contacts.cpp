@@ -132,17 +132,13 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 {
 	clo.check_allowed_options("--inter-interval: --inter-chain");
 
-	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+	const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts_1=
+			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
+	const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts_2=
+			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
-	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
-
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
-
-	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
-			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1),
-			contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2));
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2);
 
 	if(clo.isopt("--inter-chain"))
 	{
@@ -165,12 +161,14 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	}
 }
 
-std::vector<std::string> collect_chain_names_froms_atoms(const std::vector<protein::Atom>& atoms)
+template<typename ContactsMap>
+std::vector<std::string> collect_chain_names_from_contacts_map(const ContactsMap& contacts)
 {
 	std::set<std::string> set_of_names;
-	for(std::size_t i=0;i<atoms.size();i++)
+	for(typename ContactsMap::const_iterator it=contacts.begin();it!=contacts.end();++it)
 	{
-		set_of_names.insert(atoms[i].chain_id);
+		set_of_names.insert(it->first.a.chain_id);
+		set_of_names.insert(it->first.b.chain_id);
 	}
 	std::vector<std::string> vector_of_names;
 	vector_of_names.insert(vector_of_names.end(), set_of_names.begin(), set_of_names.end());
@@ -183,16 +181,16 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 
 	clo.check_allowed_options("--inter-interval: --inter-chain");
 
-	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+	const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts_1=
+			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
+	const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts_2=
+			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
-	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "target residue identifiers", "residue_ids", false);;
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
-
-	const std::vector<std::string> chain_names_1=collect_chain_names_froms_atoms(atoms_1);
-	const std::vector<std::string> chain_names_2=collect_chain_names_froms_atoms(atoms_2);
+	const std::vector<std::string> chain_names_1=collect_chain_names_from_contacts_map(inter_residue_contacts_1);
+	const std::vector<std::string> chain_names_2=collect_chain_names_from_contacts_map(inter_residue_contacts_2);
 
 	bool renaming_allowed=(chain_names_1.size()>1 && chain_names_1.size()==chain_names_2.size());
 	for(std::size_t j=0;j<chain_names_1.size() && renaming_allowed;j++)
@@ -202,32 +200,35 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 
 	if(renaming_allowed)
 	{
-		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts_1=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1);
-		const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=protein::collect_residue_ids_from_atoms(atoms_1);
-
 		std::map<double, CombinedInterResidueContacts> variations;
 
 		std::vector<std::string> chain_names_permutation=chain_names_1;
 
 		do
 		{
-			std::vector<protein::Atom> atoms_2_with_renamed_chains=atoms_2;
-			for(std::size_t i=0;i<atoms_2.size();i++)
+			std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts_2_with_renamed_chains;
+			for(typename std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >::const_iterator it=inter_residue_contacts_2.begin();it!=inter_residue_contacts_2.end();++it)
 			{
-				bool chain_renamed=false;
-				for(std::size_t j=0;j<chain_names_2.size() && !chain_renamed;j++)
+				contacto::ContactID<protein::ResidueID> cid=it->first;
+				bool a_renamed=false;
+				bool b_renamed=false;
+				for(std::size_t j=0;j<chain_names_2.size() && !(a_renamed && b_renamed);j++)
 				{
-					if(atoms_2[i].chain_id==chain_names_2[j])
+					if(!a_renamed && cid.a.chain_id==chain_names_2[j])
 					{
-						atoms_2_with_renamed_chains[i].chain_id=chain_names_permutation[j];
-						chain_renamed=true;
+						cid.a.chain_id=chain_names_permutation[j];
+						a_renamed=true;
+					}
+					if(!b_renamed && cid.b.chain_id==chain_names_2[j])
+					{
+						cid.b.chain_id=chain_names_permutation[j];
+						b_renamed=true;
 					}
 				}
+				inter_residue_contacts_2_with_renamed_chains[cid]=it->second;
 			}
 
-			CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
-					inter_residue_contacts_1,
-					contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2_with_renamed_chains, inter_atom_contacts_2));
+			CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2_with_renamed_chains);
 
 			if(clo.isopt("--inter-chain"))
 			{
@@ -275,9 +276,7 @@ void calc_combined_inter_residue_contacts_with_chains_optimally_renamed(const au
 	{
 		std::clog << "Chains renaming was not performed\n";
 
-		CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(
-				contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1),
-				contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2));
+		CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2);
 
 		if(clo.isopt("--inter-chain"))
 		{
