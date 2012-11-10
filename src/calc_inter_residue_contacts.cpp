@@ -186,7 +186,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 			do
 			{
 				InterResidueContacts inter_residue_contacts_2_with_renamed_chains;
-				for(typename InterResidueContacts::const_iterator it=inter_residue_contacts_2.begin();it!=inter_residue_contacts_2.end();++it)
+				for(InterResidueContacts::const_iterator it=inter_residue_contacts_2.begin();it!=inter_residue_contacts_2.end();++it)
 				{
 					contacto::ContactID<protein::ResidueID> cid=it->first;
 					bool a_renamed=false;
