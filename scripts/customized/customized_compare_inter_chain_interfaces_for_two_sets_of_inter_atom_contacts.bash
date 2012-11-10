@@ -25,7 +25,7 @@ then
 fi
 
 ( \
- (cat $TARGET_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts ; cat $MODEL_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts ; cat $TARGET_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids) | $VOROPROT --mode calc-combined-inter-residue-contacts-with-chains-optimally-renamed --inter-chain ; \
+ (cat $TARGET_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts ; cat $MODEL_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts ; cat $TARGET_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids) | $VOROPROT --mode calc-combined-inter-residue-contacts --optimally-rename-chains --inter-chain ; \
  cat $TARGET_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids \
 ) \
 | $VOROPROT --mode calc-CAD-profile \
