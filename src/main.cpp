@@ -6,6 +6,10 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/stream_redirector.h"
 
+#ifdef USE_VERSION_HEADER
+#include "resources/version.h"
+#endif
+
 void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
@@ -48,6 +52,16 @@ int main(const int argc, const char** argv)
 	try
 	{
 		auxiliaries::CommandLineOptions clo(argc, argv);
+
+		if(clo.isopt("--version"))
+		{
+#ifdef USE_VERSION_HEADER
+			std::cout << resources::get_version_string() << "\n";
+#else
+			std::cout << "Version information was not included in this executable\n";
+#endif
+			return 0;
+		}
 
 		mode=clo.isarg("--mode") ? clo.arg<std::string>("--mode") : std::string("");
 		clo.remove_option("--mode");
