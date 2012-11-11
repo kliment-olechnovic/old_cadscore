@@ -68,6 +68,20 @@ ContactsMap filter_inter_interval_contacts(const ContactsMap& all_contacts, cons
 	return interface_contacts;
 }
 
+template<typename ContactsMap>
+void filter_custom_contacts(ContactsMap& all_contacts, const bool inter_chain, const std::string& intervals_string)
+{
+	if(inter_chain)
+	{
+		all_contacts=filter_inter_chain_contacts(all_contacts);
+	}
+
+	if(!intervals_string.empty())
+	{
+		all_contacts=filter_inter_interval_contacts(all_contacts, intervals_string);
+	}
+}
+
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--inter-interval: --inter-chain");
@@ -78,15 +92,7 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 
 	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
 
-	if(clo.isopt("--inter-chain"))
-	{
-		inter_residue_contacts=filter_inter_chain_contacts(inter_residue_contacts);
-	}
-
-	if(clo.isopt("--inter-interval"))
-	{
-		inter_residue_contacts=filter_inter_interval_contacts(inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
-	}
+	filter_custom_contacts(inter_residue_contacts, clo.isopt("--inter-chain"), (clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string("")));
 
 	if(inter_residue_contacts.empty())
 	{
@@ -149,6 +155,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 
 	clo.check_allowed_options("--inter-interval: --inter-chain --optimally-rename-chains --input-inter-atom-contacts");
 
+	const bool inter_chain=clo.isopt("--inter-chain");
+	const std::string intervals_string=(clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string(""));
+
 	InterResidueContacts inter_residue_contacts_1;
 	InterResidueContacts inter_residue_contacts_2;
 	if(clo.isopt("--input-inter-atom-contacts"))
@@ -209,15 +218,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 
 				CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2_with_renamed_chains);
 
-				if(clo.isopt("--inter-chain"))
-				{
-					combined_inter_residue_contacts=filter_inter_chain_contacts(combined_inter_residue_contacts);
-				}
-
-				if(clo.isopt("--inter-interval"))
-				{
-					combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
-				}
+				filter_custom_contacts(combined_inter_residue_contacts, inter_chain, intervals_string);
 
 				const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile=contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, protein::ResidueSummary, contacto::BoundedDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
 				const contacto::ResidueContactAreaDifferenceScore global_score=contacto::calculate_global_contact_area_difference_score_from_profile(residue_contact_area_difference_profile, false);
@@ -263,15 +264,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	{
 		CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2);
 
-		if(clo.isopt("--inter-chain"))
-		{
-			combined_inter_residue_contacts=filter_inter_chain_contacts(combined_inter_residue_contacts);
-		}
-
-		if(clo.isopt("--inter-interval"))
-		{
-			combined_inter_residue_contacts=filter_inter_interval_contacts(combined_inter_residue_contacts, clo.arg<std::string>("--inter-interval"));
-		}
+		filter_custom_contacts(combined_inter_residue_contacts, inter_chain, intervals_string);
 
 		if(combined_inter_residue_contacts.empty())
 		{
