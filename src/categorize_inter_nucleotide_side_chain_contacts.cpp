@@ -57,7 +57,22 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 							one_halfspace=false;
 						}
 					}
-					it->second.areas[one_halfspace ? (first_halfspace<0 ? "SS_d" : "SS_u") : ("SS_s")]=area;
+					if(one_halfspace)
+					{
+						if(first_halfspace<0)
+						{
+							it->second.areas["rna_stacking_down"]=area;
+						}
+						else
+						{
+							it->second.areas["rna_stacking_up"]=area;
+						}
+						it->second.areas["rna_stacking"]=area;
+					}
+					else
+					{
+						it->second.areas["rna_siding"]=area;
+					}
 				}
 			}
 		}
