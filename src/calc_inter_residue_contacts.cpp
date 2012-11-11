@@ -107,6 +107,8 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		inter_residue_contacts_2=auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "model inter-residue contacts", "residue_contacts", false);
 	}
 
+	CombinedInterResidueContacts resulting_combined_inter_residue_contacts;
+
 	bool renaming_performed=false;
 	if(clo.isopt("--optimally-rename-chains"))
 	{
@@ -174,38 +176,32 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 			}
 			while(std::next_permutation(chain_names_permutation.begin(), chain_names_permutation.end()));
 
-			if(variations.empty() || variations.rbegin()->second.empty())
+			if(!variations.empty())
 			{
-				throw std::runtime_error("No combined inter-residue contacts constructed");
-			}
-			else
-			{
-				print_combined_inter_residue_contact_file_comments();
-				auxiliaries::print_map(std::cout, "combined_residue_contacts", variations.rbegin()->second, true);
+				resulting_combined_inter_residue_contacts=variations.rbegin()->second;
 			}
 
 			renaming_performed=true;
 		}
 		else
 		{
-			std::clog << "Chains renaming was not performed\n";
+			std::clog << "Chains renaming was not possible\n";
 		}
 	}
 
 	if(!renaming_performed)
 	{
-		CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2);
+		resulting_combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2);
+		contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactDualAreas, protein::ResidueIDsIntervalsReader>(resulting_combined_inter_residue_contacts, inter_chain, intervals_string);
+	}
 
-		contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactDualAreas, protein::ResidueIDsIntervalsReader>(combined_inter_residue_contacts, inter_chain, intervals_string);
-
-		if(combined_inter_residue_contacts.empty())
-		{
-			throw std::runtime_error("No combined inter-residue contacts constructed");
-		}
-		else
-		{
-			print_combined_inter_residue_contact_file_comments();
-			auxiliaries::print_map(std::cout, "combined_residue_contacts", combined_inter_residue_contacts, true);
-		}
+	if(resulting_combined_inter_residue_contacts.empty())
+	{
+		throw std::runtime_error("No combined inter-residue contacts constructed");
+	}
+	else
+	{
+		print_combined_inter_residue_contact_file_comments();
+		auxiliaries::print_map(std::cout, "combined_residue_contacts", resulting_combined_inter_residue_contacts, true);
 	}
 }
