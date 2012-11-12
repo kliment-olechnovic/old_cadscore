@@ -372,6 +372,8 @@ fi
 
 if $DELETE_DETAILED_MODEL_DATA
 then
-  cd $MODEL_DIR
-  rm `ls | grep -v summary`
+  if cd $MODEL_DIR
+  then
+    rm `ls -1 | grep -v summary`
+  fi
 fi
