@@ -30,8 +30,9 @@ $0 parameters:
     -n    flag to turn on special treatment for nucleic acids
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
-    -j    flag turn off thread-safe mode
-    -x    flag to print summary and delete model generated data
+    -j    flag to turn off thread-safe mode
+    -s    flag to print summary
+    -x    flag to delete detailed model generated data
 
   Other:
     -h    show this message and exit
@@ -78,9 +79,10 @@ RESETTING_CHAIN_NAMES=""
 NUCLEIC_ACIDS_MODE=false
 GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
 FULL_GLOBAL_SCORES=false
-PRINT_SUMMARY_AND_DELETE_MODEL_DATA=false
+PRINT_SUMMARY_TO_STDOUT=false
+DELETE_DETAILED_MODEL_DATA=false
 
-while getopts "hD:t:m:lv:ci:guqe:ajrnyx" OPTION
+while getopts "hD:t:m:lv:ci:guqe:ajrnysx" OPTION
 do
   case $OPTION in
     h)
@@ -136,8 +138,11 @@ do
     y)
       FULL_GLOBAL_SCORES=true
       ;;
+    s)
+      PRINT_SUMMARY_TO_STDOUT=true
+      ;;
     x)
-      PRINT_SUMMARY_AND_DELETE_MODEL_DATA=true
+      DELETE_DETAILED_MODEL_DATA=true
       ;;
     ?)
       exit 1
@@ -360,8 +365,13 @@ if $USE_TMSCORE ; then cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
 	
 if [ -n "$EXTRA_COMMAND" ] ; then cat $EXTRA_COMMAND_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
 
-if $PRINT_SUMMARY_AND_DELETE_MODEL_DATA
+if $PRINT_SUMMARY_TO_STDOUT
 then
   cat $SUMMARY_FILE
-  rm -r $MODEL_DIR
+fi
+
+if $DELETE_DETAILED_MODEL_DATA
+then
+  cd $MODEL_DIR
+  rm `ls | grep -v summary`
 fi
