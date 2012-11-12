@@ -85,7 +85,7 @@ void print_inter_residue_distance_map_image(const auxiliaries::CommandLineOption
 
 	std::vector< std::vector<double> > distance_map(residue_ids_atoms.size(), std::vector<double>(residue_ids_atoms.size(), 0.0));
 
-	double observed_max_distance=std::numeric_limits<double>::min();
+	double observed_max_distance=-std::numeric_limits<double>::max();
 
 	{
 		std::size_t i=0;
