@@ -61,17 +61,17 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 					{
 						if(first_halfspace<0)
 						{
-							it->second.areas["rna_stacking_down"]=area;
+							it->second.areas["na_stacking_down"]=area;
 						}
 						else
 						{
-							it->second.areas["rna_stacking_up"]=area;
+							it->second.areas["na_stacking_up"]=area;
 						}
-						it->second.areas["rna_stacking"]=area;
+						it->second.areas["na_stacking"]=area;
 					}
 					else
 					{
-						it->second.areas["rna_siding"]=area;
+						it->second.areas["na_siding"]=area;
 					}
 				}
 			}
