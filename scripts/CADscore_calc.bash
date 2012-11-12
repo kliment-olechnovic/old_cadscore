@@ -76,8 +76,9 @@ THREAD_SAFE_ON=true
 RESETTING_CHAIN_NAMES=""
 NUCLEIC_ACIDS_MODE=false
 GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
+FULL_GLOBAL_SCORES=false
 
-while getopts "hD:t:m:lv:ci:guqe:ajrn" OPTION
+while getopts "hD:t:m:lv:ci:guqe:ajrny" OPTION
 do
   case $OPTION in
     h)
@@ -129,6 +130,9 @@ do
     n)
       NUCLEIC_ACIDS_MODE=true
       GLOBAL_SCORES_CATEGORIES=$GLOBAL_SCORES_CATEGORIES",na_stacking,na_stacking_down,na_stacking_up,na_siding"
+      ;;
+    y)
+      FULL_GLOBAL_SCORES=true
       ;;
     ?)
       exit 1
@@ -335,8 +339,18 @@ fi
 
 echo target $TARGET_NAME > $SUMMARY_FILE
 echo model $MODEL_NAME >> $SUMMARY_FILE
+
 cat $CAD_SIZE_SCORES_FILE >> $SUMMARY_FILE
-cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" | grep -v "W" >> $SUMMARY_FILE
+
+if $FULL_GLOBAL_SCORES
+then
+  cat $CAD_GLOBAL_SCORES_FILE >> $SUMMARY_FILE
+else
+  cat $CAD_GLOBAL_SCORES_FILE | grep -v "_diff" | grep -v "_ref" | grep -v "W" >> $SUMMARY_FILE
+fi
+
 if $USE_ATOMIC_CADSCORE ; then cat $CAD_ATOMIC_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
+	
 if $USE_TMSCORE ; then cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
+	
 if [ -n "$EXTRA_COMMAND" ] ; then cat $EXTRA_COMMAND_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
