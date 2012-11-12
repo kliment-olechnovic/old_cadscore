@@ -27,10 +27,11 @@ $0 parameters:
     -a    flag to compute atomic global scores
     -r    flag to reset chain names to 'A', 'B', 'C', etc.
     -u    flag to disable model atoms filtering by target atoms
+    -n    flag to turn on special treatment for nucleic acids
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
-    -j    turn off thread-safe mode
-    
+    -j    flag turn off thread-safe mode
+
   Other:
     -h    show this message and exit
 
@@ -73,8 +74,10 @@ EXTRA_COMMAND=""
 USE_ATOMIC_CADSCORE=false
 THREAD_SAFE_ON=true
 RESETTING_CHAIN_NAMES=""
+NUCLEIC_ACIDS_MODE=false
+GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
 
-while getopts "hD:t:m:lv:ci:guqe:ajr" OPTION
+while getopts "hD:t:m:lv:ci:guqe:ajrn" OPTION
 do
   case $OPTION in
     h)
@@ -122,6 +125,10 @@ do
       ;;
     r)
       RESETTING_CHAIN_NAMES="--auto-rename-chains"
+      ;;
+    n)
+      NUCLEIC_ACIDS_MODE=true
+      GLOBAL_SCORES_CATEGORIES=$GLOBAL_SCORES_CATEGORIES",na_stacking,na_stacking_down,na_stacking_up,na_siding"
       ;;
     ?)
       exit 1
@@ -177,7 +184,7 @@ TMSCORE_GLOBAL_SCORES_FILE="$MODEL_DIR/tmscore_global_scores"
 EXTRA_COMMAND_GLOBAL_SCORES_FILE="$MODEL_DIR/extra_command_global_scores"
 SUMMARY_FILE="$MODEL_DIR/summary"
 
-TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
+TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION $NUCLEIC_ACIDS_MODE"
 
 mkdir -p $DATABASE
 
@@ -191,7 +198,15 @@ then
   if [ ! -f $TARGET_ATOMS_FILE ] ; then cat $TARGET_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES > $TARGET_ATOMS_FILE ; fi
   if [ -s "$TARGET_ATOMS_FILE" ] && [ ! -f $TARGET_INTER_ATOM_CONTACTS_FILE ] ; then cat $TARGET_ATOMS_FILE | $VOROPROT --mode calc-inter-atom-contacts > $TARGET_INTER_ATOM_CONTACTS_FILE ; fi
   if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_RESIDUE_IDS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $TARGET_RESIDUE_IDS_FILE ; fi
-  if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ] ; then cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE ; fi
+  if [ -s "$TARGET_INTER_ATOM_CONTACTS_FILE" ] && [ ! -f $TARGET_INTER_RESIDUE_CONTACTS_FILE ]
+  then
+    if $NUCLEIC_ACIDS_MODE
+    then
+      (cat $TARGET_ATOMS_FILE ; cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION) | $VOROPROT --mode categorize-inter-nucleotide-side-chain-contacts > $TARGET_INTER_RESIDUE_CONTACTS_FILE
+    else
+      cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE
+    fi
+  fi
 
   true > $TARGET_MUTEX_END
   if [ ! -f "$TARGET_MUTEX_END" ] ; then echo "Fatal error: could not create file ($TARGET_MUTEX_END)" 1>&2 ; exit 1 ; fi
@@ -253,7 +268,15 @@ if [ ! -s "$MODEL_INTER_ATOM_CONTACTS_FILE" ] ; then echo "Fatal error: no inter
 test -f $MODEL_RESIDUE_IDS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode collect-residue-ids  > $MODEL_RESIDUE_IDS_FILE
 if [ ! -s "$MODEL_RESIDUE_IDS_FILE" ] ; then echo "Fatal error: no filtered residues in the model" 1>&2 ; exit 1 ; fi
 	
-test -f $MODEL_INTER_RESIDUE_CONTACTS_FILE || cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $MODEL_INTER_RESIDUE_CONTACTS_FILE
+if [ ! -f $MODEL_INTER_RESIDUE_CONTACTS_FILE ]
+then
+  if $NUCLEIC_ACIDS_MODE
+  then
+  	(cat $MODEL_FILTERED_ATOMS_FILE ; cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION) | $VOROPROT --mode categorize-inter-nucleotide-side-chain-contacts > $MODEL_INTER_RESIDUE_CONTACTS_FILE
+  else
+    cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $MODEL_INTER_RESIDUE_CONTACTS_FILE
+  fi
+fi
 if [ ! -s "$MODEL_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-residue contacts in the model" 1>&2 ; exit 1 ; fi
 
 ##################################################
@@ -271,7 +294,7 @@ if [ ! -s "$COMBINED_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: co
 test -f $CAD_PROFILE_FILE || cat $COMBINED_INTER_RESIDUE_CONTACTS_FILE $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode calc-CAD-profile > $CAD_PROFILE_FILE
 if [ ! -s "$CAD_PROFILE_FILE" ] ; then echo "Fatal error: CAD profile file is empty" 1>&2 ; exit 1 ; fi
 
-test -f $CAD_GLOBAL_SCORES_FILE || cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-global-scores > $CAD_GLOBAL_SCORES_FILE
+test -f $CAD_GLOBAL_SCORES_FILE || cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-global-scores $GLOBAL_SCORES_CATEGORIES > $CAD_GLOBAL_SCORES_FILE
 if [ ! -s "$CAD_GLOBAL_SCORES_FILE" ] ; then echo "Fatal error: CAD global scores file is empty" 1>&2 ; exit 1 ; fi
 	
 test -f $CAD_SIZE_SCORES_FILE || cat $CAD_PROFILE_FILE $TARGET_RESIDUE_IDS_FILE $MODEL_RESIDUE_IDS_FILE | $VOROPROT --mode calc-CAD-size-scores > $CAD_SIZE_SCORES_FILE
