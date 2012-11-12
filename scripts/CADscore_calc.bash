@@ -31,6 +31,7 @@ $0 parameters:
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
     -j    flag turn off thread-safe mode
+    -x    flag to print summary and delete model generated data
 
   Other:
     -h    show this message and exit
@@ -77,8 +78,9 @@ RESETTING_CHAIN_NAMES=""
 NUCLEIC_ACIDS_MODE=false
 GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
 FULL_GLOBAL_SCORES=false
+PRINT_SUMMARY_AND_DELETE_MODEL_DATA=false
 
-while getopts "hD:t:m:lv:ci:guqe:ajrny" OPTION
+while getopts "hD:t:m:lv:ci:guqe:ajrnyx" OPTION
 do
   case $OPTION in
     h)
@@ -133,6 +135,9 @@ do
       ;;
     y)
       FULL_GLOBAL_SCORES=true
+      ;;
+    x)
+      PRINT_SUMMARY_AND_DELETE_MODEL_DATA=true
       ;;
     ?)
       exit 1
@@ -354,3 +359,9 @@ if $USE_ATOMIC_CADSCORE ; then cat $CAD_ATOMIC_GLOBAL_SCORES_FILE >> $SUMMARY_FI
 if $USE_TMSCORE ; then cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
 	
 if [ -n "$EXTRA_COMMAND" ] ; then cat $EXTRA_COMMAND_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
+
+if $PRINT_SUMMARY_AND_DELETE_MODEL_DATA
+then
+  cat $SUMMARY_FILE
+  rm -r $MODEL_DIR
+fi
