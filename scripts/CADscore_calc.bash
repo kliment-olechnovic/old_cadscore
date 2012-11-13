@@ -152,7 +152,7 @@ done
 
 if [ -z "$DATABASE" ] || [ -z "$TARGET_FILE" ] || [ -z "$MODEL_FILE" ]
 then
-  echo "Fatal error: required parameters were not provided" 1>&2
+  print_help
   exit 1
 fi
 
