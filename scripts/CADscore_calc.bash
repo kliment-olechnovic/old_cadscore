@@ -19,20 +19,21 @@ $0 parameters:
   Optional (basic):
     -l    flag to include heteroatoms
     -c    flag to consider only inter-chain contacts
-    -i    inter-interval contacts specification
     -q    flag to try to rearrange chain names for best possible scores
     -g    flag to use TM-score
+    -i    inter-interval contacts specification
 
   Optional (advanced):  
     -a    flag to compute atomic global scores
     -r    flag to reset chain names to 'A', 'B', 'C', etc.
     -u    flag to disable model atoms filtering by target atoms
     -n    flag to turn on special treatment for nucleic acids
+    -s    flag to print summary to standard output
+    -y    flag to generate more detailed summary
+    -x    flag to delete non-summary data calculated for model
+    -j    flag to turn off thread-safe mode
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
-    -j    flag to turn off thread-safe mode
-    -s    flag to print summary
-    -x    flag to delete detailed model generated data
 
   Other:
     -h    show this message and exit
@@ -66,23 +67,23 @@ DATABASE=""
 TARGET_FILE=""
 MODEL_FILE=""
 HETATM_FLAG=""
-RADII_OPTION=""
 INTER_CHAIN_FLAG=""
-INTER_INTERVAL_OPTION=""
-USE_TMSCORE=false
-DISABLE_MODEL_ATOMS_FILTERING=false
 QUATERNARY_CHAINS_RENAMING=false
-EXTRA_COMMAND=""
+USE_TMSCORE=false
+INTER_INTERVAL_OPTION=""
 USE_ATOMIC_CADSCORE=false
-THREAD_SAFE_ON=true
 RESETTING_CHAIN_NAMES=""
+DISABLE_MODEL_ATOMS_FILTERING=false
 NUCLEIC_ACIDS_MODE=false
 GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
-FULL_GLOBAL_SCORES=false
 PRINT_SUMMARY_TO_STDOUT=false
+FULL_GLOBAL_SCORES=false
 DELETE_DETAILED_MODEL_DATA=false
+THREAD_SAFE_ON=true
+RADII_OPTION=""
+EXTRA_COMMAND=""
 
-while getopts "hD:t:m:lv:ci:guqe:ajrnysx" OPTION
+while getopts "hD:t:m:lcqgi:arunsyxjv:e:" OPTION
 do
   case $OPTION in
     h)
@@ -101,48 +102,48 @@ do
     l)
       HETATM_FLAG="--HETATM"
       ;;
-    v)
-      RADII_OPTION="--radius-classes $OPTARG/vdwr_classes --radius-members $OPTARG/vdwr_members"
-      ;;
     c)
       INTER_CHAIN_FLAG="--inter-chain"
-      ;;
-    i)
-      INTER_INTERVAL_OPTION="--inter-interval "$OPTARG
-      ;;
-    g)
-      USE_TMSCORE=true
-      ;;
-    u)
-      DISABLE_MODEL_ATOMS_FILTERING=true
       ;;
     q)
       QUATERNARY_CHAINS_RENAMING=true
       ;;
-    e)
-      EXTRA_COMMAND=$OPTARG
+    g)
+      USE_TMSCORE=true
+      ;;
+    i)
+      INTER_INTERVAL_OPTION="--inter-interval "$OPTARG
       ;;
     a)
       USE_ATOMIC_CADSCORE=true
       ;;
-    j)
-      THREAD_SAFE_ON=false
-      ;;
     r)
       RESETTING_CHAIN_NAMES="--auto-rename-chains"
+      ;;
+    u)
+      DISABLE_MODEL_ATOMS_FILTERING=true
       ;;
     n)
       NUCLEIC_ACIDS_MODE=true
       GLOBAL_SCORES_CATEGORIES=$GLOBAL_SCORES_CATEGORIES",na_stacking,na_stacking_down,na_stacking_up,na_siding"
       ;;
-    y)
-      FULL_GLOBAL_SCORES=true
-      ;;
     s)
       PRINT_SUMMARY_TO_STDOUT=true
       ;;
+    y)
+      FULL_GLOBAL_SCORES=true
+      ;;
     x)
       DELETE_DETAILED_MODEL_DATA=true
+      ;;
+    j)
+      THREAD_SAFE_ON=false
+      ;;
+    v)
+      RADII_OPTION="--radius-classes $OPTARG/vdwr_classes --radius-members $OPTARG/vdwr_members"
+      ;;
+    e)
+      EXTRA_COMMAND=$OPTARG
       ;;
     ?)
       exit 1
@@ -364,6 +365,9 @@ if $USE_ATOMIC_CADSCORE ; then cat $CAD_ATOMIC_GLOBAL_SCORES_FILE >> $SUMMARY_FI
 if $USE_TMSCORE ; then cat $TMSCORE_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
 	
 if [ -n "$EXTRA_COMMAND" ] ; then cat $EXTRA_COMMAND_GLOBAL_SCORES_FILE >> $SUMMARY_FILE ; fi
+	
+##################################################
+### Optional finalizing
 
 if $PRINT_SUMMARY_TO_STDOUT
 then

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Help printing
+
 print_help()
 {
 cat << EOF 1>&2
@@ -22,6 +25,9 @@ Note: $0 needs TMscore application
 
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
 TMSCORE_BIN_NAME="TMscore"
@@ -84,6 +90,9 @@ then
   echo "Model file \"$MODEL_FILE\" does not exist" 1>&2
   exit 1
 fi
+
+##################################################
+### Getting values from TM-score
 
 TEMP_SHORT_TARGET_FILE=$(mktemp)
 TEMP_SHORT_MODEL_FILE=$(mktemp)

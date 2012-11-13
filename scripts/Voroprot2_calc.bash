@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Help printing
+
 print_help()
 {
 cat << EOF 1>&2
@@ -11,18 +14,21 @@ $0 parameters:
 
   Optional:
     -l    flag to include heteroatoms
-    -v    path to atomic radii files directory
     -a    flag to print atoms
     -q    flag to print quadruples
     -c    flag to print inter-atom contacts
     -r    flag to print inter-residue contacts
     -j    flag to print inter-atom cells faces areas
+    -v    path to atomic radii files directory
   
   Other:
     -h    show this message and exit
 
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
 VOROPROT_NAME="voroprot2"
@@ -107,6 +113,9 @@ then
   echo "File \"$MODEL_FILE\" does not exist" 1>&2
   exit 1
 fi
+
+##################################################
+### Performing flagged tasks
 
 if $PRINT_ATOMS
 then

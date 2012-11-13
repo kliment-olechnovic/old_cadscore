@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Help printing
+
 print_help()
 {
 cat << EOF 1>&2
@@ -19,6 +22,9 @@ General notes:
 
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
 VOROPROT_NAME="voroprot2"
@@ -55,5 +61,8 @@ do
       ;;
   esac
 done
+
+##################################################
+### Running detection
 
 $VOROPROT --mode check-for-any-inter-chain-contact --direct-reading $HETATM_FLAG $PROBE_RADIUS
