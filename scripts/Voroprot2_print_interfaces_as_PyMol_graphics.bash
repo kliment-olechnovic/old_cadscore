@@ -136,7 +136,7 @@ done
 
 if [ -z "$INPUT_FILE" ]
 then
-  echo "Fatal error: input file name not provided" 1>&2
+  print_help
   exit 1
 fi
 
