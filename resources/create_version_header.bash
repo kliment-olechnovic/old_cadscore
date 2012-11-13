@@ -7,7 +7,8 @@ if [ -z "$VERSION" ]
 then
   VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' ' ')
 fi
-VERSION_STRING="CAD-score version $VERSION (experimental)"
+
+VERSION_STRING="Version $VERSION (experimental)"
 
 cat << EOF > ../src/resources/version.h
 #ifndef RESOURCES_VERSION_H_
