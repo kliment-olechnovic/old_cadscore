@@ -2,11 +2,7 @@
 
 cd $(dirname "$0")
 
-VERSION=$(hg branches -a | egrep '^experimental' | awk '{print $2}' | head -1 | tr ':' ' ')
-if [ -z "$VERSION" ]
-then
-  VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' ' ')
-fi
+VERSION=$(hg branches | egrep '^experimental' | awk '{print $2}' | tr ':' ' ')
 
 VERSION_STRING="Version $VERSION (experimental)"
 
