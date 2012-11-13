@@ -3,7 +3,7 @@
 set +e
 
 ##################################################
-### Help printing
+### Printing usage help
 
 print_help()
 {
