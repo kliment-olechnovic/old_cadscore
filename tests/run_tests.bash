@@ -1,14 +1,20 @@
 #!/bin/bash
 
-cp ../Release/voroprot2 ../scripts/voroprot2
-CADSCORE_BIN_DIR=../scripts/
-INPUT_DIR=./input/
-OUTPUT_DIR=./output/
+set -e
 
+cd $(dirname "$0")
 
-rm -r ./output
+rm -r -f ./output
 mkdir ./output
 
+../package.bash cadscore_package
+mv ../cadscore_package.tar.gz ./cadscore_package.tar.gz
+tar -xf ./cadscore_package.tar.gz
+rm ./cadscore_package.tar.gz
+
+CADSCORE_BIN_DIR=./cadscore_package/bin/
+INPUT_DIR=./input/
+OUTPUT_DIR=./output/
 
 for MODEL in $INPUT_DIR/*
 do
@@ -56,3 +62,5 @@ $CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/$DBNAME | sort
 
 DBNAME="db_scores_matrices"
 $CADSCORE_BIN_DIR/CADscore_create_scores_matrices.bash -I $INPUT_DIR/ -O $OUTPUT_DIR/$DBNAME
+
+rm -r ./cadscore_package
