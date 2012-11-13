@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Help printing
+
 print_help()
 {
 cat << EOF 1>&2
@@ -58,6 +61,9 @@ Available coloring modes for faces and selections:
 
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
 VOROPROT_NAME="voroprot2"
@@ -145,6 +151,9 @@ then
   echo "Fatal error: input file \"$INPUT_FILE\" does not exist" 1>&2
   exit 1
 fi
+
+##################################################
+### Generating graphics
 
 TMP_DIR=$(mktemp -d)
 
