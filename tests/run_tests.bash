@@ -11,7 +11,8 @@ rm ./cadscore_package.tar.gz
 
 CADSCORE_BIN_DIR_ABSOLUTE_PATH="$(pwd)/cadscore_package/bin/"
 
-./basic/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH
-./rna/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH
+./basic/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH &
+./rna/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH &
+wait
 
 rm -r ./cadscore_package
