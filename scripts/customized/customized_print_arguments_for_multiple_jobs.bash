@@ -22,7 +22,7 @@ do
   do
     find "$CADSCORE_JOB_DIR/model" -type f | while read MODEL_FILE
     do
-      echo -D $DATABASE_DIR -t $TARGET_FILE -m $MODEL_FILE $CADSCORE_CALC_OPTIONS
+      echo "-D $DATABASE_DIR -t $TARGET_FILE -m $MODEL_FILE $CADSCORE_CALC_OPTIONS"
     done
   done
 done
