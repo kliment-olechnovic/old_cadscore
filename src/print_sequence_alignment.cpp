@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
 
 #include "auxiliaries/command_line_options.h"
 
@@ -42,22 +43,31 @@ std::vector< std::pair<int, int> > create_sequence_alignment(const T& seq1, cons
 			const int current_score=(local ? std::max(0, max_score) : max_score);
 			scores_matrix[i][j]=current_score;
 			directions_matrix[i][j]=(max_score==match_score ? 0 : (max_score==deletion_score ? 1 : 2));
-			if(overall_max_score<current_score)
+			if(overall_max_score<=current_score)
 			{
 				overall_max_score=current_score;
 				overall_max_score_position=std::make_pair(i, j);
 			}
+			std::cout << std::setw(4) << scores_matrix[i][j] << " (" << directions_matrix[i][j] << ")";
 		}
+		std::cout << "\n";
 	}
+	std::cout << "\n";
 
 	std::vector< std::pair<int, int> > alignment;
 	{
-		int i=static_cast<int>(seq1.size());
-		int j=static_cast<int>(seq2.size());
-		if(local)
+		int i=static_cast<int>(overall_max_score_position.first);
+		int j=static_cast<int>(overall_max_score_position.second);
+		if(!local)
 		{
-			i=static_cast<int>(overall_max_score_position.first);
-			j=static_cast<int>(overall_max_score_position.second);
+			for(int ri=static_cast<int>(seq1.size());ri>i;ri--)
+			{
+				alignment.push_back(std::make_pair(ri-1, -1));
+			}
+			for(int rj=static_cast<int>(seq2.size());rj>j;rj--)
+			{
+				alignment.push_back(std::make_pair(-1, rj-1));
+			}
 		}
 		while(i>0 && j>0 && (!local || scores_matrix[i][j]>0))
 		{
