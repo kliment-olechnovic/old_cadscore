@@ -51,36 +51,15 @@ std::vector< std::pair<int, int> > create_sequence_alignment(const T& seq1, cons
 	}
 
 	std::vector< std::pair<int, int> > alignment;
-	if(local)
-	{
-		int i=static_cast<int>(overall_max_score_position.first);
-		int j=static_cast<int>(overall_max_score_position.second);
-		while(i>0 && j>0 && scores_matrix[i][j]>0)
-		{
-			const int dir=directions_matrix[i][j];
-			if(dir==0)
-			{
-				i--;
-				j--;
-				alignment.push_back(std::make_pair(i, j));
-			}
-			else if(dir==1)
-			{
-				i--;
-				alignment.push_back(std::make_pair(i, -1));
-			}
-			else
-			{
-				j--;
-				alignment.push_back(std::make_pair(-1, j));
-			}
-		}
-	}
-	else
 	{
 		int i=static_cast<int>(seq1.size());
 		int j=static_cast<int>(seq2.size());
-		while(i>0 && j>0)
+		if(local)
+		{
+			i=static_cast<int>(overall_max_score_position.first);
+			j=static_cast<int>(overall_max_score_position.second);
+		}
+		while(i>0 && j>0 && (!local || scores_matrix[i][j]>0))
 		{
 			const int dir=directions_matrix[i][j];
 			if(dir==0)
@@ -154,7 +133,7 @@ void print_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 
 	if(seq1.empty() || seq2.empty())
 	{
-		throw std::runtime_error("Two lines not found in standard input ");
+		throw std::runtime_error("Two lines not found in standard input");
 	}
 	else
 	{
