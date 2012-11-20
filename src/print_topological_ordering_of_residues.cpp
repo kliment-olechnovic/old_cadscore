@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <iomanip>
 
 #include "protein/pdb_parsing.h"
 
@@ -12,11 +13,13 @@ struct FullResidueID
 	std::string chain_name;
 	int residue_sequence_number;
 	std::string insertion_code;
+	std::string residue_name;
 
 	FullResidueID(const protein::PDBAtomRecord& record) :
 		chain_name(record.chain_name),
 		residue_sequence_number(record.residue_sequence_number),
-		insertion_code(record.insertion_code)
+		insertion_code(record.insertion_code),
+		residue_name(record.residue_name)
 	{
 	}
 
@@ -34,19 +37,20 @@ struct FullResidueID
 
 	friend std::ostream& operator<<(std::ostream &output, const FullResidueID &rid)
 	{
-		output << (rid.chain_name.empty() ? std::string("?") : rid.chain_name) << " ";
-		output << rid.residue_sequence_number << " ";
-		output << (rid.insertion_code.empty() ? std::string("?") : rid.insertion_code) << " ";
+		output << std::setw(2) << (rid.chain_name.empty() ? std::string("?") : rid.chain_name) << " ";
+		output << std::setw(6) << rid.residue_sequence_number << " ";
+		output << std::setw(2) << (rid.insertion_code.empty() ? std::string(".") : rid.insertion_code) << " ";
+		output << std::setw(4) << (rid.residue_name.empty() ? std::string("_") : rid.residue_name);
 		return output;
 	}
 };
 
-struct RecordsPair
+struct DoubleID
 {
-	const protein::PDBAtomRecord* left;
-	const protein::PDBAtomRecord* right;
+	int left;
+	int right;
 
-	RecordsPair() : left(0), right(0)
+	DoubleID() : left(-1), right(-1)
 	{
 	}
 };
@@ -55,68 +59,101 @@ void print_topological_ordering_of_residues(const auxiliaries::CommandLineOption
 {
 	clo.check_allowed_options("--bond-distance:");
 
-	const double bond_distance=clo.isopt("--bond-distance") ? clo.arg<double>("--bond-distance") : 1.5;
+	const double bond_distance=clo.arg_or_default_value<double>("--bond-distance", 1.8);
 
 	const std::vector<protein::PDBAtomRecord> records=protein::read_PDB_atom_records_from_PDB_file_stream(std::cin);
 
-	std::map<FullResidueID, RecordsPair> nodes_map;
-	for(std::size_t i=0;i<records.size();i++)
+	for(int t=0;t<2;t++)
 	{
-		const protein::PDBAtomRecord& record=records[i];
-		if((record.alternate_location_indicator.empty() || record.alternate_location_indicator=="A") && record.residue_name!="HOH")
+		std::map<FullResidueID, DoubleID> nodes_map;
+		for(std::size_t i=0;i<records.size();i++)
 		{
-			if(record.name=="N")
+			const protein::PDBAtomRecord& record=records[i];
+			if((record.alternate_location_indicator.empty() || record.alternate_location_indicator=="A") && record.residue_name!="HOH")
 			{
-				nodes_map[FullResidueID(record)].left=&record;
-			}
-			else if(record.name=="C")
-			{
-				nodes_map[FullResidueID(record)].right=&record;
-			}
-		}
-	}
-
-	std::vector< std::pair<FullResidueID, RecordsPair> > nodes_vector;
-	nodes_vector.reserve(nodes_map.size());
-	for(std::map<FullResidueID, RecordsPair>::const_iterator it=nodes_map.begin();it!=nodes_map.end();++it)
-	{
-		if(it->second.left!=0 && it->second.right!=0)
-		{
-			nodes_vector.push_back(*it);
-		}
-	}
-
-	std::vector< std::pair<int, int> > bonds(nodes_vector.size(), std::make_pair(-1, -1));
-	for(std::size_t i=0;i<nodes_vector.size();i++)
-	{
-		bool found=false;
-		for(std::size_t l=0;l<nodes_vector.size() && !found;l++)
-		{
-			const std::size_t j=(i+l<nodes_vector.size() ? (i+l) : (i+l-nodes_vector.size()));
-			if(j!=i && apollo::distance_from_point_to_point(*(nodes_vector[i].second.right), *(nodes_vector[j].second.left))<bond_distance)
-			{
-				found=true;
-				bonds[i].second=j;
-				bonds[j].first=i;
+				if(t==0)
+				{
+					if(record.name=="N")
+					{
+						nodes_map[FullResidueID(record)].left=i;
+					}
+					else if(record.name=="C")
+					{
+						nodes_map[FullResidueID(record)].right=i;
+					}
+				}
+				else if(t==1)
+				{
+					if(record.name=="P")
+					{
+						nodes_map[FullResidueID(record)].left=i;
+					}
+					else if(record.name=="O3'" || record.name=="O3*")
+					{
+						nodes_map[FullResidueID(record)].right=i;
+					}
+				}
 			}
 		}
-	}
 
-	std::vector<bool> visited(nodes_vector.size(), false);
-	for(std::size_t i=0;i<bonds.size();i++)
-	{
-		if(bonds[i].first<0 && !visited[i])
+		std::vector< std::pair<FullResidueID, DoubleID> > nodes_vector;
+		for(std::map<FullResidueID, DoubleID>::const_iterator it=nodes_map.begin();it!=nodes_map.end();++it)
 		{
-			std::cout << nodes_vector[i].first << "\n";
-			visited[i]=true;
-			int next=bonds[i].second;
-			while(next>=0 && !visited[next])
+			if(it->second.left>=0 || it->second.right>=0)
 			{
-				std::cout << nodes_vector[next].first << "\n";
-				visited[next]=true;
-				next=bonds[next].second;
+				nodes_vector.push_back(*it);
 			}
-			std::cout << "ter\n";
+		}
+
+		std::vector<DoubleID> bonds(nodes_vector.size());
+		for(std::size_t i=0;i<nodes_vector.size();i++)
+		{
+			bool found=false;
+			for(std::size_t l=0;l<nodes_vector.size() && !found;l++)
+			{
+				const std::size_t j=(i+l<nodes_vector.size() ? (i+l) : (i+l-nodes_vector.size()));
+				if(j!=i)
+				{
+					const int i_right=nodes_vector[i].second.right;
+					const int j_left=nodes_vector[j].second.left;
+					if(i_right>=0 && j_left>=0 && apollo::distance_from_point_to_point(records[i_right], records[j_left])<bond_distance)
+					{
+						found=true;
+						bonds[i].right=j;
+						bonds[j].left=i;
+					}
+				}
+			}
+		}
+
+		std::vector< std::vector<FullResidueID> > chains;
+		std::vector<bool> visited(nodes_vector.size(), false);
+		for(std::size_t i=0;i<bonds.size();i++)
+		{
+			if(bonds[i].left<0 && !visited[i])
+			{
+				chains.push_back(std::vector<FullResidueID>());
+				chains.back().push_back(nodes_vector[i].first);
+				visited[i]=true;
+				int next=bonds[i].right;
+				while(next>=0 && !visited[next])
+				{
+					chains.back().push_back(nodes_vector[next].first);
+					visited[next]=true;
+					next=bonds[next].right;
+				}
+			}
+		}
+
+		std::cout << (t==0 ? "protein chains" : "nucleic acid chains") << " count " << chains.size() << "\n\n";
+		for(std::size_t i=0;i<chains.size();i++)
+		{
+			std::cout << "chain size " << chains[i].size() << "\n";
+			for(std::size_t j=0;j<chains[i].size();j++)
+			{
+				std::cout << chains[i][j] << "\n";
+			}
+			std::cout << "\n";
 		}
 	}
 }
