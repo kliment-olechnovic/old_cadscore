@@ -4,19 +4,32 @@
 
 #include "auxiliaries/command_line_options.h"
 
-template<typename T>
-struct PrimitiveScorer
+struct SimpleScorer
 {
+	int match_score;
+	int mismatch_score;
+	int gap_score;
+
+	SimpleScorer(int match_score, int mismatch_score, int gap_score) :
+		match_score(match_score),
+		mismatch_score(mismatch_score),
+		gap_score(gap_score)
+	{
+	}
+
+	template<typename T>
 	static int match(const T& v1, const T& v2)
 	{
 		return (v1==v2 ? 2 : -1);
 	}
 
+	template<typename T>
 	static int deletion(const T&)
 	{
 		return -1;
 	}
 
+	template<typename T>
 	static int insertion(const T&)
 	{
 		return -1;
@@ -48,11 +61,8 @@ std::vector< std::pair<int, int> > create_sequence_alignment(const T& seq1, cons
 				overall_max_score=current_score;
 				overall_max_score_position=std::make_pair(i, j);
 			}
-			std::cout << std::setw(4) << scores_matrix[i][j] << " (" << directions_matrix[i][j] << ")";
 		}
-		std::cout << "\n";
 	}
-	std::cout << "\n";
 
 	std::vector< std::pair<int, int> > alignment;
 	{
@@ -204,10 +214,11 @@ void print_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
+		SimpleScorer scorer(2, -1, -1);
 		std::cout << "\nglobal:\n";
-		print_sequence_alignment(seq1, seq2, create_sequence_alignment(seq1, seq2, PrimitiveScorer<std::string::value_type>(), false));
+		print_sequence_alignment(seq1, seq2, create_sequence_alignment(seq1, seq2, scorer, false));
 		std::cout << "\nlocal:\n";
-		print_sequence_alignment(seq1, seq2, create_sequence_alignment(seq1, seq2, PrimitiveScorer<std::string::value_type>(), true));
+		print_sequence_alignment(seq1, seq2, create_sequence_alignment(seq1, seq2, scorer, true));
 		std::cout << "\n";
 	}
 }
