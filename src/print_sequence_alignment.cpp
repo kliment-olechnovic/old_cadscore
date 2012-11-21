@@ -56,18 +56,12 @@ std::vector< std::pair<int, int> > create_sequence_alignment(const T& seq1, cons
 
 	std::vector< std::pair<int, int> > alignment;
 	{
-		int i=static_cast<int>(overall_max_score_position.first);
-		int j=static_cast<int>(overall_max_score_position.second);
-		if(!local)
+		int i=static_cast<int>(seq1.size());
+		int j=static_cast<int>(seq2.size());
+		if(local)
 		{
-			for(int ri=static_cast<int>(seq1.size());ri>i;ri--)
-			{
-				alignment.push_back(std::make_pair(ri-1, -1));
-			}
-			for(int rj=static_cast<int>(seq2.size());rj>j;rj--)
-			{
-				alignment.push_back(std::make_pair(-1, rj-1));
-			}
+			i=static_cast<int>(overall_max_score_position.first);
+			j=static_cast<int>(overall_max_score_position.second);
 		}
 		while(i>0 && j>0 && (!local || scores_matrix[i][j]>0))
 		{
