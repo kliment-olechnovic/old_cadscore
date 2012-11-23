@@ -22,6 +22,7 @@ void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
 void calc_quadruples(const auxiliaries::CommandLineOptions& clo);
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo);
 void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& clo);
+void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo);
 void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo);
@@ -87,6 +88,7 @@ int main(const int argc, const char** argv)
 		modes_map["calc-quadruples"]=ModeFunctionPointer(calc_quadruples);
 		modes_map["categorize-inter-nucleotide-side-chain-contacts"]=ModeFunctionPointer(categorize_inter_nucleotide_side_chain_contacts);
 		modes_map["check-for-any-inter-chain-contact"]=ModeFunctionPointer(check_for_any_inter_chain_contact);
+		modes_map["check-for-inter-atom-clashes"]=ModeFunctionPointer(check_for_inter_atom_clashes);
 		modes_map["collect-atoms"]=ModeFunctionPointer(collect_atoms);
 		modes_map["collect-residue-ids"]=ModeFunctionPointer(collect_residue_ids);
 		modes_map["filter-atoms-by-name"]=ModeFunctionPointer(filter_atoms_by_name);
