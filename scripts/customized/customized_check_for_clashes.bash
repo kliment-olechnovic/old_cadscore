@@ -17,5 +17,5 @@ then
   exit 1
 fi
 
-./voroprot2 --mode collect-atoms --HETATM < $PDB_FILE \
-| ./voroprot2 --mode check-for-inter-atom-clashes --inter-chain --cutoff 1.0
+$VOROPROT --mode collect-atoms --HETATM < $PDB_FILE \
+| $VOROPROT --mode check-for-inter-atom-clashes --inter-chain --cutoff 1.0
