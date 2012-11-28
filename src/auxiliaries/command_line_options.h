@@ -100,18 +100,34 @@ public:
 	}
 
 	template<typename T>
-	std::vector<T> arg_vector(const std::string& name) const
+	std::vector<T> arg_vector(const std::string& name, const char delimiter) const
 	{
 		std::vector<T> result;
 		if(isarg(name))
 		{
-			std::istringstream input(options_.find(name)->second);
+			std::string contents=options_.find(name)->second;
+			for(std::size_t i=0;i<contents.size();i++)
+			{
+				if(contents[i]==delimiter)
+				{
+					contents[i]=' ';
+				}
+			}
+			std::istringstream input(contents);
 			while(input.good())
 			{
 				T val;
 				input >> val;
+				if(input.fail())
+				{
+					throw std::runtime_error(std::string("Invalid command line argument list: ")+name);
+				}
 				result.push_back(val);
 			}
+		}
+		if(result.empty())
+		{
+			throw std::runtime_error(std::string("Empty command line argument list: ")+name);
 		}
 		return result;
 	}

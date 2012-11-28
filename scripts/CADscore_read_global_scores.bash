@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Printing usage help
+
 print_help()
 {
 cat << EOF 1>&2
@@ -14,6 +17,9 @@ $0 parameters:
   
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 DATABASE=""
 
@@ -44,6 +50,9 @@ then
   echo "Database directory \"$DATABASE\" does not exist" 1>&2
   exit 1
 fi
+
+##################################################
+### Processing summary files
 
 NEED_TO_PRINT_HEADER=true
 
