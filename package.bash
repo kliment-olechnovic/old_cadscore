@@ -1,10 +1,17 @@
 #!/bin/bash
 
-VERSION=$(hg branches -a | egrep '^default' | awk '{print $2}' | tr ':' '_')
-PACKAGE_NAME="cadscore_$VERSION"
+PACKAGE_NAME=$1
 
-rm $PACKAGE_NAME.tar.gz
-rm -r $PACKAGE_NAME
+cd $(dirname "$0")
+
+if [ -z "$PACKAGE_NAME" ]
+then
+  VERSION=$(hg branches | egrep '^default' | awk '{print $2}' | tr ':' '_')
+  PACKAGE_NAME="cadscore_$VERSION"
+fi
+
+rm -f $PACKAGE_NAME.tar.gz
+rm -r -f $PACKAGE_NAME
 
 mkdir -p $PACKAGE_NAME
 cp README $PACKAGE_NAME/README

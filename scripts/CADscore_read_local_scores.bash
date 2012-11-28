@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##################################################
+### Printing usage help
+
 print_help()
 {
 cat << EOF 1>&2
@@ -20,6 +23,9 @@ $0 parameters:
 
 EOF
 }
+
+##################################################
+### Reading and checking arguments
 
 SCRIPT_DIRECTORY=$(dirname $0)
 VOROPROT_NAME="voroprot2"
@@ -74,6 +80,9 @@ then
   print_help
   exit 1
 fi
+
+##################################################
+### Processing CAD profile
 
 CAD_PROFILE_FILE="$DATABASE/$TARGET_NAME/$MODEL_NAME/cad_profile"
 

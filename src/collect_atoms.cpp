@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <memory>
 
 #include "protein/atoms_reading.h"
 #include "protein/atoms_classification.h"
@@ -17,30 +18,27 @@
 
 protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& radius_classes_file_name, const std::string& radius_members_file_name)
 {
-	std::istream* radius_classes_stream=0;
+	std::auto_ptr<std::istream> radius_classes_stream;
 	if(radius_classes_file_name.empty())
 	{
-		radius_classes_stream=new std::istringstream(std::string(reinterpret_cast<const char*>(resources::vdwr_classes), resources::vdwr_classes_len));
+		radius_classes_stream.reset(new std::istringstream(std::string(reinterpret_cast<const char*>(resources::vdwr_classes), resources::vdwr_classes_len)));
 	}
 	else
 	{
-		radius_classes_stream=new std::ifstream(radius_classes_file_name.c_str());
+		radius_classes_stream.reset(new std::ifstream(radius_classes_file_name.c_str()));
 	}
 
-	std::istream* radius_members_stream=0;
+	std::auto_ptr<std::istream> radius_members_stream;
 	if(radius_members_file_name.empty())
 	{
-		radius_members_stream=new std::istringstream(std::string(reinterpret_cast<const char*>(resources::vdwr_members), resources::vdwr_members_len));
+		radius_members_stream.reset(new std::istringstream(std::string(reinterpret_cast<const char*>(resources::vdwr_members), resources::vdwr_members_len)));
 	}
 	else
 	{
-		radius_members_stream=new std::ifstream(radius_members_file_name.c_str());
+		radius_members_stream.reset(new std::ifstream(radius_members_file_name.c_str()));
 	}
 
 	const protein::VanDerWaalsRadiusAssigner radius_assigner(*radius_classes_stream, *radius_members_stream);
-
-	delete radius_classes_stream;
-	delete radius_members_stream;
 
 	return radius_assigner;
 }

@@ -54,18 +54,26 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 
 void calc_contact_area_difference_global_scores(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--use-min");
+	clo.check_allowed_options("--use-min --categories: --add-categories:");
 
 	const bool use_min=clo.isopt("--use-min");
+
+	const std::vector<std::string> main_categories=clo.isopt("--categories") ? clo.arg_vector<std::string>("--categories", ',') : contacto::ContactClassification::get_all_classes_list();
+	const std::vector<std::string> additional_categories=clo.isopt("--add-categories") ? clo.arg_vector<std::string>("--add-categories", ',') : std::vector<std::string>();
+
+	std::vector<std::string> all_categories=main_categories;
+	if(!additional_categories.empty())
+	{
+		all_categories.insert(all_categories.end(), additional_categories.begin(), additional_categories.end());
+	}
 
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile=auxiliaries::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>(std::cin, " CAD profile", "cad_profile", false);
 
 	const contacto::ResidueContactAreaDifferenceScore global_score=contacto::calculate_global_contact_area_difference_score_from_profile(residue_contact_area_difference_profile, use_min);
 
-	const std::vector<std::string> all_classes=contacto::ContactClassification::get_all_classes_list();
-	for(std::size_t i=0;i<all_classes.size();i++)
+	for(std::size_t i=0;i<all_categories.size();i++)
 	{
-		const std::string& the_class=all_classes[i];
+		const std::string& the_class=all_categories[i];
 		const contacto::Ratio ratio=global_score.ratio(the_class);
 		std::cout << the_class << "_diff " << ratio.difference << "\n";
 		std::cout << the_class << "_ref " << ratio.reference << "\n";
