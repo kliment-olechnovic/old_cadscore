@@ -3,8 +3,12 @@
 #include <iomanip>
 
 #include "protein/pairwise_sequence_alignment.h"
+#include "protein/residue_id.h"
+#include "protein/residue_summary.h"
+#include "protein/letters_coding.h"
 
 #include "auxiliaries/command_line_options.h"
+#include "auxiliaries/map_io.h"
 
 template<typename T>
 void print_sequence_alignment(const T& seq1, const T& seq2, const protein::PairwiseSequenceAlignment::AlignmentResult& alignment_result)
@@ -49,7 +53,7 @@ void print_sequence_alignment(const T& seq1, const T& seq2, const protein::Pairw
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
 			const int j=alignment[i].first;
-			std::cout << (j>=0 ? seq1[j] : '-');
+			std::cout << (j>=0 ? seq1[j] : '+');
 		}
 		for(int i=end.first+1;i<static_cast<int>(seq1.size());i++)
 		{
@@ -65,11 +69,11 @@ void print_sequence_alignment(const T& seq1, const T& seq2, const protein::Pairw
 		{
 			if(alignment[i].first>=0 && alignment[i].second>=0 && (seq1[alignment[i].first]==seq2[alignment[i].second]))
 			{
-				std::cout << "+";
+				std::cout << "|";
 			}
 			else
 			{
-				std::cout << "|";
+				std::cout << "-";
 			}
 		}
 		std::cout << "\n";
@@ -85,7 +89,7 @@ void print_sequence_alignment(const T& seq1, const T& seq2, const protein::Pairw
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
 			const int j=alignment[i].second;
-			std::cout << (j>=0 ? seq2[j] : '-');
+			std::cout << (j>=0 ? seq2[j] : '+');
 		}
 		for(int i=end.second+1;i<static_cast<int>(seq2.size());i++)
 		{
@@ -95,15 +99,40 @@ void print_sequence_alignment(const T& seq1, const T& seq2, const protein::Pairw
 	}
 }
 
+std::string read_sequence_from_residue_ids()
+{
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "residue identifiers", "residue_ids", false);
+	std::ostringstream output;
+	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids.begin();it!=residue_ids.end();++it)
+	{
+		output << protein::convert_residue_codes_3_to_1(it->second.name);
+		std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator next_it=it;
+		++next_it;
+		if(next_it!=residue_ids.end() && next_it->first.chain_id!=it->first.chain_id)
+		{
+			output << "=";
+		}
+	}
+	return output.str();
+}
+
 void print_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("");
+	clo.check_allowed_options("--read-residue-ids");
 
 	std::string seq1;
 	std::string seq2;
 
-	std::getline(std::cin, seq1);
-	std::getline(std::cin, seq2);
+	if(clo.isopt("--read-residue-ids"))
+	{
+		seq1=read_sequence_from_residue_ids();
+		seq2=read_sequence_from_residue_ids();
+	}
+	else
+	{
+		std::getline(std::cin, seq1);
+		std::getline(std::cin, seq2);
+	}
 
 	if(seq1.empty() || seq2.empty())
 	{
