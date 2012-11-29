@@ -13,7 +13,7 @@ namespace protein
 class ResidueIDsIntervalsReader
 {
 public:
-	static bool read_residue_ids_intervals(const std::string input, std::vector< std::vector< std::pair<ResidueID, ResidueID> > >& result)
+	static bool read_residue_ids_intervals(const std::string& input, std::vector< std::vector< std::pair<ResidueID, ResidueID> > >& result)
 	{
 		std::vector< std::vector< std::pair<ResidueID, ResidueID> > > intervals;
 		std::string::size_type a=input.find('(', 0);
@@ -53,7 +53,7 @@ public:
 	}
 
 private:
-	static bool read_residue_id(const std::string input, ResidueID& result)
+	static bool read_residue_id(const std::string& input, ResidueID& result)
 	{
 		std::string filtered_input;
 		filtered_input.reserve(input.size());
@@ -112,7 +112,7 @@ private:
 		}
 	}
 
-	static bool read_residue_ids_interval(const std::string input, std::pair<ResidueID, ResidueID>& result)
+	static bool read_residue_ids_interval(const std::string& input, std::pair<ResidueID, ResidueID>& result)
 	{
 		std::string::size_type a=input.find('-', 0);
 		if(a<input.size())
@@ -158,7 +158,7 @@ private:
 		}
 	}
 
-	static bool read_residue_ids_intervals(const std::string input, std::vector< std::pair<ResidueID, ResidueID> >& result)
+	static bool read_residue_ids_intervals(const std::string& input, std::vector< std::pair<ResidueID, ResidueID> >& result)
 	{
 		std::vector< std::pair<ResidueID, ResidueID> > intervals;
 		std::string::size_type a=0;
