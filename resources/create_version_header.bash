@@ -2,9 +2,9 @@
 
 cd $(dirname "$0")
 
-VERSION=$(hg branches | egrep '^experimental' | awk '{print $2}' | tr ':' ' ')
+VERSION=$(hg branches | egrep '^default' | awk '{print $2}' | tr ':' ' ')
 
-VERSION_STRING="Version $VERSION (experimental)"
+VERSION_STRING="Version $VERSION"
 
 cat << EOF > ../src/resources/version.h
 #ifndef RESOURCES_VERSION_H_
