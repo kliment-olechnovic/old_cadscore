@@ -76,7 +76,7 @@ public:
 					const int max_score=std::max(match_score, std::max(deletion_score, insertion_score));
 					const int current_score=(local ? std::max(0, max_score) : max_score);
 					scores_matrix[i][j]=current_score;
-					directions_matrix[i][j]=(max_score==match_score ? 0 : (max_score==deletion_score ? 1 : 2));
+					directions_matrix[i][j]=(max_score==insertion_score ? 2 : (max_score==deletion_score ? 1 : 0));
 					if(overall_max_score<=current_score)
 					{
 						overall_max_score=current_score;
