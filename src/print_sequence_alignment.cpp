@@ -140,7 +140,7 @@ void print_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		protein::PairwiseSequenceAlignment::SimpleScorer scorer(2, -1, -1);
+		protein::PairwiseSequenceAlignment::SimpleScorer scorer(2, -1, -1, -1);
 		std::cout << "\nglobal:\n";
 		print_sequence_alignment(seq1, seq2, protein::PairwiseSequenceAlignment::align_two_sequences(seq1, seq2, scorer, false));
 		std::cout << "\nlocal:\n";
