@@ -1,0 +1,4 @@
+Tried renaming chains: ( A B ) -> ( A B ), got AA-score == 0.477692
+Tried renaming chains: ( A B ) -> ( B A ), got AA-score == 0.47185
+Tried renaming chains: ( A B ) -> ( A B ), got AA-score == 0.610232
+Tried renaming chains: ( A B ) -> ( B A ), got AA-score == 0.620952

@@ -29,3 +29,5 @@ fi
 wait
 
 rm -r ./cadscore_package
+
+hg status ./
