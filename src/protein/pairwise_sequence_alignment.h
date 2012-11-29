@@ -14,31 +14,33 @@ public:
 	{
 		int match_score;
 		int mismatch_score;
-		int gap_score;
+		int deletion_score;
+		int insertion_score;
 
-		SimpleScorer(int match_score, int mismatch_score, int gap_score) :
+		SimpleScorer(int match_score, int mismatch_score, int deletion_score, int insertion_score) :
 			match_score(match_score),
 			mismatch_score(mismatch_score),
-			gap_score(gap_score)
+			deletion_score(deletion_score),
+			insertion_score(insertion_score)
 		{
 		}
 
 		template<typename T>
-		static int match(const T& v1, const T& v2)
+		int match(const T& v1, const T& v2) const
 		{
-			return (v1==v2 ? 2 : -1);
+			return (v1==v2 ? match_score : mismatch_score);
 		}
 
 		template<typename T>
-		static int deletion(const T&)
+		int deletion(const T&) const
 		{
-			return -1;
+			return deletion_score;
 		}
 
 		template<typename T>
-		static int insertion(const T&)
+		int insertion(const T&) const
 		{
-			return -1;
+			return insertion_score;
 		}
 	};
 
