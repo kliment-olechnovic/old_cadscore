@@ -105,7 +105,7 @@ std::string read_sequence_from_residue_ids()
 	std::ostringstream output;
 	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids.begin();it!=residue_ids.end();++it)
 	{
-		output << protein::convert_residue_codes_3_to_1(it->second.name);
+		output << protein::convert_residue_codes_big_to_small(it->second.name);
 		std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator next_it=it;
 		++next_it;
 		if(next_it!=residue_ids.end() && next_it->first.chain_id!=it->first.chain_id)
