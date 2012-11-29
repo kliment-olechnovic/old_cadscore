@@ -10,6 +10,9 @@ rm -r -f $OUTPUT_DIR
 mkdir $OUTPUT_DIR
 
 
+exec &> $OUTPUT_DIR/output_log
+
+
 for MODEL in $INPUT_DIR/*
 do
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -q > $OUTPUT_DIR/quadruples_$(basename $MODEL) &
