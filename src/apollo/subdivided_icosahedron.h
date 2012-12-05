@@ -95,7 +95,7 @@ private:
 		PairsMap pairs_vertices;
 		std::vector<Triple> new_triples;
 		new_triples.reserve(triples_.size()*4);
-		std::size_t middle_point_ids[3]={-1,-1,-1};
+		std::size_t middle_point_ids[3]={0, 0, 0};
 		for(std::size_t i=0;i<triples_.size();i++)
 		{
 			const Triple& triple=triples_[i];
