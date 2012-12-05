@@ -5,6 +5,7 @@
 #include <map>
 #include <stdexcept>
 #include <iostream>
+#include <limits>
 
 #include "tuples.h"
 #include "points_basic_operations.h"
@@ -21,7 +22,7 @@ class ApolloniusFace
 public:
 	typedef SphereType Sphere;
 	typedef std::map< std::size_t, std::vector<SimpleSphere> > ContainerForD3;
-	static const std::size_t npos=-1;
+	static const std::size_t npos=static_cast<std::size_t>(-1);
 
 	ApolloniusFace(
 			const std::vector<Sphere>& spheres,
