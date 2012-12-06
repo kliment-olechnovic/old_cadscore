@@ -378,6 +378,9 @@ if $DELETE_DETAILED_MODEL_DATA
 then
   if cd $MODEL_DIR
   then
-    rm `ls -1 | grep -v summary`
+    rm -f $MODEL_ATOMS_FILE
+    rm -f $MODEL_FILTERED_ATOMS_FILE
+    rm -f $MODEL_INTER_ATOM_CONTACTS_FILE
+    rm -f $MODEL_INTER_RESIDUE_CONTACTS_FILE
   fi
 fi
