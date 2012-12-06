@@ -18,4 +18,4 @@ then
 fi
 
 $VOROPROT --mode collect-atoms --HETATM < $PDB_FILE \
-| $VOROPROT --mode check-for-inter-atom-clashes --inter-chain --cutoff 1.0
+| $VOROPROT --mode check-for-inter-atom-clashes --inter-chain --cutoff 1.0 --only-main-chain
