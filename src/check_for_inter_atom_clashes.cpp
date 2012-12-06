@@ -40,12 +40,31 @@ void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 
-	clo.check_allowed_options("--cutoff: --inter-chain");
+	clo.check_allowed_options("--cutoff: --inter-chain --only-main-chain");
 
-	const bool inter_chain=clo.isopt("--inter-chain");
 	const double cutoff=clo.isopt("--cutoff") ? clo.arg_with_min_value<double>("--cutoff", 0) : 0;
+	const bool inter_chain=clo.isopt("--inter-chain");
+	const bool only_main_chain=clo.isopt("--only-main-chain");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
+	if(only_main_chain)
+	{
+		std::vector<protein::Atom> main_chain_atoms;
+		for(std::size_t i=0;i<atoms.size();i++)
+		{
+			const protein::Atom& atom=atoms[i];
+			if(atom.location_class==protein::Atom::main_chain)
+			{
+				main_chain_atoms.push_back(atom);
+			}
+		}
+		if(main_chain_atoms.empty())
+		{
+			throw std::runtime_error("No main chain atoms provided");
+		}
+		atoms=main_chain_atoms;
+	}
 
 	const Hierarchy hierarchy(atoms, 1.4*3, 1);
 
