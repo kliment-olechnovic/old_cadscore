@@ -23,6 +23,7 @@ cp Release/voroprot2 $PACKAGE_NAME/bin/voroprot2
 cp scripts/Voroprot2_* $PACKAGE_NAME/bin
 cp scripts/CADscore_* $PACKAGE_NAME/bin
 cp scripts/TMscore_calc.bash $PACKAGE_NAME/bin
+cp -r scripts/customized $PACKAGE_NAME/bin/customized
 
 mkdir -p $PACKAGE_NAME/resources
 cp resources/vdwr_* $PACKAGE_NAME/resources
