@@ -176,6 +176,7 @@ fi
 ##################################################
 ### Preparing and checking environment
 
+VERSION_STRING_FILE="$DATABASE/version"
 TARGET_DIR="$DATABASE/$TARGET_NAME"
 TARGET_MUTEX_END="$TARGET_DIR/mutex_closed"
 TARGET_PARAMETERS_FILE="$TARGET_DIR/parameters"
@@ -199,9 +200,23 @@ TMSCORE_GLOBAL_SCORES_FILE="$MODEL_DIR/tmscore_global_scores"
 EXTRA_COMMAND_GLOBAL_SCORES_FILE="$MODEL_DIR/extra_command_global_scores"
 SUMMARY_FILE="$MODEL_DIR/summary"
 
+VERSION_STRING=$($VOROPROT --version)
+
 TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION $NUCLEIC_ACIDS_MODE"
 
 mkdir -p $DATABASE
+
+if [ -f "$VERSION_STRING_FILE" ]
+then
+  CURRENT_VERSION_STRING=$(< $VERSION_STRING_FILE)
+  if [ "$VERSION_STRING" != "$CURRENT_VERSION_STRING" ]
+  then
+    echo "Fatal error: running software version is not equal to the version that the database was created with" 1>&2
+    exit 1
+  fi
+else
+  echo -n "$VERSION_STRING" > $VERSION_STRING_FILE
+fi
 
 ##################################################
 ### Preprocessing target
