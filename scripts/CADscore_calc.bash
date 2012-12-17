@@ -206,19 +206,18 @@ VERSION_STRING=$($VOROPROT --version | tr -d '\n')
 
 TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION $NUCLEIC_ACIDS_MODE"
 
-mkdir -p $DATABASE
-if [ ! -d "$DATABASE" ] ; then echo "Fatal error: could not create database directory ($DATABASE)" 1>&2 ; exit 1 ; fi
-
-if [ -f "$VERSION_STRING_FILE" ]
+if [ ! -d "$DATABASE" ]
 then
+  mkdir -p $DATABASE
+  if [ ! -d "$DATABASE" ] ; then echo "Fatal error: could not create database directory ($DATABASE)" 1>&2 ; exit 1 ; fi
+  echo -n "$VERSION_STRING" > $VERSION_STRING_FILE
+else
   CURRENT_VERSION_STRING=$(< $VERSION_STRING_FILE)
   if [ "$VERSION_STRING" != "$CURRENT_VERSION_STRING" ]
   then
     echo "Fatal error: running software version is not equal to the version that the database ($DATABASE) was created with" 1>&2
     exit 1
   fi
-else
-  echo -n "$VERSION_STRING" > $VERSION_STRING_FILE
 fi
 
 ##################################################

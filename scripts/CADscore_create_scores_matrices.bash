@@ -102,31 +102,26 @@ VERSION_STRING=$($VOROPROT --version | tr -d '\n')
 
 DATABASE_PARAMETERS="$HETATM_FLAG $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 
-mkdir -p "$DATABASE"
-if [ ! -d "$DATABASE" ] ; then echo "Fatal error: could not create output directory ($DATABASE)" 1>&2 ; exit 1 ; fi
-
-if [ -f "$VERSION_STRING_FILE" ]
+if [ ! -d "$DATABASE" ]
 then
+  mkdir -p "$DATABASE"
+  if [ ! -d "$DATABASE" ] ; then echo "Fatal error: could not create output directory ($DATABASE)" 1>&2 ; exit 1 ; fi
+  echo -n "$VERSION_STRING" > $VERSION_STRING_FILE
+  echo -n "$DATABASE_PARAMETERS" > $DATABASE_PARAMETERS_FILE
+else
   CURRENT_VERSION_STRING=$(< $VERSION_STRING_FILE)
   if [ "$VERSION_STRING" != "$CURRENT_VERSION_STRING" ]
   then
     echo "Fatal error: running software version is not equal to the version that the database was created with" 1>&2
     exit 1
   fi
-else
-  echo -n "$VERSION_STRING" > $VERSION_STRING_FILE
-fi
-
-if [ -f "$DATABASE_PARAMETERS_FILE" ]
-then
+  
   CURRENT_DATABASE_PARAMETERS=$(< $DATABASE_PARAMETERS_FILE)
   if [ "$DATABASE_PARAMETERS" != "$CURRENT_DATABASE_PARAMETERS" ]
   then
-    echo "Fatal error: provided script parameters do not match the previous parameters that were used with the same database path" 1>&2
+    echo "Fatal error: provided script parameters do not match the previous parameters that were used with the same output directory" 1>&2
     exit 1
   fi  
-else
-  echo -n "$DATABASE_PARAMETERS" > $DATABASE_PARAMETERS_FILE
 fi
 
 ##################################################
