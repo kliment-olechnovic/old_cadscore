@@ -134,7 +134,7 @@ fi
 find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read TARGET_FILE
 do
   TARGET_NAME=$(basename $TARGET_FILE)
-  TARGET_DIR="$DATABASE/$TARGET_NAME"
+  TARGET_DIR="$DATABASE/models/$TARGET_NAME"
   TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
   TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
   
@@ -157,14 +157,14 @@ then
   find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read TARGET_FILE
   do
     TARGET_NAME=$(basename $TARGET_FILE)
-    TARGET_DIR="$DATABASE/$TARGET_NAME"
+    TARGET_DIR="$DATABASE/models/$TARGET_NAME"
     TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
     TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
   
     find "$INPUT_DIR" -mindepth 1 -maxdepth 1 -type f | sort | while read MODEL_FILE
     do
   	  MODEL_NAME=$(basename $MODEL_FILE)
-  	  MODEL_INTER_ATOM_CONTACTS_FILE="$DATABASE/$MODEL_NAME/inter_atom_contacts"
+  	  MODEL_INTER_ATOM_CONTACTS_FILE="$DATABASE/models/$MODEL_NAME/inter_atom_contacts"
   	
   	  echo TARGET_ROLE $TARGET_NAME >> $SCORES_LIST_FILE
       echo MODEL_ROLE $MODEL_NAME >> $SCORES_LIST_FILE
