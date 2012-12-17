@@ -1,10 +1,8 @@
-
 syntax: regexp
 ^Release$
-syntax: regexp
-^scripts/voroprot2$
-syntax: regexp
-^analysis/speed/scripts/QTFier$
 
 syntax: regexp
 ^src/resources/version\.h$
+
+syntax: regexp
+^tests/.*/output/db_.*/version$
