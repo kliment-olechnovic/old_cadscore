@@ -54,7 +54,7 @@ int main(const int argc, const char** argv)
 
 		if(clo.isopt("--version"))
 		{
-			std::cout << resources::get_version_string();
+			std::cout << resources::get_version_string() << std::endl;
 			return 0;
 		}
 

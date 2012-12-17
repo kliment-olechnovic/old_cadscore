@@ -4,16 +4,18 @@ PACKAGE_NAME=$1
 
 cd $(dirname "$0")
 
+VERSION_STRING=$(./resources/get_version_string.bash)
+
 if [ -z "$PACKAGE_NAME" ]
 then
-  VERSION=$(hg branches | egrep '^experimental' | awk '{print $2}' | tr ':' '_')
-  PACKAGE_NAME="cadscore_experimental_$VERSION"
+  PACKAGE_NAME=$VERSION_STRING
 fi
 
 rm -f $PACKAGE_NAME.tar.gz
 rm -r -f $PACKAGE_NAME
 
 mkdir -p $PACKAGE_NAME
+echo $VERSION_STRING > $PACKAGE_NAME/VERSION
 cp README $PACKAGE_NAME/README
 cp LICENSE $PACKAGE_NAME/LICENSE
 cp -r src $PACKAGE_NAME/src
