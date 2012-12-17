@@ -84,7 +84,7 @@ fi
 ##################################################
 ### Processing CAD profile
 
-CAD_PROFILE_FILE="$DATABASE/$TARGET_NAME/$MODEL_NAME/cad_profile"
+CAD_PROFILE_FILE="$DATABASE/targets/$TARGET_NAME/models/$MODEL_NAME/cad_profile"
 
 if [ ! -s "$CAD_PROFILE_FILE" ]
 then
