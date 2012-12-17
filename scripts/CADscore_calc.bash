@@ -177,14 +177,16 @@ fi
 ### Preparing and checking environment
 
 VERSION_STRING_FILE="$DATABASE/version"
-TARGET_DIR="$DATABASE/$TARGET_NAME"
+TARGETS_DIR="$DATABASE/targets"
+TARGET_DIR="$TARGETS_DIR/$TARGET_NAME"
 TARGET_MUTEX_END="$TARGET_DIR/mutex_closed"
 TARGET_PARAMETERS_FILE="$TARGET_DIR/parameters"
 TARGET_ATOMS_FILE="$TARGET_DIR/atoms"
 TARGET_INTER_ATOM_CONTACTS_FILE="$TARGET_DIR/inter_atom_contacts"
 TARGET_RESIDUE_IDS_FILE="$TARGET_DIR/residue_ids"
 TARGET_INTER_RESIDUE_CONTACTS_FILE="$TARGET_DIR/inter_residue_contacts"
-MODEL_DIR="$DATABASE/$TARGET_NAME/$MODEL_NAME"
+MODELS_DIR="$TARGET_DIR/models"
+MODEL_DIR="$MODELS_DIR/$MODEL_NAME"
 MODEL_ATOMS_FILE="$MODEL_DIR/atoms"
 MODEL_FILTERED_ATOMS_FILE="$MODEL_DIR/filtered_atoms"
 MODEL_INTER_ATOM_CONTACTS_FILE="$MODEL_DIR/inter_atom_contacts"
@@ -220,6 +222,8 @@ fi
 
 ##################################################
 ### Preprocessing target
+
+mkdir -p $TARGETS_DIR
 
 if mkdir $TARGET_DIR &> /dev/null
 then
