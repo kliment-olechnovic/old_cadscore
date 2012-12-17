@@ -11,7 +11,7 @@ $0 parameters:
 
   Required:
     -I    path to input directory
-    -O    path to writable output directory
+    -O    path to writable output directory (may be not existing)
 
   Optional:
     -l    flag to include heteroatoms
@@ -103,6 +103,7 @@ VERSION_STRING=$($VOROPROT --version | tr -d '\n')
 DATABASE_PARAMETERS="$HETATM_FLAG $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION"
 
 mkdir -p "$DATABASE"
+if [ ! -d "$DATABASE" ] ; then echo "Fatal error: could not create output directory ($DATABASE)" 1>&2 ; exit 1 ; fi
 
 if [ -f "$VERSION_STRING_FILE" ]
 then
