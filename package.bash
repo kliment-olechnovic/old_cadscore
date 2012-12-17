@@ -4,10 +4,11 @@ PACKAGE_NAME=$1
 
 cd $(dirname "$0")
 
+VERSION_STRING=$(./resources/get_version_string.bash)
+
 if [ -z "$PACKAGE_NAME" ]
 then
-  VERSION=$(hg branches | egrep '^default' | awk '{print $2}' | tr ':' '_')
-  PACKAGE_NAME="cadscore_$VERSION"
+  PACKAGE_NAME=$VERSION_STRING
 fi
 
 rm -f $PACKAGE_NAME.tar.gz

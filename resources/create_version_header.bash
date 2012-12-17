@@ -2,9 +2,7 @@
 
 cd $(dirname "$0")
 
-VERSION=$(hg branches | egrep '^default' | awk '{print $2}' | tr ':' ' ')
-
-VERSION_STRING="Version $VERSION"
+VERSION_STRING=$(./get_version_string.bash)
 
 cat << EOF > ../src/resources/version.h
 #ifndef RESOURCES_VERSION_H_
