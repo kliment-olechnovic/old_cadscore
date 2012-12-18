@@ -218,11 +218,6 @@ then
     exit 1
   fi
 else
-  if find "$DATABASE" -mindepth 1 -maxdepth 1 -type d | head -n 1 | read
-  then
-  	echo "Fatal error: the database was initialized with the older version of the software" 1>&2
-    exit 1
-  fi
   echo -n "$VERSION_STRING" > $VERSION_STRING_FILE
 fi
 
