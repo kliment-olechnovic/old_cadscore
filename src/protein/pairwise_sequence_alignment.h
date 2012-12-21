@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <iostream>
 
 namespace protein
 {
@@ -44,20 +45,10 @@ public:
 		}
 	};
 
-	struct AlignmentResult
+	template<typename T, typename Scorer>
+	static std::vector< std::pair<int, int> > create_global_alignment(const T& seq1, const T& seq2, const Scorer& scorer)
 	{
 		std::vector< std::pair<int, int> > alignment;
-		int score;
-
-		AlignmentResult() : score(0)
-		{
-		}
-	};
-
-	template<typename T, typename Scorer>
-	static AlignmentResult align_two_sequences(const T& seq1, const T& seq2, const Scorer& scorer, const bool local)
-	{
-		AlignmentResult result;
 		if(!seq1.empty() && !seq2.empty())
 		{
 			std::vector< std::vector<int> > scores_matrix(seq1.size()+1, std::vector<int>(seq2.size()+1, 0));
@@ -74,7 +65,7 @@ public:
 					const int deletion_score=scorer.deletion(v1)+scores_matrix[i-1][j];
 					const int insertion_score=scorer.insertion(v2)+scores_matrix[i][j-1];
 					const int max_score=std::max(match_score, std::max(deletion_score, insertion_score));
-					const int current_score=(local ? std::max(0, max_score) : max_score);
+					const int current_score=max_score;
 					scores_matrix[i][j]=current_score;
 					directions_matrix[i][j]=(max_score==insertion_score ? 2 : (max_score==deletion_score ? 1 : 0));
 					if(overall_max_score<=current_score)
@@ -87,48 +78,75 @@ public:
 
 			int i=static_cast<int>(seq1.size());
 			int j=static_cast<int>(seq2.size());
-			if(local)
-			{
-				i=static_cast<int>(overall_max_score_position.first);
-				j=static_cast<int>(overall_max_score_position.second);
-			}
-			result.score=scores_matrix[i][j];
-			while(i>0 && j>0 && (!local || scores_matrix[i][j]>0))
+			while(i>0 && j>0)
 			{
 				const int dir=directions_matrix[i][j];
 				if(dir==0)
 				{
 					i--;
 					j--;
-					result.alignment.push_back(std::make_pair(i, j));
+					alignment.push_back(std::make_pair(i, j));
 				}
 				else if(dir==1)
 				{
 					i--;
-					result.alignment.push_back(std::make_pair(i, -1));
+					alignment.push_back(std::make_pair(i, -1));
 				}
 				else
 				{
 					j--;
-					result.alignment.push_back(std::make_pair(-1, j));
+					alignment.push_back(std::make_pair(-1, j));
 				}
 			}
-			if(!local)
+			while(i>0)
 			{
-				while(i>0)
-				{
-					i--;
-					result.alignment.push_back(std::make_pair(i, -1));
-				}
-				while(j>0)
-				{
-					j--;
-					result.alignment.push_back(std::make_pair(-1, j));
-				}
+				i--;
+				alignment.push_back(std::make_pair(i, -1));
 			}
-			std::reverse(result.alignment.begin(), result.alignment.end());
+			while(j>0)
+			{
+				j--;
+				alignment.push_back(std::make_pair(-1, j));
+			}
+			std::reverse(alignment.begin(), alignment.end());
 		}
-		return result;
+		return alignment;
+	}
+
+	template<typename T>
+	static bool print_global_alignment(const T& seq1, const T& seq2, const std::vector< std::pair<int, int> >& alignment, std::ostream& output)
+	{
+		for(std::size_t i=0;i<alignment.size();i++)
+		{
+			if(alignment[i].first>=static_cast<int>(seq1.size()) || alignment[i].second>=static_cast<int>(seq2.size()))
+			{
+				return false;
+			}
+		}
+
+		output << ">pairwise_global_alignment\n";
+
+		for(std::size_t i=0;i<alignment.size();i++)
+		{
+			const int j=alignment[i].first;
+			std::cout << (j>=0 ? seq1.at(j) : '-');
+		}
+		output << "\n";
+
+		for(std::size_t i=0;i<alignment.size();i++)
+		{
+			const int j=alignment[i].second;
+			std::cout << (j>=0 ? seq2.at(j) : '-');
+		}
+		output << "\n";
+
+		return true;
+	}
+
+	template<typename T, typename Scorer>
+	static bool print_global_alignment(const T& seq1, const T& seq2, const Scorer& scorer, std::ostream& output)
+	{
+		return print_global_alignment(seq1, seq2, create_global_alignment(seq1, seq2, scorer),	output);
 	}
 };
 
