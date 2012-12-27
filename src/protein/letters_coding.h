@@ -55,7 +55,7 @@ inline std::string convert_residue_codes_big_to_small(const std::string& aaa)
 {
 	static const std::map<std::string, std::string> m=create_map_of_residue_codes_big_to_small();
 	const std::map<std::string, std::string>::const_iterator it=m.find(aaa);
-	return (it==m.end() ? std::string("X") : it->second);
+	return (it==m.end() ? std::string("*") : it->second);
 }
 
 inline std::string convert_residue_codes_small_to_big(const std::string& a)
