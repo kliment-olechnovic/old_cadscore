@@ -1,7 +1,3 @@
-== Note ==
-
-This README file belongs to the experimental branch of CAD-score.
-
 == Overview ==
 
 CAD-score is a command-line software that constructs the Voronoi diagram
