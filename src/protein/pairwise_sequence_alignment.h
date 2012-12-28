@@ -146,14 +146,8 @@ public:
 		return print_global_alignment(seq1, seq2, create_global_alignment(seq1, seq2, scorer),	output);
 	}
 
-	static std::vector< std::pair<int, int> > read_global_alignment(std::istream& input)
+	static std::vector< std::pair<int, int> > read_global_alignment(const std::string& seq1, const std::string& seq2)
 	{
-		std::string seq1;
-		std::string seq2;
-
-		std::getline(input, seq1);
-		std::getline(input, seq2);
-
 		const std::size_t alignment_size=std::min(seq1.size(), seq2.size());
 
 		std::vector< std::pair<int, int> > alignment(alignment_size, std::pair<int, int>(-1, -1));

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #include "protein/atom.h"
 #include "protein/residue_ids_collection.h"
@@ -8,16 +9,8 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/vector_io.h"
 
-void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
+std::string get_sequence_string_from_residue_ids(const std::map<protein::ResidueID, protein::ResidueSummary>& residue_ids, const std::string& chain_separator)
 {
-	clo.check_allowed_options("--chain-separator:");
-
-	const std::string chain_separator=clo.arg_or_default_value<std::string>("--chain-separator", "");
-
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
-
-	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
-
 	std::ostringstream output;
 	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids.begin();it!=residue_ids.end();++it)
 	{
@@ -29,7 +22,18 @@ void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
 			output << chain_separator;
 		}
 	}
-	const std::string result=output.str();
+	return output.str();
+}
+
+void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--chain-separator:");
+
+	const std::string chain_separator=clo.arg_or_default_value<std::string>("--chain-separator", "");
+
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
+	const std::string result=get_sequence_string_from_residue_ids(protein::collect_residue_ids_from_atoms(atoms), chain_separator);
 
 	if(result.empty())
 	{
