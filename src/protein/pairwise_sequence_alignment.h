@@ -113,8 +113,7 @@ public:
 		return alignment;
 	}
 
-	template<typename T>
-	static bool print_global_alignment(const T& seq1, const T& seq2, const std::vector< std::pair<int, int> >& alignment, std::ostream& output)
+	static bool print_global_alignment(const std::string& seq1, const std::string& seq2, const std::vector< std::pair<int, int> >& alignment, std::ostream& output)
 	{
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
@@ -143,10 +142,39 @@ public:
 		return true;
 	}
 
-	template<typename T, typename Scorer>
-	static bool print_global_alignment(const T& seq1, const T& seq2, const Scorer& scorer, std::ostream& output)
+	template<typename Scorer>
+	static bool print_global_alignment(const std::string& seq1, const std::string& seq2, const Scorer& scorer, std::ostream& output)
 	{
 		return print_global_alignment(seq1, seq2, create_global_alignment(seq1, seq2, scorer),	output);
+	}
+
+	static std::vector< std::pair<int, int> > read_global_alignment(std::istream& input)
+	{
+		std::string header;
+		std::string seq1;
+		std::string seq2;
+
+		std::getline(input, header);
+		std::getline(input, seq1);
+		std::getline(input, seq2);
+
+		const std::size_t alignment_size=std::min(seq1.size(), seq2.size());
+
+		std::vector< std::pair<int, int> > alignment(alignment_size, std::pair<int, int>(-1, -1));
+
+		for(int i=0;i<static_cast<int>(alignment_size);i++)
+		{
+			if(seq1.at(i)!='-')
+			{
+				alignment[i].first=i;
+			}
+			if(seq2.at(i)!='-')
+			{
+				alignment[i].second=i;
+			}
+		}
+
+		return alignment;
 	}
 };
 
