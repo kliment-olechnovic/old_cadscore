@@ -43,7 +43,12 @@ void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
 
 void construct_primitive_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("");
+	clo.check_allowed_options("--match: --mismatch: --deletion: --insertion:");
+
+	const int match_score=clo.arg_or_default_value<int>("--match", 2);
+	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -1);
+	const int deletion_score=clo.arg_or_default_value<int>("--deletion", -1);
+	const int insertion_score=clo.arg_or_default_value<int>("--insertion", -1);
 
 	std::string seq1;
 	std::string seq2;
@@ -57,7 +62,7 @@ void construct_primitive_global_sequence_alignment(const auxiliaries::CommandLin
 	}
 	else
 	{
-		const protein::PairwiseSequenceAlignment::SimpleScorer scorer(2, -1, -1, -1);
+		const protein::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, deletion_score, insertion_score);
 		protein::PairwiseSequenceAlignment::print_global_alignment(seq1, seq2, scorer, std::cout);
 	}
 }

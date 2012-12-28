@@ -123,8 +123,6 @@ public:
 			}
 		}
 
-		output << ">pairwise_global_alignment\n";
-
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
 			const int j=alignment[i].first;
@@ -150,11 +148,9 @@ public:
 
 	static std::vector< std::pair<int, int> > read_global_alignment(std::istream& input)
 	{
-		std::string header;
 		std::string seq1;
 		std::string seq2;
 
-		std::getline(input, header);
 		std::getline(input, seq1);
 		std::getline(input, seq2);
 
