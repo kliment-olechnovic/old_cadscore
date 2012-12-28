@@ -8,7 +8,6 @@
 #include "protein/atoms_reading.h"
 #include "protein/atoms_classification.h"
 #include "protein/residue_ids_collection.h"
-#include "protein/letters_coding.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
@@ -136,39 +135,6 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 	else
 	{
 		auxiliaries::print_map(std::cout, "residue_ids", residue_ids, false);
-	}
-}
-
-void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
-{
-	clo.check_allowed_options("--chain-separator:");
-
-	const std::string chain_separator=clo.arg_or_default_value<std::string>("--chain-separator", "");
-
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
-
-	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
-
-	std::ostringstream output;
-	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids.begin();it!=residue_ids.end();++it)
-	{
-		output << protein::convert_residue_codes_big_to_small(it->second.name);
-		std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator next_it=it;
-		++next_it;
-		if(next_it!=residue_ids.end() && next_it->first.chain_id!=it->first.chain_id)
-		{
-			output << chain_separator;
-		}
-	}
-	const std::string result=output.str();
-
-	if(result.empty())
-	{
-		throw std::runtime_error("No residue sequence was collected from the provided atoms stream");
-	}
-	else
-	{
-		std::cout << result << "\n";
 	}
 }
 

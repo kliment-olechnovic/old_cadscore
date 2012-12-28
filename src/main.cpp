@@ -24,6 +24,7 @@ void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo);
 void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo);
+void construct_primitive_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
 void merge_atoms(const auxiliaries::CommandLineOptions& clo);
@@ -35,7 +36,6 @@ void print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& 
 void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo);
 void print_optimal_rotation(const auxiliaries::CommandLineOptions& clo);
 void print_quadruples_image(const auxiliaries::CommandLineOptions& clo);
-void print_sequence_alignment(const auxiliaries::CommandLineOptions& clo);
 void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo);
 void print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo);
 void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
@@ -87,6 +87,7 @@ int main(const int argc, const char** argv)
 		modes_map["collect-atoms"]=ModeFunctionPointer(collect_atoms);
 		modes_map["collect-residue-ids"]=ModeFunctionPointer(collect_residue_ids);
 		modes_map["collect-residue-sequence"]=ModeFunctionPointer(collect_residue_sequence);
+		modes_map["construct-primitive-global-sequence-alignment"]=ModeFunctionPointer(construct_primitive_global_sequence_alignment);
 		modes_map["filter-atoms-by-name"]=ModeFunctionPointer(filter_atoms_by_name);
 		modes_map["filter-atoms-by-target"]=ModeFunctionPointer(filter_atoms_by_target);
 		modes_map["merge-atoms"]=ModeFunctionPointer(merge_atoms);
@@ -98,7 +99,6 @@ int main(const int argc, const char** argv)
 		modes_map["print-nucleotides-planes"]=ModeFunctionPointer(print_nucleotides_planes);
 		modes_map["print-optimal-rotation"]=ModeFunctionPointer(print_optimal_rotation);
 		modes_map["print-quadruples-image"]=ModeFunctionPointer(print_quadruples_image);
-		modes_map["print-sequence-alignment"]=ModeFunctionPointer(print_sequence_alignment);
 		modes_map["print-stacking-nucleotides-contacts"]=ModeFunctionPointer(print_stacking_nucleotides_contacts);
 		modes_map["print-topological-ordering-of-residues"]=ModeFunctionPointer(print_topological_ordering_of_residues);
 		modes_map["summarize-dssp-file"]=ModeFunctionPointer(summarize_dssp_file);
