@@ -25,6 +25,7 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo);
 void construct_primitive_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo);
+void construct_renumbering_map_using_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo);
 void merge_atoms(const auxiliaries::CommandLineOptions& clo);
@@ -88,6 +89,7 @@ int main(const int argc, const char** argv)
 		modes_map["collect-residue-ids"]=ModeFunctionPointer(collect_residue_ids);
 		modes_map["collect-residue-sequence"]=ModeFunctionPointer(collect_residue_sequence);
 		modes_map["construct-primitive-global-sequence-alignment"]=ModeFunctionPointer(construct_primitive_global_sequence_alignment);
+		modes_map["construct-renumbering-map-using-global-sequence-alignment"]=ModeFunctionPointer(construct_renumbering_map_using_global_sequence_alignment);
 		modes_map["filter-atoms-by-name"]=ModeFunctionPointer(filter_atoms_by_name);
 		modes_map["filter-atoms-by-target"]=ModeFunctionPointer(filter_atoms_by_target);
 		modes_map["merge-atoms"]=ModeFunctionPointer(merge_atoms);
