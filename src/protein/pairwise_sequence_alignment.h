@@ -123,8 +123,6 @@ public:
 			}
 		}
 
-		output << ">pairwise_global_alignment\n";
-
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
 			const int j=alignment[i].first;
@@ -148,27 +146,19 @@ public:
 		return print_global_alignment(seq1, seq2, create_global_alignment(seq1, seq2, scorer),	output);
 	}
 
-	static std::vector< std::pair<int, int> > read_global_alignment(std::istream& input)
+	static std::vector< std::pair<int, int> > read_global_alignment(const std::string& alignment_seq1, const std::string& alignment_seq2)
 	{
-		std::string header;
-		std::string seq1;
-		std::string seq2;
-
-		std::getline(input, header);
-		std::getline(input, seq1);
-		std::getline(input, seq2);
-
-		const std::size_t alignment_size=std::min(seq1.size(), seq2.size());
+		const std::size_t alignment_size=std::min(alignment_seq1.size(), alignment_seq2.size());
 
 		std::vector< std::pair<int, int> > alignment(alignment_size, std::pair<int, int>(-1, -1));
 
 		for(int i=0;i<static_cast<int>(alignment_size);i++)
 		{
-			if(seq1.at(i)!='-')
+			if(alignment_seq1.at(i)!='-')
 			{
 				alignment[i].first=i;
 			}
-			if(seq2.at(i)!='-')
+			if(alignment_seq2.at(i)!='-')
 			{
 				alignment[i].second=i;
 			}
