@@ -46,7 +46,7 @@ void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
 	}
 }
 
-void construct_primitive_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
+void construct_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--match: --mismatch: --deletion: --insertion:");
 
@@ -71,7 +71,7 @@ void construct_primitive_global_sequence_alignment(const auxiliaries::CommandLin
 	}
 }
 
-void construct_renumbering_map_using_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
+void construct_residue_renumbering_map(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef std::map<protein::ResidueID, protein::ResidueSummary> MapOfResidueIDs;
 
@@ -82,12 +82,7 @@ void construct_renumbering_map_using_global_sequence_alignment(const auxiliaries
 
 	std::string alignment_seq1;
 	std::string alignment_seq2;
-	std::getline(std::cin, alignment_seq1);
-	if(alignment_seq1.empty())
-	{
-		std::getline(std::cin, alignment_seq1);
-	}
-	std::getline(std::cin, alignment_seq2);
+	std::cin >> alignment_seq1 >> alignment_seq2;
 
 	if(alignment_seq1.empty() || alignment_seq2.empty())
 	{
@@ -140,5 +135,5 @@ void construct_renumbering_map_using_global_sequence_alignment(const auxiliaries
 		i++;
 	}
 
-	auxiliaries::print_map<protein::ResidueID, protein::ResidueID>(std::cout, "renumbering_map", renumbering_map, false);
+	auxiliaries::print_map<protein::ResidueID, protein::ResidueID>(std::cout, "residue_renumbering_map", renumbering_map, false);
 }
