@@ -31,6 +31,7 @@ $0 parameters:
     -s    flag to print summary to standard output
     -y    flag to generate more detailed summary
     -x    flag to delete non-summary data calculated for model
+    -z    flag to automatically renumber model residues
     -j    flag to turn off thread-safe mode
     -v    path to atomic radii files directory
     -e    extra command to produce additional global scores
@@ -79,11 +80,12 @@ GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
 PRINT_SUMMARY_TO_STDOUT=false
 FULL_GLOBAL_SCORES=false
 DELETE_DETAILED_MODEL_DATA=false
+RENUMBER_MODEL_RESIDUES=false
 THREAD_SAFE_ON=true
 RADII_OPTION=""
 EXTRA_COMMAND=""
 
-while getopts "hD:t:m:lcqgi:arunsyxjv:e:" OPTION
+while getopts "hD:t:m:lcqgi:arunsyxzjv:e:" OPTION
 do
   case $OPTION in
     h)
@@ -135,6 +137,9 @@ do
       ;;
     x)
       DELETE_DETAILED_MODEL_DATA=true
+      ;;
+    z)
+      RENUMBER_MODEL_RESIDUES=true
       ;;
     j)
       THREAD_SAFE_ON=false
@@ -188,6 +193,9 @@ TARGET_INTER_RESIDUE_CONTACTS_FILE="$TARGET_DIR/inter_residue_contacts"
 MODELS_DIR="$TARGET_DIR/models"
 MODEL_DIR="$MODELS_DIR/$MODEL_NAME"
 MODEL_ATOMS_FILE="$MODEL_DIR/atoms"
+MODEL_RENUMBERING_ALIGNMENT_FILE="$MODEL_DIR/renumbering_sequence_alignment"
+MODEL_RENUMBERING_MAP_FILE="$MODEL_DIR/renumbering_map"
+MODEL_RENUMBERED_ATOMS_FILE="$MODEL_DIR/renumbered_atoms"
 MODEL_FILTERED_ATOMS_FILE="$MODEL_DIR/filtered_atoms"
 MODEL_INTER_ATOM_CONTACTS_FILE="$MODEL_DIR/inter_atom_contacts"
 MODEL_RESIDUE_IDS_FILE="$MODEL_DIR/residue_ids"
@@ -288,6 +296,20 @@ mkdir -p $MODEL_DIR
 
 test -f $MODEL_ATOMS_FILE || cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES > $MODEL_ATOMS_FILE
 if [ ! -s "$MODEL_ATOMS_FILE" ] ; then echo "Fatal error: no atoms in the model" 1>&2 ; exit 1 ; fi
+
+if $RENUMBER_MODEL_RESIDUES
+then
+  test -f $MODEL_RENUMBERING_ALIGNMENT_FILE || (cat $TARGET_RESIDUE_IDS_FILE | $VOROPROT --mode collect-residue-sequence ; cat $MODEL_ATOMS_FILE | $VOROPROT --mode collect-residue-ids | $VOROPROT --mode collect-residue-sequence ) | $VOROPROT --mode construct-global-sequence-alignment > $MODEL_RENUMBERING_ALIGNMENT_FILE
+  if [ ! -s "$MODEL_RENUMBERING_ALIGNMENT_FILE" ] ; then echo "Fatal error: failed to align target and model sequences" 1>&2 ; exit 1 ; fi
+
+  test -f $MODEL_RENUMBERING_MAP_FILE || ( cat $TARGET_RESIDUE_IDS_FILE ; cat $MODEL_ATOMS_FILE | $VOROPROT --mode collect-residue-ids ; cat $MODEL_RENUMBERING_ALIGNMENT_FILE ) | $VOROPROT --mode construct-residue-renumbering-map > $MODEL_RENUMBERING_MAP_FILE
+  if [ ! -s "$MODEL_RENUMBERING_MAP_FILE" ] ; then echo "Fatal error: failed to construct residue renumbering map" 1>&2 ; exit 1 ; fi
+
+  test -f $MODEL_RENUMBERED_ATOMS_FILE || cat $MODEL_ATOMS_FILE $MODEL_RENUMBERING_MAP_FILE | $VOROPROT --mode renumber-residues --remove-not-renumbered > $MODEL_RENUMBERED_ATOMS_FILE
+  if [ ! -s "$MODEL_RENUMBERED_ATOMS_FILE" ] ; then echo "Fatal error: failed to renumber residues" 1>&2 ; exit 1 ; fi
+
+  MODEL_ATOMS_FILE=$MODEL_RENUMBERED_ATOMS_FILE
+fi
 
 if $DISABLE_MODEL_ATOMS_FILTERING
 then
@@ -399,6 +421,7 @@ then
   if cd $MODEL_DIR
   then
     rm -f $MODEL_ATOMS_FILE
+    rm -f $MODEL_RENUMBERED_ATOMS_FILE
     rm -f $MODEL_FILTERED_ATOMS_FILE
     rm -f $MODEL_INTER_ATOM_CONTACTS_FILE
     rm -f $MODEL_INTER_RESIDUE_CONTACTS_FILE

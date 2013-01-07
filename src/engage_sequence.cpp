@@ -1,14 +1,15 @@
 #include <iostream>
 #include <sstream>
 
-#include "protein/atom.h"
 #include "protein/residue_id.h"
 #include "protein/residue_summary.h"
 #include "protein/pairwise_sequence_alignment.h"
 #include "protein/letters_coding.h"
+#include "protein/atom.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/map_io.h"
+#include "auxiliaries/vector_io.h"
 
 std::string get_sequence_string_from_residue_ids(const std::map<protein::ResidueID, protein::ResidueSummary>& residue_ids, const std::string& chain_separator)
 {
@@ -136,4 +137,47 @@ void construct_residue_renumbering_map(const auxiliaries::CommandLineOptions& cl
 	}
 
 	auxiliaries::print_map<protein::ResidueID, protein::ResidueID>(std::cout, "residue_renumbering_map", renumbering_map, false);
+}
+
+void renumber_residues(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--remove-not-renumbered");
+
+	const bool remove_not_renumbered=clo.isopt("--remove-not-renumbered");
+
+	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
+	const std::map<protein::ResidueID, protein::ResidueID> renumbering_map=auxiliaries::read_map<protein::ResidueID, protein::ResidueID>(std::cin, "residue renumbering map", "residue_renumbering_map", false);
+
+	std::vector<protein::Atom> result;
+	result.reserve(atoms.size());
+
+	for(std::size_t i=0;i<atoms.size();i++)
+	{
+		const protein::Atom& atom=atoms[i];
+		std::map<protein::ResidueID, protein::ResidueID>::const_iterator it=renumbering_map.find(protein::ResidueID::from_atom(atom));
+		if(it!=renumbering_map.end())
+		{
+			result.push_back(atom);
+			protein::Atom& result_atom=result.back();
+			result_atom.chain_id=it->second.chain_id;
+			result_atom.residue_number=it->second.residue_number;
+		}
+		else
+		{
+			if(!remove_not_renumbered)
+			{
+				result.push_back(atom);
+			}
+		}
+	}
+
+	if(result.empty())
+	{
+		throw std::runtime_error("No atoms for the provided renumbering map");
+	}
+	else
+	{
+		auxiliaries::print_vector(std::cout, "atoms", result);
+	}
 }

@@ -39,6 +39,7 @@ void print_optimal_rotation(const auxiliaries::CommandLineOptions& clo);
 void print_quadruples_image(const auxiliaries::CommandLineOptions& clo);
 void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo);
 void print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo);
+void renumber_residues(const auxiliaries::CommandLineOptions& clo);
 void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 
@@ -103,6 +104,7 @@ int main(const int argc, const char** argv)
 		modes_map["print-quadruples-image"]=ModeFunctionPointer(print_quadruples_image);
 		modes_map["print-stacking-nucleotides-contacts"]=ModeFunctionPointer(print_stacking_nucleotides_contacts);
 		modes_map["print-topological-ordering-of-residues"]=ModeFunctionPointer(print_topological_ordering_of_residues);
+		modes_map["renumber-residues"]=ModeFunctionPointer(renumber_residues);
 		modes_map["summarize-dssp-file"]=ModeFunctionPointer(summarize_dssp_file);
 		modes_map["summarize-inter-atom-contacts"]=ModeFunctionPointer(summarize_inter_atom_contacts);
 
