@@ -15,14 +15,14 @@ public:
 	{
 		int match_score;
 		int mismatch_score;
-		int deletion_score;
-		int insertion_score;
+		int gap_start_score;
+		int gap_extension_score;
 
-		SimpleScorer(int match_score, int mismatch_score, int deletion_score, int insertion_score) :
+		SimpleScorer(int match_score, int mismatch_score, int gap_start_score, int gap_extension_score) :
 			match_score(match_score),
 			mismatch_score(mismatch_score),
-			deletion_score(deletion_score),
-			insertion_score(insertion_score)
+			gap_start_score(gap_start_score),
+			gap_extension_score(gap_extension_score)
 		{
 		}
 
@@ -32,16 +32,14 @@ public:
 			return (v1==v2 ? match_score : mismatch_score);
 		}
 
-		template<typename T>
-		int deletion(const T&) const
+		int gap_start() const
 		{
-			return deletion_score;
+			return gap_start_score;
 		}
 
-		template<typename T>
-		int insertion(const T&) const
+		int gap_extension() const
 		{
-			return insertion_score;
+			return gap_extension_score;
 		}
 	};
 
@@ -61,9 +59,9 @@ public:
 				{
 					const typename T::value_type& v1=seq1[i-1];
 					const typename T::value_type& v2=seq2[j-1];
-					const int match_score=scorer.match(v1, v2)+scores_matrix[i-1][j-1];
-					const int deletion_score=scorer.deletion(v1)+scores_matrix[i-1][j];
-					const int insertion_score=scorer.insertion(v2)+scores_matrix[i][j-1];
+					const int match_score=scores_matrix[i-1][j-1]+scorer.match(v1, v2);
+					const int deletion_score=scores_matrix[i-1][j]+(directions_matrix[i-1][j]!=1 ? scorer.gap_start() : scorer.gap_extension());
+					const int insertion_score=scores_matrix[i][j-1]+(directions_matrix[i][j-1]!=2 ? scorer.gap_start() : scorer.gap_extension());
 					const int max_score=std::max(match_score, std::max(deletion_score, insertion_score));
 					const int current_score=max_score;
 					scores_matrix[i][j]=current_score;
