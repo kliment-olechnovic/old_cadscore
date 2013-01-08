@@ -49,12 +49,12 @@ void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
 
 void construct_global_sequence_alignment(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--match: --mismatch: --deletion: --insertion:");
+	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension:");
 
-	const int match_score=clo.arg_or_default_value<int>("--match", 2);
-	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -1);
-	const int deletion_score=clo.arg_or_default_value<int>("--deletion", -1);
-	const int insertion_score=clo.arg_or_default_value<int>("--insertion", -1);
+	const int match_score=clo.arg_or_default_value<int>("--match", 0);
+	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -10);
+	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
+	const int gap_extension_score=clo.arg_or_default_value<int>("--gap-extension", -1);
 
 	std::string seq1;
 	std::string seq2;
@@ -67,7 +67,7 @@ void construct_global_sequence_alignment(const auxiliaries::CommandLineOptions& 
 	}
 	else
 	{
-		const protein::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, deletion_score, insertion_score);
+		const protein::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, gap_start_score, gap_extension_score);
 		protein::PairwiseSequenceAlignment::print_global_alignment(seq1, seq2, scorer, std::cout);
 	}
 }
