@@ -29,9 +29,10 @@ std::string get_sequence_string_from_residue_ids(const std::map<protein::Residue
 
 void collect_residue_sequence(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--chain-separator:");
+	clo.check_allowed_options("--chain-separator-length:");
 
-	const std::string chain_separator=clo.arg_or_default_value<std::string>("--chain-separator", "");
+	const std::size_t chain_separator_length=clo.arg_or_default_value<std::size_t>("--chain-separator-length", 10);
+	const std::string chain_separator(chain_separator_length, '-');
 
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "residue identifiers", "residue_ids", false);
 
