@@ -16,13 +16,13 @@
 
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--inter-interval: --inter-chain");
+	clo.check_allowed_options("--inter-interval: --inter-chain --binarize");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "inter-atom contacts", "contacts", false);
 
-	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts, clo.isopt("--binarize"));
 
 	contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactAreas, protein::ResidueIDsIntervalsReader>(inter_residue_contacts, clo.isopt("--inter-chain"), (clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string("")));
 
@@ -85,7 +85,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > InterResidueContacts;
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > CombinedInterResidueContacts;
 
-	clo.check_allowed_options("--inter-interval: --inter-chain --optimally-rename-chains --input-inter-atom-contacts");
+	clo.check_allowed_options("--inter-interval: --inter-chain --optimally-rename-chains --input-inter-atom-contacts --binarize");
 
 	const bool inter_chain=clo.isopt("--inter-chain");
 	const std::string intervals_string=(clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string(""));
@@ -98,8 +98,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
 		const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 		const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
-		inter_residue_contacts_1=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1);
-		inter_residue_contacts_2=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2);
+		const bool binarize=clo.isopt("--binarize");
+		inter_residue_contacts_1=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1, binarize);
+		inter_residue_contacts_2=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2, binarize);
 	}
 	else
 	{

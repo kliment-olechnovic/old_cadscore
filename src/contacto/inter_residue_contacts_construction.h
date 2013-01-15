@@ -13,7 +13,7 @@ namespace contacto
 {
 
 template<typename Atom, typename ResidueID>
-std::map< ContactID<ResidueID>, InterResidueContactAreas > construct_inter_residue_contacts(const std::vector<Atom>& atoms, const std::vector<InterAtomContact>& inter_atom_contacts)
+std::map< ContactID<ResidueID>, InterResidueContactAreas > construct_inter_residue_contacts(const std::vector<Atom>& atoms, const std::vector<InterAtomContact>& inter_atom_contacts, const bool binarize)
 {
 	std::map< ContactID<ResidueID>, InterResidueContactAreas > inter_residue_contacts_map;
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
@@ -27,7 +27,14 @@ std::map< ContactID<ResidueID>, InterResidueContactAreas > construct_inter_resid
 			InterResidueContactAreas& inter_residue_contact_areas=inter_residue_contacts_map[ContactID<ResidueID>(ResidueID::from_atom(a1), ResidueID::from_atom(a2))];
 			for(std::size_t j=0;j<contact_classes.size();j++)
 			{
-				inter_residue_contact_areas.areas[contact_classes[j]]+=inter_atom_contact.area;
+				if(binarize)
+				{
+					inter_residue_contact_areas.areas[contact_classes[j]]=1;
+				}
+				else
+				{
+					inter_residue_contact_areas.areas[contact_classes[j]]+=inter_atom_contact.area;
+				}
 			}
 		}
 	}
