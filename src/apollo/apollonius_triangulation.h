@@ -12,7 +12,7 @@
 namespace apollo
 {
 
-template<typename SpheresHierarchyType, int MonitoringLevel=0>
+template<typename SpheresHierarchyType>
 class ApolloniusTriangulation
 {
 public:
@@ -47,7 +47,7 @@ public:
 				stack.pop_back();
 				stack_map.erase(face.abc_ids());
 				{
-					if(MonitoringLevel==1 && !face.can_have_d2())
+					if(monitoring_level()>0 && !face.can_have_d2())
 					{
 						difficult_faces_count++;
 					}
@@ -131,12 +131,13 @@ public:
 				}
 			}
 
-			if(MonitoringLevel==1)
+			if(monitoring_level()>0)
 			{
 				std::clog << "sheres " << hierarchy.spheres().size() << "\n";
 				std::clog << "quadruples " << quadruples_map.size() << "\n";
 				std::clog << "triples " << processed_triples.size() << "\n";
 				std::clog << "difficulties " << difficult_faces_count << "\n";
+				if(monitoring_level()>1)
 				{
 					std::size_t tangent_spheres_count=0;
 					for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
@@ -254,6 +255,17 @@ public:
 			}
 		}
 		return true;
+	}
+
+	static int& monitoring_level_reference()
+	{
+		static int monitoring_level=0;
+		return monitoring_level;
+	}
+
+	static int monitoring_level()
+	{
+		return monitoring_level_reference();
 	}
 
 private:
@@ -430,7 +442,7 @@ private:
 							}
 							if(!result.empty())
 							{
-								if(MonitoringLevel==1)
+								if(monitoring_level()>0)
 								{
 									std::clog << "brute " << tries_before_success << "\n";
 								}
