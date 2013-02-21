@@ -15,12 +15,18 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
+	clo.check_allowed_options("--epsilon: --monitoring-name: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
 
 	if(clo.isopt("--epsilon"))
 	{
 		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
 		apollo::epsilon_reference()=epsilon;
+	}
+
+	if(clo.isopt("--monitoring-name"))
+	{
+		const std::string monitoring_name=clo.arg<std::string>("--monitoring-name");
+		std::clog << "monitoring " << monitoring_name << "\n";
 	}
 
 	if(clo.isopt("--monitoring-level"))
