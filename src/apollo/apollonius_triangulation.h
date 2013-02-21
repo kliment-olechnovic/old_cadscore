@@ -146,6 +146,31 @@ public:
 					}
 					std::clog << "tangents " << tangent_spheres_count << "\n";
 				}
+				if(monitoring_level()>2)
+				{
+					std::vector<int> spheres_inclusion_map(hierarchy.spheres().size(), 0);
+					for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+					{
+						const Quadruple& q=it->first;
+						for(int i=0;i<4;i++)
+						{
+							spheres_inclusion_map[q.get(i)]=1;
+						}
+					}
+					std::size_t ignored_spheres_count=0;
+					for(std::size_t i=0;i<spheres_inclusion_map.size();i++)
+					{
+						if(spheres_inclusion_map[i]==0)
+						{
+							ignored_spheres_count++;
+						}
+					}
+					std::clog << "ignored " << ignored_spheres_count << "\n";
+				}
+				if(monitoring_level()>3)
+				{
+					std::clog << "hidden " << hierarchy.find_all_hidden_spheres().size() << "\n";
+				}
 			}
 		}
 
