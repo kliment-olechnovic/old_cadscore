@@ -131,7 +131,7 @@ public:
 
 		if(monitoring_level()>0)
 		{
-			std::clog << "sheres " << hierarchy.spheres().size() << "\n";
+			std::clog << "spheres " << hierarchy.spheres().size() << "\n";
 			std::clog << "quadruples " << quadruples_map.size() << "\n";
 			std::clog << "triples " << processed_triples.size() << "\n";
 			std::clog << "difficulties " << difficult_faces_count << "\n";
@@ -453,6 +453,7 @@ private:
 						{
 							for(std::size_t d=((a+1<u && b+1<u && c+1<u) ? (u-1) : (c+1));d<u;d++)
 							{
+								tries_before_success++;
 								Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 								std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 								if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
@@ -474,15 +475,15 @@ private:
 										return result;
 									}
 								}
-								else
-								{
-									tries_before_success++;
-								}
 							}
 						}
 					}
 				}
 			}
+		}
+		if(monitoring_level()>0)
+		{
+			std::clog << "brute " << tries_before_success << "\n";
 		}
 		return result;
 	}
