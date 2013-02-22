@@ -118,7 +118,7 @@ public:
 						{
 							result.insert(ids[k]);
 						}
-						else if(sphere_contains_sphere(spheres_[ids[k]], spheres_[ids[j]]))
+						if(sphere_contains_sphere(spheres_[ids[k]], spheres_[ids[j]]))
 						{
 							result.insert(ids[j]);
 						}
