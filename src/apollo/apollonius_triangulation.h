@@ -163,11 +163,25 @@ public:
 						ignored_spheres_count++;
 					}
 				}
-				std::clog << "ignored " << ignored_spheres_count << "\n";
+				std::clog << "ignored " << ignored_spheres_count;
+				for(std::size_t i=0;i<spheres_inclusion_map.size();i++)
+				{
+					if(spheres_inclusion_map[i]==0)
+					{
+						std::clog << " " << i;
+					}
+				}
+				std::clog << "\n";
 			}
 			if(monitoring_level()>3)
 			{
-				std::clog << "hidden " << hierarchy.find_all_hidden_spheres().size() << "\n";
+				const std::set<std::size_t> hidden_spheres_ids=hierarchy.find_all_hidden_spheres();
+				std::clog << "hidden " << hidden_spheres_ids.size();
+				for(std::set<std::size_t>::const_iterator it=hidden_spheres_ids.begin();it!=hidden_spheres_ids.end();++it)
+				{
+					std::clog << " " << (*it);
+				}
+				std::clog << "\n";
 			}
 		}
 
