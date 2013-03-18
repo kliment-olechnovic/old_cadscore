@@ -17,10 +17,113 @@
 #include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/map_io.h"
-#include "auxiliaries/name_colorizing.h"
 #include "auxiliaries/opengl_printer.h"
 
-class ResidueNameColorizerByResidueType : public auxiliaries::NameColorizerForPymol<std::string>
+namespace
+{
+
+class ColorManagementForMapping
+{
+public:
+	static auxiliaries::Color default_color()
+	{
+		return auxiliaries::Color::from_code(0xFFFFFF);
+	}
+
+	template<typename T>
+	static auxiliaries::Color color_from_map(const std::map<T, auxiliaries::Color>& map_of_colors, const T& name)
+	{
+		typename std::map<T, auxiliaries::Color>::const_iterator it=map_of_colors.find(name);
+		return (it==map_of_colors.end() ? default_color() : it->second);
+	}
+};
+
+template<typename T>
+class NameColorizer
+{
+public:
+	NameColorizer()
+	{
+	}
+
+	const std::map<T, auxiliaries::Color>& map_of_colors() const
+	{
+		return map_of_colors_;
+	}
+
+	auxiliaries::Color color(const T& name) const
+	{
+		return ColorManagementForMapping::color_from_map(map_of_colors_, name);
+	}
+
+	void set_map_of_colors(const std::map<T, auxiliaries::Color> map_of_colors)
+	{
+		map_of_colors_=map_of_colors;
+	}
+
+	void add_name_color(const T& name, const auxiliaries::Color& color)
+	{
+		map_of_colors_[name]=color;
+	}
+
+private:
+	std::map<T, auxiliaries::Color> map_of_colors_;
+};
+
+class ColorManagementForPymol
+{
+public:
+	static std::string color_to_string_id(const auxiliaries::Color& color)
+	{
+		std::ostringstream output;
+		output << "custom_color_" << static_cast<int>(color.r) << "_" << static_cast<int>(color.g) << "_" << static_cast<int>(color.b);
+		return output.str();
+	}
+
+	static std::string color_to_string_value(const auxiliaries::Color& color)
+	{
+		std::ostringstream output;
+		output << "[ " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << " ]";
+		return output.str();
+	}
+
+	static void list_color(const auxiliaries::Color& color)
+	{
+		std::cout << "cmd.set_color('" << color_to_string_id(color) << "', " << color_to_string_value(color) << ")\n";
+	}
+
+	template<typename ColorsMapType>
+	static void list_colors_from_map(const ColorsMapType& map_of_colors)
+	{
+		for(typename ColorsMapType::const_iterator it=map_of_colors.begin();it!=map_of_colors.end();++it)
+		{
+			list_color(it->second);
+		}
+		list_color(ColorManagementForMapping::default_color());
+		std::cout << "\n";
+	}
+};
+
+template<typename T>
+class NameColorizerForPymol : public NameColorizer<T>
+{
+public:
+	NameColorizerForPymol()
+	{
+	}
+
+	std::string color_string(const T& name) const
+	{
+		return ColorManagementForPymol::color_to_string_id(color(name));
+	}
+
+	void list_colors() const
+	{
+		ColorManagementForPymol::list_colors_from_map(NameColorizer<T>::map_of_colors());
+	}
+};
+
+class ResidueNameColorizerByResidueType : public NameColorizerForPymol<std::string>
 {
 public:
 	ResidueNameColorizerByResidueType()
@@ -66,7 +169,7 @@ private:
 	}
 };
 
-class ResidueNameColorizerByResidueHydrophobicity : public auxiliaries::NameColorizerForPymol<std::string>
+class ResidueNameColorizerByResidueHydrophobicity : public NameColorizerForPymol<std::string>
 {
 public:
 	ResidueNameColorizerByResidueHydrophobicity()
@@ -107,7 +210,7 @@ private:
 	}
 };
 
-class AtomNameColorizerByAtomType : public auxiliaries::NameColorizerForPymol<std::string>
+class AtomNameColorizerByAtomType : public NameColorizerForPymol<std::string>
 {
 public:
 	AtomNameColorizerByAtomType()
@@ -130,7 +233,7 @@ private:
 	}
 };
 
-class ValueColorizer : public auxiliaries::NameColorizerForPymol<int>
+class ValueColorizer : public NameColorizerForPymol<int>
 {
 public:
 	ValueColorizer()
@@ -151,7 +254,7 @@ private:
 	}
 };
 
-class ValuePairColorizer : public auxiliaries::NameColorizerForPymol< std::pair<int, int> >
+class ValuePairColorizer : public NameColorizerForPymol< std::pair<int, int> >
 {
 public:
 	ValuePairColorizer()
@@ -184,7 +287,7 @@ public:
 
 	std::string color_string(const protein::Atom& a, const protein::Atom& b) const
 	{
-		return auxiliaries::ColorManagementForPymol::color_to_string_id(color(a, b));
+		return ColorManagementForPymol::color_to_string_id(color(a, b));
 	}
 
 	virtual void list_colors() const = 0;
@@ -354,7 +457,7 @@ private:
 		return static_cast<long>(residue_id.residue_number)+(residue_id.chain_id.empty() ? 0 : static_cast<long>(residue_id.chain_id.c_str()[0])*1000000);
 	}
 
-	auxiliaries::NameColorizerForPymol<long> name_colorizer_;
+	NameColorizerForPymol<long> name_colorizer_;
 };
 
 class ContactColorizerByFirstAtomID : public ContactColorizerInterface
@@ -380,7 +483,7 @@ public:
 	}
 
 private:
-	auxiliaries::NameColorizerForPymol<int> name_colorizer_;
+	NameColorizerForPymol<int> name_colorizer_;
 };
 
 class ContactAccepterInterface
@@ -510,6 +613,8 @@ private:
 
 	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals_;
 };
+
+}
 
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
@@ -643,7 +748,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	}
 	else
 	{
-		face_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
+		face_colorizer.reset(new ContactColorizerByFirstResidueName< NameColorizerForPymol<std::string> >());
 	}
 
 	std::cout << "from pymol.cgo import *\n";
@@ -694,7 +799,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 		else
 		{
-			selection_colorizer.reset(new ContactColorizerByFirstResidueName< auxiliaries::NameColorizerForPymol<std::string> >());
+			selection_colorizer.reset(new ContactColorizerByFirstResidueName< NameColorizerForPymol<std::string> >());
 			color_pymol_selection_at_atomic_level=false;
 		}
 
