@@ -8,7 +8,10 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/vector_io.h"
 
-bool check_if_atomic_collision_is_tolerable(const protein::Atom& a, const protein::Atom& b)
+namespace
+{
+
+inline bool check_if_atomic_collision_is_tolerable(const protein::Atom& a, const protein::Atom& b)
 {
 	if(protein::ResidueID::from_atom(a)==protein::ResidueID::from_atom(b))
 	{
@@ -34,6 +37,8 @@ bool check_if_atomic_collision_is_tolerable(const protein::Atom& a, const protei
 		}
 	}
 	return false;
+}
+
 }
 
 void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
