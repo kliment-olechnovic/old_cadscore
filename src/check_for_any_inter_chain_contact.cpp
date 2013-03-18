@@ -8,7 +8,6 @@
 #include "apollo/spheres_hierarchy.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 
 protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& radius_classes_file_name, const std::string& radius_members_file_name);
