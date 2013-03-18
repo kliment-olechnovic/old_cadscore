@@ -12,7 +12,7 @@
 namespace apollo
 {
 
-template<typename SpheresHierarchyType, int MonitoringLevel=0>
+template<typename SpheresHierarchyType>
 class ApolloniusTriangulation
 {
 public:
@@ -26,6 +26,8 @@ public:
 	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy, bool enable_searching_for_d3)
 	{
 		QuadruplesMap quadruples_map;
+		std::tr1::unordered_set<Triple, Triple::HashFunctor> processed_triples;
+		std::size_t difficult_faces_count=0;
 
 		std::deque<Face> stack=find_first_faces(hierarchy);
 		std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> stack_map;
@@ -35,19 +37,14 @@ public:
 		}
 		if(!stack.empty())
 		{
-			std::tr1::unordered_set<Triple, Triple::HashFunctor> processed_triples;
-
 			quadruples_map[stack.front().quadruple_with_d1()].push_back(stack.front().d1_tangent_sphere());
-
-			std::size_t difficult_faces_count=0;
-
 			while(!stack.empty())
 			{
 				Face face=stack.back();
 				stack.pop_back();
 				stack_map.erase(face.abc_ids());
 				{
-					if(MonitoringLevel==1 && !face.can_have_d2())
+					if(monitoring_level()>0 && !face.can_have_d2())
 					{
 						difficult_faces_count++;
 					}
@@ -130,21 +127,61 @@ public:
 					processed_triples.insert(face.abc_ids());
 				}
 			}
+		}
 
-			if(MonitoringLevel==1)
+		if(monitoring_level()>0)
+		{
+			std::clog << "spheres " << hierarchy.spheres().size() << "\n";
+			std::clog << "quadruples " << quadruples_map.size() << "\n";
+			std::clog << "triples " << processed_triples.size() << "\n";
+			std::clog << "difficulties " << difficult_faces_count << "\n";
+			if(monitoring_level()>1)
 			{
-				std::clog << "sheres " << hierarchy.spheres().size() << "\n";
-				std::clog << "quadruples " << quadruples_map.size() << "\n";
-				std::clog << "triples " << processed_triples.size() << "\n";
-				std::clog << "difficulties " << difficult_faces_count << "\n";
+				std::size_t tangent_spheres_count=0;
+				for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 				{
-					std::size_t tangent_spheres_count=0;
-					for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
-					{
-						tangent_spheres_count+=it->second.size();
-					}
-					std::clog << "tangents " << tangent_spheres_count << "\n";
+					tangent_spheres_count+=it->second.size();
 				}
+				std::clog << "tangents " << tangent_spheres_count << "\n";
+			}
+			if(monitoring_level()>2)
+			{
+				std::vector<int> spheres_inclusion_map(hierarchy.spheres().size(), 0);
+				for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+				{
+					const Quadruple& q=it->first;
+					for(int i=0;i<4;i++)
+					{
+						spheres_inclusion_map[q.get(i)]=1;
+					}
+				}
+				std::size_t ignored_spheres_count=0;
+				for(std::size_t i=0;i<spheres_inclusion_map.size();i++)
+				{
+					if(spheres_inclusion_map[i]==0)
+					{
+						ignored_spheres_count++;
+					}
+				}
+				std::clog << "ignored " << ignored_spheres_count;
+				for(std::size_t i=0;i<spheres_inclusion_map.size();i++)
+				{
+					if(spheres_inclusion_map[i]==0)
+					{
+						std::clog << " " << i;
+					}
+				}
+				std::clog << "\n";
+			}
+			if(monitoring_level()>3)
+			{
+				const std::set<std::size_t> hidden_spheres_ids=hierarchy.find_all_hidden_spheres();
+				std::clog << "hidden " << hidden_spheres_ids.size();
+				for(std::set<std::size_t>::const_iterator it=hidden_spheres_ids.begin();it!=hidden_spheres_ids.end();++it)
+				{
+					std::clog << " " << (*it);
+				}
+				std::clog << "\n";
 			}
 		}
 
@@ -254,6 +291,17 @@ public:
 			}
 		}
 		return true;
+	}
+
+	static int& monitoring_level_reference()
+	{
+		static int monitoring_level=0;
+		return monitoring_level;
+	}
+
+	static int monitoring_level()
+	{
+		return monitoring_level_reference();
 	}
 
 private:
@@ -409,41 +457,47 @@ private:
 		if(!spheres.empty())
 		{
 			const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
-			const std::size_t a=0;
-			for(std::size_t b=a+1;b<traversal.size();b++)
+			for(std::size_t u=4;u<traversal.size();u++)
 			{
-				for(std::size_t c=b+1;c<traversal.size();c++)
+				for(std::size_t a=0;a<u;a++)
 				{
-					for(std::size_t d=c+1;d<traversal.size();d++)
+					for(std::size_t b=a+1;b<u;b++)
 					{
-						Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-						std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-						if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
+						for(std::size_t c=b+1;c<u;c++)
 						{
-							for(int i=0;i<4;i++)
+							for(std::size_t d=((a+1<u && b+1<u && c+1<u) ? (u-1) : (c+1));d<u;d++)
 							{
-								const Face face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front());
-								if(face.valid())
+								tries_before_success++;
+								Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
+								std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+								if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
 								{
-									result.push_back(face);
+									for(int i=0;i<4;i++)
+									{
+										const Face face(spheres, quadruple.exclude(i), quadruple.get(i), tangents.front());
+										if(face.valid())
+										{
+											result.push_back(face);
+										}
+									}
+									if(!result.empty())
+									{
+										if(monitoring_level()>0)
+										{
+											std::clog << "brute " << tries_before_success << "\n";
+										}
+										return result;
+									}
 								}
 							}
-							if(!result.empty())
-							{
-								if(MonitoringLevel==1)
-								{
-									std::clog << "brute " << tries_before_success << "\n";
-								}
-								return result;
-							}
-						}
-						else
-						{
-							tries_before_success++;
 						}
 					}
 				}
 			}
+		}
+		if(monitoring_level()>0)
+		{
+			std::clog << "brute " << tries_before_success << "\n";
 		}
 		return result;
 	}
