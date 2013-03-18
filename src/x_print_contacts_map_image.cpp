@@ -18,7 +18,7 @@
 #include "auxiliaries/color.h"
 #include "auxiliaries/ppm_image_writer.h"
 
-void print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo)
+void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > InterResidueContacts;
 
@@ -68,7 +68,7 @@ void print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOption
 	svg.write(std::cout);
 }
 
-void print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo)
+void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--max-distance:");
 

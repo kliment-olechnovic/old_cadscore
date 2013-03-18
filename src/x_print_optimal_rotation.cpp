@@ -11,7 +11,7 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/vector_io.h"
 
-void print_optimal_rotation(const auxiliaries::CommandLineOptions& clo)
+void x_print_optimal_rotation(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--depth:");
 

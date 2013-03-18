@@ -84,7 +84,7 @@ inline bool is_in_strand(const DSSPResidueRecord& dr)
 
 }
 
-void summarize_dssp_file(const auxiliaries::CommandLineOptions& clo)
+void x_summarize_dssp_file(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--print-sequence --print-sequence-colored");
 

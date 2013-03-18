@@ -22,7 +22,7 @@ from pymol import cmd
 
 EOF
 
-cat $INPUT | $VOROPROT --mode collect-atoms | $VOROPROT --mode print-optimal-rotation | sed 's/.*/cmd.do("&")/' >> $SCRIPT_FILE
+cat $INPUT | $VOROPROT --mode collect-atoms | $VOROPROT --mode x-print-optimal-rotation | sed 's/.*/cmd.do("&")/' >> $SCRIPT_FILE
 
 cat << EOF >> $SCRIPT_FILE
 

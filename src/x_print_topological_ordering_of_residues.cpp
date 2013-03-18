@@ -8,6 +8,9 @@
 
 #include "auxiliaries/command_line_options.h"
 
+namespace
+{
+
 struct FullResidueID
 {
 	std::string chain_name;
@@ -55,7 +58,9 @@ struct DoubleID
 	}
 };
 
-void print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo)
+}
+
+void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--bond-distance:");
 

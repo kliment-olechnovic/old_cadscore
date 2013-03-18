@@ -9,7 +9,7 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/map_io.h"
 
-void print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo)
+void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > InterResidueContacts;
 
