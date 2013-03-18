@@ -16,7 +16,7 @@
 #include "auxiliaries/map_io.h"
 #include "auxiliaries/opengl_printer.h"
 
-void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo)
+void x_print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef protein::NucleotidePlane<apollo::SimplePoint> Plane;
 	clo.check_allowed_options("--graphics");
@@ -48,7 +48,7 @@ void print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo)
 	}
 }
 
-void print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& clo)
+void x_print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
@@ -144,7 +144,7 @@ void print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& 
 	}
 }
 
-void print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo)
+void x_print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef protein::NucleotidePlane<apollo::SimplePoint> Plane;
 
