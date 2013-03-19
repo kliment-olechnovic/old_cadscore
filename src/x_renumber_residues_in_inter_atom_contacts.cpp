@@ -126,11 +126,11 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 		{
 			for(std::size_t i=0;i<std::max(alignments[j].size(), alignments[j+1].size());i++)
 			{
-				if(i<alignments[j].size() && alignments[j][i].second<0)
+				if(i<alignments[j].size() && alignments[j][i].second<0 && (i>=alignments[j+1].size() || alignments[j+1][i].first>=0))
 				{
 					alignments[j+1].insert(alignments[j+1].begin()+i, std::pair<int, int>(-1, -1));
 				}
-				else if(i<alignments[j+1].size() && alignments[j+1][i].first<0)
+				else if(i<alignments[j+1].size() && alignments[j+1][i].first<0 && (i>=alignments[j].size() || alignments[j][i].second>=0))
 				{
 					for(int e=0;e<=j;e++)
 					{
