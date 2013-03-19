@@ -147,15 +147,19 @@ public:
 	{
 		const std::size_t alignment_size=std::min(alignment_seq1.size(), alignment_seq2.size());
 		std::vector< std::pair<int, int> > alignment(alignment_size, std::pair<int, int>(-1, -1));
-		for(int i=0;i<static_cast<int>(alignment_size);i++)
+		int pos1=0;
+		int pos2=0;
+		for(std::size_t i=0;i<alignment_size;i++)
 		{
 			if(alignment_seq1.at(i)!='-')
 			{
-				alignment[i].first=i;
+				alignment[i].first=pos1;
+				pos1++;
 			}
 			if(alignment_seq2.at(i)!='-')
 			{
-				alignment[i].second=i;
+				alignment[i].second=pos2;
+				pos2++;
 			}
 		}
 		return alignment;
