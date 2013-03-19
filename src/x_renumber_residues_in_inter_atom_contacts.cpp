@@ -77,6 +77,8 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 	{
 		const std::string chain_name=chain_names.substr(l, 1);
 
+		std::clog << "Chain " << chain_name << ":\n";
+
 		const std::vector< std::pair<protein::ResidueID, protein::ResidueSummary> > filtered_residue_ids_1=filter_residue_ids_map_by_chain_id(residue_ids_1, chain_name);
 		const std::vector< std::pair<protein::ResidueID, protein::ResidueSummary> > filtered_residue_ids_2=filter_residue_ids_map_by_chain_id(residue_ids_2, chain_name);
 
@@ -93,10 +95,14 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 			throw std::runtime_error("Unconvertible sequence");
 		}
 
+		std::clog << "Sequences from atoms:\n";
+		std::clog << sequence_string_from_atoms_1 << "\n";
+		std::clog << sequence_string_from_atoms_2 << "\n";
+
 		std::string input_alignment_string_1;
-		std::getline(std::cin, input_alignment_string_1);
+		std::cin >> input_alignment_string_1;
 		std::string input_alignment_string_2;
-		std::getline(std::cin, input_alignment_string_2);
+		std::cin >> input_alignment_string_2;
 
 		const std::string sequence_string_from_input_alignment_1=collect_string_without_gaps(input_alignment_string_1);
 		const std::string sequence_string_from_input_alignment_2=collect_string_without_gaps(input_alignment_string_2);
@@ -105,6 +111,10 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 		{
 			throw std::runtime_error("Invalid input alignment");
 		}
+
+		std::clog << "Input alignment:\n";
+		std::clog << input_alignment_string_1 << "\n";
+		std::clog << input_alignment_string_2 << "\n";
 
 		const protein::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, gap_start_score, gap_extension_score);
 		std::vector< std::pair<int, int> > alignments[3];
@@ -135,46 +145,37 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 			throw std::runtime_error("Failed to align alignments");
 		}
 
+		std::clog << "Result alignment:\n";
+		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_atoms_1, sequence_string_from_input_alignment_1, alignments[0], std::clog);
+		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_1, sequence_string_from_input_alignment_2, alignments[1], std::clog);
+		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_2, sequence_string_from_atoms_2, alignments[2], std::clog);
+
 		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_1=filter_residue_ids_map_by_chain_id(residue_ids_indices_1, chain_name);
 		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_2=filter_residue_ids_map_by_chain_id(residue_ids_indices_2, chain_name);
-
-		if(alignments[0].size()!=filtered_residue_ids_indices_1.size() || alignments[2].size()!=filtered_residue_ids_indices_2.size())
-		{
-			throw std::runtime_error("Alignment size does not match residue list size");
-		}
 
 		for(std::size_t i=0;i<alignments[0].size();i++)
 		{
 			if(alignments[0][i].first>=0)
 			{
-				const std::vector<std::size_t>& atoms_indices=filtered_residue_ids_indices_1.at(i).second;
+				const std::vector<std::size_t>& atoms_indices=filtered_residue_ids_indices_1.at(alignments[0][i].first).second;
 				for(std::size_t j=0;j<atoms_indices.size();j++)
 				{
 					protein::Atom& atom=atoms_1[atoms_indices[j]];
 					atom.chain_id=chain_name;
-					atom.residue_number=i;
+					atom.residue_number=i+1;
 				}
 			}
 			if(alignments[2][i].second>=0)
 			{
-				const std::vector<std::size_t>& atoms_indices=filtered_residue_ids_indices_2.at(i).second;
+				const std::vector<std::size_t>& atoms_indices=filtered_residue_ids_indices_2.at(alignments[2][i].second).second;
 				for(std::size_t j=0;j<atoms_indices.size();j++)
 				{
 					protein::Atom& atom=atoms_2[atoms_indices[j]];
 					atom.chain_id=chain_name;
-					atom.residue_number=i;
+					atom.residue_number=i+1;
 				}
 			}
 		}
-
-		std::clog << "Chain " << chain_name << ":\n";
-		std::clog << "Input alignment:\n";
-		std::clog << input_alignment_string_1 << "\n";
-		std::clog << input_alignment_string_2 << "\n";
-		std::clog << "Result alignment:\n";
-		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_atoms_1, sequence_string_from_input_alignment_1, alignments[0], std::clog);
-		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_1, sequence_string_from_input_alignment_2, alignments[1], std::clog);
-		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_2, sequence_string_from_atoms_2, alignments[2], std::clog);
 	}
 
 	auxiliaries::print_vector(std::cout, "atoms", atoms_1);
