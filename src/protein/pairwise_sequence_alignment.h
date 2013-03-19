@@ -123,14 +123,14 @@ public:
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
 			const int j=alignment[i].first;
-			std::cout << (j>=0 ? seq1.at(j) : '-');
+			output << (j>=0 ? seq1.at(j) : '-');
 		}
 		output << "\n";
 
 		for(std::size_t i=0;i<alignment.size();i++)
 		{
 			const int j=alignment[i].second;
-			std::cout << (j>=0 ? seq2.at(j) : '-');
+			output << (j>=0 ? seq2.at(j) : '-');
 		}
 		output << "\n";
 
