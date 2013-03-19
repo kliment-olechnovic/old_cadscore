@@ -308,15 +308,18 @@ void x_combine_three_global_sequence_alignments(const auxiliaries::CommandLineOp
 	{
 		for(std::size_t i=0;i<std::max(alignments[j].second.size(), alignments[j+1].first.size());i++)
 		{
-			if(i<alignments[j].second.size() && alignments[j].second[i]=='-' && (i==alignments[j+1].first.size() || (i<alignments[j+1].first.size() && alignments[j+1].first[i]!='-')))
+			if(i<alignments[j].second.size() && alignments[j].second[i]=='-')
 			{
 				alignments[j+1].first.insert(i, "-");
 				alignments[j+1].second.insert(i, "-");
 			}
-			if(i<alignments[j+1].first.size() && alignments[j+1].first[i]=='-' && (i==alignments[j].second.size() || (i<alignments[j].second.size() && alignments[j].second[i]!='-')))
+			else if(i<alignments[j+1].first.size() && alignments[j+1].first[i]=='-')
 			{
-				alignments[j].first.insert(i, "-");
-				alignments[j].second.insert(i, "-");
+				for(int e=0;e<=j;e++)
+				{
+					alignments[e].first.insert(i, "-");
+					alignments[e].second.insert(i, "-");
+				}
 			}
 		}
 	}
