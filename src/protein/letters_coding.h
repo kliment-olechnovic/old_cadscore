@@ -14,14 +14,14 @@ public:
 	{
 		static const std::map<std::string, std::string> m=create_map_of_residue_codes_big_to_small();
 		const std::map<std::string, std::string>::const_iterator it=m.find(aaa);
-		return (it==m.end() ? std::string("*") : it->second);
+		return (it==m.end() ? std::string("?") : it->second);
 	}
 
 	inline static std::string convert_residue_codes_small_to_big(const std::string& a)
 	{
 		static const std::map<std::string, std::string> m=create_map_of_residue_codes_small_to_big();
 		const std::map<std::string, std::string>::const_iterator it=m.find(a);
-		return (it==m.end() ? std::string("XXX") : it->second);
+		return (it==m.end() ? std::string("???") : it->second);
 	}
 private:
 	static std::map<std::string, std::string> create_map_of_residue_codes_big_to_small()
@@ -54,6 +54,7 @@ private:
 		m["G"]="g";
 		m["T"]="t";
 		m["U"]="u";
+		m["???"]="?";
 		return m;
 	}
 

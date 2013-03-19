@@ -2,6 +2,7 @@
 #define PROTEIN_PAIRWISE_SEQUENCE_ALIGNMENT_H_
 
 #include <vector>
+#include <algorithm>
 
 namespace protein
 {
