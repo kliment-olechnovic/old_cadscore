@@ -280,11 +280,6 @@ void x_combine_three_global_sequence_alignments(const auxiliaries::CommandLineOp
 		}
 	}
 
-	if(alignments[1].first.size()<alignments[0].first.size() || alignments[1].first.size()<alignments[2].first.size())
-	{
-		throw std::runtime_error("Second alignment is too short");
-	}
-
 	std::pair<std::string, std::string> contents[3];
 	for(int i=0;i<3;i++)
 	{
@@ -309,26 +304,19 @@ void x_combine_three_global_sequence_alignments(const auxiliaries::CommandLineOp
 		throw std::runtime_error("Second alignment is not consistent with others");
 	}
 
-	if(alignments[1].first.size()>alignments[0].second.size())
+	for(int j=0;j<2;j++)
 	{
-		for(std::size_t i=0;i<alignments[1].first.size();i++)
+		for(std::size_t i=0;i<std::max(alignments[j].second.size(), alignments[j+1].first.size());i++)
 		{
-			if(alignments[1].first[i]=='-')
+			if(i<alignments[j].second.size() && alignments[j].second[i]=='-' && (i==alignments[j+1].first.size() || (i<alignments[j+1].first.size() && alignments[j+1].first[i]!='-')))
 			{
-				alignments[0].first.insert(i, "-");
-				alignments[0].second.insert(i, "-");
+				alignments[j+1].first.insert(i, "-");
+				alignments[j+1].second.insert(i, "-");
 			}
-		}
-	}
-
-	if(alignments[1].second.size()>alignments[2].first.size())
-	{
-		for(std::size_t i=0;i<alignments[1].second.size();i++)
-		{
-			if(alignments[1].second[i]=='-')
+			if(i<alignments[j+1].first.size() && alignments[j+1].first[i]=='-' && (i==alignments[j].second.size() || (i<alignments[j].second.size() && alignments[j].second[i]!='-')))
 			{
-				alignments[2].first.insert(i, "-");
-				alignments[2].second.insert(i, "-");
+				alignments[j].first.insert(i, "-");
+				alignments[j].second.insert(i, "-");
 			}
 		}
 	}
