@@ -147,7 +147,6 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 
 		std::clog << "Result alignment:\n";
 		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_atoms_1, sequence_string_from_input_alignment_1, alignments[0], std::clog);
-		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_1, sequence_string_from_input_alignment_2, alignments[1], std::clog);
 		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_2, sequence_string_from_atoms_2, alignments[2], std::clog);
 
 		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_1=filter_residue_ids_map_by_chain_id(residue_ids_indices_1, chain_name);
@@ -176,6 +175,8 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 				}
 			}
 		}
+
+		std::clog << "\n";
 	}
 
 	auxiliaries::print_vector(std::cout, "atoms", atoms_1);
