@@ -105,23 +105,20 @@ public:
 	std::set<std::size_t> find_all_hidden_spheres() const
 	{
 		std::set<std::size_t> result;
-		if(!clusters_layers_.empty())
+		for(std::size_t i=0;i<spheres_.size();i++)
 		{
-			for(std::size_t i=0;i<clusters_layers_[0].size();i++)
+			std::vector<std::size_t> candidates=find_all_collisions(custom_sphere_from_object<SimpleSphere>(spheres_[i]));
+			for(std::size_t j=0;j<candidates.size();j++)
 			{
-				const std::vector<std::size_t>& ids=clusters_layers_[0][i].second;
-				for(std::size_t j=0;j<ids.size();j++)
+				if(i!=candidates[j])
 				{
-					for(std::size_t k=j+1;k<ids.size();k++)
+					if(sphere_contains_sphere(spheres_[i], spheres_[candidates[j]]))
 					{
-						if(sphere_contains_sphere(spheres_[ids[j]], spheres_[ids[k]]))
-						{
-							result.insert(ids[k]);
-						}
-						if(sphere_contains_sphere(spheres_[ids[k]], spheres_[ids[j]]))
-						{
-							result.insert(ids[j]);
-						}
+						result.insert(candidates[j]);
+					}
+					if(sphere_contains_sphere(spheres_[candidates[j]], spheres_[i]))
+					{
+						result.insert(i);
 					}
 				}
 			}
