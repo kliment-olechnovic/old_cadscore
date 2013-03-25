@@ -55,6 +55,13 @@ public:
 		std::cout << end_color.r_double() << ", " << end_color.g_double() << ", " << end_color.b_double() << ",\n";
 	}
 
+	template<typename SphereType>
+	static void print_sphere(const SphereType& sphere, const auxiliaries::Color& color)
+	{
+		std::cout << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
+		std::cout << "    SPHERE, " << point_to_string(sphere) << ", " << sphere.r << ",\n";
+	}
+
 private:
 	template<typename PointType>
 	static std::string point_to_string(const PointType& a)
