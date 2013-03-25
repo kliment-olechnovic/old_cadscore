@@ -37,6 +37,7 @@ void x_print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo);
 void x_print_optimal_rotation(const auxiliaries::CommandLineOptions& clo);
 void x_print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo);
 void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo);
+void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo);
 void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 void x_summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
 
@@ -99,6 +100,7 @@ int main(const int argc, const char** argv)
 		modes_map["x-print-optimal-rotation"]=ModeFunctionPointer(x_print_optimal_rotation);
 		modes_map["x-print-stacking-nucleotides-contacts"]=ModeFunctionPointer(x_print_stacking_nucleotides_contacts);
 		modes_map["x-print-topological-ordering-of-residues"]=ModeFunctionPointer(x_print_topological_ordering_of_residues);
+		modes_map["x-print-tunnels-graphics"]=ModeFunctionPointer(x_print_tunnels_graphics);
 		modes_map["x-renumber-residues-in-inter-atom-contacts"]=ModeFunctionPointer(x_renumber_residues_in_inter_atom_contacts);
 		modes_map["x-summarize-dssp-file"]=ModeFunctionPointer(x_summarize_dssp_file);
 
