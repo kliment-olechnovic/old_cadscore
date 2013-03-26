@@ -2,7 +2,7 @@
 
 #include "apollo/spheres_hierarchy.h"
 #include "apollo/apollonius_triangulation.h"
-#include "apollo/spheres_tangent_disk.h"
+#include "apollo/spheres_tangent_sphere_minimal.h"
 #include "apollo/spheres_tangent_sphere_by_radius.h"
 
 #include "auxiliaries/command_line_options.h"
@@ -34,7 +34,7 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 	int counter=0;
 	for(Apollo::TriplesNeighboursMap::const_iterator it=triples_neighbours_map.begin();it!=triples_neighbours_map.end();++it)
 	{
-		const std::vector<apollo::SimpleSphere> tangent_disks=apollo::construct_spheres_tangent_disk<apollo::SimpleSphere>(atoms[it->first.get(0)], atoms[it->first.get(1)], atoms[it->first.get(2)]);
+		const std::vector<apollo::SimpleSphere> tangent_disks=apollo::construct_spheres_tangent_sphere_minimal<apollo::SimpleSphere>(atoms[it->first.get(0)], atoms[it->first.get(1)], atoms[it->first.get(2)]);
 		for(std::size_t e=0;e<tangent_disks.size();e++)
 		{
 			const apollo::SimpleSphere& tangent_disk=tangent_disks[e];
@@ -57,7 +57,7 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 						{
 							circle_points[j]=apollo::custom_sphere_from_point<apollo::SimpleSphere>(tanget_sphere_center+((apollo::custom_point_from_object<apollo::SimplePoint>(atoms[it->first.get(j)])-tanget_sphere_center).unit()*tangent_sphere.r), 0);
 						}
-						const std::vector<apollo::SimpleSphere> circles=apollo::construct_spheres_tangent_disk<apollo::SimpleSphere>(circle_points[0], circle_points[1], circle_points[2]);
+						const std::vector<apollo::SimpleSphere> circles=apollo::construct_spheres_tangent_sphere_minimal<apollo::SimpleSphere>(circle_points[0], circle_points[1], circle_points[2]);
 						for(std::size_t j=0;j<circles.size();j++)
 						{
 							const apollo::SimpleSphere& circle=circles[j];
