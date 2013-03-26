@@ -65,7 +65,7 @@ inline std::vector<OutputSphereType> construct_spheres_tangent_sphere_by_radius(
 
 	std::vector<double> zs;
 	if(greater_or_equal(D, 0)) {zs.push_back((-b-sqrt(fabs(D)))/(2*a));}
-	if(greater(D, 0))  {zs.push_back((-b+sqrt(D))/(2*a));}
+	if(greater(D, 0))  {zs.push_back((-b+sqrt(fabs(D)))/(2*a));}
 
 	std::vector<OutputSphereType> results;
 	results.reserve(zs.size());

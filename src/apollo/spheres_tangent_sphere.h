@@ -81,8 +81,8 @@ inline std::vector<OutputSphereType> construct_spheres_tangent_sphere(const Inpu
 	const double D = b*b-4*a*c;
 
 	std::vector<double> radiuses;
-	if(D>=0) {radiuses.push_back((-b-sqrt(D))/(2*a));}
-	if(D>0)  {radiuses.push_back((-b+sqrt(D))/(2*a));}
+	if(greater_or_equal(D, 0)) {radiuses.push_back((-b-sqrt(fabs(D)))/(2*a));}
+	if(greater(D, 0))  {radiuses.push_back((-b+sqrt(fabs(D)))/(2*a));}
 
 	std::vector<OutputSphereType> results;
 	results.reserve(radiuses.size());
