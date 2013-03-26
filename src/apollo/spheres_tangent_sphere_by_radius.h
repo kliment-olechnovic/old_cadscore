@@ -73,7 +73,7 @@ inline std::vector<OutputSphereType> construct_spheres_tangent_sphere_by_radius(
 	{
 		const double z=zs[i];
 		const OutputSphereType candidate=custom_sphere<OutputSphereType>((ux*z+vx+sm.x), (uy*z+vy+sm.y), (z+sm.z), (r-sm.r));
-		//if(check_spheres_tangent_sphere_by_radius(sm, s1, s2, custom_tangent_sphere_radius, candidate))
+		if(check_spheres_tangent_sphere_by_radius(sm, s1, s2, custom_tangent_sphere_radius, candidate))
 		{
 			results.push_back(candidate);
 		}
