@@ -1,5 +1,5 @@
-#ifndef APOLLO_SPHERES_TANGENT_H_
-#define APOLLO_SPHERES_TANGENT_H_
+#ifndef APOLLO_SPHERES_TANGENT_SPHERE_H_
+#define APOLLO_SPHERES_TANGENT_SPHERE_H_
 
 #include <vector>
 
@@ -9,7 +9,7 @@ namespace apollo
 {
 
 template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC, typename InputSphereTypeD, typename InputSphereTypeE>
-bool check_spheres_tangent(const InputSphereTypeA& s1, const InputSphereTypeB& s2, const InputSphereTypeC& s3, const InputSphereTypeD& s4, const InputSphereTypeE& tangent)
+bool check_spheres_tangent_sphere(const InputSphereTypeA& s1, const InputSphereTypeB& s2, const InputSphereTypeC& s3, const InputSphereTypeD& s4, const InputSphereTypeE& tangent)
 {
 	return (sphere_touches_sphere(tangent, s1) &&
 			sphere_touches_sphere(tangent, s2) &&
@@ -18,15 +18,15 @@ bool check_spheres_tangent(const InputSphereTypeA& s1, const InputSphereTypeB& s
 }
 
 template<typename OutputSphereType, typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC, typename InputSphereTypeD>
-inline std::vector<OutputSphereType> construct_spheres_tangent(const InputSphereTypeA& sm, const InputSphereTypeB& s1, const InputSphereTypeC& s2, const InputSphereTypeD& s3)
+inline std::vector<OutputSphereType> construct_spheres_tangent_sphere(const InputSphereTypeA& sm, const InputSphereTypeB& s1, const InputSphereTypeC& s2, const InputSphereTypeD& s3)
 {
 	{
 		const double min_r=std::min(sm.r, std::min(s1.r, std::min(s2.r, s3.r)));
 		if(sm.r!=min_r)
 		{
-			if(s1.r==min_r) return construct_spheres_tangent<OutputSphereType>(s1, sm, s2, s3);
-			if(s2.r==min_r) return construct_spheres_tangent<OutputSphereType>(s2, sm, s1, s3);
-			if(s3.r==min_r) return construct_spheres_tangent<OutputSphereType>(s3, sm, s1, s2);
+			if(s1.r==min_r) return construct_spheres_tangent_sphere<OutputSphereType>(s1, sm, s2, s3);
+			if(s2.r==min_r) return construct_spheres_tangent_sphere<OutputSphereType>(s2, sm, s1, s3);
+			if(s3.r==min_r) return construct_spheres_tangent_sphere<OutputSphereType>(s3, sm, s1, s2);
 		}
 	}
 
@@ -92,7 +92,7 @@ inline std::vector<OutputSphereType> construct_spheres_tangent(const InputSphere
 		if(r>0)
 		{
 			const OutputSphereType candidate=custom_sphere<OutputSphereType>((u1*r+v1+sm.x), (u2*r+v2+sm.y), (u3*r+v3+sm.z), (r-sm.r));
-			if(check_spheres_tangent(sm, s1, s2, s3, candidate))
+			if(check_spheres_tangent_sphere(sm, s1, s2, s3, candidate))
 			{
 				results.push_back(candidate);
 			}
@@ -104,4 +104,4 @@ inline std::vector<OutputSphereType> construct_spheres_tangent(const InputSphere
 
 }
 
-#endif /* APOLLO_SPHERES_TANGENT_H_ */
+#endif /* APOLLO_SPHERES_TANGENT_SPHERE_H_ */
