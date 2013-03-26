@@ -110,7 +110,7 @@ public:
 			const Sphere& d2=spheres_->at(d2_id);
 			if(sphere_may_contain_candidate_for_d2(d2) && !sphere_intersects_sphere(d1_tangent_sphere_, d2))
 			{
-				const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d2);
+				const std::vector<SimpleSphere> tangents=construct_spheres_tangent_sphere<SimpleSphere>(*a_, *b_, *c_, d2);
 				for(std::size_t i=0;i<tangents.size();i++)
 				{
 					if(!sphere_intersects_sphere(tangents[i], *d1_))
@@ -159,7 +159,7 @@ public:
 				}
 				if(no_conflict_with_other_d3_tangents)
 				{
-					const std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(*a_, *b_, *c_, d3);
+					const std::vector<SimpleSphere> tangents=construct_spheres_tangent_sphere<SimpleSphere>(*a_, *b_, *c_, d3);
 					std::vector<SimpleSphere> valid_tangents;
 					for(std::size_t i=0;i<tangents.size();i++)
 					{

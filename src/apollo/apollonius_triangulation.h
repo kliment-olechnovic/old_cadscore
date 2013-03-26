@@ -469,7 +469,7 @@ private:
 							{
 								tries_before_success++;
 								Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-								std::vector<SimpleSphere> tangents=construct_spheres_tangent<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+								std::vector<SimpleSphere> tangents=construct_spheres_tangent_sphere<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 								if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
 								{
 									for(int i=0;i<4;i++)
