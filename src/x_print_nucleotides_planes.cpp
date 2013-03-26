@@ -34,7 +34,7 @@ void x_print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo)
 		if(clo.isopt("--graphics"))
 		{
 			std::cout << "from pymol.cgo import *\n";
-			const auxiliaries::OpenGLPrinter opengl_printer("obj_np", "cgo_np");
+			auxiliaries::OpenGLPrinter opengl_printer("obj_np", "cgo_np");
 			for(std::map< protein::ResidueID, Plane >::const_iterator it=nucleotides_planes.begin();it!=nucleotides_planes.end();++it)
 			{
 				const Plane& plane=it->second;
@@ -107,7 +107,7 @@ void x_print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions
 	std::cout << "from pymol.cgo import *\n";
 	std::cout << "from pymol import cmd\n\n";
 
-	const auxiliaries::OpenGLPrinter opengl_printer("obj_contacts", "cgo_contacts");
+	auxiliaries::OpenGLPrinter opengl_printer("obj_contacts", "cgo_contacts");
 	for(std::size_t i=0;i<interface_vector.size();++i)
 	{
 		const std::pair<std::size_t, std::size_t> atoms_ids_pair=interface_vector[i];
