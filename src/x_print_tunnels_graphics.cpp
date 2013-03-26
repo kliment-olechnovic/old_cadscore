@@ -29,7 +29,8 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 	std::cout << "from pymol.cgo import *\n";
 	std::cout << "from pymol import cmd\n\n";
 
-	const auxiliaries::OpenGLPrinter opengl_printer("obj_tunnels", "cgo_tunnels");
+	auxiliaries::OpenGLPrinter opengl_printer1("obj_spheres", "cgo_spheres");
+	auxiliaries::OpenGLPrinter opengl_printer2("obj_tunnels", "cgo_tunnels");
 
 	int counter=0;
 	for(Apollo::TriplesNeighboursMap::const_iterator it=triples_neighbours_map.begin();it!=triples_neighbours_map.end();++it)
@@ -40,9 +41,9 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 			const apollo::SimpleSphere& tangent_disk=tangent_disks[e];
 			if(tangent_disk.r>=min_tangent_radius && tangent_disk.r<max_tangent_radius/4)
 			{
-				opengl_printer.print_sphere(atoms[it->first.get(0)], auxiliaries::Color::from_code(0x00FF00));
-				opengl_printer.print_sphere(atoms[it->first.get(1)], auxiliaries::Color::from_code(0x00FF00));
-				opengl_printer.print_sphere(atoms[it->first.get(2)], auxiliaries::Color::from_code(0x00FF00));
+				opengl_printer1.print_sphere(atoms[it->first.get(0)], auxiliaries::Color::from_code(0x00FF00));
+				opengl_printer1.print_sphere(atoms[it->first.get(1)], auxiliaries::Color::from_code(0x00FF00));
+				opengl_printer1.print_sphere(atoms[it->first.get(2)], auxiliaries::Color::from_code(0x00FF00));
 
 				double multiplier=1.01;
 				for(double r=tangent_disk.r;r<=max_tangent_radius;r*=multiplier)
@@ -63,7 +64,7 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 							const apollo::SimpleSphere& circle=circles[j];
 							const apollo::SimplePoint normal=apollo::plane_normal_from_three_points<apollo::SimplePoint>(circle_points[0], circle_points[1], circle_points[2]);
 							const apollo::SimplePoint center=apollo::custom_point_from_object<apollo::SimplePoint>(circle);
-							opengl_printer.print_cylinder(center-(normal*0.02), center+(normal*0.02), circle.r, auxiliaries::Color::from_code(0xFFFF00), auxiliaries::Color::from_code(0xFFFF00));
+							opengl_printer2.print_cylinder(center-(normal*0.02), center+(normal*0.02), circle.r, auxiliaries::Color::from_code(0xFFFF00), auxiliaries::Color::from_code(0xFFFF00));
 						}
 					}
 					multiplier+=step;

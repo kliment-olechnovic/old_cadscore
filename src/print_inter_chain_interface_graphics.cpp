@@ -758,7 +758,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		const std::string obj_name=output_names_prefix+std::string("obj_")+it->first.first+"_"+it->first.second;
 		const std::string cgo_name=output_names_prefix+std::string("iface_")+it->first.first+"_"+it->first.second;
-		const auxiliaries::OpenGLPrinter opengl_printer(obj_name, cgo_name);
+		auxiliaries::OpenGLPrinter opengl_printer(obj_name, cgo_name);
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=it->second[i];
