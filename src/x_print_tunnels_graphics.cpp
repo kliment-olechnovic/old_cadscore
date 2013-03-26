@@ -42,9 +42,6 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 				opengl_printer.print_sphere(atoms[it->first.get(0)], auxiliaries::Color::from_code(0x00FF00));
 				opengl_printer.print_sphere(atoms[it->first.get(1)], auxiliaries::Color::from_code(0x00FF00));
 				opengl_printer.print_sphere(atoms[it->first.get(2)], auxiliaries::Color::from_code(0x00FF00));
-				const apollo::SimplePoint normal=apollo::plane_normal_from_three_points<apollo::SimplePoint>(atoms[it->first.get(0)], atoms[it->first.get(1)], atoms[it->first.get(2)]);
-				const apollo::SimplePoint center=apollo::custom_point_from_object<apollo::SimplePoint>(tangent_disk);
-				opengl_printer.print_cylinder(center-(normal*0.02), center+(normal*0.02), tangent_disk.r, auxiliaries::Color::from_code(0xFF0000), auxiliaries::Color::from_code(0xFF0000));
 
 				for(double r=tangent_disk.r;r<=max_tangent_radius;r+=step)
 				{
