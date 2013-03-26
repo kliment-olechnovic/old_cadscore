@@ -18,7 +18,7 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 
 	const double min_tangent_radius=clo.isopt("--min-tangent-radius") ? clo.arg_with_min_value<double>("--min-tangent-radius", 0) : 0.1;
 	const double max_tangent_radius=clo.isopt("--max-tangent-radius") ? clo.arg_with_min_value<double>("--max-tangent-radius", min_tangent_radius) : 2.8;
-	const double step=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0) : 0.1;
+	const double step=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0) : 0.05;
 
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -31,6 +31,7 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 
 	const auxiliaries::OpenGLPrinter opengl_printer("obj_tunnels", "cgo_tunnels");
 
+	int counter=0;
 	for(Apollo::TriplesNeighboursMap::const_iterator it=triples_neighbours_map.begin();it!=triples_neighbours_map.end();++it)
 	{
 		const std::vector<apollo::SimpleSphere> tangent_disks=apollo::construct_spheres_tangent_disk<apollo::SimpleSphere>(atoms[it->first.get(0)], atoms[it->first.get(1)], atoms[it->first.get(2)]);
@@ -43,13 +44,13 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 				opengl_printer.print_sphere(atoms[it->first.get(1)], auxiliaries::Color::from_code(0x00FF00));
 				opengl_printer.print_sphere(atoms[it->first.get(2)], auxiliaries::Color::from_code(0x00FF00));
 
-				for(double r=tangent_disk.r;r<=max_tangent_radius;r+=step)
+				double multiplier=1.01;
+				for(double r=tangent_disk.r;r<=max_tangent_radius;r*=multiplier)
 				{
 					const std::vector<apollo::SimpleSphere> tangent_spheres=apollo::construct_spheres_tangent_sphere_by_radius<apollo::SimpleSphere>(atoms[it->first.get(0)], atoms[it->first.get(1)], atoms[it->first.get(2)], r);
 					for(std::size_t i=0;i<tangent_spheres.size();i++)
 					{
 						const apollo::SimpleSphere& tangent_sphere=tangent_spheres[i];
-//						opengl_printer.print_sphere(tangent_sphere, auxiliaries::Color::from_code(0x0000FF));
 						const apollo::SimplePoint tanget_sphere_center=apollo::custom_point_from_object<apollo::SimplePoint>(tangent_sphere);
 						std::vector<apollo::SimpleSphere> circle_points(3);
 						for(int j=0;j<3;j++)
@@ -65,9 +66,14 @@ void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo)
 							opengl_printer.print_cylinder(center-(normal*0.02), center+(normal*0.02), circle.r, auxiliaries::Color::from_code(0xFFFF00), auxiliaries::Color::from_code(0xFFFF00));
 						}
 					}
+					multiplier+=step;
 				}
 
-				return;
+				counter++;
+				if(counter==1)
+				{
+					return;
+				}
 			}
 		}
 	}
