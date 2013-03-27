@@ -122,9 +122,28 @@ struct SimpleSphere
 	double z;
 	double r;
 
-	SimpleSphere() : x(0), y(0), z(0), r(0) {}
+	SimpleSphere() : x(0), y(0), z(0), r(0)
+	{
+	}
 
-	SimpleSphere(const double x, const double y, const double z, const double r) : x(x), y(y), z(z), r(r) {}
+	SimpleSphere(const double x, const double y, const double z, const double r) : x(x), y(y), z(z), r(r)
+	{
+	}
+
+	template<typename InputSphereType>
+	SimpleSphere(const InputSphereType& input_sphere) : x(input_sphere.x), y(input_sphere.y), z(input_sphere.z), r(input_sphere.r)
+	{
+	}
+
+	template<typename InputPointType>
+	SimpleSphere(const InputPointType& input_point, const double r) : x(input_point.x), y(input_point.y), z(input_point.z), r(r)
+	{
+	}
+
+	SimplePoint center() const
+	{
+		return SimplePoint(x, y, z);
+	}
 };
 
 }

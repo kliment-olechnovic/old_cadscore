@@ -105,9 +105,18 @@ struct SimplePoint
 	double y;
 	double z;
 
-	SimplePoint() : x(0), y(0), z(0) {}
+	SimplePoint() : x(0), y(0), z(0)
+	{
+	}
 
-	SimplePoint(const double x, const double y, const double z) : x(x), y(y), z(z) {}
+	SimplePoint(const double x, const double y, const double z) : x(x), y(y), z(z)
+	{
+	}
+
+	template<typename InputPointType>
+	SimplePoint(const InputPointType& input_point) : x(input_point.x), y(input_point.y), z(input_point.z)
+	{
+	}
 
 	SimplePoint operator+(const SimplePoint& b) const
 	{
