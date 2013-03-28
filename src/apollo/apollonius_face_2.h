@@ -36,14 +36,14 @@ public:
 		}
 	}
 
+	const Triple& abc_ids() const
+	{
+		return abc_ids_;
+	}
+
 	bool can_have_d() const
 	{
 		return can_have_d_;
-	}
-
-	bool can_have_e() const
-	{
-		return can_have_e_;
 	}
 
 	template<typename InputSphereType>
@@ -82,6 +82,11 @@ public:
 			}
 		}
 		return std::make_pair(false, SimpleSphere());
+	}
+
+	bool can_have_e() const
+	{
+		return can_have_e_;
 	}
 
 	template<typename InputSphereType>
