@@ -54,16 +54,16 @@ public:
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d(const std::size_t d_id, const std::size_t d_number) const
 	{
-		if(can_have_d_ && d_id!=npos && !abc_ids_.contains(d_id) && d_number<d_ids_and_tangent_spheres_.size() && d_id!=d_ids_and_tangent_spheres_[d_number].first && !id_equals_recorded_e_id(d_id))
+		if(can_have_d_ && d_id!=npos && !abc_ids_.contains(d_id) && d_number<d_ids_and_tangent_spheres_.size() && d_id!=d_ids_and_tangent_spheres_[d_number].first)
 		{
 			const Sphere& d_sphere=spheres_->at(d_id);
-			if(sphere_may_contain_candidate_for_d(d_sphere, d_number) && !sphere_intersects_d_or_e_tangent_spheres(d_sphere))
+			if(sphere_may_contain_candidate_for_d(d_sphere, d_number) && !sphere_intersects_recorded_d_tangent_spheres(d_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), d_sphere);
 				for(std::size_t i=0;i<tangent_spheres.size();i++)
 				{
 					const SimpleSphere& tangent_sphere=tangent_spheres[i];
-					if(!sphere_intersects_recorded_d_or_e(tangent_sphere))
+					if(!sphere_intersects_recorded_d(tangent_sphere))
 					{
 						bool different_from_previous_d=true;
 						for(std::size_t j=0;j<d_ids_and_tangent_spheres_.size() && different_from_previous_d;j++)
@@ -95,7 +95,7 @@ public:
 		if(can_have_e_ && e_id!=npos && !abc_ids_.contains(e_id) && !id_equals_recorded_d_id(e_id) && !id_equals_recorded_e_id(e_id))
 		{
 			const Sphere& e_sphere=spheres_->at(e_id);
-			if(sphere_may_contain_candidate_for_e(e_sphere) && !sphere_intersects_recorded_d_or_e_tangent_spheres(e_sphere))
+			if(sphere_may_contain_candidate_for_e(e_sphere) && !sphere_intersects_recorded_d_tangent_spheres(e_sphere) && !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), e_sphere);
 				std::vector<SimpleSphere> valid_tangent_spheres;
@@ -103,7 +103,7 @@ public:
 				for(std::size_t i=0;i<tangent_spheres.size();i++)
 				{
 					const SimpleSphere& tangent_sphere=tangent_spheres[i];
-					if(!sphere_intersects_recorded_d_or_e(tangent_sphere))
+					if(!sphere_intersects_recorded_d(tangent_sphere) && !sphere_intersects_recorded_e(tangent_sphere))
 					{
 						valid_tangent_spheres.push_back(tangent_sphere);
 					}
@@ -172,7 +172,7 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_intersects_recorded_d_or_e(const InputSphereType& input_sphere) const
+	bool sphere_intersects_recorded_d(const InputSphereType& input_sphere) const
 	{
 		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
 		{
@@ -181,7 +181,13 @@ private:
 				return true;
 			}
 		}
-		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
+		return false;
+	}
+
+	template<typename InputSphereType>
+	bool sphere_intersects_recorded_e(const InputSphereType& input_sphere) const
+	{
+		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
 		{
 			if(sphere_intersects_sphere(input_sphere, spheres_->at(e_ids_and_tangent_spheres_[i].first)))
 			{
@@ -192,7 +198,7 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_intersects_recorded_d_or_e_tangent_spheres(const InputSphereType& input_sphere) const
+	bool sphere_intersects_recorded_d_tangent_spheres(const InputSphereType& input_sphere) const
 	{
 		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
 		{
@@ -201,11 +207,20 @@ private:
 				return true;
 			}
 		}
-		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
+		return false;
+	}
+
+	template<typename InputSphereType>
+	bool sphere_intersects_recorded_e_tangent_spheres(const InputSphereType& input_sphere) const
+	{
+		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
 		{
-			if(sphere_intersects_sphere(input_sphere, e_ids_and_tangent_spheres_[i].second))
+			for(std::size_t j=0;j<e_ids_and_tangent_spheres_[i].second.size();j++)
 			{
-				return true;
+				if(sphere_intersects_sphere(input_sphere, e_ids_and_tangent_spheres_[i].second[j]))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
@@ -239,7 +254,7 @@ private:
 	Triple abc_ids_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	std::vector< std::pair<std::size_t, SimpleSphere> > d_ids_and_tangent_spheres_;
-	std::vector< std::pair<std::size_t, SimpleSphere> > e_ids_and_tangent_spheres_;
+	std::vector< std::pair<std::size_t, std::vector<SimpleSphere> > > e_ids_and_tangent_spheres_;
 	bool can_have_d_;
 	bool can_have_e_;
 };
