@@ -60,20 +60,17 @@ public:
 			if(sphere_may_contain_candidate_for_d(d_sphere, d_number) && !sphere_intersects_recorded_d_tangent_spheres(d_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), d_sphere);
-				for(std::size_t i=0;i<tangent_spheres.size();i++)
+				if(tangent_spheres.size()==1 && !sphere_intersects_recorded_d(tangent_spheres.front()))
 				{
-					const SimpleSphere& tangent_sphere=tangent_spheres[i];
-					if(!sphere_intersects_recorded_d(tangent_sphere))
+					return std::make_pair(true, tangent_spheres.front());
+				}
+				else if(tangent_spheres.size()==2)
+				{
+					for(std::size_t i=0;i<tangent_spheres.size();i++)
 					{
-						bool different_from_previous_d=true;
-						for(std::size_t j=0;j<d_ids_and_tangent_spheres_.size() && different_from_previous_d;j++)
-						{
-							if(d_id==d_ids_and_tangent_spheres_[j].first && spheres_equal(tangent_sphere, d_ids_and_tangent_spheres_[j].second))
-							{
-								different_from_previous_d=false;
-							}
-						}
-						if(different_from_previous_d)
+						const SimpleSphere& tangent_sphere=tangent_spheres[i];
+						const SimplePoint touch_point=SimplePoint(d_sphere)+((SimplePoint(tangent_sphere)-SimplePoint(d_sphere)).unit()*d_sphere.r);
+						if(halfspace_of_point(halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second), touch_point)==1)
 						{
 							return std::make_pair(true, tangent_sphere);
 						}
