@@ -89,7 +89,7 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_e(const InputSphereType& x) const
 	{
-		return (can_have_e_ && sphere_intersects_Dupine_cyclide_part_approximation(x) && sphere_may_contain_inner_sphere(x));
+		return (can_have_e_ && sphere_intersects_Dupine_cyclide_remaining_part_approximation(x) && sphere_may_contain_inner_sphere(x));
 	}
 
 	std::vector<SimpleSphere> check_candidate_for_e(const std::size_t e_id) const
@@ -150,7 +150,7 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_intersects_Dupine_cyclide_part_approximation(const InputSphereType& input_sphere) const
+	bool sphere_intersects_Dupine_cyclide_remaining_part_approximation(const InputSphereType& input_sphere) const
 	{
 		if(d_ids_and_tangent_spheres_.size()==2)
 		{
@@ -163,7 +163,7 @@ private:
 			{
 				if(d_ids_and_tangent_spheres_[i].first!=npos)
 				{
-					if(!sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[i].second, d_ids_and_tangent_spheres_[i].r+expansion_radius)))
+					if(sphere_contains_sphere(d_ids_and_tangent_spheres_[i].second, input_sphere) || !sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[i].second, d_ids_and_tangent_spheres_[i].r+expansion_radius)))
 					{
 						return false;
 					}
