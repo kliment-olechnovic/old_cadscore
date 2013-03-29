@@ -26,7 +26,7 @@ public:
 		can_have_d_(tangent_planes_.size()==2),
 		can_have_e_(!equal(spheres_->at(abc_ids_.get(0)).r, 0) && !equal(spheres_->at(abc_ids_.get(1)).r, 0) && !equal(spheres_->at(abc_ids_.get(2)).r, 0))
 	{
-		if(tangent_planes_.size()==2)
+		if(can_have_d_)
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
 		}
@@ -49,28 +49,36 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_d(const InputSphereType& input_sphere, const std::size_t d_number) const
 	{
-		return (can_have_d_ && d_number<tangent_planes_.size() && (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, input_sphere)>-1));
+		return (can_have_d_
+				&& d_number<2
+				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, input_sphere)>-1));
 	}
 
 	std::pair<bool, SimpleSphere> check_candidate_for_d(const std::size_t d_id, const std::size_t d_number) const
 	{
-		if(can_have_d_ && d_id!=npos && !abc_ids_.contains(d_id) && d_number<d_ids_and_tangent_spheres_.size() && d_id!=d_ids_and_tangent_spheres_[d_number].first)
+		if(can_have_d_
+				&& d_id!=npos
+				&& d_number<2
+				&& !abc_ids_.contains(d_id)
+				&& d_id!=d_ids_and_tangent_spheres_[d_number].first
+				&& !id_equals_recorded_e_id(d_id))
 		{
+			const std::size_t other_d_number=(d_number==0 ? 1 : 0);
+			const std::size_t other_d_id=d_ids_and_tangent_spheres_[other_d_number].first;
 			const Sphere& d_sphere=spheres_->at(d_id);
-			if(sphere_may_contain_candidate_for_d(d_sphere, d_number) && !sphere_intersects_recorded_d_tangent_spheres(d_sphere))
+			if(sphere_may_contain_candidate_for_d(d_sphere, d_number)
+					&& (other_d_id==npos || !sphere_intersects_sphere(d_sphere, d_ids_and_tangent_spheres_[other_d_number].second))
+					&& !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), d_sphere);
-				if(tangent_spheres.size()==1 && !sphere_intersects_recorded_d(tangent_spheres.front()))
+				for(std::size_t i=0;i<tangent_spheres.size();i++)
 				{
-					return std::make_pair(true, tangent_spheres.front());
-				}
-				else if(tangent_spheres.size()==2)
-				{
-					for(std::size_t i=0;i<tangent_spheres.size();i++)
+					const SimpleSphere& tangent_sphere=tangent_spheres[i];
+					if((other_d_id==npos || !sphere_intersects_sphere(tangent_sphere, spheres_->at(other_d_id)))
+							&& !sphere_intersects_recorded_e(tangent_sphere))
 					{
-						const SimpleSphere& tangent_sphere=tangent_spheres[i];
-						const SimplePoint touch_point=SimplePoint(d_sphere)+((SimplePoint(tangent_sphere)-SimplePoint(d_sphere)).unit()*d_sphere.r);
-						if(halfspace_of_point(halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second), touch_point)==1)
+						if(tangent_spheres.size()==1
+								|| (halfspace_of_point(tangent_planes_[d_number].first, tangent_planes_[d_number].second, SimplePoint(d_sphere)+((SimplePoint(tangent_sphere)-SimplePoint(d_sphere)).unit()*d_sphere.r))==1))
 						{
 							return std::make_pair(true, tangent_sphere);
 						}
@@ -89,23 +97,31 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_e(const InputSphereType& input_sphere) const
 	{
-		return (can_have_e_ && sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(input_sphere));
+		return (can_have_e_
+				&& sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(input_sphere));
 	}
 
 	std::vector<SimpleSphere> check_candidate_for_e(const std::size_t e_id) const
 	{
-		if(can_have_e_ && e_id!=npos && !abc_ids_.contains(e_id) && !id_equals_recorded_d_id(e_id) && !id_equals_recorded_e_id(e_id))
+		if(can_have_e_
+				&& e_id!=npos
+				&& !abc_ids_.contains(e_id)
+				&& !id_equals_recorded_d_id(e_id)
+				&& !id_equals_recorded_e_id(e_id))
 		{
 			const Sphere& e_sphere=spheres_->at(e_id);
-			if(sphere_is_inner(e_sphere) && sphere_may_contain_candidate_for_e(e_sphere) && !sphere_intersects_recorded_d_tangent_spheres(e_sphere) && !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
+			if(sphere_is_inner(e_sphere)
+					&& sphere_may_contain_candidate_for_e(e_sphere)
+					&& !sphere_intersects_recorded_d_tangent_spheres(e_sphere)
+					&& !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), e_sphere);
 				std::vector<SimpleSphere> valid_tangent_spheres;
-				valid_tangent_spheres.reserve(tangent_spheres.size());
 				for(std::size_t i=0;i<tangent_spheres.size();i++)
 				{
 					const SimpleSphere& tangent_sphere=tangent_spheres[i];
-					if(!sphere_intersects_recorded_d(tangent_sphere) && !sphere_intersects_recorded_e(tangent_sphere))
+					if(!sphere_intersects_recorded_d(tangent_sphere)
+							&& !sphere_intersects_recorded_e(tangent_sphere))
 					{
 						valid_tangent_spheres.push_back(tangent_sphere);
 					}
@@ -136,7 +152,7 @@ private:
 	template<typename InputSphereType>
 	bool sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(const InputSphereType& input_sphere) const
 	{
-		if(d_ids_and_tangent_spheres_.size()==2)
+		if(can_have_d_)
 		{
 			for(std::size_t i=0;i<tangent_planes_.size();i++)
 			{
