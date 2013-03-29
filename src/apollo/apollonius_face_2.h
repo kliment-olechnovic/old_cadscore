@@ -87,9 +87,9 @@ public:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_may_contain_candidate_for_e(const InputSphereType& x) const
+	bool sphere_may_contain_candidate_for_e(const InputSphereType& input_sphere) const
 	{
-		return (can_have_e_ && sphere_intersects_Dupine_cyclide_remaining_part_approximation(x) && sphere_may_contain_inner_sphere(x));
+		return (can_have_e_ && sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(input_sphere));
 	}
 
 	std::vector<SimpleSphere> check_candidate_for_e(const std::size_t e_id) const
@@ -97,7 +97,7 @@ public:
 		if(can_have_e_ && e_id!=npos && !abc_ids_.contains(e_id) && !id_equals_recorded_d_id(e_id) && !id_equals_recorded_e_id(e_id))
 		{
 			const Sphere& e_sphere=spheres_->at(e_id);
-			if(sphere_may_contain_candidate_for_e(e_sphere) && !sphere_intersects_recorded_d_tangent_spheres(e_sphere) && !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
+			if(sphere_is_inner(e_sphere) && sphere_may_contain_candidate_for_e(e_sphere) && !sphere_intersects_recorded_d_tangent_spheres(e_sphere) && !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), e_sphere);
 				std::vector<SimpleSphere> valid_tangent_spheres;
@@ -118,22 +118,6 @@ public:
 
 private:
 	template<typename InputSphereType>
-	bool sphere_may_contain_inner_sphere(const InputSphereType& input_sphere) const
-	{
-		if(tangent_planes_.size()==2)
-		{
-			for(std::size_t i=0;i<tangent_planes_.size();i++)
-			{
-				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, input_sphere)==1)
-				{
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	template<typename InputSphereType>
 	bool sphere_is_inner(const InputSphereType& input_sphere) const
 	{
 		if(tangent_planes_.size()==2)
@@ -150,10 +134,17 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_intersects_Dupine_cyclide_remaining_part_approximation(const InputSphereType& input_sphere) const
+	bool sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(const InputSphereType& input_sphere) const
 	{
 		if(d_ids_and_tangent_spheres_.size()==2)
 		{
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
+			{
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, input_sphere)==1)
+				{
+					return false;
+				}
+			}
 			double expansion_radius=0;
 			for(int i=0;i<abc_ids_.size();i++)
 			{
@@ -167,6 +158,16 @@ private:
 					{
 						return false;
 					}
+				}
+			}
+		}
+		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
+		{
+			for(std::size_t j=0;j<e_ids_and_tangent_spheres_[i].second.size();j++)
+			{
+				if(sphere_contains_sphere(e_ids_and_tangent_spheres_[i].second[j], input_sphere))
+				{
+					return false;
 				}
 			}
 		}
