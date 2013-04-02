@@ -184,68 +184,88 @@ public:
 		}
 	}
 
+	std::vector< std::pair<std::size_t, SimpleSphere> > get_all_recorded_ids_and_tangent_spheres() const
+	{
+		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
+		recorded_ids_and_tangent_spheres.reserve(d_ids_and_tangent_spheres_.size()+e_ids_and_tangent_spheres_.size());
+		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
+		{
+			if(d_ids_and_tangent_spheres_[i].first!=npos)
+			{
+				recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[i]);
+			}
+		}
+		recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
+		return recorded_ids_and_tangent_spheres;
+	}
+
+	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples() const
+	{
+		std::vector< std::pair<Quadruple, SimpleSphere> > quadruples_with_tangent_spheres;
+		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=get_all_recorded_ids_and_tangent_spheres();
+		for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
+		{
+			quadruples_with_tangent_spheres.push_back(std::make_pair(Quadruple(abc_ids_, recorded_ids_and_tangent_spheres[i].first), recorded_ids_and_tangent_spheres[i].second));
+		}
+		return quadruples_with_tangent_spheres;
+	}
+
 	std::vector<ApolloniusFace2> produce_faces() const
 	{
 		std::vector<ApolloniusFace2> produced_faces;
-		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
-		recorded_ids_and_tangent_spheres.reserve(d_ids_and_tangent_spheres_.size()+e_ids_and_tangent_spheres_.size());
-		recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), d_ids_and_tangent_spheres_.begin(), d_ids_and_tangent_spheres_.end());
-		recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
+		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=get_all_recorded_ids_and_tangent_spheres();
 		for(std::size_t j=0;j<abc_ids_.size();j++)
 		{
 			for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 			{
 				const std::size_t id=recorded_ids_and_tangent_spheres[i].first;
-				if(id!=npos)
+				const SimpleSphere& tangent_sphere=recorded_ids_and_tangent_spheres[i].second;
+				ApolloniusFace2 produced_face(*spheres_, Triple(abc_ids_.exclude(j), id));
+				if(produced_face.can_have_d_)
 				{
-					const SimpleSphere& tangent_sphere=recorded_ids_and_tangent_spheres[i].second;
-					ApolloniusFace2 produced_face(*spheres_, Triple(abc_ids_.exclude(j), id));
-					if(produced_face.can_have_d_)
-					{
-						const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
-						const int h1=halfspace_of_sphere(produced_face.tangent_planes_[1].first, produced_face.tangent_planes_[1].second, produced_face.spheres_->at(id));
-						if(h0==-1 && h1==-1)
-						{
-							produced_face.add_e(id, tangent_sphere);
-						}
-						else if(h0>-1 && h1==-1)
-						{
-							produced_face.set_d(id, 0, tangent_sphere);
-						}
-						else if(h0==-1 && h1>-1)
-						{
-							produced_face.set_d(id, 1, tangent_sphere);
-						}
-						else
-						{
-							const SimplePoint tangent_touching_point=SimplePoint(produced_face.spheres_->at(id))+((SimplePoint(tangent_sphere)-SimplePoint(produced_face.spheres_->at(id))).unit()*(produced_face.spheres_->at(id).r));
-							if(halfspace_of_point(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, tangent_touching_point)==1)
-							{
-								produced_face.set_d(id, 0, tangent_sphere);
-							}
-							else if(halfspace_of_point(produced_face.tangent_planes_[1].first, produced_face.tangent_planes_[1].second, tangent_touching_point)==1)
-							{
-								produced_face.set_d(id, 1, tangent_sphere);
-							}
-						}
-					}
-					else
+					const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
+					const int h1=halfspace_of_sphere(produced_face.tangent_planes_[1].first, produced_face.tangent_planes_[1].second, produced_face.spheres_->at(id));
+					if(h0==-1 && h1==-1)
 					{
 						produced_face.add_e(id, tangent_sphere);
 					}
-					bool updated=false;
-					for(std::size_t e=0;e<produced_faces.size() && !updated;e++)
+					else if(h0>-1 && h1==-1)
 					{
-						if(produced_faces[e].abc_ids_==produced_face.abc_ids_)
+						produced_face.set_d(id, 0, tangent_sphere);
+					}
+					else if(h0==-1 && h1>-1)
+					{
+						produced_face.set_d(id, 1, tangent_sphere);
+					}
+					else
+					{
+						const SimplePoint tangent_touching_point=SimplePoint(produced_face.spheres_->at(id))+((SimplePoint(tangent_sphere)-SimplePoint(produced_face.spheres_->at(id))).unit()*(produced_face.spheres_->at(id).r));
+						if(halfspace_of_point(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, tangent_touching_point)==1)
 						{
-							produced_faces[e].update(produced_face);
-							updated=true;
+							produced_face.set_d(id, 0, tangent_sphere);
+						}
+						else
+						{
+							produced_face.set_d(id, 1, tangent_sphere);
 						}
 					}
-					if(!updated)
+				}
+				else
+				{
+					produced_face.add_e(id, tangent_sphere);
+				}
+				bool updated=false;
+				for(std::size_t e=0;e<produced_faces.size() && !updated;e++)
+				{
+					if(produced_faces[e].abc_ids_==produced_face.abc_ids_)
 					{
-						produced_faces.push_back(produced_face);
+						produced_faces[e].update(produced_face);
+						updated=true;
 					}
+				}
+				if(!updated)
+				{
+					produced_faces.push_back(produced_face);
 				}
 			}
 		}
