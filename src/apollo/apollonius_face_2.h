@@ -58,16 +58,16 @@ public:
 	{
 		if(can_have_d_
 				&& d_id!=npos
+				&& d_id!=d_ids_and_tangent_spheres_[d_number].first
 				&& d_number<2
 				&& !abc_ids_.contains(d_id)
-				&& d_id!=d_ids_and_tangent_spheres_[d_number].first
 				&& !id_equals_recorded_e_id(d_id))
 		{
 			const std::size_t other_d_number=(d_number==0 ? 1 : 0);
 			const std::size_t other_d_id=d_ids_and_tangent_spheres_[other_d_number].first;
 			const Sphere& d_sphere=spheres_->at(d_id);
-			if(sphere_may_contain_candidate_for_d(d_sphere, d_number)
-					&& (other_d_id==npos || !sphere_intersects_sphere(d_sphere, d_ids_and_tangent_spheres_[other_d_number].second))
+			if((other_d_id==npos || !sphere_intersects_sphere(d_sphere, d_ids_and_tangent_spheres_[other_d_number].second))
+					&& sphere_may_contain_candidate_for_d(d_sphere, d_number)
 					&& !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
 			{
 				const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), d_sphere);
@@ -97,8 +97,38 @@ public:
 	template<typename InputSphereType>
 	bool sphere_may_contain_candidate_for_e(const InputSphereType& input_sphere) const
 	{
-		return (can_have_e_
-				&& sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(input_sphere));
+		if(!can_have_e_
+				|| sphere_is_contained_in_recorded_d_tangent_spheres(input_sphere)
+				|| sphere_is_contained_in_recorded_e_tangent_spheres(input_sphere))
+		{
+			return false;
+		}
+		if(can_have_d_)
+		{
+			for(std::size_t i=0;i<tangent_planes_.size();i++)
+			{
+				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, input_sphere)==1)
+				{
+					return false;
+				}
+			}
+			double expansion_radius=0;
+			for(int i=0;i<abc_ids_.size();i++)
+			{
+				expansion_radius=std::max(expansion_radius, spheres_->at(abc_ids_.get(i)).r*2);
+			}
+			for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
+			{
+				if(d_ids_and_tangent_spheres_[i].first!=npos)
+				{
+					if(!sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[i].second, d_ids_and_tangent_spheres_[i].r+expansion_radius)))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	std::vector<SimpleSphere> check_candidate_for_e(const std::size_t e_id) const
@@ -110,7 +140,7 @@ public:
 				&& !id_equals_recorded_e_id(e_id))
 		{
 			const Sphere& e_sphere=spheres_->at(e_id);
-			if(sphere_is_inner(e_sphere)
+			if((!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, e_sphere)==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, e_sphere)==-1))
 					&& sphere_may_contain_candidate_for_e(e_sphere)
 					&& !sphere_intersects_recorded_d_tangent_spheres(e_sphere)
 					&& !sphere_intersects_recorded_e_tangent_spheres(e_sphere))
@@ -133,61 +163,28 @@ public:
 	}
 
 private:
-	template<typename InputSphereType>
-	bool sphere_is_inner(const InputSphereType& input_sphere) const
+	bool id_equals_recorded_d_id(const std::size_t id) const
 	{
-		if(tangent_planes_.size()==2)
+		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
 		{
-			for(std::size_t i=0;i<tangent_planes_.size();i++)
+			if(id==d_ids_and_tangent_spheres_[i].first)
 			{
-				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, input_sphere)!=-1)
-				{
-					return false;
-				}
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
-	template<typename InputSphereType>
-	bool sphere_intersects_Dupine_cyclide_remaining_inner_part_approximation(const InputSphereType& input_sphere) const
+	bool id_equals_recorded_e_id(const std::size_t id) const
 	{
-		if(can_have_d_)
-		{
-			for(std::size_t i=0;i<tangent_planes_.size();i++)
-			{
-				if(halfspace_of_sphere(tangent_planes_[i].first, tangent_planes_[i].second, input_sphere)==1)
-				{
-					return false;
-				}
-			}
-			double expansion_radius=0;
-			for(int i=0;i<abc_ids_.size();i++)
-			{
-				expansion_radius=std::max(expansion_radius, spheres_->at(abc_ids_.get(i)).r*2);
-			}
-			for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
-			{
-				if(d_ids_and_tangent_spheres_[i].first!=npos)
-				{
-					if(sphere_contains_sphere(d_ids_and_tangent_spheres_[i].second, input_sphere) || !sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[i].second, d_ids_and_tangent_spheres_[i].r+expansion_radius)))
-					{
-						return false;
-					}
-				}
-			}
-		}
 		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
 		{
-			for(std::size_t j=0;j<e_ids_and_tangent_spheres_[i].second.size();j++)
+			if(id==e_ids_and_tangent_spheres_[i].first)
 			{
-				if(sphere_contains_sphere(e_ids_and_tangent_spheres_[i].second[j], input_sphere))
-				{
-					return false;
-				}
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	template<typename InputSphereType>
@@ -245,11 +242,12 @@ private:
 		return false;
 	}
 
-	bool id_equals_recorded_d_id(const std::size_t id) const
+	template<typename InputSphereType>
+	bool sphere_is_contained_in_recorded_d_tangent_spheres(const InputSphereType& input_sphere) const
 	{
 		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
 		{
-			if(id==d_ids_and_tangent_spheres_[i].first)
+			if(d_ids_and_tangent_spheres_[i].first!=npos && sphere_contains_sphere(d_ids_and_tangent_spheres_[i].second, input_sphere))
 			{
 				return true;
 			}
@@ -257,13 +255,17 @@ private:
 		return false;
 	}
 
-	bool id_equals_recorded_e_id(const std::size_t id) const
+	template<typename InputSphereType>
+	bool sphere_is_contained_in_recorded_e_tangent_spheres(const InputSphereType& input_sphere) const
 	{
-		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
+		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
 		{
-			if(id==e_ids_and_tangent_spheres_[i].first)
+			for(std::size_t j=0;j<e_ids_and_tangent_spheres_[i].second.size();j++)
 			{
-				return true;
+				if(sphere_contains_sphere(e_ids_and_tangent_spheres_[i].second[j], input_sphere))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
