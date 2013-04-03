@@ -39,7 +39,7 @@ public:
 			Face face=stack.back();
 			stack.pop_back();
 			stack_map.erase(face.abc_ids());
-			if(monitoring_level()>0 && !face.can_have_e())
+			if(monitoring_level()>0 && !face.can_have_d())
 			{
 				difficult_faces_count++;
 			}
@@ -96,6 +96,46 @@ public:
 			std::clog << "difficulties " << difficult_faces_count << "\n";
 		}
 		return quadruples_map;
+	}
+
+	static bool check_quadruples(const QuadruplesMap& quadruples_map, const std::vector<Sphere>& spheres)
+	{
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const Quadruple& q=it->first;
+			if(q.has_repetetions())
+			{
+				return false;
+			}
+			const std::vector<SimpleSphere>& ts=it->second;
+			if(ts.empty() || ts.size()>2)
+			{
+				return false;
+			}
+			if(ts.size()==2 && spheres_equal(ts.front(), ts.back()))
+			{
+				return false;
+			}
+			for(std::size_t i=0;i<ts.size();i++)
+			{
+				const SimpleSphere& t=ts[i];
+				for(std::size_t j=0;j<spheres.size();j++)
+				{
+					if(sphere_intersects_sphere(t, spheres[j]))
+					{
+						return false;
+					}
+				}
+				for(int j=0;j<4;j++)
+				{
+					if(!sphere_touches_sphere(t, spheres[q.get(j)]))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	static int& monitoring_level_reference()

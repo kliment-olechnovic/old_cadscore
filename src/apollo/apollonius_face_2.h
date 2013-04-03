@@ -52,10 +52,10 @@ public:
 	{
 		return (
 				can_have_d_
-				&& d_number<2
+				&& (d_number<2)
 				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, input_sphere)>-1)
-				&& !sphere_is_contained_in_recorded_tangent_sphere(d_ids_and_tangent_spheres_, input_sphere, d_number)
-				&& !sphere_is_contained_in_recorded_tangent_sphere(e_ids_and_tangent_spheres_, input_sphere, npos)
+				&& (!sphere_is_contained_in_recorded_tangent_sphere(d_ids_and_tangent_spheres_, input_sphere, d_number))
+				&& (!sphere_is_contained_in_recorded_tangent_sphere(e_ids_and_tangent_spheres_, input_sphere, npos))
 				);
 	}
 
@@ -63,14 +63,14 @@ public:
 	{
 		if(
 				can_have_d_
-				&& d_id!=npos
-				&& d_number<2
-				&& d_id!=d_ids_and_tangent_spheres_[d_number].first
-				&& !abc_ids_.contains(d_id)
-				&& !id_equals_recorded_id(e_ids_and_tangent_spheres_, d_id, npos)
+				&& (d_id!=npos)
+				&& (d_number<2)
+				&& (d_id!=d_ids_and_tangent_spheres_[d_number].first)
+				&& (!abc_ids_.contains(d_id))
+				&& (!id_equals_recorded_id(e_ids_and_tangent_spheres_, d_id, npos))
 				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_->at(d_id))>-1)
-				&& !sphere_intersects_recorded_tangent_sphere(d_ids_and_tangent_spheres_, spheres_->at(d_id), d_number)
-				&& !sphere_intersects_recorded_tangent_sphere(e_ids_and_tangent_spheres_, spheres_->at(d_id), npos)
+				&& (!sphere_intersects_recorded_tangent_sphere(d_ids_and_tangent_spheres_, spheres_->at(d_id), d_number))
+				&& (!sphere_intersects_recorded_tangent_sphere(e_ids_and_tangent_spheres_, spheres_->at(d_id), npos))
 			)
 		{
 			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), spheres_->at(d_id));
@@ -78,8 +78,8 @@ public:
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
 				if(
-						!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, d_number)
-						&& !sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos)
+						(!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, d_number))
+						&& (!sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos))
 						&& (tangent_spheres.size()==1 || (halfspace_of_point(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_touching_point<SimpleSphere>(spheres_->at(d_id), tangent_sphere))==1))
 					)
 				{
@@ -132,8 +132,8 @@ public:
 		return (
 				can_have_e_
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)!=1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)!=1))
-				&& !sphere_is_contained_in_recorded_tangent_sphere(d_ids_and_tangent_spheres_, input_sphere, npos)
-				&& !sphere_is_contained_in_recorded_tangent_sphere(e_ids_and_tangent_spheres_, input_sphere, npos)
+				&& (!sphere_is_contained_in_recorded_tangent_sphere(d_ids_and_tangent_spheres_, input_sphere, npos))
+				&& (!sphere_is_contained_in_recorded_tangent_sphere(e_ids_and_tangent_spheres_, input_sphere, npos))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+expansion_for_d_tangent_spheres_)))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+expansion_for_d_tangent_spheres_)))
 				);
@@ -143,12 +143,12 @@ public:
 	{
 		if(
 				can_have_e_
-				&& e_id!=npos
-				&& !abc_ids_.contains(e_id)
-				&& !id_equals_recorded_id(d_ids_and_tangent_spheres_, e_id, npos)
+				&& (e_id!=npos)
+				&& (!abc_ids_.contains(e_id))
+				&& (!id_equals_recorded_id(d_ids_and_tangent_spheres_, e_id, npos))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
-				&& !sphere_intersects_recorded_tangent_sphere(d_ids_and_tangent_spheres_, spheres_->at(e_id), npos)
-				&& !sphere_intersects_recorded_tangent_sphere(e_ids_and_tangent_spheres_, spheres_->at(e_id), npos)
+				&& (!sphere_intersects_recorded_tangent_sphere(d_ids_and_tangent_spheres_, spheres_->at(e_id), npos))
+				&& (!sphere_intersects_recorded_tangent_sphere(e_ids_and_tangent_spheres_, spheres_->at(e_id), npos))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+expansion_for_d_tangent_spheres_)))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+expansion_for_d_tangent_spheres_)))
 			)
@@ -159,8 +159,8 @@ public:
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
 				if(
-						!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, npos)
-						&& !sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos)
+						(!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, npos))
+						&& (!sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos))
 					)
 				{
 					valid_tangent_spheres.push_back(tangent_sphere);
@@ -173,13 +173,13 @@ public:
 
 	void add_e(const std::size_t e_id, const SimpleSphere& tangent_sphere)
 	{
-		if(can_have_e_)
+		if(can_have_e_ && e_id!=npos)
 		{
 			bool found=false;
 			for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size() && !found;i++)
 			{
-				found=(e_ids_and_tangent_spheres_[i].first==e_id
-						&& spheres_equal(e_ids_and_tangent_spheres_[i].second, tangent_sphere));
+				found=((e_ids_and_tangent_spheres_[i].first==e_id)
+						&& (spheres_equal(e_ids_and_tangent_spheres_[i].second, tangent_sphere)));
 			}
 			if(!found)
 			{
@@ -202,7 +202,7 @@ public:
 	{
 		if(spheres_==source.spheres_ && abc_ids_==source.abc_ids_)
 		{
-			for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size() && source.d_ids_and_tangent_spheres_.size();i++)
+			for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size() && i<source.d_ids_and_tangent_spheres_.size();i++)
 			{
 				if(d_ids_and_tangent_spheres_[i].first==npos && source.d_ids_and_tangent_spheres_[i].first!=npos)
 				{
@@ -261,11 +261,11 @@ public:
 		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=collect_all_recorded_ids_and_tangent_spheres(with_d0, with_d1, with_e);
 		for(int j=0;j<abc_ids_.size();j++)
 		{
+			const std::size_t id=abc_ids_.get(j);
 			for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 			{
-				const std::size_t id=recorded_ids_and_tangent_spheres[i].first;
 				const SimpleSphere& tangent_sphere=recorded_ids_and_tangent_spheres[i].second;
-				ApolloniusFace2 produced_face(*spheres_, Triple(abc_ids_.exclude(j), id));
+				ApolloniusFace2 produced_face(*spheres_, Triple(abc_ids_.exclude(j), recorded_ids_and_tangent_spheres[i].first));
 				if(produced_face.can_have_d_)
 				{
 					const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
