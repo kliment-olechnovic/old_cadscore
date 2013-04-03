@@ -184,25 +184,28 @@ public:
 		}
 	}
 
-	std::vector< std::pair<std::size_t, SimpleSphere> > get_all_recorded_ids_and_tangent_spheres() const
+	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
 		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
 		recorded_ids_and_tangent_spheres.reserve(d_ids_and_tangent_spheres_.size()+e_ids_and_tangent_spheres_.size());
 		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
 		{
-			if(d_ids_and_tangent_spheres_[i].first!=npos)
+			if(((i==0 && with_d0) || (i==1 && with_d1)) && d_ids_and_tangent_spheres_[i].first!=npos)
 			{
 				recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[i]);
 			}
 		}
-		recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
+		if(with_e)
+		{
+			recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
+		}
 		return recorded_ids_and_tangent_spheres;
 	}
 
-	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples() const
+	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
 		std::vector< std::pair<Quadruple, SimpleSphere> > quadruples_with_tangent_spheres;
-		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=get_all_recorded_ids_and_tangent_spheres();
+		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=collect_all_recorded_ids_and_tangent_spheres(with_d0, with_d1, with_e);
 		for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 		{
 			quadruples_with_tangent_spheres.push_back(std::make_pair(Quadruple(abc_ids_, recorded_ids_and_tangent_spheres[i].first), recorded_ids_and_tangent_spheres[i].second));
@@ -210,10 +213,10 @@ public:
 		return quadruples_with_tangent_spheres;
 	}
 
-	std::vector<ApolloniusFace2> produce_faces() const
+	std::vector<ApolloniusFace2> produce_faces(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
 		std::vector<ApolloniusFace2> produced_faces;
-		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=get_all_recorded_ids_and_tangent_spheres();
+		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=collect_all_recorded_ids_and_tangent_spheres(with_d0, with_d1, with_e);
 		for(int j=0;j<abc_ids_.size();j++)
 		{
 			for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
