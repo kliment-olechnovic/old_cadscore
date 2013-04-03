@@ -80,7 +80,7 @@ public:
 				if(
 						!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, d_number)
 						&& !sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos)
-						&& (tangent_spheres.size()==1 || (halfspace_of_point(tangent_planes_[d_number].first, tangent_planes_[d_number].second, SimplePoint(spheres_->at(d_id))+((SimplePoint(tangent_sphere)-SimplePoint(spheres_->at(d_id))).unit()*(spheres_->at(d_id).r)))==1))
+						&& (tangent_spheres.size()==1 || (halfspace_of_point(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_touching_point<SimpleSphere>(spheres_->at(d_id), tangent_sphere))==1))
 					)
 				{
 					return std::vector<SimpleSphere>(1, tangent_sphere);
@@ -242,8 +242,7 @@ public:
 					}
 					else
 					{
-						const SimplePoint tangent_touching_point=SimplePoint(produced_face.spheres_->at(id))+((SimplePoint(tangent_sphere)-SimplePoint(produced_face.spheres_->at(id))).unit()*(produced_face.spheres_->at(id).r));
-						if(halfspace_of_point(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, tangent_touching_point)==1)
+						if(halfspace_of_point(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, spheres_touching_point<SimpleSphere>(produced_face.spheres_->at(id), tangent_sphere))==1)
 						{
 							produced_face.set_d(id, 0, tangent_sphere);
 						}
