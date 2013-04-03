@@ -29,6 +29,7 @@ void merge_atoms(const auxiliaries::CommandLineOptions& clo);
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo);
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 
+void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo);
@@ -92,6 +93,7 @@ int main(const int argc, const char** argv)
 		modes_map["print-inter-chain-interface-graphics"]=ModeFunctionPointer(print_inter_chain_interface_graphics);
 		modes_map["summarize-inter-atom-contacts"]=ModeFunctionPointer(summarize_inter_atom_contacts);
 
+		modes_map["x-calc-quadruples-2"]=ModeFunctionPointer(x_calc_quadruples_2);
 		modes_map["x-print-inter-residue-contacts-graph"]=ModeFunctionPointer(x_print_inter_residue_contacts_graph);
 		modes_map["x-print-inter-residue-contacts-map-image"]=ModeFunctionPointer(x_print_inter_residue_contacts_map_image);
 		modes_map["x-print-inter-residue-distance-map-image"]=ModeFunctionPointer(x_print_inter_residue_distance_map_image);

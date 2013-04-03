@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <tr1/unordered_set>
 #include <tr1/unordered_map>
 #include <tr1/functional>
 
@@ -91,7 +92,7 @@ public:
 		{
 			std::clog << "spheres " << hierarchy.spheres().size() << "\n";
 			std::clog << "quadruples " << quadruples_map.size() << "\n";
-			std::clog << "triples " << processed_triples.size() << "\n";
+			std::clog << "triples " << processed_triples_set.size() << "\n";
 			std::clog << "difficulties " << difficult_faces_count << "\n";
 		}
 		return quadruples_map;
@@ -174,7 +175,7 @@ private:
 
 			std::tr1::unordered_set<std::size_t> visited;
 
-			LeafChecker(const Face& target, const std::size_t d_number) : face(target), d_number(d_number)
+			LeafChecker(Face& target, const std::size_t d_number) : face(target), d_number(d_number)
 			{
 			}
 
@@ -227,7 +228,7 @@ private:
 			{
 				const std::vector<SimpleSphere> check_result=face.check_candidate_for_e(id);
 				bool e_added=false;
-				for(std::size_t i=0;i<check_result.second.size();i++)
+				for(std::size_t i=0;i<check_result.size();i++)
 				{
 					if(hierarchy.find_any_collision(check_result[i]).empty())
 					{
@@ -286,7 +287,7 @@ private:
 		return result;
 	}
 
-	static bool find_valid_d(const Hierarchy& hierarchy, const Face& face, const std::size_t d_number)
+	static bool find_valid_d(const Hierarchy& hierarchy, Face& face, const std::size_t d_number)
 	{
 		if(!face.has_d(d_number))
 		{
