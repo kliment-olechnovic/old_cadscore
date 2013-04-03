@@ -98,7 +98,7 @@ public:
 		}
 	}
 
-	void unset_d(const std::size_t d_id, const std::size_t d_number)
+	void unset_d(const std::size_t d_number)
 	{
 		if(can_have_d_ && d_number<2)
 		{
