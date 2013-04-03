@@ -22,9 +22,13 @@ public:
 
 	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy, bool enable_searching_for_e)
 	{
+		typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
+		typedef std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> TriplesMap;
 		QuadruplesMap quadruples_map;
+		TriplesSet processed_triples_set;
+		std::size_t difficult_faces_count=0;
 		std::deque<Face> stack=find_first_faces(hierarchy);
-		std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> stack_map;
+		TriplesMap stack_map;
 		for(std::size_t i=0;i<stack.size();i++)
 		{
 			stack_map[stack[i].abc_ids()]=i;
@@ -34,6 +38,61 @@ public:
 			Face face=stack.back();
 			stack.pop_back();
 			stack_map.erase(face.abc_ids());
+			if(monitoring_level()>0 && !face.can_have_e())
+			{
+				difficult_faces_count++;
+			}
+			const bool found_d0=face.can_have_d() && !face.has_d(0) && find_valid_d(hierarchy, face, 0);
+			const bool found_d1=face.can_have_d() && !face.has_d(1) && find_valid_d(hierarchy, face, 1);
+			const bool found_e=enable_searching_for_e && face.can_have_e() && find_valid_e(hierarchy, face);
+			if(found_d0 || found_d1 || found_e)
+			{
+				const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples(found_d0, found_d1, found_e);
+				for(std::size_t i=0;i<produced_quadruples.size();i++)
+				{
+					const Quadruple& quadruple=produced_quadruples[i].first;
+					const SimpleSphere& quadruple_tangent_sphere=produced_quadruples[i].second;
+					QuadruplesMap::iterator qm_it=quadruples_map.find(quadruple);
+					if(qm_it==quadruples_map.end())
+					{
+						quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
+					}
+					else
+					{
+						std::vector<SimpleSphere>& quadruple_tangent_spheres_list=qm_it->second;
+						if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere))
+						{
+							quadruple_tangent_spheres_list.push_back(quadruple_tangent_sphere);
+						}
+					}
+				}
+				const std::vector<Face> produced_faces=face.produce_faces(found_d0, found_d1, found_e);
+				for(std::size_t i=0;i<produced_faces.size();i++)
+				{
+					const Face& produced_face=produced_faces[i];
+					if(processed_triples_set.count(produced_face.abc_ids())==0)
+					{
+						TriplesMap::const_iterator sm_it=stack_map.find(produced_face.abc_ids());
+						if(sm_it==stack_map.end())
+						{
+							stack_map[produced_face.abc_ids()]=stack.size();
+							stack.push_back(produced_face);
+						}
+						else
+						{
+							stack.at(sm_it->second).update(produced_face);
+						}
+					}
+				}
+			}
+			processed_triples_set.insert(face.abc_ids());
+		}
+		if(monitoring_level()>0)
+		{
+			std::clog << "spheres " << hierarchy.spheres().size() << "\n";
+			std::clog << "quadruples " << quadruples_map.size() << "\n";
+			std::clog << "triples " << processed_triples.size() << "\n";
+			std::clog << "difficulties " << difficult_faces_count << "\n";
 		}
 		return quadruples_map;
 	}
