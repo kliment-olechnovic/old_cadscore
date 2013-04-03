@@ -80,13 +80,103 @@ private:
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
 			{
-				std::vector<SimpleSphere> check_result=face.check_candidate_for_d2(id, d_number);
+				const std::vector<SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
 				if(check_result.size()==1)
 				{
 					face.set_d(id, d_number, check_result.front());
 					return std::make_pair(true, true);
 				}
 				return std::make_pair(false, false);
+			}
+		};
+	};
+
+	struct checkers_for_valid_d
+	{
+		struct NodeChecker
+		{
+			const Face& face;
+			const std::size_t d_number;
+
+			NodeChecker(const Face& target, const std::size_t d_number) : face(target), d_number(d_number)
+			{
+			}
+
+			bool operator()(const SimpleSphere& sphere) const
+			{
+				return (face.has_d(d_number) && sphere_intersects_sphere(sphere, face.get_d_tangent_sphere(d_number)));
+			}
+		};
+
+		struct LeafChecker
+		{
+			Face& face;
+			const std::size_t d_number;
+
+			std::tr1::unordered_set<std::size_t> visited;
+
+			LeafChecker(const Face& target, const std::size_t d_number) : face(target), d_number(d_number)
+			{
+			}
+
+			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
+			{
+				if(face.has_d(d_number) && sphere_intersects_sphere(sphere, face.get_d_tangent_sphere(d_number)))
+				{
+					const std::vector<SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
+					if(check_result.size()==1)
+					{
+						face.set_d(id, d_number, check_result.front());
+						return std::make_pair(true, true);
+					}
+					else
+					{
+						return std::make_pair(true, false);
+					}
+				}
+				return std::make_pair(false, false);
+			}
+		};
+	};
+
+	struct checkers_for_valid_e
+	{
+		struct NodeChecker
+		{
+			const Face& face;
+
+			NodeChecker(const Face& target) : face(target)
+			{
+			}
+
+			bool operator()(const SimpleSphere& sphere) const
+			{
+				return face.sphere_may_contain_candidate_for_e(sphere);
+			}
+		};
+
+		struct LeafChecker
+		{
+			Face& face;
+			const Hierarchy& hierarchy;
+
+			LeafChecker(Face& target, const Hierarchy& hierarchy) : face(target), hierarchy(hierarchy)
+			{
+			}
+
+			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
+			{
+				const std::vector<SimpleSphere> check_result=face.check_candidate_for_e(id);
+				bool e_added=false;
+				for(std::size_t i=0;i<check_result.second.size();i++)
+				{
+					if(hierarchy.find_any_collision(check_result[i]).empty())
+					{
+						face.add_e(id, check_result[i]);
+						e_added=true;
+					}
+				}
+				return std::make_pair(e_added, false);
 			}
 		};
 	};
