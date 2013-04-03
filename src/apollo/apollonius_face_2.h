@@ -98,9 +98,19 @@ public:
 		}
 	}
 
+	bool has_d(const std::size_t d_number) const
+	{
+		return (can_have_d_ && d_number<2 && d_ids_and_tangent_spheres_[d_number].first!=npos);
+	}
+
 	std::size_t get_d_id(const std::size_t d_number) const
 	{
 		return ((can_have_d_ && d_number<2) ? d_ids_and_tangent_spheres_[d_number].first : npos);
+	}
+
+	const SimpleSphere get_d_tangent_sphere(const std::size_t d_number) const
+	{
+		return ((can_have_d_ && d_number<2) ? d_ids_and_tangent_spheres_[d_number].second : SimpleSphere());
 	}
 
 	bool can_have_e() const
@@ -170,23 +180,14 @@ public:
 		}
 	}
 
-	std::vector<std::size_t> get_e_ids() const
+	bool has_e() const
 	{
-		std::vector<std::size_t> e_ids;
-		e_ids.reserve(e_ids_and_tangent_spheres_.size());
-		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
-		{
-			bool found=false;
-			for(std::size_t j=0;j<e_ids.size() && !found;j++)
-			{
-				found=(e_ids[j]==e_ids_and_tangent_spheres_[i].first);
-			}
-			if(!found)
-			{
-				e_ids.push_back(e_ids_and_tangent_spheres_[i].first);
-			}
-		}
-		return e_ids;
+		return (!e_ids_and_tangent_spheres_.empty());
+	}
+
+	const std::vector< std::pair<std::size_t, SimpleSphere> >& get_e_ids_and_tangent_spheres() const
+	{
+		return e_ids_and_tangent_spheres_;
 	}
 
 	void update(const ApolloniusFace2& source)
