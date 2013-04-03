@@ -98,6 +98,14 @@ public:
 		}
 	}
 
+	void unset_d(const std::size_t d_id, const std::size_t d_number)
+	{
+		if(can_have_d_ && d_number<2)
+		{
+			d_ids_and_tangent_spheres_[d_number]=std::make_pair(npos, SimpleSphere());
+		}
+	}
+
 	bool has_d(const std::size_t d_number) const
 	{
 		return (can_have_d_ && d_number<2 && d_ids_and_tangent_spheres_[d_number].first!=npos);

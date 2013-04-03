@@ -226,6 +226,41 @@ private:
 		}
 		return result;
 	}
+
+	static bool find_valid_d(const Hierarchy& hierarchy, const Face& face, const std::size_t d_number)
+	{
+		if(!face.has_d(d_number))
+		{
+			typename checkers_for_any_d::LeafChecker leaf_checker(face, d_number);
+			typename checkers_for_any_d::NodeChecker node_checker(face, d_number);
+			hierarchy.search(node_checker, leaf_checker);
+		}
+		if(face.has_d(d_number))
+		{
+			typename checkers_for_valid_d::NodeChecker node_checker(face, d_number);
+			typename checkers_for_valid_d::LeafChecker leaf_checker(face, d_number);
+			while(face.has_d(d_number))
+			{
+				const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
+				if(results.empty())
+				{
+					return true;
+				}
+				else if(face.get_d_id(d_number)!=results.back())
+				{
+					face.unset_d(d_number);
+				}
+			}
+		}
+		return false;
+	}
+
+	static bool find_valid_e(const Hierarchy& hierarchy, Face& face)
+	{
+		typename checkers_for_valid_e::NodeChecker node_checker(face);
+		typename checkers_for_valid_e::LeafChecker leaf_checker(face, hierarchy);
+		return !hierarchy.search(node_checker, leaf_checker).empty();
+	}
 };
 
 }
