@@ -98,6 +98,11 @@ public:
 		}
 	}
 
+	std::size_t get_d_id(const std::size_t d_number) const
+	{
+		return ((can_have_d_ && d_number<2) ? d_ids_and_tangent_spheres_[d_number].first : npos);
+	}
+
 	bool can_have_e() const
 	{
 		return can_have_e_;
@@ -123,7 +128,6 @@ public:
 				&& e_id!=npos
 				&& !abc_ids_.contains(e_id)
 				&& !id_equals_recorded_id(d_ids_and_tangent_spheres_, e_id, npos)
-				&& !id_equals_recorded_id(e_ids_and_tangent_spheres_, e_id, npos)
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 				&& !sphere_intersects_recorded_tangent_sphere(d_ids_and_tangent_spheres_, spheres_->at(e_id), npos)
 				&& !sphere_intersects_recorded_tangent_sphere(e_ids_and_tangent_spheres_, spheres_->at(e_id), npos)
@@ -153,8 +157,36 @@ public:
 	{
 		if(can_have_e_)
 		{
-			e_ids_and_tangent_spheres_.push_back(std::make_pair(e_id, tangent_sphere));
+			bool found=false;
+			for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size() && !found;i++)
+			{
+				found=(e_ids_and_tangent_spheres_[i].first==e_id
+						&& spheres_equal(e_ids_and_tangent_spheres_[i].second, tangent_sphere));
+			}
+			if(!found)
+			{
+				e_ids_and_tangent_spheres_.push_back(std::make_pair(e_id, tangent_sphere));
+			}
 		}
+	}
+
+	std::vector<std::size_t> get_e_ids() const
+	{
+		std::vector<std::size_t> e_ids;
+		e_ids.reserve(e_ids_and_tangent_spheres_.size());
+		for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size();i++)
+		{
+			bool found=false;
+			for(std::size_t j=0;j<e_ids.size() && !found;j++)
+			{
+				found=(e_ids[j]==e_ids_and_tangent_spheres_[i].first);
+			}
+			if(!found)
+			{
+				e_ids.push_back(e_ids_and_tangent_spheres_[i].first);
+			}
+		}
+		return e_ids;
 	}
 
 	void update(const ApolloniusFace2& source)
@@ -168,7 +200,7 @@ public:
 					d_ids_and_tangent_spheres_[i]=source.d_ids_and_tangent_spheres_[i];
 				}
 			}
-			for(std::size_t i=0;source.e_ids_and_tangent_spheres_.size();i++)
+			for(std::size_t i=0;i<source.e_ids_and_tangent_spheres_.size();i++)
 			{
 				bool found=false;
 				for(std::size_t j=0;j<e_ids_and_tangent_spheres_.size() && !found;j++)
@@ -188,14 +220,15 @@ public:
 	{
 		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
 		recorded_ids_and_tangent_spheres.reserve(d_ids_and_tangent_spheres_.size()+e_ids_and_tangent_spheres_.size());
-		for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size();i++)
+		if(can_have_d_ && with_d0 && d_ids_and_tangent_spheres_[0].first!=npos)
 		{
-			if(((i==0 && with_d0) || (i==1 && with_d1)) && d_ids_and_tangent_spheres_[i].first!=npos)
-			{
-				recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[i]);
-			}
+			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[0]);
 		}
-		if(with_e)
+		if(can_have_d_ && with_d1 && d_ids_and_tangent_spheres_[1].first!=npos)
+		{
+			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[1]);
+		}
+		if(can_have_e_ && with_e)
 		{
 			recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
 		}
