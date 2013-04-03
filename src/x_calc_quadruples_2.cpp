@@ -14,7 +14,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation2<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner");
+	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -80,6 +80,14 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		{
 			const apollo::SimpleSphere& s=tangents[i];
 			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
+		}
+	}
+
+	if(clo.isopt("--check"))
+	{
+		if(!Apollo::check_quadruples(quadruples_map, atoms))
+		{
+			std::cerr << "Check failed!\n";
 		}
 	}
 }
