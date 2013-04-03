@@ -28,6 +28,8 @@ public:
 		QuadruplesMap quadruples_map;
 		TriplesSet processed_triples_set;
 		std::size_t difficult_faces_count=0;
+		std::size_t double_d_searches_count=0;
+		std::size_t triples_repetitions=0;
 		std::deque<Face> stack=find_first_faces(hierarchy);
 		TriplesMap stack_map;
 		for(std::size_t i=0;i<stack.size();i++)
@@ -42,6 +44,10 @@ public:
 			if(monitoring_level()>0 && !face.can_have_d())
 			{
 				difficult_faces_count++;
+			}
+			if(monitoring_level()>0 && face.can_have_d() && !face.has_d(0) && !face.has_d(1))
+			{
+				double_d_searches_count++;
 			}
 			const bool found_d0=face.can_have_d() && !face.has_d(0) && find_valid_d(hierarchy, face, 0);
 			const bool found_d1=face.can_have_d() && !face.has_d(1) && find_valid_d(hierarchy, face, 1);
@@ -84,6 +90,13 @@ public:
 							stack.at(sm_it->second).update(produced_face);
 						}
 					}
+					else
+					{
+						if(monitoring_level()>0)
+						{
+							triples_repetitions++;
+						}
+					}
 				}
 			}
 			processed_triples_set.insert(face.abc_ids());
@@ -94,6 +107,8 @@ public:
 			std::clog << "quadruples " << quadruples_map.size() << "\n";
 			std::clog << "triples " << processed_triples_set.size() << "\n";
 			std::clog << "difficulties " << difficult_faces_count << "\n";
+			std::clog << "doubles " << double_d_searches_count << "\n";
+			std::clog << "repetitions " << triples_repetitions << "\n";
 		}
 		return quadruples_map;
 	}
