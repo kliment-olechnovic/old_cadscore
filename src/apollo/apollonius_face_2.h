@@ -171,16 +171,7 @@ public:
 	{
 		if(can_have_e_ && e_id!=npos)
 		{
-			bool found=false;
-			for(std::size_t i=0;i<e_ids_and_tangent_spheres_.size() && !found;i++)
-			{
-				found=((e_ids_and_tangent_spheres_[i].first==e_id)
-						&& (spheres_equal(e_ids_and_tangent_spheres_[i].second, tangent_sphere)));
-			}
-			if(!found)
-			{
-				e_ids_and_tangent_spheres_.push_back(std::make_pair(e_id, tangent_sphere));
-			}
+			e_ids_and_tangent_spheres_.push_back(std::make_pair(e_id, tangent_sphere));
 		}
 	}
 
@@ -233,7 +224,7 @@ public:
 		{
 			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[1]);
 		}
-		if(can_have_e_ && with_e)
+		if(can_have_e_ && with_e && !e_ids_and_tangent_spheres_.empty())
 		{
 			recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
 		}
