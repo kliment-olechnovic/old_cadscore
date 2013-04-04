@@ -25,11 +25,16 @@ public:
 		tangent_planes_(construct_spheres_tangent_planes(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)))),
 		can_have_d_(tangent_planes_.size()==2),
 		can_have_e_(!equal(spheres_->at(abc_ids_.get(0)).r, 0) && !equal(spheres_->at(abc_ids_.get(1)).r, 0) && !equal(spheres_->at(abc_ids_.get(2)).r, 0)),
-		expansion_for_d_tangent_spheres_(std::max(0.0, std::max(spheres_->at(abc_ids_.get(0)).r, std::max(spheres_->at(abc_ids_.get(1)).r, spheres_->at(abc_ids_.get(2)).r)))*2)
+		abc_spheres_maximum_diameter_(std::max(0.0, std::max(spheres_->at(abc_ids_.get(0)).r, std::max(spheres_->at(abc_ids_.get(1)).r, spheres_->at(abc_ids_.get(2)).r)))*2)
 	{
 		if(can_have_d_)
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
+			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)));
+			if(halfspace_of_point(spheres_->at(abc_ids_.get(0)), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
+			{
+				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
+			}
 		}
 		else
 		{
@@ -80,7 +85,7 @@ public:
 				if(
 						(!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, d_number))
 						&& (!sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos))
-						&& (tangent_spheres.size()==1 || (halfspace_of_point(spheres_->at(abc_ids_.get(0)), plane_normal_from_three_points<SimplePoint>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2))), spheres_touching_point<SimpleSphere>(spheres_->at(d_id), tangent_sphere))==1))
+						&& (tangent_spheres.size()==1 || (halfspace_of_point(spheres_->at(abc_ids_.get(0)), abc_centers_plane_normal_, tangent_sphere)==(d_number==0 ? 1 : -1)))
 					)
 				{
 					return std::vector<SimpleSphere>(1, tangent_sphere);
@@ -134,8 +139,8 @@ public:
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)!=1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)!=1))
 				&& (!sphere_is_contained_in_recorded_tangent_sphere(d_ids_and_tangent_spheres_, input_sphere, npos))
 				&& (!sphere_is_contained_in_recorded_tangent_sphere(e_ids_and_tangent_spheres_, input_sphere, npos))
-				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+expansion_for_d_tangent_spheres_)))
-				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+expansion_for_d_tangent_spheres_)))
+				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+abc_spheres_maximum_diameter_)))
+				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(input_sphere, SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+abc_spheres_maximum_diameter_)))
 				);
 	}
 
@@ -149,8 +154,8 @@ public:
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 				&& (!sphere_intersects_recorded_tangent_sphere(d_ids_and_tangent_spheres_, spheres_->at(e_id), npos))
 				&& (!sphere_intersects_recorded_tangent_sphere(e_ids_and_tangent_spheres_, spheres_->at(e_id), npos))
-				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+expansion_for_d_tangent_spheres_)))
-				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+expansion_for_d_tangent_spheres_)))
+				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+abc_spheres_maximum_diameter_)))
+				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+abc_spheres_maximum_diameter_)))
 			)
 		{
 			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), spheres_->at(e_id));
@@ -284,7 +289,7 @@ public:
 					}
 					else
 					{
-						if(halfspace_of_point(spheres_->at(produced_face.abc_ids().get(0)), plane_normal_from_three_points<SimplePoint>(spheres_->at(produced_face.abc_ids().get(0)), spheres_->at(produced_face.abc_ids().get(1)), spheres_->at(produced_face.abc_ids().get(2))), spheres_touching_point<SimpleSphere>(produced_face.spheres_->at(id), tangent_sphere))==1)
+						if(halfspace_of_point(spheres_->at(produced_face.abc_ids().get(0)), produced_face.abc_centers_plane_normal_, tangent_sphere)==1)
 						{
 							produced_face.set_d(id, 0, tangent_sphere);
 						}
@@ -371,11 +376,12 @@ private:
 	const std::vector<Sphere>* spheres_;
 	Triple abc_ids_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
+	SimplePoint abc_centers_plane_normal_;
 	std::vector< std::pair<std::size_t, SimpleSphere> > d_ids_and_tangent_spheres_;
 	std::vector< std::pair<std::size_t, SimpleSphere> > e_ids_and_tangent_spheres_;
 	bool can_have_d_;
 	bool can_have_e_;
-	double expansion_for_d_tangent_spheres_;
+	double abc_spheres_maximum_diameter_;
 };
 
 }
