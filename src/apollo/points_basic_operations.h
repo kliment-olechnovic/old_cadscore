@@ -157,6 +157,11 @@ struct SimplePoint
 	{
 		return unit_point<SimplePoint>(*this);
 	}
+
+	SimplePoint inverted() const
+	{
+		return inverted_point<SimplePoint>(*this);
+	}
 };
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC, typename InputPointTypeD>
