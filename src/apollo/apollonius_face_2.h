@@ -70,7 +70,6 @@ public:
 				&& (d_number<2)
 				&& (d_id!=d_ids_and_tangent_spheres_[d_number].first)
 				&& (!abc_ids_.contains(d_id))
-				&& (!id_equals_recorded_id(e_ids_and_tangent_spheres_, d_id, npos))
 				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_->at(d_id))>-1)
 			)
 		{
@@ -144,7 +143,7 @@ public:
 				can_have_e_
 				&& (e_id!=npos)
 				&& (!abc_ids_.contains(e_id))
-				&& (!id_equals_recorded_id(d_ids_and_tangent_spheres_, e_id, npos))
+				&& (!can_have_d_ || (e_id!=d_ids_and_tangent_spheres_[0].first && e_id!=d_ids_and_tangent_spheres_[1].first))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[0].second, d_ids_and_tangent_spheres_[0].second.r+abc_spheres_maximum_diameter_)))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere(spheres_->at(e_id), SimpleSphere(d_ids_and_tangent_spheres_[1].second, d_ids_and_tangent_spheres_[1].second.r+abc_spheres_maximum_diameter_)))
@@ -267,11 +266,7 @@ public:
 				{
 					const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
 					const int h1=halfspace_of_sphere(produced_face.tangent_planes_[1].first, produced_face.tangent_planes_[1].second, produced_face.spheres_->at(id));
-					if(h0==-1 && h1==-1)
-					{
-						produced_face.add_e(id, tangent_sphere);
-					}
-					else if(h0>-1 && h1==-1)
+					if(h0>-1 && h1==-1)
 					{
 						produced_face.set_d(id, 0, tangent_sphere);
 					}
@@ -279,7 +274,7 @@ public:
 					{
 						produced_face.set_d(id, 1, tangent_sphere);
 					}
-					else
+					else if(h0==-1 && h1==1)
 					{
 						if(halfspace_of_point(spheres_->at(produced_face.abc_ids().get(0)), produced_face.abc_centers_plane_normal_, tangent_sphere)==1)
 						{
@@ -290,10 +285,6 @@ public:
 							produced_face.set_d(id, 1, tangent_sphere);
 						}
 					}
-				}
-				else
-				{
-					produced_face.add_e(id, tangent_sphere);
 				}
 				bool updated=false;
 				for(std::size_t e=0;e<produced_faces.size() && !updated;e++)
@@ -314,18 +305,6 @@ public:
 	}
 
 private:
-	static bool id_equals_recorded_id(const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const std::size_t id, const std::size_t excluding_position)
-	{
-		for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
-		{
-			if(i!=excluding_position && id==recorded_ids_and_tangent_spheres[i].first)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	template<typename InputSphereType>
 	static bool sphere_intersects_recorded_sphere(const std::vector<Sphere>* spheres, const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const InputSphereType& input_sphere, const std::size_t excluding_position)
 	{
