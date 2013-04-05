@@ -62,7 +62,7 @@ public:
 				);
 	}
 
-	std::vector<SimpleSphere> check_candidate_for_d(const std::size_t d_id, const std::size_t d_number) const
+	std::pair<bool, SimpleSphere> check_candidate_for_d(const std::size_t d_id, const std::size_t d_number) const
 	{
 		if(
 				can_have_d_
@@ -83,11 +83,11 @@ public:
 						&& (tangent_spheres.size()==1 || (halfspace_of_point(spheres_->at(abc_ids_.get(0)), abc_centers_plane_normal_, tangent_sphere)==(d_number==0 ? 1 : -1)))
 					)
 				{
-					return std::vector<SimpleSphere>(1, tangent_sphere);
+					return std::make_pair(true, tangent_sphere);
 				}
 			}
 		}
-		return std::vector<SimpleSphere>();
+		return std::make_pair(false, SimpleSphere());
 	}
 
 	void set_d(const std::size_t d_id, const std::size_t d_number, const SimpleSphere& tangent_sphere)
