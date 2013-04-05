@@ -22,16 +22,19 @@ public:
 	ApolloniusFace2(const std::vector<Sphere>& spheres, const Triple& abc_ids) :
 		spheres_(&spheres),
 		abc_ids_(abc_ids),
-		tangent_planes_(construct_spheres_tangent_planes(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)))),
+		a_sphere_(&(spheres_->at(abc_ids_.get(0)))),
+		b_sphere_(&(spheres_->at(abc_ids_.get(1)))),
+		c_sphere_(&(spheres_->at(abc_ids_.get(2)))),
+		tangent_planes_(construct_spheres_tangent_planes((*a_sphere_), (*b_sphere_), (*c_sphere_))),
 		can_have_d_(tangent_planes_.size()==2),
-		can_have_e_(!equal(spheres_->at(abc_ids_.get(0)).r, 0) && !equal(spheres_->at(abc_ids_.get(1)).r, 0) && !equal(spheres_->at(abc_ids_.get(2)).r, 0)),
-		abc_spheres_maximum_diameter_(std::max(0.0, std::max(spheres_->at(abc_ids_.get(0)).r, std::max(spheres_->at(abc_ids_.get(1)).r, spheres_->at(abc_ids_.get(2)).r)))*2)
+		can_have_e_(!equal(a_sphere_->r, 0) && !equal(b_sphere_->r, 0) && !equal(c_sphere_->r, 0)),
+		abc_spheres_maximum_diameter_(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2)
 	{
 		if(can_have_d_)
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
-			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)));
-			if(halfspace_of_point(spheres_->at(abc_ids_.get(0)), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
+			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
+			if(halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
 			{
 				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
 			}
@@ -73,14 +76,14 @@ public:
 				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_->at(d_id))>-1)
 			)
 		{
-			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), spheres_->at(d_id));
+			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(d_id));
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
 				if(
 						(!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, d_number))
 						&& (!sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos))
-						&& (tangent_spheres.size()==1 || (halfspace_of_point(spheres_->at(abc_ids_.get(0)), abc_centers_plane_normal_, tangent_sphere)==(d_number==0 ? 1 : -1)))
+						&& (tangent_spheres.size()==1 || (halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_sphere)==(d_number==0 ? 1 : -1)))
 					)
 				{
 					return std::make_pair(true, tangent_sphere);
@@ -151,7 +154,7 @@ public:
 				&& (!can_have_d_ || halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1)
 			)
 		{
-			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), spheres_->at(e_id));
+			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(e_id));
 			std::vector<SimpleSphere> valid_tangent_spheres;
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
@@ -313,6 +316,9 @@ private:
 
 	const std::vector<Sphere>* spheres_;
 	Triple abc_ids_;
+	const Sphere* a_sphere_;
+	const Sphere* b_sphere_;
+	const Sphere* c_sphere_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
 	SimplePoint abc_centers_plane_normal_;
 	std::vector< std::pair<std::size_t, SimpleSphere> > d_ids_and_tangent_spheres_;
