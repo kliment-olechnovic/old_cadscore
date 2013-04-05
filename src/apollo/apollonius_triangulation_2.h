@@ -195,10 +195,10 @@ private:
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
 			{
-				const std::vector<SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
-				if(check_result.size()==1)
+				const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
+				if(check_result.first)
 				{
-					face.set_d(id, d_number, check_result.front());
+					face.set_d(id, d_number, check_result.second);
 					return std::make_pair(true, true);
 				}
 				return std::make_pair(false, false);
@@ -242,10 +242,10 @@ private:
 						return std::make_pair(true, false);
 					}
 					visited.insert(id);
-					const std::vector<SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
-					if(check_result.size()==1)
+					const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
+					if(check_result.first)
 					{
-						face.set_d(id, d_number, check_result.front());
+						face.set_d(id, d_number, check_result.second);
 						return std::make_pair(true, true);
 					}
 					else
