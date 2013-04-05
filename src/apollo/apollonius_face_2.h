@@ -262,21 +262,22 @@ public:
 				{
 					const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
 					const int h1=halfspace_of_sphere(produced_face.tangent_planes_[1].first, produced_face.tangent_planes_[1].second, produced_face.spheres_->at(id));
-					if(h0>-1 && h1==-1)
+					if(h0>=0 && h1==-1)
 					{
 						produced_face.set_d(id, 0, tangent_sphere);
 					}
-					else if(h0==-1 && h1>-1)
+					else if(h0==-1 && h1>=0)
 					{
 						produced_face.set_d(id, 1, tangent_sphere);
 					}
-					else if(h0==-1 && h1==1)
+					else if(h0==0 && h1==0)
 					{
-						if(halfspace_of_point(spheres_->at(produced_face.abc_ids().get(0)), produced_face.abc_centers_plane_normal_, tangent_sphere)==1)
+						const int hc=halfspace_of_point((*produced_face.a_sphere_), produced_face.abc_centers_plane_normal_, tangent_sphere);
+						if(hc==1)
 						{
 							produced_face.set_d(id, 0, tangent_sphere);
 						}
-						else
+						else if(hc==-1)
 						{
 							produced_face.set_d(id, 1, tangent_sphere);
 						}
