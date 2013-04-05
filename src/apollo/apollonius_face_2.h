@@ -256,8 +256,8 @@ public:
 			const std::size_t id=abc_ids_.get(j);
 			for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 			{
-				const SimpleSphere& tangent_sphere=recorded_ids_and_tangent_spheres[i].second;
 				ApolloniusFace2 produced_face(*spheres_, Triple(abc_ids_.exclude(j), recorded_ids_and_tangent_spheres[i].first));
+				const SimpleSphere& tangent_sphere=recorded_ids_and_tangent_spheres[i].second;
 				if(produced_face.can_have_d_)
 				{
 					const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
@@ -283,19 +283,7 @@ public:
 						}
 					}
 				}
-				bool updated=false;
-				for(std::size_t e=0;e<produced_faces.size() && !updated;e++)
-				{
-					if(produced_faces[e].abc_ids_==produced_face.abc_ids_)
-					{
-						produced_faces[e].update(produced_face);
-						updated=true;
-					}
-				}
-				if(!updated)
-				{
-					produced_faces.push_back(produced_face);
-				}
+				produced_faces.push_back(produced_face);
 			}
 		}
 		return produced_faces;
