@@ -133,7 +133,8 @@ public:
 				can_have_e_
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_)
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_)
-				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)!=1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)!=1))
+				&& (!can_have_d_ || halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)!=1)
+				&& (!can_have_d_ || halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)!=1)
 				);
 	}
 
@@ -146,7 +147,8 @@ public:
 				&& (!can_have_d_ || (e_id!=d_ids_and_tangent_spheres_[0].first && e_id!=d_ids_and_tangent_spheres_[1].first))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_)
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[1].first==npos || minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_)
-				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
+				&& (!can_have_d_ || halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1)
+				&& (!can_have_d_ || halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1)
 			)
 		{
 			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>(spheres_->at(abc_ids_.get(0)), spheres_->at(abc_ids_.get(1)), spheres_->at(abc_ids_.get(2)), spheres_->at(e_id));
