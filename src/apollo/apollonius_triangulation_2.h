@@ -21,15 +21,49 @@ public:
 	typedef typename Hierarchy::Sphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
+	struct Log
+	{
+		std::size_t difficult_faces;
+		std::size_t d0_searches;
+		std::size_t d1_searches;
+		std::size_t e_searches;
+		std::size_t produced_faces;
+		std::size_t updated_faces;
+		std::size_t triples_repetitions;
+		std::size_t finding_first_faces_iterations;
+		std::size_t finding_any_d_node_checks;
+		std::size_t finding_any_d_leaf_checks;
+		std::size_t finding_valid_d_node_checks;
+		std::size_t finding_valid_d_leaf_checks;
+		std::size_t finding_valid_e_node_checks;
+		std::size_t finding_valid_e_leaf_checks;
+
+		void print(std::ostream& output) const
+		{
+			output << "difficult_faces                 " << difficult_faces << "\n";
+			output << "d0_searches                     " << d0_searches << "\n";
+			output << "d1_searches                     " << d1_searches << "\n";
+			output << "e_searches                      " << e_searches << "\n";
+			output << "produced_faces                  " << produced_faces << "\n";
+			output << "updated_faces                   " << updated_faces << "\n";
+			output << "triples_repetitions             " << triples_repetitions << "\n";
+			output << "finding_first_faces_iterations  " << finding_first_faces_iterations << "\n";
+			output << "finding_any_d_node_checks       " <<  finding_any_d_node_checks<< "\n";
+			output << "finding_any_d_leaf_checks       " << finding_any_d_leaf_checks << "\n";
+			output << "finding_valid_d_node_checks     " << finding_valid_d_node_checks << "\n";
+			output << "finding_valid_d_leaf_checks     " << finding_valid_d_leaf_checks << "\n";
+			output << "finding_valid_e_node_checks     " << finding_valid_e_node_checks << "\n";
+			output << "finding_valid_e_leaf_checks     " << finding_valid_e_leaf_checks << "\n";
+		}
+	};
+
 	static QuadruplesMap find_quadruples(const Hierarchy& hierarchy, bool enable_searching_for_e)
 	{
 		typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
 		typedef std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> TriplesMap;
+		log_ref()=Log();
 		QuadruplesMap quadruples_map;
 		TriplesSet processed_triples_set;
-		std::size_t difficult_faces_count=0;
-		std::size_t double_d_searches_count=0;
-		std::size_t triples_repetitions=0;
 		std::deque<Face> stack=find_first_faces(hierarchy);
 		TriplesMap stack_map;
 		for(std::size_t i=0;i<stack.size();i++)
@@ -41,13 +75,9 @@ public:
 			Face face=stack.back();
 			stack.pop_back();
 			stack_map.erase(face.abc_ids());
-			if(monitoring_level()>0 && !face.can_have_d())
+			if(!face.can_have_d())
 			{
-				difficult_faces_count++;
-			}
-			if(monitoring_level()>0 && face.can_have_d() && !face.has_d(0) && !face.has_d(1))
-			{
-				double_d_searches_count++;
+				log_ref().difficult_faces++;
 			}
 			const bool found_d0=face.can_have_d() && !face.has_d(0) && find_valid_d(hierarchy, face, 0);
 			const bool found_d1=face.can_have_d() && !face.has_d(1) && find_valid_d(hierarchy, face, 1);
@@ -85,31 +115,21 @@ public:
 							stack_map[produced_preface.first]=stack.size();
 							stack.push_back(Face(hierarchy.spheres(), produced_preface.first));
 							stack.back().set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
+							log_ref().produced_faces++;
 						}
 						else
 						{
 							stack.at(sm_it->second).set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
+							log_ref().updated_faces++;
 						}
 					}
 					else
 					{
-						if(monitoring_level()>0)
-						{
-							triples_repetitions++;
-						}
+						log_ref().triples_repetitions++;
 					}
 				}
 			}
 			processed_triples_set.insert(face.abc_ids());
-		}
-		if(monitoring_level()>0)
-		{
-			std::clog << "spheres " << hierarchy.spheres().size() << "\n";
-			std::clog << "quadruples " << quadruples_map.size() << "\n";
-			std::clog << "triples " << processed_triples_set.size() << "\n";
-			std::clog << "difficulties " << difficult_faces_count << "\n";
-			std::clog << "doubles " << double_d_searches_count << "\n";
-			std::clog << "repetitions " << triples_repetitions << "\n";
 		}
 		return quadruples_map;
 	}
@@ -154,15 +174,9 @@ public:
 		return true;
 	}
 
-	static int& monitoring_level_reference()
+	static Log log()
 	{
-		static int monitoring_level=0;
-		return monitoring_level;
-	}
-
-	static int monitoring_level()
-	{
-		return monitoring_level_reference();
+		return log_ref();
 	}
 
 private:
@@ -181,6 +195,7 @@ private:
 
 			bool operator()(const SimpleSphere& sphere) const
 			{
+				log_ref().finding_any_d_node_checks++;
 				return face.sphere_may_contain_candidate_for_d(sphere, d_number);
 			}
 		};
@@ -196,6 +211,7 @@ private:
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
 			{
+				log_ref().finding_any_d_leaf_checks++;
 				const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
 				if(check_result.first)
 				{
@@ -220,6 +236,7 @@ private:
 
 			bool operator()(const SimpleSphere& sphere) const
 			{
+				log_ref().finding_valid_d_node_checks++;
 				return (face.has_d(d_number) && sphere_intersects_sphere(sphere, face.get_d_tangent_sphere(d_number)));
 			}
 		};
@@ -236,6 +253,7 @@ private:
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& sphere)
 			{
+				log_ref().finding_valid_d_leaf_checks++;
 				if(face.has_d(d_number) && sphere_intersects_sphere(sphere, face.get_d_tangent_sphere(d_number)))
 				{
 					if(visited.find(id)!=visited.end())
@@ -271,6 +289,7 @@ private:
 
 			bool operator()(const SimpleSphere& sphere) const
 			{
+				log_ref().finding_valid_e_node_checks++;
 				return face.sphere_may_contain_candidate_for_e(sphere);
 			}
 		};
@@ -286,6 +305,7 @@ private:
 
 			std::pair<bool, bool> operator()(const std::size_t id, const Sphere& /*sphere*/)
 			{
+				log_ref().finding_valid_e_leaf_checks++;
 				const std::vector<SimpleSphere> check_result=face.check_candidate_for_e(id);
 				bool e_added=false;
 				for(std::size_t i=0;i<check_result.size();i++)
@@ -301,11 +321,16 @@ private:
 		};
 	};
 
+	static Log& log_ref()
+	{
+		static Log log=Log();
+		return log;
+	}
+
 	static std::deque<Face> find_first_faces(const Hierarchy& hierarchy)
 	{
 		const std::vector<Sphere>& spheres=hierarchy.spheres();
 		std::deque<Face> result;
-		int tries_count=0;
 		if(!spheres.empty())
 		{
 			const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
@@ -319,7 +344,7 @@ private:
 						{
 							for(std::size_t d=((a+1<u && b+1<u && c+1<u) ? (u-1) : (c+1));d<u;d++)
 							{
-								tries_count++;
+								log_ref().finding_first_faces_iterations++;
 								Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 								std::vector<SimpleSphere> tangents=construct_spheres_tangent_sphere<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 								if(tangents.size()==1 && hierarchy.find_any_collision(tangents.front()).empty())
@@ -327,10 +352,6 @@ private:
 									for(int i=0;i<4;i++)
 									{
 										result.push_back(Face(spheres, quadruple.exclude(i)));
-									}
-									if(monitoring_level()>0)
-									{
-										std::clog << "brute " << tries_count << "\n";
 									}
 									return result;
 								}
@@ -340,15 +361,19 @@ private:
 				}
 			}
 		}
-		if(monitoring_level()>0)
-		{
-			std::clog << "brute " << tries_count << "\n";
-		}
 		return result;
 	}
 
 	static bool find_valid_d(const Hierarchy& hierarchy, Face& face, const std::size_t d_number)
 	{
+		if(d_number==0)
+		{
+			log_ref().d0_searches++;
+		}
+		else
+		{
+			log_ref().d1_searches++;
+		}
 		if(!face.has_d(d_number))
 		{
 			typename checkers_for_any_d::LeafChecker leaf_checker(face, d_number);
@@ -377,6 +402,7 @@ private:
 
 	static bool find_valid_e(const Hierarchy& hierarchy, Face& face)
 	{
+		log_ref().e_searches++;
 		typename checkers_for_valid_e::NodeChecker node_checker(face);
 		typename checkers_for_valid_e::LeafChecker leaf_checker(face, hierarchy);
 		return !hierarchy.search(node_checker, leaf_checker).empty();
