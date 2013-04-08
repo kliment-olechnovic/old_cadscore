@@ -73,21 +73,22 @@ public:
 						}
 					}
 				}
-				const std::vector<Face> produced_faces=face.produce_faces(found_d0, found_d1, found_e);
-				for(std::size_t i=0;i<produced_faces.size();i++)
+				const std::vector< std::pair<Triple, std::pair<std::size_t, SimpleSphere> > > produced_prefaces=face.produce_prefaces(found_d0, found_d1, found_e);
+				for(std::size_t i=0;i<produced_prefaces.size();i++)
 				{
-					const Face& produced_face=produced_faces[i];
-					if(processed_triples_set.count(produced_face.abc_ids())==0)
+					const std::pair<Triple, std::pair<std::size_t, SimpleSphere> >& produced_preface=produced_prefaces[i];
+					if(processed_triples_set.count(produced_preface.first)==0)
 					{
-						TriplesMap::const_iterator sm_it=stack_map.find(produced_face.abc_ids());
+						TriplesMap::const_iterator sm_it=stack_map.find(produced_preface.first);
 						if(sm_it==stack_map.end())
 						{
-							stack_map[produced_face.abc_ids()]=stack.size();
-							stack.push_back(produced_face);
+							stack_map[produced_preface.first]=stack.size();
+							stack.push_back(Face(hierarchy.spheres(), produced_preface.first));
+							stack.back().set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
 						}
 						else
 						{
-							stack.at(sm_it->second).update(produced_face);
+							stack.at(sm_it->second).set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
 						}
 					}
 					else
