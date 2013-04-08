@@ -14,18 +14,12 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation2<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
+	clo.check_allowed_options("--epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --monitor --check");
 
 	if(clo.isopt("--epsilon"))
 	{
 		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
 		apollo::epsilon_reference()=epsilon;
-	}
-
-	if(clo.isopt("--monitoring-level"))
-	{
-		const int monitoring_level=clo.arg_with_min_value<int>("--monitoring-level", 0);
-		Apollo::monitoring_level_reference()=monitoring_level;
 	}
 
 	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
@@ -81,6 +75,11 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 			const apollo::SimpleSphere& s=tangents[i];
 			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
 		}
+	}
+
+	if(clo.isopt("--monitor"))
+	{
+		Apollo::log().print(std::clog);
 	}
 
 	if(clo.isopt("--check"))
