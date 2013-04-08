@@ -101,6 +101,35 @@ public:
 		}
 	}
 
+	void set_d_with_d_number_selection(const std::size_t d_id, const SimpleSphere& tangent_sphere)
+	{
+		if(can_have_d_)
+		{
+			const int h0=halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(d_id));
+			const int h1=halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(d_id));
+			if(h0>=0 && h1==-1)
+			{
+				set_d(d_id, 0, tangent_sphere);
+			}
+			else if(h0==-1 && h1>=0)
+			{
+				set_d(d_id, 1, tangent_sphere);
+			}
+			else if(h0==0 && h1==0)
+			{
+				const int hc=halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_sphere);
+				if(hc==1)
+				{
+					set_d(d_id, 0, tangent_sphere);
+				}
+				else if(hc==-1)
+				{
+					set_d(d_id, 1, tangent_sphere);
+				}
+			}
+		}
+	}
+
 	void unset_d(const std::size_t d_number)
 	{
 		if(can_have_d_ && d_number<2)
@@ -181,38 +210,6 @@ public:
 		return (!e_ids_and_tangent_spheres_.empty());
 	}
 
-	const std::vector< std::pair<std::size_t, SimpleSphere> >& get_e_ids_and_tangent_spheres() const
-	{
-		return e_ids_and_tangent_spheres_;
-	}
-
-	void update(const ApolloniusFace2& source)
-	{
-		if(spheres_==source.spheres_ && abc_ids_==source.abc_ids_)
-		{
-			for(std::size_t i=0;i<d_ids_and_tangent_spheres_.size() && i<source.d_ids_and_tangent_spheres_.size();i++)
-			{
-				if(d_ids_and_tangent_spheres_[i].first==npos && source.d_ids_and_tangent_spheres_[i].first!=npos)
-				{
-					d_ids_and_tangent_spheres_[i]=source.d_ids_and_tangent_spheres_[i];
-				}
-			}
-			for(std::size_t i=0;i<source.e_ids_and_tangent_spheres_.size();i++)
-			{
-				bool found=false;
-				for(std::size_t j=0;j<e_ids_and_tangent_spheres_.size() && !found;j++)
-				{
-					found=(e_ids_and_tangent_spheres_[j].first==source.e_ids_and_tangent_spheres_[i].first
-							&& spheres_equal(e_ids_and_tangent_spheres_[j].second, source.e_ids_and_tangent_spheres_[i].second));
-				}
-				if(!found)
-				{
-					e_ids_and_tangent_spheres_.push_back(source.e_ids_and_tangent_spheres_[i]);
-				}
-			}
-		}
-	}
-
 	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
 		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
@@ -243,46 +240,19 @@ public:
 		return quadruples_with_tangent_spheres;
 	}
 
-	std::vector<ApolloniusFace2> produce_faces(const bool with_d0, const bool with_d1, const bool with_e) const
+	std::vector< std::pair<Triple, std::pair<std::size_t, SimpleSphere> > > produce_prefaces(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
-		std::vector<ApolloniusFace2> produced_faces;
+		std::vector< std::pair<Triple, std::pair<std::size_t, SimpleSphere> > > produced_prefaces;
 		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=collect_all_recorded_ids_and_tangent_spheres(with_d0, with_d1, with_e);
 		for(int j=0;j<abc_ids_.size();j++)
 		{
 			const std::size_t id=abc_ids_.get(j);
 			for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 			{
-				ApolloniusFace2 produced_face(*spheres_, Triple(abc_ids_.exclude(j), recorded_ids_and_tangent_spheres[i].first));
-				const SimpleSphere& tangent_sphere=recorded_ids_and_tangent_spheres[i].second;
-				if(produced_face.can_have_d_)
-				{
-					const int h0=halfspace_of_sphere(produced_face.tangent_planes_[0].first, produced_face.tangent_planes_[0].second, produced_face.spheres_->at(id));
-					const int h1=halfspace_of_sphere(produced_face.tangent_planes_[1].first, produced_face.tangent_planes_[1].second, produced_face.spheres_->at(id));
-					if(h0>=0 && h1==-1)
-					{
-						produced_face.set_d(id, 0, tangent_sphere);
-					}
-					else if(h0==-1 && h1>=0)
-					{
-						produced_face.set_d(id, 1, tangent_sphere);
-					}
-					else if(h0==0 && h1==0)
-					{
-						const int hc=halfspace_of_point((*produced_face.a_sphere_), produced_face.abc_centers_plane_normal_, tangent_sphere);
-						if(hc==1)
-						{
-							produced_face.set_d(id, 0, tangent_sphere);
-						}
-						else if(hc==-1)
-						{
-							produced_face.set_d(id, 1, tangent_sphere);
-						}
-					}
-				}
-				produced_faces.push_back(produced_face);
+				produced_prefaces.push_back(std::make_pair(Triple(abc_ids_.exclude(j), recorded_ids_and_tangent_spheres[i].first), std::make_pair(id, recorded_ids_and_tangent_spheres[i].second)));
 			}
 		}
-		return produced_faces;
+		return produced_prefaces;
 	}
 
 private:
