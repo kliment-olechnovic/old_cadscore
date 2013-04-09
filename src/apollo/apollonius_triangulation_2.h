@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <deque>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
 #include <tr1/functional>
@@ -64,7 +63,7 @@ public:
 		log_ref()=Log();
 		QuadruplesMap quadruples_map;
 		TriplesSet processed_triples_set;
-		std::deque<Face> stack=find_first_faces(hierarchy);
+		std::vector<Face> stack=find_first_faces(hierarchy);
 		TriplesMap stack_map;
 		for(std::size_t i=0;i<stack.size();i++)
 		{
@@ -348,10 +347,10 @@ private:
 		return log;
 	}
 
-	static std::deque<Face> find_first_faces(const Hierarchy& hierarchy)
+	static std::vector<Face> find_first_faces(const Hierarchy& hierarchy)
 	{
 		const std::vector<Sphere>& spheres=hierarchy.spheres();
-		std::deque<Face> result;
+		std::vector<Face> result;
 		if(!spheres.empty())
 		{
 			const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
