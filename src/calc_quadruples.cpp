@@ -15,7 +15,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
+	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --monitor --check");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -82,6 +82,11 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 			const apollo::SimpleSphere& s=tangents[i];
 			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
 		}
+	}
+
+	if(clo.isopt("--monitor"))
+	{
+		Apollo::log().print(std::clog);
 	}
 
 	if(clo.isopt("--check"))
