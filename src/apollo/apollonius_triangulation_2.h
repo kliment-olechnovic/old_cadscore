@@ -188,15 +188,36 @@ private:
 		{
 			const Face& face;
 			const std::size_t d_number;
+			bool constrained;
+			SimpleSphere constraint_sphere;
 
-			NodeChecker(const Face& target, const std::size_t d_number) : face(target), d_number(d_number)
+			NodeChecker(const Face& target, const std::size_t d_number) : face(target), d_number(d_number), constrained(false)
 			{
+			}
+
+			bool constrain()
+			{
+				if(face.has_d(d_number==0 ? 1 : 0))
+				{
+					constraint_sphere=face.get_d_tangent_sphere(d_number==0 ? 1 : 0);
+					constrained=true;
+				}
+				else
+				{
+					constrained=false;
+				}
+				return constrained;
+			}
+
+			void unconstrain()
+			{
+				constrained=false;
 			}
 
 			bool operator()(const SimpleSphere& sphere) const
 			{
 				log_ref().finding_any_d_node_checks++;
-				return face.sphere_may_contain_candidate_for_d(sphere, d_number);
+				return (!constrained || sphere_intersects_sphere(constraint_sphere, sphere)) && face.sphere_may_contain_candidate_for_d(sphere, d_number);
 			}
 		};
 
@@ -376,9 +397,15 @@ private:
 		}
 		if(!face.has_d(d_number))
 		{
-			typename checkers_for_any_d::LeafChecker leaf_checker(face, d_number);
 			typename checkers_for_any_d::NodeChecker node_checker(face, d_number);
+			typename checkers_for_any_d::LeafChecker leaf_checker(face, d_number);
+			node_checker.constrain();
 			hierarchy.search(node_checker, leaf_checker);
+			if(node_checker.constrained && !face.has_d(d_number))
+			{
+				node_checker.unconstrain();
+				hierarchy.search(node_checker, leaf_checker);
+			}
 		}
 		if(face.has_d(d_number))
 		{
