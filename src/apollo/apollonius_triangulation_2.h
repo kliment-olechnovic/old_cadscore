@@ -372,6 +372,7 @@ private:
 									for(int i=0;i<4;i++)
 									{
 										result.push_back(Face(spheres, quadruple.exclude(i)));
+										result.back().set_d_with_d_number_selection(quadruple.get(i), tangents.front());
 									}
 									return result;
 								}
