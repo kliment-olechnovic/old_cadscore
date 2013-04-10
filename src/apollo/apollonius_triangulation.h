@@ -25,6 +25,8 @@ public:
 
 	struct Log
 	{
+		std::size_t quadruples;
+		std::size_t tangent_spheres;
 		std::size_t difficult_faces;
 		std::size_t d_searches;
 		std::size_t e_searches;
@@ -41,6 +43,8 @@ public:
 
 		void print(std::ostream& output) const
 		{
+			output << "quadruples                      " << quadruples << "\n";
+			output << "tangent_spheres                 " << tangent_spheres << "\n";
 			output << "difficult_faces                 " << difficult_faces << "\n";
 			output << "d_searches                      " << d_searches << "\n";
 			output << "e_searches                      " << e_searches << "\n";
@@ -107,6 +111,8 @@ public:
 								QuadruplesMap::iterator qm_it=quadruples_map.find(quadruple);
 								if(qm_it==quadruples_map.end())
 								{
+									log_ref().quadruples++;
+									log_ref().tangent_spheres++;
 									quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
 								}
 								else
@@ -114,6 +120,7 @@ public:
 									std::vector<SimpleSphere>& quadruple_tangent_spheres_list=qm_it->second;
 									if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere))
 									{
+										log_ref().tangent_spheres++;
 										quadruple_tangent_spheres_list.push_back(quadruple_tangent_sphere);
 									}
 								}
