@@ -60,7 +60,7 @@ public:
 		return (
 				can_have_d_
 				&& (d_number<2)
-				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, input_sphere)>-1)
+				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, input_sphere)>=0)
 				);
 	}
 
@@ -72,7 +72,7 @@ public:
 				&& (d_number<2)
 				&& (d_id!=d_ids_and_tangent_spheres_[d_number].first)
 				&& (!abc_ids_.contains(d_id))
-				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_->at(d_id))>-1)
+				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_->at(d_id))>=0)
 			)
 		{
 			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(d_id));
@@ -152,7 +152,7 @@ public:
 				can_have_e_
 				&& (!has_e_zone_approximation_sphere_ || (sphere_intersects_sphere(e_zone_approximation_sphere_, input_sphere)))
 				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_ && minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_))
-				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first!=npos && d_ids_and_tangent_spheres_[1].first!=npos) || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)!=1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)!=1))
+				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first!=npos && d_ids_and_tangent_spheres_[1].first!=npos) || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
 				);
 	}
 
