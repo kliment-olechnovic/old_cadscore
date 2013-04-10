@@ -94,7 +94,7 @@ public:
 
 	void set_d(const std::size_t d_id, const std::size_t d_number, const SimpleSphere& tangent_sphere)
 	{
-		if(can_have_d_ && d_number<2)
+		if(can_have_d_ && d_number<2 && d_ids_and_tangent_spheres_[d_number].first!=d_id)
 		{
 			d_ids_and_tangent_spheres_[d_number]=std::make_pair(d_id, tangent_sphere);
 		}
