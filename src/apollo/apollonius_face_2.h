@@ -29,14 +29,16 @@ public:
 		tangent_planes_(construct_spheres_tangent_planes((*a_sphere_), (*b_sphere_), (*c_sphere_))),
 		can_have_d_(tangent_planes_.size()==2),
 		can_have_e_(!equal(a_sphere_->r, 0) && !equal(b_sphere_->r, 0) && !equal(c_sphere_->r, 0)),
-		abc_spheres_maximum_diameter_(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2),
-		has_e_zone_approximation_sphere_(false)
+		abc_spheres_maximum_diameter_(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2)
 	{
 		if(can_have_d_)
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
-			init_abc_centers_plane_normal();
-			init_e_zone_approximation_sphere();
+			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
+			if(halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
+			{
+				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
+			}
 		}
 		else
 		{
@@ -150,7 +152,6 @@ public:
 	{
 		return (
 				can_have_e_
-				&& (!has_e_zone_approximation_sphere_ || (sphere_intersects_sphere(e_zone_approximation_sphere_, input_sphere)))
 				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_ && minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_))
 				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first!=npos && d_ids_and_tangent_spheres_[1].first!=npos) || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
 				);
@@ -163,7 +164,6 @@ public:
 				&& (e_id!=npos)
 				&& (!abc_ids_.contains(e_id))
 				&& (!can_have_d_ || (e_id!=d_ids_and_tangent_spheres_[0].first && e_id!=d_ids_and_tangent_spheres_[1].first))
-				&& (!has_e_zone_approximation_sphere_ || (sphere_intersects_sphere(e_zone_approximation_sphere_, spheres_->at(e_id))))
 				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_ && minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 			)
@@ -257,50 +257,6 @@ private:
 		return false;
 	}
 
-	void init_abc_centers_plane_normal()
-	{
-		if(can_have_d_)
-		{
-			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
-			if(halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
-			{
-				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
-			}
-		}
-	}
-
-	void init_e_zone_approximation_sphere()
-	{
-		std::vector<SimpleSphere> planes_touching_points;
-		planes_touching_points.reserve(6);
-		std::vector<SimpleSphere> planes_touching_points_circumcircles;
-		planes_touching_points_circumcircles.reserve(2);
-		for(int i=0;i<2;i++)
-		{
-			planes_touching_points.push_back(SimpleSphere(SimplePoint(*a_sphere_)+(tangent_planes_[i].second*(a_sphere_->r)), 0));
-			planes_touching_points.push_back(SimpleSphere(SimplePoint(*b_sphere_)+(tangent_planes_[i].second*(b_sphere_->r)), 0));
-			planes_touching_points.push_back(SimpleSphere(SimplePoint(*c_sphere_)+(tangent_planes_[i].second*(c_sphere_->r)), 0));
-			std::vector<SimpleSphere> plane_points_circumcircles=construct_spheres_tangent_sphere_minimal<SimpleSphere>(planes_touching_points[i*3+0], planes_touching_points[i*3+1], planes_touching_points[i*3+2]);
-			if(plane_points_circumcircles.size()==1)
-			{
-				planes_touching_points_circumcircles.push_back(plane_points_circumcircles.front());
-			}
-		}
-		if(planes_touching_points_circumcircles.size()==2)
-		{
-			e_zone_approximation_sphere_=SimpleSphere((SimplePoint(planes_touching_points_circumcircles[0])+SimplePoint(planes_touching_points_circumcircles[1]))*0.5, 0);
-			for(std::size_t i=0;i<planes_touching_points.size();i++)
-			{
-				e_zone_approximation_sphere_.r=std::max(e_zone_approximation_sphere_.r, distance_from_point_to_point(e_zone_approximation_sphere_, planes_touching_points[i]));
-			}
-			has_e_zone_approximation_sphere_=true;
-		}
-		else
-		{
-			has_e_zone_approximation_sphere_=false;
-		}
-	}
-
 	const std::vector<Sphere>* spheres_;
 	Triple abc_ids_;
 	const Sphere* a_sphere_;
@@ -313,8 +269,6 @@ private:
 	bool can_have_e_;
 	double abc_spheres_maximum_diameter_;
 	SimplePoint abc_centers_plane_normal_;
-	bool has_e_zone_approximation_sphere_;
-	SimpleSphere e_zone_approximation_sphere_;
 };
 
 }
