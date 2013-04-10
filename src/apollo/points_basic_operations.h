@@ -214,18 +214,15 @@ template<typename InputPointTypeA, typename InputPointTypeB, typename InputPoint
 int halfspace_of_point(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
 {
 	const double sd=signed_distance_from_point_to_plane(plane_point, plane_normal, x);
-	if(equal(sd, 0))
+	if(sd>0)
 	{
-		return 0;
+		return 1;
 	}
 	else if(sd<0)
 	{
 		return -1;
 	}
-	else
-	{
-		return 1;
-	}
+	return 0;
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>

@@ -101,18 +101,16 @@ OutputSphereType spheres_intersection_circle(const InputSphereTypeA& a, const In
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputSphereTypeC>
 int halfspace_of_sphere(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputSphereTypeC& x)
 {
-	const SimplePoint sx=custom_point_from_object<SimplePoint>(x);
-	const SimplePoint sn=custom_point_from_object<SimplePoint>(plane_normal).unit();
-	const int halfspace_one=halfspace_of_point(plane_point, plane_normal, sx+(sn*x.r));
-	const int halfspace_two=halfspace_of_point(plane_point, plane_normal, sx-(sn*x.r));
-	if(halfspace_one!=halfspace_two)
+	const double dc=signed_distance_from_point_to_plane(plane_point, plane_normal, x);
+	if(dc>0 && (dc-x.r>0))
 	{
-		return 0;
+		return 1;
 	}
-	else
+	else if(dc<0 && (dc+x.r<0))
 	{
-		return halfspace_one;
+		return -1;
 	}
+	return 0;
 }
 
 struct SimpleSphere
