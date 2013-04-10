@@ -272,7 +272,6 @@ private:
 		{
 			Face& face;
 			const std::size_t d_number;
-			std::tr1::unordered_set<std::size_t> visited;
 
 			LeafChecker(Face& target, const std::size_t d_number) : face(target), d_number(d_number)
 			{
@@ -283,11 +282,6 @@ private:
 				log_ref().finding_valid_d_leaf_checks++;
 				if(face.has_d(d_number) && sphere_intersects_sphere(sphere, face.get_d_tangent_sphere(d_number)))
 				{
-					if(visited.find(id)!=visited.end())
-					{
-						return std::make_pair(true, false);
-					}
-					visited.insert(id);
 					const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
 					if(check_result.first)
 					{
