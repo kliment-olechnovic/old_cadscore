@@ -406,21 +406,21 @@ private:
 				node_checker.unconstrain();
 				hierarchy.search(node_checker, leaf_checker);
 			}
-		}
-		if(face.has_d(d_number))
-		{
-			typename checkers_for_valid_d::NodeChecker node_checker(face, d_number);
-			typename checkers_for_valid_d::LeafChecker leaf_checker(face, d_number);
-			while(face.has_d(d_number))
+			if(face.has_d(d_number))
 			{
-				const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
-				if(results.empty())
+				typename checkers_for_valid_d::NodeChecker node_checker(face, d_number);
+				typename checkers_for_valid_d::LeafChecker leaf_checker(face, d_number);
+				while(face.has_d(d_number))
 				{
-					return true;
-				}
-				else if(face.get_d_id(d_number)!=results.back())
-				{
-					face.unset_d(d_number);
+					const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
+					if(results.empty())
+					{
+						return true;
+					}
+					else if(face.get_d_id(d_number)!=results.back())
+					{
+						face.unset_d(d_number);
+					}
 				}
 			}
 		}
