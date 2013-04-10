@@ -114,18 +114,6 @@ public:
 			{
 				set_d(d_id, 1, tangent_sphere);
 			}
-			else if(h0==0 && h1==0)
-			{
-				const int hc=halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_sphere);
-				if(hc==1)
-				{
-					set_d(d_id, 0, tangent_sphere);
-				}
-				else if(hc==-1)
-				{
-					set_d(d_id, 1, tangent_sphere);
-				}
-			}
 		}
 	}
 
