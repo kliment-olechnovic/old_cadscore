@@ -245,12 +245,11 @@ public:
 	{
 		std::vector< std::pair<Triple, std::pair<std::size_t, SimpleSphere> > > produced_prefaces;
 		const std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres=collect_all_recorded_ids_and_tangent_spheres(with_d0, with_d1, with_e);
-		for(int j=0;j<abc_ids_.size();j++)
+		for(int j=0;j<3;j++)
 		{
-			const std::size_t id=abc_ids_.get(j);
 			for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 			{
-				produced_prefaces.push_back(std::make_pair(Triple(abc_ids_.exclude(j), recorded_ids_and_tangent_spheres[i].first), std::make_pair(id, recorded_ids_and_tangent_spheres[i].second)));
+				produced_prefaces.push_back(std::make_pair(Triple(abc_ids_.exclude(j), recorded_ids_and_tangent_spheres[i].first), std::make_pair(abc_ids_.get(j), recorded_ids_and_tangent_spheres[i].second)));
 			}
 		}
 		return produced_prefaces;
