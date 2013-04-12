@@ -1,5 +1,5 @@
-#ifndef APOLLO_APOLLONIUS_TRIANGULATION_2_H_
-#define APOLLO_APOLLONIUS_TRIANGULATION_2_H_
+#ifndef APOLLO2_APOLLONIUS_TRIANGULATION_2_H_
+#define APOLLO2_APOLLONIUS_TRIANGULATION_2_H_
 
 #include <iostream>
 #include <vector>
@@ -7,13 +7,13 @@
 #include <tr1/unordered_map>
 #include <tr1/functional>
 
-#include "apollonius_face_2.h"
+#include "apollonius_face.h"
 
-namespace apollo
+namespace apollo2
 {
 
 template<typename SpheresHierarchyType>
-class ApolloniusTriangulation2
+class ApolloniusTriangulation
 {
 public:
 	typedef SpheresHierarchyType Hierarchy;
@@ -186,7 +186,7 @@ public:
 	}
 
 private:
-	typedef ApolloniusFace2<Sphere> Face;
+	typedef ApolloniusFace<Sphere> Face;
 
 	struct checkers_for_any_d
 	{
@@ -439,4 +439,4 @@ private:
 
 }
 
-#endif /* APOLLO_APOLLONIUS_TRIANGULATION_2_H_ */
+#endif /* APOLLO2_APOLLONIUS_TRIANGULATION_2_H_ */
