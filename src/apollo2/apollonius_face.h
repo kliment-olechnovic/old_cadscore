@@ -1,5 +1,5 @@
-#ifndef APOLLO_APOLLONIUS_FACE_2_H_
-#define APOLLO_APOLLONIUS_FACE_2_H_
+#ifndef APOLLO2_APOLLONIUS_FACE_2_H_
+#define APOLLO2_APOLLONIUS_FACE_2_H_
 
 #include <vector>
 
@@ -8,19 +8,18 @@
 #include "spheres_basic_operations.h"
 #include "spheres_tangent_plane.h"
 #include "spheres_tangent_sphere.h"
-#include "spheres_tangent_sphere_minimal.h"
 
-namespace apollo
+namespace apollo2
 {
 
 template<typename SphereType>
-class ApolloniusFace2
+class ApolloniusFace
 {
 public:
 	typedef SphereType Sphere;
 	static const std::size_t npos=static_cast<std::size_t>(-1);
 
-	ApolloniusFace2(const std::vector<Sphere>& spheres, const Triple& abc_ids) :
+	ApolloniusFace(const std::vector<Sphere>& spheres, const Triple& abc_ids) :
 		spheres_(&spheres),
 		abc_ids_(abc_ids),
 		a_sphere_(&(spheres_->at(abc_ids_.get(0)))),
@@ -273,4 +272,4 @@ private:
 
 }
 
-#endif /* APOLLO_APOLLONIUS_FACE_2_H_ */
+#endif /* APOLLO2_APOLLONIUS_FACE_2_H_ */
