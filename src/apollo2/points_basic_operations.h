@@ -93,6 +93,33 @@ OutputPointType sub_of_points(const InputPointTypeA& a, const InputPointTypeB& b
 	return custom_point<OutputPointType>(a.x-b.x, a.y-b.y, a.z-b.z);
 }
 
+template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+OutputPointType plane_normal_from_three_points(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+{
+	return unit_point<OutputPointType>(cross_product<OutputPointType>(sub_of_points<OutputPointType>(b, a), sub_of_points<OutputPointType>(c, a)));
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double signed_distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
+{
+	return dot_product(unit_point<InputPointTypeA>(plane_normal), sub_of_points<InputPointTypeA>(x, plane_point));
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+int halfspace_of_point(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
+{
+	const double sd=signed_distance_from_point_to_plane(plane_point, plane_normal, x);
+	if(sd>0)
+	{
+		return 1;
+	}
+	else if(sd<0)
+	{
+		return -1;
+	}
+	return 0;
+}
+
 struct SimplePoint
 {
 	double x;
@@ -157,37 +184,6 @@ struct SimplePoint
 		return inverted_point<SimplePoint>(*this);
 	}
 };
-
-template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
-OutputPointType plane_normal_from_three_points(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
-{
-	const SimplePoint ab=sub_of_points<SimplePoint>(b, a);
-	const SimplePoint ac=sub_of_points<SimplePoint>(c, a);
-	return custom_point_from_object<OutputPointType>((ab&ac).unit());
-}
-
-template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
-double signed_distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
-{
-	const SimplePoint n=unit_point<SimplePoint>(plane_normal);
-	const SimplePoint v=sub_of_points<SimplePoint>(x, plane_point);
-	return (n*v);
-}
-
-template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
-int halfspace_of_point(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
-{
-	const double sd=signed_distance_from_point_to_plane(plane_point, plane_normal, x);
-	if(sd>0)
-	{
-		return 1;
-	}
-	else if(sd<0)
-	{
-		return -1;
-	}
-	return 0;
-}
 
 }
 
