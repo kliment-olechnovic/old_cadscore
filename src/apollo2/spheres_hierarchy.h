@@ -92,76 +92,8 @@ public:
 		return results;
 	}
 
-	std::vector<std::size_t> find_all_collisions(const SimpleSphere& target) const
-	{
-		return find_collisions(target, false);
-	}
-
-	std::vector<std::size_t> find_any_collision(const SimpleSphere& target) const
-	{
-		return find_collisions(target, true);
-	}
-
-	std::set<std::size_t> find_all_hidden_spheres() const
-	{
-		std::set<std::size_t> result;
-		for(std::size_t i=0;i<spheres_.size();i++)
-		{
-			std::vector<std::size_t> candidates=find_all_collisions(custom_sphere_from_object<SimpleSphere>(spheres_[i]));
-			for(std::size_t j=0;j<candidates.size();j++)
-			{
-				if(i!=candidates[j])
-				{
-					if(sphere_contains_sphere(spheres_[i], spheres_[candidates[j]]))
-					{
-						result.insert(candidates[j]);
-					}
-					if(sphere_contains_sphere(spheres_[candidates[j]], spheres_[i]))
-					{
-						result.insert(i);
-					}
-				}
-			}
-		}
-		return result;
-	}
-
 private:
 	typedef std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > ClustersLayer;
-
-	struct collision_checkers
-	{
-		struct NodeChecker
-		{
-			const SimpleSphere& target;
-
-			NodeChecker(const SimpleSphere& target) : target(target) {}
-
-			bool operator()(const SimpleSphere& sphere) const
-			{
-				return sphere_intersects_sphere(sphere, target);
-			}
-		};
-
-		struct LeafChecker
-		{
-			const SimpleSphere& target;
-			const bool one_hit_is_enough;
-
-			LeafChecker(const SimpleSphere& target) : target(target), one_hit_is_enough(true) {}
-
-			LeafChecker(const SimpleSphere& target, const bool one_hit_is_enough) : target(target), one_hit_is_enough(one_hit_is_enough) {}
-
-			std::pair<bool, bool> operator()(const std::size_t /*id*/, const Sphere& sphere) const
-			{
-				if(sphere_intersects_sphere(sphere, target))
-				{
-					return std::make_pair(true, one_hit_is_enough);
-				}
-				return std::make_pair(false, false);
-			}
-		};
-	};
 
 	template<typename SphereType>
 	static std::vector<SimpleSphere> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
@@ -257,13 +189,6 @@ private:
 			}
 		}
 		return clusters_layers;
-	}
-
-	std::vector<std::size_t> find_collisions(const SimpleSphere& target, const bool one_hit_is_enough) const
-	{
-		typename collision_checkers::NodeChecker node_checker(target);
-		typename collision_checkers::LeafChecker leaf_checker(target, one_hit_is_enough);
-		return search(node_checker, leaf_checker);
 	}
 
 	const std::vector<Sphere>& spheres_;
