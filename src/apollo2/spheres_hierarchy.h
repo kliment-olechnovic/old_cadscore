@@ -18,6 +18,7 @@ public:
 
 	SpheresHierarchy(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count) :
 		spheres_(spheres),
+		input_radii_range_(calc_input_radii_range(spheres_)),
 		clusters_layers_(cluster_spheres_in_layers(spheres_, r, low_count))
 	{
 	}
@@ -25,6 +26,16 @@ public:
 	const std::vector<Sphere>& spheres() const
 	{
 		return spheres_;
+	}
+
+	double min_input_radius() const
+	{
+		return input_radii_range_.first;
+	}
+
+	double max_input_radius() const
+	{
+		return input_radii_range_.second;
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
@@ -99,6 +110,23 @@ private:
 		{
 		}
 	};
+
+	template<typename SphereType>
+	static const std::pair<double, double> calc_input_radii_range(const std::vector<SphereType>& spheres)
+	{
+		std::pair<double, double> range(0, 0);
+		if(!spheres.empty())
+		{
+			range.first=spheres.front().r;
+			range.second=spheres.front().r;
+			for(std::size_t i=1;i<spheres.size();i++)
+			{
+				range.first=std::min(range.first, spheres[i].r);
+				range.second=std::max(range.second, spheres[i].r);
+			}
+		}
+		return range;
+	}
 
 	template<typename SphereType>
 	static std::vector<SimpleSphere> select_centers_for_clusters(const std::vector<SphereType>& spheres, const double r)
@@ -198,6 +226,7 @@ private:
 	}
 
 	const std::vector<Sphere>& spheres_;
+	const std::pair<double, double> input_radii_range_;
 	const std::vector< std::vector<Cluster> > clusters_layers_;
 };
 
