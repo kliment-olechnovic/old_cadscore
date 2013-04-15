@@ -28,7 +28,7 @@ public:
 		tangent_planes_(construct_spheres_tangent_planes((*a_sphere_), (*b_sphere_), (*c_sphere_))),
 		can_have_d_(tangent_planes_.size()==2),
 		can_have_e_(greater(a_sphere_->r, min_sphere_radius) || greater(b_sphere_->r, min_sphere_radius) || greater(c_sphere_->r, min_sphere_radius)),
-		abc_spheres_maximum_diameter_(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2)
+		threshold_distance_for_e_checking(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2-2*min_sphere_radius)
 	{
 		if(can_have_d_)
 		{
@@ -151,7 +151,7 @@ public:
 	{
 		return (
 				can_have_e_
-				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_ && minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_))
+				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[0].second)<=threshold_distance_for_e_checking && minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[1].second)<=threshold_distance_for_e_checking))
 				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first!=npos && d_ids_and_tangent_spheres_[1].first!=npos) || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
 				);
 	}
@@ -163,7 +163,7 @@ public:
 				&& (e_id!=npos)
 				&& (!abc_ids_.contains(e_id))
 				&& (!can_have_d_ || (e_id!=d_ids_and_tangent_spheres_[0].first && e_id!=d_ids_and_tangent_spheres_[1].first))
-				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second)<=abc_spheres_maximum_diameter_ && minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second)<=abc_spheres_maximum_diameter_))
+				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second)<=threshold_distance_for_e_checking && minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second)<=threshold_distance_for_e_checking))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 			)
 		{
@@ -266,7 +266,7 @@ private:
 	std::vector< std::pair<std::size_t, SimpleSphere> > e_ids_and_tangent_spheres_;
 	bool can_have_d_;
 	bool can_have_e_;
-	double abc_spheres_maximum_diameter_;
+	double threshold_distance_for_e_checking;
 	SimplePoint abc_centers_plane_normal_;
 };
 
