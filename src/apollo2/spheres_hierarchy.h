@@ -58,12 +58,12 @@ public:
 
 				if(current_level<clusters_layers_.size()
 						&& current_cluster_id<clusters_layers_[current_level].size()
-						&& current_child_id<clusters_layers_[current_level][current_cluster_id].second.size())
+						&& current_child_id<clusters_layers_[current_level][current_cluster_id].children.size())
 				{
-					const SimpleSphere& sphere=clusters_layers_[current_level][current_cluster_id].first;
+					const SimpleSphere& sphere=clusters_layers_[current_level][current_cluster_id];
 					if(node_checker(sphere))
 					{
-						const std::vector<std::size_t>& children=clusters_layers_[current_level][current_cluster_id].second;
+						const std::vector<std::size_t>& children=clusters_layers_[current_level][current_cluster_id].children;
 						if(current_level==0)
 						{
 							for(std::size_t i=0;i<children.size();i++)
@@ -93,6 +93,12 @@ public:
 	}
 
 private:
+	class Cluster : public SimpleSphere
+	{
+	public:
+		std::vector<std::size_t> children;
+	};
+
 	typedef std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > ClustersLayer;
 
 	template<typename SphereType>
@@ -125,60 +131,61 @@ private:
 	}
 
 	template<typename SphereType>
-	static ClustersLayer form_clusters_from_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
+	static std::vector<Cluster> form_clusters_from_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
 	{
-		ClustersLayer clusters;
+		std::vector<Cluster> clusters;
+		clusters.reserve(centers.size());
 		for(std::size_t i=0;i<centers.size();i++)
 		{
-			clusters.push_back(std::make_pair(centers[i], std::vector<std::size_t>()));
+			clusters.push_back(custom_sphere_from_object<Cluster>(centers[i]));
 		}
-
 		for(std::size_t i=0;i<spheres.size();i++)
 		{
 			const SphereType& sphere=spheres[i];
 			std::size_t min_dist_id=0;
+			double min_dist_value=maximal_distance_from_point_to_sphere(clusters[min_dist_id], sphere);
 			for(std::size_t j=1;j<clusters.size();j++)
 			{
-				if( maximal_distance_from_point_to_sphere(clusters[j].first, sphere) <
-						maximal_distance_from_point_to_sphere(clusters[min_dist_id].first, sphere))
+				const double dist_value=maximal_distance_from_point_to_sphere(clusters[j], sphere);
+				if(dist_value<min_dist_value)
 				{
 					min_dist_id=j;
+					min_dist_value=dist_value;
 				}
 			}
-			std::pair<SimpleSphere, std::vector<std::size_t> >& cluster=clusters[min_dist_id];
-			cluster.first.r=std::max(cluster.first.r, maximal_distance_from_point_to_sphere(cluster.first, sphere));
-			cluster.second.push_back(i);
+			Cluster& cluster=clusters[min_dist_id];
+			cluster.r=std::max(cluster.r, min_dist_value);
+			cluster.children.push_back(i);
 		}
-
-		ClustersLayer nonempty_clusters;
+		std::vector<Cluster> nonempty_clusters;
 		nonempty_clusters.reserve(clusters.size());
 		for(std::size_t i=0;i<clusters.size();i++)
 		{
-			if(!clusters[i].second.empty())
+			if(!clusters[i].children.empty())
 			{
 				nonempty_clusters.push_back(clusters[i]);
 			}
 		}
-
 		return nonempty_clusters;
 	}
 
 	template<typename SphereType>
-	static ClustersLayer cluster_spheres(const std::vector<SphereType>& spheres, const double r)
+	static std::vector<Cluster> cluster_spheres(const std::vector<SphereType>& spheres, const double r)
 	{
 		return form_clusters_from_spheres_using_centers(spheres, find_clusters_centers(spheres, r));
 	}
 
-	static std::vector<ClustersLayer> cluster_spheres_until_low_count(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count)
+	template<typename SphereType>
+	static std::vector< std::vector<Cluster> > cluster_spheres_until_low_count(const std::vector<SphereType>& spheres, const double r, const std::size_t low_count)
 	{
-		std::vector<ClustersLayer> clusters_layers;
+		std::vector< std::vector<Cluster> > clusters_layers;
 		double using_r=r;
 		clusters_layers.push_back(cluster_spheres(spheres, using_r));
 		bool need_more=clusters_layers.back().size()>low_count;
 		while(need_more)
 		{
 			using_r*=2;
-			const ClustersLayer clusters=cluster_spheres(split_pairs(clusters_layers.back()).first, using_r);
+			const std::vector<Cluster> clusters=cluster_spheres(clusters_layers.back(), using_r);
 			if(clusters.size()<clusters_layers.back().size() && clusters.size()>low_count)
 			{
 				clusters_layers.push_back(clusters);
@@ -192,7 +199,7 @@ private:
 	}
 
 	const std::vector<Sphere>& spheres_;
-	const std::vector<ClustersLayer> clusters_layers_;
+	const std::vector< std::vector<Cluster> > clusters_layers_;
 };
 
 }
