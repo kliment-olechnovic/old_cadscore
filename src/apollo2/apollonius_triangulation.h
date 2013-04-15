@@ -120,7 +120,7 @@ public:
 						if(sm_it==stack_map.end())
 						{
 							stack_map[produced_preface.first]=stack.size();
-							stack.push_back(Face(hierarchy.spheres(), produced_preface.first));
+							stack.push_back(Face(hierarchy.spheres(), produced_preface.first, hierarchy.min_input_radius()));
 							stack.back().set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
 							log_ref().produced_faces++;
 						}
@@ -373,7 +373,7 @@ private:
 								{
 									for(int i=0;i<4;i++)
 									{
-										result.push_back(Face(spheres, quadruple.exclude(i)));
+										result.push_back(Face(spheres, quadruple.exclude(i), hierarchy.min_input_radius()));
 										result.back().set_d_with_d_number_selection(quadruple.get(i), tangents.front());
 									}
 									return result;
