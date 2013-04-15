@@ -18,7 +18,7 @@ public:
 
 	SpheresHierarchy(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count) :
 		spheres_(spheres),
-		clusters_layers_(cluster_spheres_until_low_count(spheres_, r, low_count))
+		clusters_layers_(cluster_spheres_in_layers(spheres_, r, low_count))
 	{
 	}
 
@@ -101,7 +101,7 @@ private:
 	};
 
 	template<typename SphereType>
-	static std::vector<SimpleSphere> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
+	static std::vector<SimpleSphere> select_centers_for_clusters(const std::vector<SphereType>& spheres, const double r)
 	{
 		std::vector<SimpleSphere> centers;
 		if(!spheres.empty())
@@ -130,7 +130,7 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector<Cluster> form_clusters_from_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
+	static std::vector<Cluster> cluster_spheres(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
 	{
 		std::vector<Cluster> clusters;
 		clusters.reserve(centers.size());
@@ -171,11 +171,11 @@ private:
 	template<typename SphereType>
 	static std::vector<Cluster> cluster_spheres(const std::vector<SphereType>& spheres, const double r)
 	{
-		return form_clusters_from_spheres_using_centers(spheres, find_clusters_centers(spheres, r));
+		return cluster_spheres(spheres, select_centers_for_clusters(spheres, r));
 	}
 
 	template<typename SphereType>
-	static std::vector< std::vector<Cluster> > cluster_spheres_until_low_count(const std::vector<SphereType>& spheres, const double r, const std::size_t low_count)
+	static std::vector< std::vector<Cluster> > cluster_spheres_in_layers(const std::vector<SphereType>& spheres, const double r, const std::size_t low_count)
 	{
 		std::vector< std::vector<Cluster> > clusters_layers;
 		double using_r=r;
