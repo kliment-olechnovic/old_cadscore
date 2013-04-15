@@ -50,7 +50,7 @@ public:
 				if(ncs.level_id<clusters_layers_.size() && ncs.cluster_id<clusters_layers_[ncs.level_id].size() && ncs.child_id<clusters_layers_[ncs.level_id][ncs.cluster_id].children.size())
 				{
 					const SimpleSphere& sphere=clusters_layers_[ncs.level_id][ncs.cluster_id];
-					if(node_checker(sphere))
+					if(ncs.child_id>0 || node_checker(sphere))
 					{
 						const std::vector<std::size_t>& children=clusters_layers_[ncs.level_id][ncs.cluster_id].children;
 						if(ncs.level_id==0)
