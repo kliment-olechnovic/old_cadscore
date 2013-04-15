@@ -19,7 +19,7 @@ public:
 	typedef SphereType Sphere;
 	static const std::size_t npos=static_cast<std::size_t>(-1);
 
-	ApolloniusFace(const std::vector<Sphere>& spheres, const Triple& abc_ids) :
+	ApolloniusFace(const std::vector<Sphere>& spheres, const Triple& abc_ids, const double min_sphere_radius) :
 		spheres_(&spheres),
 		abc_ids_(abc_ids),
 		a_sphere_(&(spheres_->at(abc_ids_.get(0)))),
@@ -27,7 +27,7 @@ public:
 		c_sphere_(&(spheres_->at(abc_ids_.get(2)))),
 		tangent_planes_(construct_spheres_tangent_planes((*a_sphere_), (*b_sphere_), (*c_sphere_))),
 		can_have_d_(tangent_planes_.size()==2),
-		can_have_e_(!equal(a_sphere_->r, 0) && !equal(b_sphere_->r, 0) && !equal(c_sphere_->r, 0)),
+		can_have_e_(greater(a_sphere_->r, min_sphere_radius) || greater(b_sphere_->r, min_sphere_radius) || greater(c_sphere_->r, min_sphere_radius)),
 		abc_spheres_maximum_diameter_(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2)
 	{
 		if(can_have_d_)
