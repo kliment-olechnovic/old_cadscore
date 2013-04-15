@@ -2,8 +2,6 @@
 #define APOLLO2_SPHERES_HIERARCH_2_H_
 
 #include <vector>
-#include <deque>
-#include <set>
 #include <tr1/functional>
 
 #include "spheres_basic_operations.h"
@@ -37,20 +35,19 @@ public:
 		std::vector<std::size_t> results;
 		if(!clusters_layers_.empty())
 		{
-			std::deque<NodeCoordinates> stack;
-			const std::size_t top_level=clusters_layers_.size()-1;
-			for(std::size_t top_id=0;top_id<clusters_layers_[top_level].size();top_id++)
+			std::vector<NodeCoordinates> stack;
 			{
-				stack.push_back(NodeCoordinates(top_level, top_id, 0));
+				const std::size_t top_level=clusters_layers_.size()-1;
+				for(std::size_t top_id=0;top_id<clusters_layers_[top_level].size();top_id++)
+				{
+					stack.push_back(NodeCoordinates(top_level, top_id, 0));
+				}
 			}
 			while(!stack.empty())
 			{
 				const NodeCoordinates ncs=stack.back();
 				stack.pop_back();
-
-				if(ncs.level_id<clusters_layers_.size()
-						&& ncs.cluster_id<clusters_layers_[ncs.level_id].size()
-						&& ncs.child_id<clusters_layers_[ncs.level_id][ncs.cluster_id].children.size())
+				if(ncs.level_id<clusters_layers_.size() && ncs.cluster_id<clusters_layers_[ncs.level_id].size() && ncs.child_id<clusters_layers_[ncs.level_id][ncs.cluster_id].children.size())
 				{
 					const SimpleSphere& sphere=clusters_layers_[ncs.level_id][ncs.cluster_id];
 					if(node_checker(sphere))
