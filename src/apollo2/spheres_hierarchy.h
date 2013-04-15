@@ -99,8 +99,6 @@ private:
 		std::vector<std::size_t> children;
 	};
 
-	typedef std::vector< std::pair<SimpleSphere, std::vector<std::size_t> > > ClustersLayer;
-
 	template<typename SphereType>
 	static std::vector<SimpleSphere> find_clusters_centers(const std::vector<SphereType>& spheres, const double r)
 	{
