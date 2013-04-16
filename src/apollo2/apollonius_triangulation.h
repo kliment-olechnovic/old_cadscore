@@ -18,7 +18,7 @@ class ApolloniusTriangulation
 {
 public:
 	typedef SpheresHierarchyType Hierarchy;
-	typedef typename Hierarchy::Sphere Sphere;
+	typedef typename Hierarchy::InputSphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
 	struct Log
