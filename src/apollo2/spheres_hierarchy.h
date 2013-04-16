@@ -47,6 +47,7 @@ public:
 		if(!clusters_layers_.empty())
 		{
 			std::vector<NodeCoordinates> stack;
+			stack.reserve(clusters_layers_.back().size()+clusters_layers_.size()+1);
 			{
 				const std::size_t top_level=clusters_layers_.size()-1;
 				for(std::size_t top_id=0;top_id<clusters_layers_[top_level].size();top_id++)
@@ -57,35 +58,40 @@ public:
 			while(!stack.empty())
 			{
 				const NodeCoordinates ncs=stack.back();
-				stack.pop_back();
-				if(ncs.level_id<clusters_layers_.size() && ncs.cluster_id<clusters_layers_[ncs.level_id].size() && ncs.child_id<clusters_layers_[ncs.level_id][ncs.cluster_id].children.size())
+				if(
+						ncs.level_id<clusters_layers_.size()
+						&& ncs.cluster_id<clusters_layers_[ncs.level_id].size()
+						&& ncs.child_id<clusters_layers_[ncs.level_id][ncs.cluster_id].children.size()
+						&& (ncs.child_id>0 || node_checker(clusters_layers_[ncs.level_id][ncs.cluster_id]))
+					)
 				{
-					const SimpleSphere& sphere=clusters_layers_[ncs.level_id][ncs.cluster_id];
-					if(ncs.child_id>0 || node_checker(sphere))
+					const std::vector<std::size_t>& children=clusters_layers_[ncs.level_id][ncs.cluster_id].children;
+					if(ncs.level_id==0)
 					{
-						const std::vector<std::size_t>& children=clusters_layers_[ncs.level_id][ncs.cluster_id].children;
-						if(ncs.level_id==0)
+						for(std::size_t i=0;i<children.size();i++)
 						{
-							for(std::size_t i=0;i<children.size();i++)
+							const std::size_t child=children[i];
+							const std::pair<bool, bool> status=leaf_checker(child, spheres_[child]);
+							if(status.first)
 							{
-								const std::size_t child=children[i];
-								const std::pair<bool, bool> status=leaf_checker(child, spheres_[child]);
-								if(status.first)
+								results.push_back(child);
+								if(status.second)
 								{
-									results.push_back(child);
-									if(status.second)
-									{
-										return results;
-									}
+									return results;
 								}
 							}
 						}
-						else
-						{
-							stack.push_back(NodeCoordinates(ncs.level_id, ncs.cluster_id, ncs.child_id+1));
-							stack.push_back(NodeCoordinates(ncs.level_id-1, children[ncs.child_id], 0));
-						}
+						stack.pop_back();
 					}
+					else
+					{
+						stack.back().child_id++;
+						stack.push_back(NodeCoordinates(ncs.level_id-1, children[ncs.child_id], 0));
+					}
+				}
+				else
+				{
+					stack.pop_back();
 				}
 			}
 		}
