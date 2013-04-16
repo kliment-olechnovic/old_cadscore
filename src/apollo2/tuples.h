@@ -7,71 +7,72 @@
 namespace apollo2
 {
 
-template<int N>
+template<unsigned int N>
 class Tuple
 {
 public:
+	struct HashFunctor
+	{
+		std::size_t operator()(const Tuple& t) const
+		{
+			return t.hash_value();
+		}
+	};
+
 	Tuple()
 	{
-		for(int i=0;i<N;i++) { unsafe_set(i, 0); }
+		for(unsigned int i=0;i<N;i++)
+		{
+			unsafe_set(i, 0);
+		}
 	}
 
 	Tuple(const std::vector<std::size_t>& values)
 	{
-		for(int i=0;i<N;i++) { unsafe_set(i, (i<static_cast<int>(values.size()) ? values[i] : 0)); }
+		for(unsigned int i=0;i<N && i<values.size();i++)
+		{
+			unsafe_set(i, values[i]);
+		}
 		sort();
 	}
 
 	Tuple(const Tuple<N-1>& shorter, const std::size_t tail)
 	{
-		for(int i=0;i<shorter.size();i++) { unsafe_set(i, shorter.get(i)); }
-		unsafe_set(shorter.size(), tail);
+		for(unsigned int i=0;i<(N-1);i++)
+		{
+			unsafe_set(i, shorter.get(i));
+		}
+		unsafe_set((N-1), tail);
 		sort();
 	}
 
-	int size() const
+	unsigned int size() const
 	{
 		return N;
 	}
 
-	std::size_t get(int i) const
+	std::size_t get(unsigned int i) const
 	{
 		return v_[i];
 	}
 
 	bool contains(std::size_t x) const
 	{
-		for(int i=0;i<N;i++) { if(get(i)==x) return true; }
-		return false;
-	}
-
-	bool operator==(const Tuple& t) const
-	{
-		for(int i=0;i<N;i++) { if(get(i)!=t.get(i)) return false; }
-		return true;
-	}
-
-	bool operator<(const Tuple& t) const
-	{
-		for(int i=0;i<N;i++)
+		for(unsigned int i=0;i<N;i++)
 		{
-			if(get(i)<t.get(i)) return true;
-			else if(get(i)>t.get(i)) return false;
+			if(get(i)==x)
+			{
+				return true;
+			}
 		}
 		return false;
 	}
 
-	void set(int i, std::size_t x)
-	{
-		unsafe_set(i, x);
-		sort();
-	}
-
-	Tuple<N-1> exclude(int i) const
+	Tuple<N-1> exclude(unsigned int i) const
 	{
 		std::vector<std::size_t> values;
 		values.reserve(N-1);
-		for(int j=0;j<N;j++)
+		for(unsigned int j=0;j<N;j++)
 		{
 			if(j!=i)
 			{
@@ -81,10 +82,22 @@ public:
 		return Tuple<N-1>(values);
 	}
 
+	bool has_repetetions() const
+	{
+		for(unsigned int i=0;i+1<N;i++)
+		{
+			if(v_[i]==v_[i+1])
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	std::size_t hash_value() const
 	{
 		std::size_t h=0;
-		for(int i=0;i<N;i++)
+		for(unsigned int i=0;i<N;i++)
 		{
 			h += get(i);
 			h += (h << 10);
@@ -96,30 +109,38 @@ public:
 		return h;
 	}
 
-	struct HashFunctor
+	bool operator==(const Tuple& t) const
 	{
-		std::size_t operator()(const Tuple& t) const
+		for(unsigned int i=0;i<N;i++)
 		{
-			return t.hash_value();
+			if(get(i)!=t.get(i))
+			{
+				return false;
+			}
 		}
-	};
+		return true;
+	}
 
-	bool has_repetetions() const
+	bool operator<(const Tuple& t) const
 	{
-		for(int i=0;i+1<N;i++)
+		for(unsigned int i=0;i<N;i++)
 		{
-			if(v_[i]==v_[i+1])
+			if(get(i)<t.get(i))
 			{
 				return true;
+			}
+			else if(get(i)>t.get(i))
+			{
+				return false;
 			}
 		}
 		return false;
 	}
 
 private:
-	void unsafe_set(int i, std::size_t x)
+	void unsafe_set(unsigned int i, std::size_t x)
 	{
-		if(i<N) { v_[i]=x; }
+		v_[i]=x;
 	}
 
 	void sort()
