@@ -81,8 +81,8 @@ public:
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
 				if(
-						(!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, d_number))
-						&& (!sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos))
+						(!sphere_intersects_recorded_sphere(d_ids_and_tangent_spheres_, tangent_sphere, d_number))
+						&& (!sphere_intersects_recorded_sphere(e_ids_and_tangent_spheres_, tangent_sphere, npos))
 						&& (tangent_spheres.size()==1 || (halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_sphere)==(d_number==0 ? 1 : -1)))
 					)
 				{
@@ -173,8 +173,8 @@ public:
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
 				if(
-						(!sphere_intersects_recorded_sphere(spheres_, d_ids_and_tangent_spheres_, tangent_sphere, npos))
-						&& (!sphere_intersects_recorded_sphere(spheres_, e_ids_and_tangent_spheres_, tangent_sphere, npos))
+						(!sphere_intersects_recorded_sphere(d_ids_and_tangent_spheres_, tangent_sphere, npos))
+						&& (!sphere_intersects_recorded_sphere(e_ids_and_tangent_spheres_, tangent_sphere, npos))
 					)
 				{
 					valid_tangent_spheres.push_back(tangent_sphere);
@@ -244,11 +244,11 @@ public:
 
 private:
 	template<typename InputSphereType>
-	static bool sphere_intersects_recorded_sphere(const std::vector<Sphere>* spheres, const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const InputSphereType& input_sphere, const std::size_t excluding_position)
+	bool sphere_intersects_recorded_sphere(const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const InputSphereType& input_sphere, const std::size_t excluding_position) const
 	{
 		for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 		{
-			if(i!=excluding_position && recorded_ids_and_tangent_spheres[i].first!=npos && sphere_intersects_sphere(input_sphere, spheres->at(recorded_ids_and_tangent_spheres[i].first)))
+			if(i!=excluding_position && recorded_ids_and_tangent_spheres[i].first!=npos && sphere_intersects_sphere(input_sphere, spheres_->at(recorded_ids_and_tangent_spheres[i].first)))
 			{
 				return true;
 			}
