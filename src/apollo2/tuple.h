@@ -1,5 +1,5 @@
-#ifndef APOLLO2_TUPLES_H_
-#define APOLLO2_TUPLES_H_
+#ifndef APOLLO2_TUPLE_H_
+#define APOLLO2_TUPLE_H_
 
 #include <vector>
 #include <algorithm>
@@ -181,4 +181,4 @@ typedef Tuple<4> Quadruple;
 
 }
 
-#endif /* APOLLO2_TUPLES_H_ */
+#endif /* APOLLO2_TUPLE_H_ */
