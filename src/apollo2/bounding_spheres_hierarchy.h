@@ -10,22 +10,22 @@
 namespace apollo2
 {
 
-template<typename InputSphereType>
+template<typename LeafSphereType>
 class BoundingSpheresHierarchy
 {
 public:
-	typedef InputSphereType InputSphere;
+	typedef LeafSphereType LeafSphere;
 
-	BoundingSpheresHierarchy(const std::vector<InputSphere>& input_spheres, const double r, const std::size_t min_number_of_clusters) :
-		spheres_(input_spheres),
-		input_radii_range_(calc_input_radii_range(spheres_)),
-		clusters_layers_(cluster_spheres_in_layers(spheres_, r, min_number_of_clusters))
+	BoundingSpheresHierarchy(const std::vector<LeafSphere>& input_spheres, const double r, const std::size_t min_number_of_clusters) :
+		leaves_spheres_(input_spheres),
+		input_radii_range_(calc_input_radii_range(leaves_spheres_)),
+		clusters_layers_(cluster_spheres_in_layers(leaves_spheres_, r, min_number_of_clusters))
 	{
 	}
 
-	const std::vector<InputSphere>& spheres() const
+	const std::vector<LeafSphere>& leaves_spheres() const
 	{
-		return spheres_;
+		return leaves_spheres_;
 	}
 
 	double min_input_radius() const
@@ -69,7 +69,7 @@ public:
 						for(std::size_t i=0;i<children.size();i++)
 						{
 							const std::size_t child=children[i];
-							const std::pair<bool, bool> status=leaf_checker(child, spheres_[child]);
+							const std::pair<bool, bool> status=leaf_checker(child, leaves_spheres_[child]);
 							if(status.first)
 							{
 								results.push_back(child);
@@ -232,7 +232,7 @@ private:
 		return clusters_layers;
 	}
 
-	const std::vector<InputSphere>& spheres_;
+	const std::vector<LeafSphere>& leaves_spheres_;
 	const std::pair<double, double> input_radii_range_;
 	const std::vector< std::vector<Cluster> > clusters_layers_;
 };
