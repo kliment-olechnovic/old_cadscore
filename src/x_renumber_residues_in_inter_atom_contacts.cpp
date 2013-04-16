@@ -55,9 +55,10 @@ std::string collect_sequence_string_from_residue_ids_map(const T& residue_ids_ma
 
 void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--chain-names: --match: --mismatch: --gap-start: --gap-extension:");
+	clo.check_allowed_options("--target-chain-names: --model-chain-names: --match: --mismatch: --gap-start: --gap-extension:");
 
-	const std::string chain_names=clo.arg<std::string>("--chain-names");
+	const std::string chain_names_1=clo.arg<std::string>("--target-chain-names");
+	const std::string chain_names_2=clo.arg<std::string>("--model-chain-names");
 	const int match_score=clo.arg_or_default_value<int>("--match", 10);
 	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -10);
 	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
@@ -73,14 +74,16 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_2=protein::collect_residue_ids_from_atoms(atoms_2);
 	const std::map<protein::ResidueID, std::vector<std::size_t> > residue_ids_indices_2=protein::group_atoms_indices_by_residue_ids(atoms_2);
 
-	for(std::size_t l=0;l<chain_names.size();l++)
+	for(std::size_t l=0;l<chain_names_1.size() && l<chain_names_2.size();l++)
 	{
-		const std::string chain_name=chain_names.substr(l, 1);
+		const std::string chain_name_1=chain_names_1.substr(l, 1);
+		const std::string chain_name_2=chain_names_2.substr(l, 1);
 
-		std::clog << "Chain " << chain_name << ":\n";
+		std::clog << "Chain in target: " << chain_name_1 << "\n";
+		std::clog << "Chain in model: " << chain_name_2 << "\n";
 
-		const std::vector< std::pair<protein::ResidueID, protein::ResidueSummary> > filtered_residue_ids_1=filter_residue_ids_map_by_chain_id(residue_ids_1, chain_name);
-		const std::vector< std::pair<protein::ResidueID, protein::ResidueSummary> > filtered_residue_ids_2=filter_residue_ids_map_by_chain_id(residue_ids_2, chain_name);
+		const std::vector< std::pair<protein::ResidueID, protein::ResidueSummary> > filtered_residue_ids_1=filter_residue_ids_map_by_chain_id(residue_ids_1, chain_name_1);
+		const std::vector< std::pair<protein::ResidueID, protein::ResidueSummary> > filtered_residue_ids_2=filter_residue_ids_map_by_chain_id(residue_ids_2, chain_name_2);
 
 		if(filtered_residue_ids_1.empty() || filtered_residue_ids_2.empty())
 		{
@@ -149,8 +152,8 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_atoms_1, sequence_string_from_input_alignment_1, alignments[0], std::clog);
 		protein::PairwiseSequenceAlignment::print_sequence_alignment(sequence_string_from_input_alignment_2, sequence_string_from_atoms_2, alignments[2], std::clog);
 
-		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_1=filter_residue_ids_map_by_chain_id(residue_ids_indices_1, chain_name);
-		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_2=filter_residue_ids_map_by_chain_id(residue_ids_indices_2, chain_name);
+		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_1=filter_residue_ids_map_by_chain_id(residue_ids_indices_1, chain_name_1);
+		const std::vector< std::pair<protein::ResidueID, std::vector<std::size_t> > > filtered_residue_ids_indices_2=filter_residue_ids_map_by_chain_id(residue_ids_indices_2, chain_name_2);
 
 		for(std::size_t i=0;i<alignments[0].size();i++)
 		{
@@ -160,7 +163,7 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 				for(std::size_t j=0;j<atoms_indices.size();j++)
 				{
 					protein::Atom& atom=atoms_1[atoms_indices[j]];
-					atom.chain_id=chain_name;
+					atom.chain_id=chain_name_1;
 					atom.residue_number=i+1;
 				}
 			}
@@ -170,7 +173,7 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 				for(std::size_t j=0;j<atoms_indices.size();j++)
 				{
 					protein::Atom& atom=atoms_2[atoms_indices[j]];
-					atom.chain_id=chain_name;
+					atom.chain_id=chain_name_2;
 					atom.residue_number=i+1;
 				}
 			}
