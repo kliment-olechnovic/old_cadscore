@@ -83,8 +83,8 @@ public:
 			{
 				log_ref().difficult_faces++;
 			}
-			const bool found_d0=face.can_have_d() && !face.has_d(0) && find_valid_d(hierarchy, face, 0);
-			const bool found_d1=face.can_have_d() && !face.has_d(1) && find_valid_d(hierarchy, face, 1);
+			const bool found_d0=face.can_have_d() && !face.has_d(0) && find_any_d(hierarchy, face, 0) && find_valid_d(hierarchy, face, 0);
+			const bool found_d1=face.can_have_d() && !face.has_d(1) && find_any_d(hierarchy, face, 1) && find_valid_d(hierarchy, face, 1);
 			const bool found_e=enable_searching_for_e && face.can_have_e() && find_valid_e(hierarchy, face);
 			if(found_d0 || found_d1 || found_e)
 			{
@@ -387,16 +387,8 @@ private:
 		return result;
 	}
 
-	static bool find_valid_d(const Hierarchy& hierarchy, Face& face, const std::size_t d_number)
+	static bool find_any_d(const Hierarchy& hierarchy, Face& face, const std::size_t d_number)
 	{
-		if(d_number==0)
-		{
-			log_ref().d0_searches++;
-		}
-		else
-		{
-			log_ref().d1_searches++;
-		}
 		if(!face.has_d(d_number))
 		{
 			typename checkers_for_any_d::NodeChecker node_checker(face, d_number);
@@ -408,21 +400,35 @@ private:
 				node_checker.unconstrain();
 				hierarchy.search(node_checker, leaf_checker);
 			}
-			if(face.has_d(d_number))
+			return face.has_d(d_number);
+		}
+		return false;
+	}
+
+	static bool find_valid_d(const Hierarchy& hierarchy, Face& face, const std::size_t d_number)
+	{
+		if(d_number==0)
+		{
+			log_ref().d0_searches++;
+		}
+		else
+		{
+			log_ref().d1_searches++;
+		}
+		if(face.has_d(d_number))
+		{
+			typename checkers_for_valid_d::NodeChecker node_checker(face, d_number);
+			typename checkers_for_valid_d::LeafChecker leaf_checker(face, d_number);
+			while(face.has_d(d_number))
 			{
-				typename checkers_for_valid_d::NodeChecker node_checker(face, d_number);
-				typename checkers_for_valid_d::LeafChecker leaf_checker(face, d_number);
-				while(face.has_d(d_number))
+				const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
+				if(results.empty())
 				{
-					const std::vector<std::size_t> results=hierarchy.search(node_checker, leaf_checker);
-					if(results.empty())
-					{
-						return true;
-					}
-					else if(face.get_d_id(d_number)!=results.back())
-					{
-						face.unset_d(d_number);
-					}
+					return true;
+				}
+				else if(face.get_d_id(d_number)!=results.back())
+				{
+					face.unset_d(d_number);
 				}
 			}
 		}
