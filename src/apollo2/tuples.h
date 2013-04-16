@@ -46,6 +46,30 @@ public:
 		sort();
 	}
 
+	Tuple(const std::size_t a, const std::size_t b)
+	{
+		unsafe_set(0, a);
+		unsafe_set(1, b);
+		sort();
+	}
+
+	Tuple(const std::size_t a, const std::size_t b, const std::size_t c)
+	{
+		unsafe_set(0, a);
+		unsafe_set(1, b);
+		unsafe_set(2, c);
+		sort();
+	}
+
+	Tuple(const std::size_t a, const std::size_t b, const std::size_t c, const std::size_t d)
+	{
+		unsafe_set(0, a);
+		unsafe_set(1, b);
+		unsafe_set(2, c);
+		unsafe_set(3, d);
+		sort();
+	}
+
 	unsigned int size() const
 	{
 		return N;
@@ -152,37 +176,8 @@ private:
 };
 
 typedef Tuple<2> Pair;
-
-inline Pair make_pair(const std::size_t a, const std::size_t b)
-{
-	std::vector<std::size_t> v(3);
-	v[0]=a;
-	v[1]=b;
-	return Pair(v);
-}
-
 typedef Tuple<3> Triple;
-
-inline Triple make_triple(const std::size_t a, const std::size_t b, const std::size_t c)
-{
-	std::vector<std::size_t> v(3);
-	v[0]=a;
-	v[1]=b;
-	v[2]=c;
-	return Triple(v);
-}
-
 typedef Tuple<4> Quadruple;
-
-inline Quadruple make_quadruple(const std::size_t a, const std::size_t b, const std::size_t c, const std::size_t d)
-{
-	std::vector<std::size_t> v(4);
-	v[0]=a;
-	v[1]=b;
-	v[2]=c;
-	v[3]=d;
-	return Quadruple(v);
-}
 
 }
 

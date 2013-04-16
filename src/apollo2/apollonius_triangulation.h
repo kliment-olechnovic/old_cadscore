@@ -367,7 +367,7 @@ private:
 							for(std::size_t d=((a+1<u && b+1<u && c+1<u) ? (u-1) : (c+1));d<u;d++)
 							{
 								log_ref().finding_first_faces_iterations++;
-								Quadruple quadruple=make_quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
+								Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 								std::vector<SimpleSphere> tangents=construct_spheres_tangent_sphere<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 								if(tangents.size()==1 && SpheresCollisionDetector::find_any_collision(hierarchy, tangents.front()).empty())
 								{
