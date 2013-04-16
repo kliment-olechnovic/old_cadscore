@@ -18,7 +18,7 @@ class ApolloniusTriangulation
 {
 public:
 	typedef SpheresHierarchyType Hierarchy;
-	typedef typename Hierarchy::InputSphere Sphere;
+	typedef typename Hierarchy::LeafSphere Sphere;
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
 	struct Log
@@ -120,7 +120,7 @@ public:
 						if(sm_it==stack_map.end())
 						{
 							stack_map[produced_preface.first]=stack.size();
-							stack.push_back(Face(hierarchy.spheres(), produced_preface.first, hierarchy.min_input_radius()));
+							stack.push_back(Face(hierarchy.leaves_spheres(), produced_preface.first, hierarchy.min_input_radius()));
 							stack.back().set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
 							log_ref().produced_faces++;
 						}
@@ -351,7 +351,7 @@ private:
 
 	static std::vector<Face> find_first_faces(const Hierarchy& hierarchy)
 	{
-		const std::vector<Sphere>& spheres=hierarchy.spheres();
+		const std::vector<Sphere>& spheres=hierarchy.leaves_spheres();
 		std::vector<Face> result;
 		if(!spheres.empty())
 		{
