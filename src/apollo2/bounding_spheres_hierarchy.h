@@ -1,5 +1,5 @@
-#ifndef APOLLO2_SPHERES_HIERARCH_2_H_
-#define APOLLO2_SPHERES_HIERARCH_2_H_
+#ifndef APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_
+#define APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_
 
 #include <vector>
 #include <tr1/functional>
@@ -11,12 +11,12 @@ namespace apollo2
 {
 
 template<typename InputSphereType>
-class SpheresHierarchy
+class BoundingSpheresHierarchy
 {
 public:
 	typedef InputSphereType InputSphere;
 
-	SpheresHierarchy(const std::vector<InputSphere>& input_spheres, const double r, const std::size_t min_number_of_clusters) :
+	BoundingSpheresHierarchy(const std::vector<InputSphere>& input_spheres, const double r, const std::size_t min_number_of_clusters) :
 		spheres_(input_spheres),
 		input_radii_range_(calc_input_radii_range(spheres_)),
 		clusters_layers_(cluster_spheres_in_layers(spheres_, r, min_number_of_clusters))
@@ -97,8 +97,8 @@ public:
 	}
 
 private:
-	SpheresHierarchy(const SpheresHierarchy&);
-	const SpheresHierarchy& operator=(const SpheresHierarchy&);
+	BoundingSpheresHierarchy(const BoundingSpheresHierarchy&);
+	const BoundingSpheresHierarchy& operator=(const BoundingSpheresHierarchy&);
 
 	class Cluster : public SimpleSphere
 	{
@@ -239,4 +239,4 @@ private:
 
 }
 
-#endif /* APOLLO2_SPHERES_HIERARCH_2_H_ */
+#endif /* APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_ */

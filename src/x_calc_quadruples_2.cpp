@@ -3,7 +3,7 @@
 
 #include "protein/atom.h"
 
-#include "apollo2/spheres_hierarchy.h"
+#include "apollo2/bounding_spheres_hierarchy.h"
 #include "apollo2/apollonius_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
@@ -11,7 +11,7 @@
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo2::SpheresHierarchy<protein::Atom> Hierarchy;
+	typedef apollo2::BoundingSpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo2::ApolloniusTriangulation<Hierarchy> Apollo;
 
 	clo.check_allowed_options("--epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --monitor --check");
