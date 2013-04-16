@@ -99,6 +99,9 @@ public:
 	}
 
 private:
+	SpheresHierarchy(const SpheresHierarchy&);
+	const SpheresHierarchy& operator=(const SpheresHierarchy&);
+
 	class Cluster : public SimpleSphere
 	{
 	public:
