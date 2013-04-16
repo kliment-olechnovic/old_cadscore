@@ -23,7 +23,7 @@ public:
 	{
 		for(unsigned int i=0;i<N;i++)
 		{
-			unsafe_set(i, 0);
+			v_[i]=0;
 		}
 	}
 
@@ -31,7 +31,7 @@ public:
 	{
 		for(unsigned int i=0;i<N && i<values.size();i++)
 		{
-			unsafe_set(i, values[i]);
+			v_[i]=values[i];
 		}
 		sort();
 	}
@@ -40,33 +40,33 @@ public:
 	{
 		for(unsigned int i=0;i<(N-1);i++)
 		{
-			unsafe_set(i, shorter.get(i));
+			v_[i]=shorter.get(i);
 		}
-		unsafe_set((N-1), tail);
+		v_[N-1]=tail;
 		sort();
 	}
 
 	Tuple(const std::size_t a, const std::size_t b)
 	{
-		unsafe_set(0, a);
-		unsafe_set(1, b);
+		v_[0]=a;
+		v_[1]=b;
 		sort();
 	}
 
 	Tuple(const std::size_t a, const std::size_t b, const std::size_t c)
 	{
-		unsafe_set(0, a);
-		unsafe_set(1, b);
-		unsafe_set(2, c);
+		v_[0]=a;
+		v_[1]=b;
+		v_[2]=c;
 		sort();
 	}
 
 	Tuple(const std::size_t a, const std::size_t b, const std::size_t c, const std::size_t d)
 	{
-		unsafe_set(0, a);
-		unsafe_set(1, b);
-		unsafe_set(2, c);
-		unsafe_set(3, d);
+		v_[0]=a;
+		v_[1]=b;
+		v_[2]=c;
+		v_[3]=d;
 		sort();
 	}
 
@@ -162,11 +162,6 @@ public:
 	}
 
 private:
-	void unsafe_set(unsigned int i, std::size_t x)
-	{
-		v_[i]=x;
-	}
-
 	void sort()
 	{
 		std::sort(v_, v_+N);
