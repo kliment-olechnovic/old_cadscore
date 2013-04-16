@@ -10,20 +10,20 @@
 namespace apollo2
 {
 
-template<typename PrimarySphereType>
+template<typename InputSphereType>
 class SpheresHierarchy
 {
 public:
-	typedef PrimarySphereType Sphere;
+	typedef InputSphereType InputSphere;
 
-	SpheresHierarchy(const std::vector<Sphere>& spheres, const double r, const std::size_t low_count) :
-		spheres_(spheres),
+	SpheresHierarchy(const std::vector<InputSphere>& input_spheres, const double r, const std::size_t min_number_of_clusters) :
+		spheres_(input_spheres),
 		input_radii_range_(calc_input_radii_range(spheres_)),
-		clusters_layers_(cluster_spheres_in_layers(spheres_, r, low_count))
+		clusters_layers_(cluster_spheres_in_layers(spheres_, r, min_number_of_clusters))
 	{
 	}
 
-	const std::vector<Sphere>& spheres() const
+	const std::vector<InputSphere>& spheres() const
 	{
 		return spheres_;
 	}
@@ -39,9 +39,7 @@ public:
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
-	std::vector<std::size_t> search(
-			NodeChecker& node_checker,
-			LeafChecker& leaf_checker) const
+	std::vector<std::size_t> search(NodeChecker& node_checker, LeafChecker& leaf_checker) const
 	{
 		std::vector<std::size_t> results;
 		if(!clusters_layers_.empty())
@@ -167,7 +165,7 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector<Cluster> cluster_spheres(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
+	static std::vector<Cluster> cluster_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
 	{
 		std::vector<Cluster> clusters;
 		clusters.reserve(centers.size());
@@ -206,23 +204,23 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector<Cluster> cluster_spheres(const std::vector<SphereType>& spheres, const double r)
+	static std::vector<Cluster> cluster_spheres_using_radius(const std::vector<SphereType>& spheres, const double radius)
 	{
-		return cluster_spheres(spheres, select_centers_for_clusters(spheres, r));
+		return cluster_spheres_using_centers(spheres, select_centers_for_clusters(spheres, radius));
 	}
 
 	template<typename SphereType>
-	static std::vector< std::vector<Cluster> > cluster_spheres_in_layers(const std::vector<SphereType>& spheres, const double r, const std::size_t low_count)
+	static std::vector< std::vector<Cluster> > cluster_spheres_in_layers(const std::vector<SphereType>& spheres, const double r, const std::size_t min_number_of_clusters)
 	{
 		std::vector< std::vector<Cluster> > clusters_layers;
 		double using_r=r;
-		clusters_layers.push_back(cluster_spheres(spheres, using_r));
-		bool need_more=clusters_layers.back().size()>low_count;
+		clusters_layers.push_back(cluster_spheres_using_radius(spheres, using_r));
+		bool need_more=clusters_layers.back().size()>min_number_of_clusters;
 		while(need_more)
 		{
 			using_r*=2;
-			const std::vector<Cluster> clusters=cluster_spheres(clusters_layers.back(), using_r);
-			if(clusters.size()<clusters_layers.back().size() && clusters.size()>low_count)
+			const std::vector<Cluster> clusters=cluster_spheres_using_radius(clusters_layers.back(), using_r);
+			if(clusters.size()<clusters_layers.back().size() && clusters.size()>min_number_of_clusters)
 			{
 				clusters_layers.push_back(clusters);
 			}
@@ -234,7 +232,7 @@ private:
 		return clusters_layers;
 	}
 
-	const std::vector<Sphere>& spheres_;
+	const std::vector<InputSphere>& spheres_;
 	const std::pair<double, double> input_radii_range_;
 	const std::vector< std::vector<Cluster> > clusters_layers_;
 };
