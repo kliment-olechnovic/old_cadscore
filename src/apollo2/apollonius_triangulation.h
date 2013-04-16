@@ -8,7 +8,7 @@
 #include <tr1/functional>
 
 #include "apollonius_face.h"
-#include "spheres_collision_detector.h"
+#include "collision_search.h"
 
 namespace apollo2
 {
@@ -332,7 +332,7 @@ private:
 				bool e_added=false;
 				for(std::size_t i=0;i<check_result.size();i++)
 				{
-					if(SpheresCollisionDetector::find_any_collision(hierarchy, check_result[i]).empty())
+					if(CollisionSearch::find_any_collision(hierarchy, check_result[i]).empty())
 					{
 						face.add_e(id, check_result[i]);
 						e_added=true;
@@ -369,7 +369,7 @@ private:
 								log_ref().finding_first_faces_iterations++;
 								Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 								std::vector<SimpleSphere> tangents=construct_spheres_tangent_sphere<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-								if(tangents.size()==1 && SpheresCollisionDetector::find_any_collision(hierarchy, tangents.front()).empty())
+								if(tangents.size()==1 && CollisionSearch::find_any_collision(hierarchy, tangents.front()).empty())
 								{
 									for(int i=0;i<4;i++)
 									{
