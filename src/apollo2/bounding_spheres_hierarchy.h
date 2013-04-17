@@ -4,7 +4,7 @@
 #include <vector>
 #include <tr1/functional>
 
-#include "spheres_basic_operations.h"
+#include "basic_operations_on_spheres.h"
 #include "utilities.h"
 
 namespace apollo2

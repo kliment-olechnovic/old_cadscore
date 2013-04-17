@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "tuple.h"
-#include "points_basic_operations.h"
-#include "spheres_basic_operations.h"
+#include "basic_operations_on_points.h"
+#include "basic_operations_on_spheres.h"
 #include "spheres_tangent_plane.h"
 #include "spheres_tangent_sphere.h"
 

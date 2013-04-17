@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "spheres_basic_operations.h"
+#include "basic_operations_on_spheres.h"
 
 namespace apollo2
 {

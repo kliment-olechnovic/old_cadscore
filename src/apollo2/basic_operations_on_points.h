@@ -1,9 +1,9 @@
-#ifndef APOLLO2_POINTS_BASIC_OPERATIONS_H_
-#define APOLLO2_POINTS_BASIC_OPERATIONS_H_
+#ifndef APOLLO2_BASIC_OPERATIONS_ON_POINTS_H_
+#define APOLLO2_BASIC_OPERATIONS_ON_POINTS_H_
 
 #include <cmath>
 
-#include "safe_comparison.h"
+#include "safe_comparison_of_floating_point_numbers.h"
 
 namespace apollo2
 {
@@ -189,4 +189,4 @@ struct SimplePoint
 
 }
 
-#endif /* APOLLO2_POINTS_BASIC_OPERATIONS_H_ */
+#endif /* APOLLO2_BASIC_OPERATIONS_ON_POINTS_H_ */
