@@ -8,6 +8,13 @@
 namespace apollo2
 {
 
+struct PODPoint
+{
+	double x;
+	double y;
+	double z;
+};
+
 template<typename OutputPointType>
 OutputPointType custom_point(const double x, const double y, const double z)
 {
@@ -96,13 +103,13 @@ OutputPointType sub_of_points(const InputPointTypeA& a, const InputPointTypeB& b
 template<typename OutputPointType, typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
 OutputPointType plane_normal_from_three_points(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
 {
-	return unit_point<OutputPointType>(cross_product<OutputPointType>(sub_of_points<OutputPointType>(b, a), sub_of_points<OutputPointType>(c, a)));
+	return unit_point<OutputPointType>(cross_product<PODPoint>(sub_of_points<PODPoint>(b, a), sub_of_points<PODPoint>(c, a)));
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
 double signed_distance_from_point_to_plane(const InputPointTypeA& plane_point, const InputPointTypeB& plane_normal, const InputPointTypeC& x)
 {
-	return dot_product(unit_point<InputPointTypeA>(plane_normal), sub_of_points<InputPointTypeA>(x, plane_point));
+	return dot_product(unit_point<PODPoint>(plane_normal), sub_of_points<PODPoint>(x, plane_point));
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
@@ -157,16 +164,6 @@ struct SimplePoint
 	SimplePoint operator*(const double k) const
 	{
 		return point_and_number_product<SimplePoint>(*this, k);
-	}
-
-	SimplePoint operator/(const double k) const
-	{
-		return point_and_number_product<SimplePoint>(*this, 1/k);
-	}
-
-	SimplePoint operator&(const SimplePoint& b) const
-	{
-		return cross_product<SimplePoint>(*this, b);
 	}
 
 	double module() const
