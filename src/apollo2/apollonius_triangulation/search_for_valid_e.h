@@ -13,58 +13,53 @@ namespace apollonius_triangulation
 {
 
 template<typename SphereType>
-class SearchForValidE
+struct NodeCheckerForValidE
 {
-public:
-	typedef SphereType Sphere;
+	const Face<SphereType>& face;
 
-	static bool find_valid_e(const BoundingSpheresHierarchy<Sphere>& bsh, Face<Sphere>& face)
+	NodeCheckerForValidE(const Face<SphereType>& target) : face(target)
 	{
-		NodeChecker node_checker(face);
-		LeafChecker leaf_checker(face, bsh);
-		return !bsh.search(node_checker, leaf_checker).empty();
 	}
 
-private:
-	struct NodeChecker
+	bool operator()(const SimpleSphere& sphere) const
 	{
-		const Face<Sphere>& face;
-
-		NodeChecker(const Face<Sphere>& target) : face(target)
-		{
-		}
-
-		bool operator()(const SimpleSphere& sphere) const
-		{
-			return face.sphere_may_contain_candidate_for_e(sphere);
-		}
-	};
-
-	struct LeafChecker
-	{
-		Face<Sphere>& face;
-		const BoundingSpheresHierarchy<Sphere>& bsh;
-
-		LeafChecker(Face<Sphere>& target, const BoundingSpheresHierarchy<Sphere>& bsh) : face(target), bsh(bsh)
-		{
-		}
-
-		std::pair<bool, bool> operator()(const std::size_t id, const Sphere&)
-		{
-			const std::vector<SimpleSphere> check_result=face.check_candidate_for_e(id);
-			bool e_added=false;
-			for(std::size_t i=0;i<check_result.size();i++)
-			{
-				if(CollisionSearch::find_any_collision(bsh, check_result[i]).empty())
-				{
-					face.add_e(id, check_result[i]);
-					e_added=true;
-				}
-			}
-			return std::make_pair(e_added, false);
-		}
-	};
+		return face.sphere_may_contain_candidate_for_e(sphere);
+	}
 };
+
+template<typename SphereType>
+struct LeafCheckerForValidE
+{
+	Face<SphereType>& face;
+	const BoundingSpheresHierarchy<SphereType>& bsh;
+
+	LeafCheckerForValidE(Face<SphereType>& target, const BoundingSpheresHierarchy<SphereType>& bsh) : face(target), bsh(bsh)
+	{
+	}
+
+	std::pair<bool, bool> operator()(const std::size_t id, const SphereType&)
+	{
+		const std::vector<SimpleSphere> check_result=face.check_candidate_for_e(id);
+		bool e_added=false;
+		for(std::size_t i=0;i<check_result.size();i++)
+		{
+			if(CollisionSearch::find_any_collision(bsh, check_result[i]).empty())
+			{
+				face.add_e(id, check_result[i]);
+				e_added=true;
+			}
+		}
+		return std::make_pair(e_added, false);
+	}
+};
+
+template<typename SphereType>
+static bool find_valid_e(const BoundingSpheresHierarchy<SphereType>& bsh, Face<SphereType>& face)
+{
+	NodeCheckerForValidE<SphereType> node_checker(face);
+	LeafCheckerForValidE<SphereType> leaf_checker(face, bsh);
+	return !bsh.search(node_checker, leaf_checker).empty();
+}
 
 }
 
