@@ -36,12 +36,6 @@ bool spheres_equal(const InputSphereTypeA& a, const InputSphereTypeB& b)
 	return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z) && equal(a.r, b.r));
 }
 
-template<typename OutputSphereType>
-OutputSphereType zero_sphere()
-{
-	return custom_sphere<OutputSphereType>(0, 0, 0, 0);
-}
-
 template<typename InputPointType, typename InputSphereType>
 double minimal_distance_from_point_to_sphere(const InputPointType& a, const InputSphereType& b)
 {
@@ -116,11 +110,6 @@ struct SimpleSphere
 	template<typename InputPointType>
 	SimpleSphere(const InputPointType& input_point, const double r) : x(input_point.x), y(input_point.y), z(input_point.z), r(r)
 	{
-	}
-
-	SimplePoint center() const
-	{
-		return SimplePoint(x, y, z);
 	}
 };
 
