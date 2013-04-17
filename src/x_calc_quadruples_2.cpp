@@ -14,7 +14,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	typedef apollo2::BoundingSpheresHierarchy<protein::Atom> Hierarchy;
 	typedef apollo2::ApolloniusTriangulation<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --monitor --check");
+	clo.check_allowed_options("--epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --monitor");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -80,14 +80,6 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--monitor"))
 	{
 		Apollo::log().print(std::clog);
-	}
-
-	if(clo.isopt("--check"))
-	{
-		if(!Apollo::check_quadruples(quadruples_map, atoms))
-		{
-			std::cerr << "Check failed!\n";
-		}
 	}
 }
 

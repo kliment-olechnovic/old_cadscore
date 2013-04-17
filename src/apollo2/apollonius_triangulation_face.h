@@ -1,5 +1,5 @@
-#ifndef APOLLO2_APOLLONIUS_FACE_2_H_
-#define APOLLO2_APOLLONIUS_FACE_2_H_
+#ifndef APOLLO2_APOLLONIUS_TRIANGULATION_FACE_2_H_
+#define APOLLO2_APOLLONIUS_TRIANGULATION_FACE_2_H_
 
 #include <vector>
 
@@ -11,13 +11,14 @@ namespace apollo2
 {
 
 template<typename SphereType>
-class ApolloniusFace
+class ApolloniusTriangulationFace
 {
 public:
 	typedef SphereType Sphere;
+
 	static const std::size_t npos=static_cast<std::size_t>(-1);
 
-	ApolloniusFace(const std::vector<Sphere>& spheres, const Triple& abc_ids, const double min_sphere_radius) :
+	ApolloniusTriangulationFace(const std::vector<Sphere>& spheres, const Triple& abc_ids, const double min_sphere_radius) :
 		spheres_(&spheres),
 		abc_ids_(abc_ids),
 		a_sphere_(&(spheres_->at(abc_ids_.get(0)))),
@@ -196,25 +197,6 @@ public:
 		return (!e_ids_and_tangent_spheres_.empty());
 	}
 
-	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
-	{
-		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
-		recorded_ids_and_tangent_spheres.reserve(d_ids_and_tangent_spheres_.size()+e_ids_and_tangent_spheres_.size());
-		if(can_have_d_ && with_d0 && d_ids_and_tangent_spheres_[0].first!=npos)
-		{
-			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[0]);
-		}
-		if(can_have_d_ && with_d1 && d_ids_and_tangent_spheres_[1].first!=npos)
-		{
-			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[1]);
-		}
-		if(can_have_e_ && with_e && !e_ids_and_tangent_spheres_.empty())
-		{
-			recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
-		}
-		return recorded_ids_and_tangent_spheres;
-	}
-
 	std::vector< std::pair<Quadruple, SimpleSphere> > produce_quadruples(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
 		std::vector< std::pair<Quadruple, SimpleSphere> > quadruples_with_tangent_spheres;
@@ -241,6 +223,25 @@ public:
 	}
 
 private:
+	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
+	{
+		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
+		recorded_ids_and_tangent_spheres.reserve(d_ids_and_tangent_spheres_.size()+e_ids_and_tangent_spheres_.size());
+		if(can_have_d_ && with_d0 && d_ids_and_tangent_spheres_[0].first!=npos)
+		{
+			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[0]);
+		}
+		if(can_have_d_ && with_d1 && d_ids_and_tangent_spheres_[1].first!=npos)
+		{
+			recorded_ids_and_tangent_spheres.push_back(d_ids_and_tangent_spheres_[1]);
+		}
+		if(can_have_e_ && with_e && !e_ids_and_tangent_spheres_.empty())
+		{
+			recorded_ids_and_tangent_spheres.insert(recorded_ids_and_tangent_spheres.end(), e_ids_and_tangent_spheres_.begin(), e_ids_and_tangent_spheres_.end());
+		}
+		return recorded_ids_and_tangent_spheres;
+	}
+
 	template<typename InputSphereType>
 	bool sphere_intersects_recorded_sphere(const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const InputSphereType& input_sphere, const std::size_t excluding_position) const
 	{
@@ -270,4 +271,4 @@ private:
 
 }
 
-#endif /* APOLLO2_APOLLONIUS_FACE_2_H_ */
+#endif /* APOLLO2_APOLLONIUS_TRIANGULATION_FACE_2_H_ */
