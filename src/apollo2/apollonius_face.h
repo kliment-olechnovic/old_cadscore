@@ -4,10 +4,8 @@
 #include <vector>
 
 #include "tuple.h"
-#include "basic_operations_on_points.h"
-#include "basic_operations_on_spheres.h"
-#include "spheres_tangent_plane.h"
-#include "spheres_tangent_sphere.h"
+#include "tangent_plane_of_three_spheres.h"
+#include "tangent_sphere_of_four_spheres.h"
 
 namespace apollo2
 {
@@ -25,7 +23,7 @@ public:
 		a_sphere_(&(spheres_->at(abc_ids_.get(0)))),
 		b_sphere_(&(spheres_->at(abc_ids_.get(1)))),
 		c_sphere_(&(spheres_->at(abc_ids_.get(2)))),
-		tangent_planes_(construct_spheres_tangent_planes((*a_sphere_), (*b_sphere_), (*c_sphere_))),
+		tangent_planes_(TangentPlaneOfThreeSpheres::calculate((*a_sphere_), (*b_sphere_), (*c_sphere_))),
 		can_have_d_(tangent_planes_.size()==2),
 		can_have_e_(greater(a_sphere_->r, min_sphere_radius) || greater(b_sphere_->r, min_sphere_radius) || greater(c_sphere_->r, min_sphere_radius)),
 		threshold_distance_for_e_checking(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2-2*min_sphere_radius)
@@ -76,7 +74,7 @@ public:
 				&& (halfspace_of_sphere(tangent_planes_[d_number].first, tangent_planes_[d_number].second, spheres_->at(d_id))>=0)
 			)
 		{
-			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(d_id));
+			const std::vector<SimpleSphere> tangent_spheres=TangentSphereOfFourSpheres::calculate<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(d_id));
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
@@ -167,7 +165,7 @@ public:
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 			)
 		{
-			const std::vector<SimpleSphere> tangent_spheres=construct_spheres_tangent_sphere<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(e_id));
+			const std::vector<SimpleSphere> tangent_spheres=TangentSphereOfFourSpheres::calculate<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(e_id));
 			std::vector<SimpleSphere> valid_tangent_spheres;
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{

@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "safe_comparison_of_floating_point_numbers.h"
+#include "safe_comparison_of_numbers.h"
 
 namespace apollo2
 {
