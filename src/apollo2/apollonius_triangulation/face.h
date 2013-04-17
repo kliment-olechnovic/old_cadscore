@@ -3,22 +3,25 @@
 
 #include <vector>
 
-#include "tuple.h"
-#include "tangent_plane_of_three_spheres.h"
-#include "tangent_sphere_of_four_spheres.h"
+#include "../tuple.h"
+#include "../tangent_plane_of_three_spheres.h"
+#include "../tangent_sphere_of_four_spheres.h"
 
 namespace apollo2
 {
 
+namespace apollonius_triangulation
+{
+
 template<typename SphereType>
-class ApolloniusTriangulationFace
+class Face
 {
 public:
 	typedef SphereType Sphere;
 
 	static const std::size_t npos=static_cast<std::size_t>(-1);
 
-	ApolloniusTriangulationFace(const std::vector<Sphere>& spheres, const Triple& abc_ids, const double min_sphere_radius) :
+	Face(const std::vector<Sphere>& spheres, const Triple& abc_ids, const double min_sphere_radius) :
 		spheres_(&spheres),
 		abc_ids_(abc_ids),
 		a_sphere_(&(spheres_->at(abc_ids_.get(0)))),
@@ -268,6 +271,8 @@ private:
 	double threshold_distance_for_e_checking;
 	SimplePoint abc_centers_plane_normal_;
 };
+
+}
 
 }
 
