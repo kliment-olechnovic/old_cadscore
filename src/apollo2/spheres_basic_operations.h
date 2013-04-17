@@ -1,7 +1,6 @@
 #ifndef APOLLO2_SPHERES_BASIC_OPERATIONS_H_
 #define APOLLO2_SPHERES_BASIC_OPERATIONS_H_
 
-#include "safe_comparison.h"
 #include "points_basic_operations.h"
 
 namespace apollo2
