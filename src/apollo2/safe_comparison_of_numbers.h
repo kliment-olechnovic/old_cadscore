@@ -4,30 +4,30 @@
 namespace apollo2
 {
 
-inline double& epsilon_reference()
+inline double& comparison_epsilon_reference()
 {
 	static double e=0.00001;
 	return e;
 }
 
-inline double epsilon()
+inline double comparison_epsilon()
 {
-	return epsilon_reference();
+	return comparison_epsilon_reference();
 }
 
 inline bool equal(const double a, const double b)
 {
-	return (((a-b)<epsilon()) && ((b-a)<epsilon()));
+	return (((a-b)<comparison_epsilon()) && ((b-a)<comparison_epsilon()));
 }
 
 inline bool less(const double a, const double b)
 {
-	return ((a+epsilon())<b);
+	return ((a+comparison_epsilon())<b);
 }
 
 inline bool greater(const double a, const double b)
 {
-	return ((a-epsilon())>b);
+	return ((a-comparison_epsilon())>b);
 }
 
 inline bool less_or_equal(const double a, const double b)

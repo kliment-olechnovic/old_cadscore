@@ -19,7 +19,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--epsilon"))
 	{
 		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
-		apollo2::epsilon_reference()=epsilon;
+		apollo2::comparison_epsilon_reference()=epsilon;
 	}
 
 	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
