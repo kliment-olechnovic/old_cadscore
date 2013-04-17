@@ -9,7 +9,7 @@ namespace apollo2
 class ApolloniusTriangulation
 {
 public:
-	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
+	typedef apollonius_triangulation::QuadruplesMap QuadruplesMap;
 	typedef apollonius_triangulation::Log Log;
 
 	template<typename SphereType>
