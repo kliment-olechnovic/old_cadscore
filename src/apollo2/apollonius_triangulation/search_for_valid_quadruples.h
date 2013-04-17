@@ -44,9 +44,9 @@ static std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::
 		{
 			log_ref().difficult_faces++;
 		}
-		const bool found_d0=face.can_have_d() && !face.has_d(0) && SearchForAnyD<Sphere>::find_any_d(bsh, face, 0) && SearchForValidD<Sphere>::find_valid_d(bsh, face, 0);
-		const bool found_d1=face.can_have_d() && !face.has_d(1) && SearchForAnyD<Sphere>::find_any_d(bsh, face, 1) && SearchForValidD<Sphere>::find_valid_d(bsh, face, 1);
-		const bool found_e=enable_searching_for_e && face.can_have_e() && SearchForValidE<Sphere>::find_valid_e(bsh, face);
+		const bool found_d0=face.can_have_d() && !face.has_d(0) && find_any_d<Sphere>(bsh, face, 0) && find_valid_d<Sphere>(bsh, face, 0);
+		const bool found_d1=face.can_have_d() && !face.has_d(1) && find_any_d<Sphere>(bsh, face, 1) && find_valid_d<Sphere>(bsh, face, 1);
+		const bool found_e=enable_searching_for_e && face.can_have_e() && find_valid_e<Sphere>(bsh, face);
 		if(found_d0 || found_d1 || found_e)
 		{
 			const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples(found_d0, found_d1, found_e);

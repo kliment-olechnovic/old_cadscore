@@ -12,87 +12,82 @@ namespace apollonius_triangulation
 {
 
 template<typename SphereType>
-class SearchForAnyD
+struct NodeCheckerForAnyD
 {
-public:
-	typedef SphereType Sphere;
+	const Face<SphereType>& face;
+	const std::size_t d_number;
+	bool constrained;
+	SimpleSphere constraint_sphere;
 
-	static bool find_any_d(const BoundingSpheresHierarchy<Sphere>& bsh, Face<Sphere>& face, const std::size_t d_number)
+	NodeCheckerForAnyD(const Face<SphereType>& target, const std::size_t d_number) : face(target), d_number(d_number), constrained(false)
 	{
-		if(!face.has_d(d_number))
-		{
-			NodeChecker node_checker(face, d_number);
-			LeafChecker leaf_checker(face, d_number);
-			node_checker.constrain();
-			bsh.search(node_checker, leaf_checker);
-			if(node_checker.constrained && !face.has_d(d_number))
-			{
-				node_checker.unconstrain();
-				bsh.search(node_checker, leaf_checker);
-			}
-			return face.has_d(d_number);
-		}
-		return false;
 	}
 
-private:
-	struct NodeChecker
+	bool constrain()
 	{
-		const Face<Sphere>& face;
-		const std::size_t d_number;
-		bool constrained;
-		SimpleSphere constraint_sphere;
-
-		NodeChecker(const Face<Sphere>& target, const std::size_t d_number) : face(target), d_number(d_number), constrained(false)
+		if(face.has_d(d_number==0 ? 1 : 0))
 		{
+			constraint_sphere=face.get_d_tangent_sphere(d_number==0 ? 1 : 0);
+			constrained=true;
 		}
-
-		bool constrain()
-		{
-			if(face.has_d(d_number==0 ? 1 : 0))
-			{
-				constraint_sphere=face.get_d_tangent_sphere(d_number==0 ? 1 : 0);
-				constrained=true;
-			}
-			else
-			{
-				constrained=false;
-			}
-			return constrained;
-		}
-
-		void unconstrain()
+		else
 		{
 			constrained=false;
 		}
+		return constrained;
+	}
 
-		bool operator()(const SimpleSphere& sphere) const
-		{
-			return (!constrained || sphere_intersects_sphere(constraint_sphere, sphere)) && face.sphere_may_contain_candidate_for_d(sphere, d_number);
-		}
-	};
-
-	struct LeafChecker
+	void unconstrain()
 	{
-		Face<Sphere>& face;
-		const std::size_t d_number;
+		constrained=false;
+	}
 
-		LeafChecker(Face<Sphere>& target, const std::size_t d_number) : face(target), d_number(d_number)
-		{
-		}
-
-		std::pair<bool, bool> operator()(const std::size_t id, const Sphere&)
-		{
-			const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
-			if(check_result.first)
-			{
-				face.set_d(id, d_number, check_result.second);
-				return std::make_pair(true, true);
-			}
-			return std::make_pair(false, false);
-		}
-	};
+	bool operator()(const SimpleSphere& sphere) const
+	{
+		return (!constrained || sphere_intersects_sphere(constraint_sphere, sphere)) && face.sphere_may_contain_candidate_for_d(sphere, d_number);
+	}
 };
+
+template<typename SphereType>
+struct LeafCheckerForAnyD
+{
+	Face<SphereType>& face;
+	const std::size_t d_number;
+
+	LeafCheckerForAnyD(Face<SphereType>& target, const std::size_t d_number) : face(target), d_number(d_number)
+	{
+	}
+
+	std::pair<bool, bool> operator()(const std::size_t id, const SphereType&)
+	{
+		const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
+		if(check_result.first)
+		{
+			face.set_d(id, d_number, check_result.second);
+			return std::make_pair(true, true);
+		}
+		return std::make_pair(false, false);
+	}
+};
+
+template<typename SphereType>
+bool find_any_d(const BoundingSpheresHierarchy<SphereType>& bsh, Face<SphereType>& face, const std::size_t d_number)
+{
+	if(!face.has_d(d_number))
+	{
+		NodeCheckerForAnyD<SphereType> node_checker(face, d_number);
+		LeafCheckerForAnyD<SphereType> leaf_checker(face, d_number);
+		node_checker.constrain();
+		bsh.search(node_checker, leaf_checker);
+		if(node_checker.constrained && !face.has_d(d_number))
+		{
+			node_checker.unconstrain();
+			bsh.search(node_checker, leaf_checker);
+		}
+		return face.has_d(d_number);
+	}
+	return false;
+}
 
 }
 
