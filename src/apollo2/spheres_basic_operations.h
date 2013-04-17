@@ -111,6 +111,11 @@ struct SimpleSphere
 	SimpleSphere(const InputPointType& input_point, const double r) : x(input_point.x), y(input_point.y), z(input_point.z), r(r)
 	{
 	}
+
+	bool operator==(const SimpleSphere& b) const
+	{
+		return spheres_equal(*this, b);
+	}
 };
 
 }
