@@ -1,7 +1,7 @@
-#ifndef APOLLO2_SPHERES_BASIC_OPERATIONS_H_
-#define APOLLO2_SPHERES_BASIC_OPERATIONS_H_
+#ifndef APOLLO2_BASIC_OPERATIONS_ON_SPHERES_H_
+#define APOLLO2_BASIC_OPERATIONS_ON_SPHERES_H_
 
-#include "points_basic_operations.h"
+#include "basic_operations_on_points.h"
 
 namespace apollo2
 {
@@ -119,4 +119,4 @@ struct SimpleSphere
 
 }
 
-#endif /* APOLLO2_SPHERES_BASIC_OPERATIONS_H_ */
+#endif /* APOLLO2_BASIC_OPERATIONS_ON_SPHERES_H_ */
