@@ -2,9 +2,9 @@
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_E_H_
 
 #include "../bounding_spheres_hierarchy.h"
-#include "../collision_search.h"
 
 #include "face.h"
+#include "search_for_collisions.h"
 
 namespace apollo2
 {
@@ -43,7 +43,7 @@ struct LeafCheckerForValidE
 		bool e_added=false;
 		for(std::size_t i=0;i<check_result.size();i++)
 		{
-			if(CollisionSearch::find_any_collision(bsh, check_result[i]).empty())
+			if(find_any_collision(bsh, check_result[i]).empty())
 			{
 				face.add_e(id, check_result[i]);
 				e_added=true;

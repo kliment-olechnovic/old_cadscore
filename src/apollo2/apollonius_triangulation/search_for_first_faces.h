@@ -6,9 +6,9 @@
 #include <tr1/functional>
 
 #include "../bounding_spheres_hierarchy.h"
-#include "../collision_search.h"
 
 #include "face.h"
+#include "search_for_collisions.h"
 #include "log.h"
 
 namespace apollo2
@@ -40,7 +40,7 @@ static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHie
 							log_ref().finding_first_faces_iterations++;
 							Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 							std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-							if(tangents.size()==1 && CollisionSearch::find_any_collision(bsh, tangents.front()).empty())
+							if(tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
 							{
 								for(int i=0;i<4;i++)
 								{
