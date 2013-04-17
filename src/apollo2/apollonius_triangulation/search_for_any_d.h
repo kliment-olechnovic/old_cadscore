@@ -1,19 +1,23 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_ANY_D_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_ANY_D_H_
 
-#include "apollonius_triangulation_face.h"
-#include "bounding_spheres_hierarchy.h"
+#include "../bounding_spheres_hierarchy.h"
+
+#include "face.h"
 
 namespace apollo2
 {
 
+namespace apollonius_triangulation
+{
+
 template<typename SphereType>
-class ApolloniusTriangulationSearchForAnyD
+class SearchForAnyD
 {
 public:
 	typedef SphereType Sphere;
 
-	static bool find_any_d(const BoundingSpheresHierarchy<Sphere>& bsh, ApolloniusTriangulationFace<Sphere>& face, const std::size_t d_number)
+	static bool find_any_d(const BoundingSpheresHierarchy<Sphere>& bsh, Face<Sphere>& face, const std::size_t d_number)
 	{
 		if(!face.has_d(d_number))
 		{
@@ -32,16 +36,14 @@ public:
 	}
 
 private:
-	typedef ApolloniusTriangulationFace<Sphere> Face;
-
 	struct NodeChecker
 	{
-		const Face& face;
+		const Face<Sphere>& face;
 		const std::size_t d_number;
 		bool constrained;
 		SimpleSphere constraint_sphere;
 
-		NodeChecker(const Face& target, const std::size_t d_number) : face(target), d_number(d_number), constrained(false)
+		NodeChecker(const Face<Sphere>& target, const std::size_t d_number) : face(target), d_number(d_number), constrained(false)
 		{
 		}
 
@@ -72,10 +74,10 @@ private:
 
 	struct LeafChecker
 	{
-		Face& face;
+		Face<Sphere>& face;
 		const std::size_t d_number;
 
-		LeafChecker(Face& target, const std::size_t d_number) : face(target), d_number(d_number)
+		LeafChecker(Face<Sphere>& target, const std::size_t d_number) : face(target), d_number(d_number)
 		{
 		}
 
@@ -91,6 +93,8 @@ private:
 		}
 	};
 };
+
+}
 
 }
 

@@ -11,9 +11,6 @@
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo2::BoundingSpheresHierarchy<protein::Atom> Hierarchy;
-	typedef apollo2::ApolloniusTriangulation<Hierarchy> Apollo;
-
 	clo.check_allowed_options("--epsilon: --bsi-radius: --bsi-min-count: --as-points --skip-inner --monitor");
 
 	if(clo.isopt("--epsilon"))
@@ -42,24 +39,24 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	const Hierarchy hierarchy(atoms, radius, low_count);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_e && !as_points);
+	const apollo2::BoundingSpheresHierarchy<protein::Atom> hierarchy(atoms, radius, low_count);
+	const apollo2::ApolloniusTriangulation::QuadruplesMap quadruples_map=apollo2::ApolloniusTriangulation::construct(hierarchy, search_for_e && !as_points);
 
 	std::cout << "Atoms count: " << atoms.size() << "\n";
 	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
 
 	{
 		int tangent_spheres_count=0;
-		for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		for(apollo2::ApolloniusTriangulation::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
 			tangent_spheres_count+=it->second.size();
 		}
 		std::cout << "Tangent spheres count: " << tangent_spheres_count << "\n";
 	}
 
-	typedef std::map< Apollo::QuadruplesMap::key_type, Apollo::QuadruplesMap::mapped_type > QuadruplesSortedMap;
+	typedef std::map< apollo2::ApolloniusTriangulation::QuadruplesMap::key_type, apollo2::ApolloniusTriangulation::QuadruplesMap::mapped_type > QuadruplesSortedMap;
 	QuadruplesSortedMap quadruples_sorted_map;
-	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+	for(apollo2::ApolloniusTriangulation::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 	{
 		quadruples_sorted_map.insert(*it);
 	}
@@ -79,7 +76,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--monitor"))
 	{
-		Apollo::log().print(std::clog);
+		apollo2::ApolloniusTriangulation::log().print(std::clog);
 	}
 }
 

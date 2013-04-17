@@ -1,20 +1,24 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_E_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_E_H_
 
-#include "apollonius_triangulation_face.h"
-#include "bounding_spheres_hierarchy.h"
-#include "collision_search.h"
+#include "../bounding_spheres_hierarchy.h"
+#include "../collision_search.h"
+
+#include "face.h"
 
 namespace apollo2
 {
 
+namespace apollonius_triangulation
+{
+
 template<typename SphereType>
-class ApolloniusTriangulationSearchForValidE
+class SearchForValidE
 {
 public:
 	typedef SphereType Sphere;
 
-	static bool find_valid_e(const BoundingSpheresHierarchy<Sphere>& bsh, ApolloniusTriangulationFace<Sphere>& face)
+	static bool find_valid_e(const BoundingSpheresHierarchy<Sphere>& bsh, Face<Sphere>& face)
 	{
 		NodeChecker node_checker(face);
 		LeafChecker leaf_checker(face, bsh);
@@ -22,13 +26,11 @@ public:
 	}
 
 private:
-	typedef ApolloniusTriangulationFace<Sphere> Face;
-
 	struct NodeChecker
 	{
-		const Face& face;
+		const Face<Sphere>& face;
 
-		NodeChecker(const Face& target) : face(target)
+		NodeChecker(const Face<Sphere>& target) : face(target)
 		{
 		}
 
@@ -40,10 +42,10 @@ private:
 
 	struct LeafChecker
 	{
-		Face& face;
+		Face<Sphere>& face;
 		const BoundingSpheresHierarchy<Sphere>& bsh;
 
-		LeafChecker(Face& target, const BoundingSpheresHierarchy<Sphere>& bsh) : face(target), bsh(bsh)
+		LeafChecker(Face<Sphere>& target, const BoundingSpheresHierarchy<Sphere>& bsh) : face(target), bsh(bsh)
 		{
 		}
 
@@ -63,6 +65,8 @@ private:
 		}
 	};
 };
+
+}
 
 }
 
