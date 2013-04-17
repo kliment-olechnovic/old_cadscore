@@ -146,6 +146,11 @@ struct SimplePoint
 	{
 	}
 
+	bool operator==(const SimplePoint& b) const
+	{
+		return points_equal(*this, b);
+	}
+
 	SimplePoint operator+(const SimplePoint& b) const
 	{
 		return sum_of_points<SimplePoint>(*this, b);
