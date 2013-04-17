@@ -18,11 +18,12 @@ namespace apollo2
 namespace apollonius_triangulation
 {
 
+typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
+
 template<typename SphereType>
-static std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, const bool enable_searching_for_e)
+static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, const bool enable_searching_for_e)
 {
 	typedef SphereType Sphere;
-	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 	typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
 	typedef std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> TriplesMap;
 
