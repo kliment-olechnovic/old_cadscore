@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <limits>
 
 #include "apollonius_triangulation/search_for_valid_quadruples.h"
 
@@ -23,6 +24,8 @@ public:
 
 	static void print_map_of_quadruples(const QuadruplesMap& quadruples_map, std::ostream& output)
 	{
+		output.precision(std::numeric_limits<double>::digits10);
+		output << std::fixed;
 		const QuadruplesOrderedMap quadruples_ordered_map=collect_ordered_map_of_quadruples(quadruples_map);
 		for(QuadruplesOrderedMap::const_iterator it=quadruples_ordered_map.begin();it!=quadruples_ordered_map.end();++it)
 		{
