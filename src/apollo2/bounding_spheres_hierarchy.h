@@ -42,15 +42,14 @@ public:
 	{
 		if(!clusters_layers_.empty())
 		{
-			bool done=false;
-			for(std::size_t i=0;i<clusters_layers_[0].size() && !done;i++)
+			for(std::size_t i=0;i<clusters_layers_[0].size();i++)
 			{
 				std::vector<std::size_t>& children=clusters_layers_[0][i].children;
 				std::vector<std::size_t>::iterator it=std::remove(children.begin(), children.end(), leaf_sphere_id);
 				if(it!=children.end())
 				{
 					children.erase(it, children.end());
-					done=true;
+					return;
 				}
 			}
 		}
