@@ -40,39 +40,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	}
 
 	const apollo2::BoundingSpheresHierarchy<protein::Atom> hierarchy(atoms, radius, low_count);
-	const apollo2::ApolloniusTriangulation::QuadruplesMap quadruples_map=apollo2::ApolloniusTriangulation::construct(hierarchy, search_for_e && !as_points);
-
-	std::cout << "Atoms count: " << atoms.size() << "\n";
-	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
-
-	{
-		int tangent_spheres_count=0;
-		for(apollo2::ApolloniusTriangulation::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
-		{
-			tangent_spheres_count+=it->second.size();
-		}
-		std::cout << "Tangent spheres count: " << tangent_spheres_count << "\n";
-	}
-
-	typedef std::map< apollo2::ApolloniusTriangulation::QuadruplesMap::key_type, apollo2::ApolloniusTriangulation::QuadruplesMap::mapped_type > QuadruplesSortedMap;
-	QuadruplesSortedMap quadruples_sorted_map;
-	for(apollo2::ApolloniusTriangulation::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
-	{
-		quadruples_sorted_map.insert(*it);
-	}
-
-	for(QuadruplesSortedMap::const_iterator it=quadruples_sorted_map.begin();it!=quadruples_sorted_map.end();++it)
-	{
-		std::cout << "\n";
-		const apollo2::Quadruple& q=it->first;
-		std::cout << "Quadruple (a, b, c, d): " << q.get(0) << " " << q.get(1) << " " << q.get(2) << " " << q.get(3) << "\n";
-		const std::vector<apollo2::SimpleSphere>& tangents=it->second;
-		for(std::size_t i=0;i<tangents.size();i++)
-		{
-			const apollo2::SimpleSphere& s=tangents[i];
-			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
-		}
-	}
+	apollo2::ApolloniusTriangulation::print_map_of_quadruples(apollo2::ApolloniusTriangulation::construct_map_of_quadruples(hierarchy, search_for_e && !as_points), std::cout);
 
 	if(clo.isopt("--monitor"))
 	{
