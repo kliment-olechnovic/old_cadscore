@@ -67,18 +67,18 @@ template<typename SphereType>
 static std::set<std::size_t> find_all_hidden_spheres(const BoundingSpheresHierarchy<SphereType>& bsh)
 {
 	std::set<std::size_t> result;
-	for(std::size_t i=0;i<bsh.spheres().size();i++)
+	for(std::size_t i=0;i<bsh.leaves_spheres().size();i++)
 	{
-		std::vector<std::size_t> candidates=find_all_collisions(bsh, custom_sphere_from_object<SimpleSphere>(bsh.spheres()[i]));
+		std::vector<std::size_t> candidates=find_all_collisions(bsh, custom_sphere_from_object<SimpleSphere>(bsh.leaves_spheres()[i]));
 		for(std::size_t j=0;j<candidates.size();j++)
 		{
 			if(i!=candidates[j])
 			{
-				if(sphere_contains_sphere(bsh.spheres()[i], bsh.spheres()[candidates[j]]))
+				if(sphere_contains_sphere(bsh.leaves_spheres()[i], bsh.leaves_spheres()[candidates[j]]))
 				{
 					result.insert(candidates[j]);
 				}
-				if(sphere_contains_sphere(bsh.spheres()[candidates[j]], bsh.spheres()[i]))
+				if(sphere_contains_sphere(bsh.leaves_spheres()[candidates[j]], bsh.leaves_spheres()[i]))
 				{
 					result.insert(i);
 				}
