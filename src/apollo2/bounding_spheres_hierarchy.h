@@ -16,10 +16,10 @@ class BoundingSpheresHierarchy
 public:
 	typedef LeafSphereType LeafSphere;
 
-	BoundingSpheresHierarchy(const std::vector<LeafSphere>& input_spheres, const double r, const std::size_t min_number_of_clusters) :
+	BoundingSpheresHierarchy(const std::vector<LeafSphere>& input_spheres, const double initial_radius_for_spheres_bucketing, const std::size_t min_number_of_clusters) :
 		leaves_spheres_(input_spheres),
 		input_radii_range_(calc_input_radii_range(leaves_spheres_)),
-		clusters_layers_(cluster_spheres_in_layers(leaves_spheres_, r, min_number_of_clusters))
+		clusters_layers_(cluster_spheres_in_layers(leaves_spheres_, initial_radius_for_spheres_bucketing, min_number_of_clusters))
 	{
 	}
 
@@ -36,6 +36,18 @@ public:
 	double max_input_radius() const
 	{
 		return input_radii_range_.second;
+	}
+
+	void ignore_leaf_sphere(const std::size_t leaf_sphere_id)
+	{
+		if(!clusters_layers_.empty())
+		{
+			for(std::size_t i=0;i<clusters_layers_[0].size();i++)
+			{
+				std::vector<std::size_t>& children=clusters_layers_[0][i].children;
+				children.erase(std::remove(children.begin(), children.end(), leaf_sphere_id), children.end());
+			}
+		}
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
@@ -234,7 +246,7 @@ private:
 
 	const std::vector<LeafSphere>& leaves_spheres_;
 	const std::pair<double, double> input_radii_range_;
-	const std::vector< std::vector<Cluster> > clusters_layers_;
+	std::vector< std::vector<Cluster> > clusters_layers_;
 };
 
 }

@@ -3,7 +3,6 @@
 
 #include "protein/atom.h"
 
-#include "apollo2/bounding_spheres_hierarchy.h"
 #include "apollo2/apollonius_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
@@ -20,9 +19,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	}
 
 	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
-	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<std::size_t>("--bsi-min-count", 1) : 1;
 	const bool as_points=clo.isopt("--as-points");
-	const bool search_for_e=!clo.isopt("--skip-inner");
 
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -39,8 +36,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	const apollo2::BoundingSpheresHierarchy<protein::Atom> hierarchy(atoms, radius, low_count);
-	apollo2::ApolloniusTriangulation::print_map_of_quadruples(apollo2::ApolloniusTriangulation::construct_map_of_quadruples(hierarchy, search_for_e && !as_points), std::cout);
+	apollo2::ApolloniusTriangulation::print_map_of_quadruples(apollo2::ApolloniusTriangulation::construct_map_of_quadruples(atoms, radius), std::cout);
 
 	if(clo.isopt("--monitor"))
 	{

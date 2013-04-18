@@ -6,6 +6,7 @@
 #include <limits>
 
 #include "apollonius_triangulation/search_for_valid_quadruples.h"
+#include "bounding_spheres_hierarchy.h"
 
 namespace apollo2
 {
@@ -17,9 +18,15 @@ public:
 	typedef apollonius_triangulation::Log Log;
 
 	template<typename SphereType>
-	static QuadruplesMap construct_map_of_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, const bool enable_searching_for_e)
+	static QuadruplesMap construct_map_of_quadruples(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing)
 	{
-		return apollonius_triangulation::find_valid_quadruples(bsh, enable_searching_for_e);
+		BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
+		const std::set<std::size_t> hidden_spheres_ids=apollonius_triangulation::find_all_hidden_spheres(bsh);
+		for(std::set<std::size_t>::const_iterator it=hidden_spheres_ids.begin();it!=hidden_spheres_ids.end();++it)
+		{
+			bsh.ignore_leaf_sphere(*it);
+		}
+		return apollonius_triangulation::find_valid_quadruples(bsh);
 	}
 
 	static void print_map_of_quadruples(const QuadruplesMap& quadruples_map, std::ostream& output)

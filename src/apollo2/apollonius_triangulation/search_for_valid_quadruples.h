@@ -21,7 +21,7 @@ namespace apollonius_triangulation
 typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
 template<typename SphereType>
-static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, const bool enable_searching_for_e)
+static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh)
 {
 	typedef SphereType Sphere;
 	typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
@@ -47,7 +47,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 		}
 		const bool found_d0=face.can_have_d() && !face.has_d(0) && find_any_d<Sphere>(bsh, face, 0) && find_valid_d<Sphere>(bsh, face, 0);
 		const bool found_d1=face.can_have_d() && !face.has_d(1) && find_any_d<Sphere>(bsh, face, 1) && find_valid_d<Sphere>(bsh, face, 1);
-		const bool found_e=enable_searching_for_e && face.can_have_e() && find_valid_e<Sphere>(bsh, face);
+		const bool found_e=face.can_have_e() && find_valid_e<Sphere>(bsh, face);
 		if(found_d0 || found_d1 || found_e)
 		{
 			const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples(found_d0, found_d1, found_e);
