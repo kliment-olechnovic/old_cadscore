@@ -9,7 +9,6 @@
 
 #include "face.h"
 #include "search_for_collisions.h"
-#include "log.h"
 
 namespace apollo2
 {
@@ -18,10 +17,11 @@ namespace apollonius_triangulation
 {
 
 template<typename SphereType>
-static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh)
+static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, std::size_t& iterations_count)
 {
 	typedef SphereType Sphere;
 
+	iterations_count=0;
 	const std::vector<Sphere>& spheres=bsh.leaves_spheres();
 	std::vector< Face<Sphere> > result;
 	if(!spheres.empty())
@@ -37,7 +37,7 @@ static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHie
 					{
 						for(std::size_t d=((a+1<u && b+1<u && c+1<u) ? (u-1) : (c+1));d<u;d++)
 						{
-							log_ref().finding_first_faces_iterations++;
+							iterations_count++;
 							Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
 							std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 							if(tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
