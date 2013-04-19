@@ -35,9 +35,8 @@ static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHie
 				{
 					for(std::size_t c=b+1;c+1<u;c++)
 					{
-						const std::size_t d=u-1;
 						iterations_count++;
-						Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
+						Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[u-1]);
 						const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 						if(!tangents.empty() && (find_any_collision(bsh, tangents.front()).empty() || (tangents.size()==2 && find_any_collision(bsh, tangents.back()).empty())))
 						{
