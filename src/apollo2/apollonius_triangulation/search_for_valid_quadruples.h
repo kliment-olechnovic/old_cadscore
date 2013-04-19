@@ -10,7 +10,6 @@
 #include "search_for_any_d.h"
 #include "search_for_valid_d.h"
 #include "search_for_valid_e.h"
-#include "log.h"
 
 namespace apollo2
 {
@@ -20,17 +19,28 @@ namespace apollonius_triangulation
 
 typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
 
+struct QuadruplesLog
+{
+	std::size_t quadruples;
+	std::size_t tangent_spheres;
+	std::size_t difficult_faces;
+	std::size_t produced_faces;
+	std::size_t updated_faces;
+	std::size_t triples_repetitions;
+	std::size_t finding_first_faces_iterations;
+};
+
 template<typename SphereType>
-static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh)
+static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, QuadruplesLog& log)
 {
 	typedef SphereType Sphere;
 	typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
 	typedef std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> TriplesMap;
 
-	log_ref()=Log();
+	log=QuadruplesLog();
 	QuadruplesMap quadruples_map;
 	TriplesSet processed_triples_set;
-	std::vector< Face<Sphere> > stack=find_first_faces(bsh);
+	std::vector< Face<Sphere> > stack=find_first_faces(bsh, log.finding_first_faces_iterations);
 	TriplesMap stack_map;
 	for(std::size_t i=0;i<stack.size();i++)
 	{
@@ -43,7 +53,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 		stack_map.erase(face.abc_ids());
 		if(!face.can_have_d())
 		{
-			log_ref().difficult_faces++;
+			log.difficult_faces++;
 		}
 		const bool found_d0=face.can_have_d() && !face.has_d(0) && find_any_d<Sphere>(bsh, face, 0) && find_valid_d<Sphere>(bsh, face, 0);
 		const bool found_d1=face.can_have_d() && !face.has_d(1) && find_any_d<Sphere>(bsh, face, 1) && find_valid_d<Sphere>(bsh, face, 1);
@@ -58,8 +68,8 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 				QuadruplesMap::iterator qm_it=quadruples_map.find(quadruple);
 				if(qm_it==quadruples_map.end())
 				{
-					log_ref().quadruples++;
-					log_ref().tangent_spheres++;
+					log.quadruples++;
+					log.tangent_spheres++;
 					quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
 				}
 				else
@@ -67,7 +77,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 					std::vector<SimpleSphere>& quadruple_tangent_spheres_list=qm_it->second;
 					if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere))
 					{
-						log_ref().tangent_spheres++;
+						log.tangent_spheres++;
 						quadruple_tangent_spheres_list.push_back(quadruple_tangent_sphere);
 					}
 				}
@@ -84,17 +94,17 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 						stack_map[produced_preface.first]=stack.size();
 						stack.push_back(Face<Sphere>(bsh.leaves_spheres(), produced_preface.first, bsh.min_input_radius()));
 						stack.back().set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
-						log_ref().produced_faces++;
+						log.produced_faces++;
 					}
 					else
 					{
 						stack.at(sm_it->second).set_d_with_d_number_selection(produced_preface.second.first, produced_preface.second.second);
-						log_ref().updated_faces++;
+						log.updated_faces++;
 					}
 				}
 				else
 				{
-					log_ref().triples_repetitions++;
+					log.triples_repetitions++;
 				}
 			}
 		}

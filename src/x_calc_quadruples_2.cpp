@@ -36,11 +36,13 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	apollo2::ApolloniusTriangulation::print_map_of_quadruples(apollo2::ApolloniusTriangulation::construct_map_of_quadruples(atoms, radius), std::cout);
+	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct(atoms, radius);
+
+	apollo2::ApolloniusTriangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
 
 	if(clo.isopt("--monitor"))
 	{
-		apollo2::ApolloniusTriangulation::log().print(std::clog);
+		apollo2::ApolloniusTriangulation::print_quadruples_log(apollonius_triangulation_result.quadruples_log, std::clog);
 	}
 }
 

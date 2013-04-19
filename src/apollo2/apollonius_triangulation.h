@@ -15,21 +15,30 @@ class ApolloniusTriangulation
 {
 public:
 	typedef apollonius_triangulation::QuadruplesMap QuadruplesMap;
-	typedef apollonius_triangulation::Log Log;
+	typedef apollonius_triangulation::QuadruplesLog QuadruplesLog;
+
+	struct Result
+	{
+		std::set<std::size_t> hidden_spheres_ids;
+		QuadruplesLog quadruples_log;
+		QuadruplesMap quadruples_map;
+	};
 
 	template<typename SphereType>
-	static QuadruplesMap construct_map_of_quadruples(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing)
+	static Result construct(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing)
 	{
+		Result result;
 		BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
-		const std::set<std::size_t> hidden_spheres_ids=apollonius_triangulation::find_all_hidden_spheres(bsh);
-		for(std::set<std::size_t>::const_iterator it=hidden_spheres_ids.begin();it!=hidden_spheres_ids.end();++it)
+		result.hidden_spheres_ids=apollonius_triangulation::find_all_hidden_spheres(bsh);
+		for(std::set<std::size_t>::const_iterator it=result.hidden_spheres_ids.begin();it!=result.hidden_spheres_ids.end();++it)
 		{
 			bsh.ignore_leaf_sphere(*it);
 		}
-		return apollonius_triangulation::find_valid_quadruples(bsh);
+		result.quadruples_map=apollonius_triangulation::find_valid_quadruples(bsh, result.quadruples_log);
+		return result;
 	}
 
-	static void print_map_of_quadruples(const QuadruplesMap& quadruples_map, std::ostream& output)
+	static void print_quadruples_map(const QuadruplesMap& quadruples_map, std::ostream& output)
 	{
 		output.precision(std::numeric_limits<double>::digits10);
 		output << std::fixed;
@@ -47,7 +56,7 @@ public:
 		}
 	}
 
-	static QuadruplesMap read_map_of_quadruples(std::istream& input)
+	static QuadruplesMap read_quadruples_map(std::istream& input)
 	{
 		QuadruplesMap quadruples_map;
 		bool valid=true;
@@ -83,9 +92,15 @@ public:
 		return quadruples_map;
 	}
 
-	static const Log& log()
+	static void print_quadruples_log(const QuadruplesLog& quadruples_log, std::ostream& output)
 	{
-		return apollonius_triangulation::log_ref();
+		output << "quadruples                      " << quadruples_log.quadruples << "\n";
+		output << "tangent_spheres                 " << quadruples_log.tangent_spheres << "\n";
+		output << "difficult_faces                 " << quadruples_log.difficult_faces << "\n";
+		output << "produced_faces                  " << quadruples_log.produced_faces << "\n";
+		output << "updated_faces                   " << quadruples_log.updated_faces << "\n";
+		output << "triples_repetitions             " << quadruples_log.triples_repetitions << "\n";
+		output << "finding_first_faces_iterations  " << quadruples_log.finding_first_faces_iterations << "\n";
 	}
 
 private:
