@@ -17,13 +17,13 @@ namespace apollonius_triangulation
 {
 
 template<typename SphereType>
-static std::vector<Triple> find_first_faces_triples(const BoundingSpheresHierarchy<SphereType>& bsh, const std::vector<SphereType>& spheres, const std::size_t starting_face_id, std::size_t& iterations_count)
+static std::vector<Triple> find_first_faces_triples(const BoundingSpheresHierarchy<SphereType>& bsh, const std::vector<SphereType>& spheres, const std::size_t starting_sphere_id, std::size_t& iterations_count)
 {
 	iterations_count=0;
 	std::vector<Triple> result;
-	if(starting_face_id<spheres.size())
+	if(spheres.size()>=4 && starting_sphere_id<spheres.size())
 	{
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<SphereType, SphereType>, spheres[starting_face_id], std::tr1::placeholders::_1));
+		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<SphereType, SphereType>, spheres[starting_sphere_id], std::tr1::placeholders::_1));
 		for(std::size_t u=4;u<traversal.size();u++)
 		{
 			for(std::size_t a=0;a<u;a++)
@@ -52,13 +52,33 @@ static std::vector<Triple> find_first_faces_triples(const BoundingSpheresHierarc
 }
 
 template<typename SphereType>
-std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, const std::size_t starting_face_id, std::size_t& iterations_count)
+std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, const std::size_t starting_sphere_id, std::size_t& iterations_count)
 {
-	const std::vector<Triple> triples=find_first_faces_triples(bsh, bsh.leaves_spheres(), starting_face_id, iterations_count);
+	const std::vector<Triple> triples=find_first_faces_triples(bsh, bsh.leaves_spheres(), starting_sphere_id, iterations_count);
 	std::vector< Face<SphereType> > result;
 	for(std::size_t i=0;i<triples.size();i++)
 	{
 		result.push_back(Face<SphereType>(bsh.leaves_spheres(), triples[i], bsh.min_input_radius()));
+	}
+	return result;
+}
+
+template<typename SphereType>
+std::vector< Face<SphereType> > find_first_faces_for_subset_of_spheres(const BoundingSpheresHierarchy<SphereType>& bsh, const std::set<std::size_t>& set_of_spheres_ids, std::size_t& iterations_count)
+{
+	std::vector<SimpleSphere> spheres;
+	std::map<std::size_t, std::size_t> mapping;
+	for(std::set<std::size_t>::const_iterator it=set_of_spheres_ids.begin();it!=set_of_spheres_ids.end();++it)
+	{
+		spheres.push_back(SimpleSphere(bsh.leaves_spheres().at(*it)));
+		mapping[spheres.size()-1]=(*it);
+	}
+	const std::vector<Triple> triples=find_first_faces_triples(bsh, spheres, 0, iterations_count);
+	std::vector< Face<SphereType> > result;
+	for(std::size_t i=0;i<triples.size();i++)
+	{
+		const Triple& t=triples[i];
+		result.push_back(Face<SphereType>(bsh.leaves_spheres(), Triple(mapping[t.get(0)], mapping[t.get(1)], mapping[t.get(2)]), bsh.min_input_radius()));
 	}
 	return result;
 }
