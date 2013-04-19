@@ -28,6 +28,7 @@ struct QuadruplesLog
 	std::size_t updated_faces;
 	std::size_t triples_repetitions;
 	std::size_t finding_first_faces_iterations;
+	std::size_t ignored_spheres;
 };
 
 template<typename SphereType>
@@ -40,6 +41,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 	log=QuadruplesLog();
 	QuadruplesMap quadruples_map;
 	TriplesSet processed_triples_set;
+	std::vector<int> processed_ids_map(bsh.leaves_spheres().size(), 0);
 	std::vector< Face<Sphere> > stack=find_first_faces(bsh, 0, log.finding_first_faces_iterations);
 	TriplesMap stack_map;
 	for(std::size_t i=0;i<stack.size();i++)
@@ -71,6 +73,10 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 					log.quadruples++;
 					log.tangent_spheres++;
 					quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
+					for(int j=0;j<4;j++)
+					{
+						processed_ids_map[quadruple.get(j)]++;
+					}
 				}
 				else
 				{
@@ -110,6 +116,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 		}
 		processed_triples_set.insert(face.abc_ids());
 	}
+	log.ignored_spheres=std::count(processed_ids_map.begin(), processed_ids_map.end(), 0);
 	return quadruples_map;
 }
 

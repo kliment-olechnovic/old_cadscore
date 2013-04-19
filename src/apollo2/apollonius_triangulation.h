@@ -101,6 +101,7 @@ public:
 		output << "updated_faces                   " << quadruples_log.updated_faces << "\n";
 		output << "triples_repetitions             " << quadruples_log.triples_repetitions << "\n";
 		output << "finding_first_faces_iterations  " << quadruples_log.finding_first_faces_iterations << "\n";
+		output << "ignored_spheres                 " << quadruples_log.ignored_spheres << "\n";
 	}
 
 private:
