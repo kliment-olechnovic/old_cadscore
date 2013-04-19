@@ -7,6 +7,9 @@
 namespace apollo2
 {
 
+namespace apollonius_triangulation
+{
+
 template<unsigned int N>
 class Tuple
 {
@@ -173,6 +176,8 @@ private:
 typedef Tuple<2> Pair;
 typedef Tuple<3> Triple;
 typedef Tuple<4> Quadruple;
+
+}
 
 }
 

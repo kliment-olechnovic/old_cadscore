@@ -45,7 +45,7 @@ public:
 		const QuadruplesOrderedMap quadruples_ordered_map=collect_ordered_map_of_quadruples(quadruples_map);
 		for(QuadruplesOrderedMap::const_iterator it=quadruples_ordered_map.begin();it!=quadruples_ordered_map.end();++it)
 		{
-			const Quadruple& quadruple=it->first;
+			const apollonius_triangulation::Quadruple& quadruple=it->first;
 			const std::vector<SimpleSphere>& tangent_spheres=it->second;
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
@@ -85,7 +85,7 @@ public:
 				}
 				if(valid)
 				{
-					quadruples_map[Quadruple(q[0], q[1], q[2], q[3])].push_back(SimpleSphere(s[0], s[1], s[2], s[3]));
+					quadruples_map[apollonius_triangulation::Quadruple(q[0], q[1], q[2], q[3])].push_back(SimpleSphere(s[0], s[1], s[2], s[3]));
 				}
 			}
 		}
