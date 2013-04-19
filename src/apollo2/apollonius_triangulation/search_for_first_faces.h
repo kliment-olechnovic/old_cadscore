@@ -63,35 +63,6 @@ std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<
 	return result;
 }
 
-template<typename SphereType>
-std::vector< Face<SphereType> > find_first_faces_for_subset_of_spheres(const BoundingSpheresHierarchy<SphereType>& bsh, const std::set<std::size_t>& set_of_spheres_ids, const std::size_t starting_sphere_id, std::size_t& iterations_count)
-{
-	std::vector< Face<SphereType> > result;
-	if(set_of_spheres_ids.count(starting_sphere_id)==1)
-	{
-		std::vector<SimpleSphere> local_spheres;
-		std::map<std::size_t, std::size_t> local_to_global_ids_map;
-		std::size_t local_starting_sphere_id=0;
-		for(std::set<std::size_t>::const_iterator it=set_of_spheres_ids.begin();it!=set_of_spheres_ids.end();++it)
-		{
-			const std::size_t global_id=(*it);
-			local_spheres.push_back(SimpleSphere(bsh.leaves_spheres().at(global_id)));
-			local_to_global_ids_map[local_spheres.size()-1]=global_id;
-			if(global_id==starting_sphere_id)
-			{
-				local_starting_sphere_id=local_spheres.size()-1;
-			}
-		}
-		const std::vector<Triple> triples=find_first_faces_triples(bsh, local_spheres, local_starting_sphere_id, iterations_count);
-		for(std::size_t i=0;i<triples.size();i++)
-		{
-			const Triple& t=triples[i];
-			result.push_back(Face<SphereType>(bsh.leaves_spheres(), Triple(local_to_global_ids_map[t.get(0)], local_to_global_ids_map[t.get(1)], local_to_global_ids_map[t.get(2)]), bsh.min_input_radius()));
-		}
-	}
-	return result;
-}
-
 }
 
 }
