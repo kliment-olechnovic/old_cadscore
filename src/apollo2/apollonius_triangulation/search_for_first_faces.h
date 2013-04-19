@@ -17,38 +17,36 @@ namespace apollonius_triangulation
 {
 
 template<typename SphereType>
-static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, std::size_t& iterations_count)
+static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, const std::size_t starting_face_id, std::size_t& iterations_count)
 {
 	typedef SphereType Sphere;
 
 	iterations_count=0;
 	const std::vector<Sphere>& spheres=bsh.leaves_spheres();
 	std::vector< Face<Sphere> > result;
-	if(!spheres.empty())
+	if(starting_face_id<spheres.size())
 	{
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres.front(), std::tr1::placeholders::_1));
+		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<Sphere, Sphere>, spheres[starting_face_id], std::tr1::placeholders::_1));
 		for(std::size_t u=4;u<traversal.size();u++)
 		{
 			for(std::size_t a=0;a<u;a++)
 			{
-				for(std::size_t b=a+1;b<u;b++)
+				for(std::size_t b=a+1;b+1<u;b++)
 				{
-					for(std::size_t c=b+1;c<u;c++)
+					for(std::size_t c=b+1;c+1<u;c++)
 					{
-						for(std::size_t d=((a+1<u && b+1<u && c+1<u) ? (u-1) : (c+1));d<u;d++)
+						const std::size_t d=u-1;
+						iterations_count++;
+						Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
+						std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+						if(tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
 						{
-							iterations_count++;
-							Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-							std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-							if(tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
+							for(int i=0;i<4;i++)
 							{
-								for(int i=0;i<4;i++)
-								{
-									result.push_back(Face<Sphere>(spheres, quadruple.exclude(i), bsh.min_input_radius()));
-									result.back().set_d_with_d_number_selection(quadruple.get(i), tangents.front());
-								}
-								return result;
+								result.push_back(Face<Sphere>(spheres, quadruple.exclude(i), bsh.min_input_radius()));
+								result.back().set_d_with_d_number_selection(quadruple.get(i), tangents.front());
 							}
+							return result;
 						}
 					}
 				}
