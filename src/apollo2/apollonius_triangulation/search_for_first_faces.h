@@ -38,13 +38,12 @@ static std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHie
 						const std::size_t d=u-1;
 						iterations_count++;
 						Quadruple quadruple(traversal[a], traversal[b], traversal[c], traversal[d]);
-						std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-						if(tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
+						const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+						if(!tangents.empty() && (find_any_collision(bsh, tangents.front()).empty() || (tangents.size()==2 && find_any_collision(bsh, tangents.back()).empty())))
 						{
 							for(int i=0;i<4;i++)
 							{
 								result.push_back(Face<Sphere>(spheres, quadruple.exclude(i), bsh.min_input_radius()));
-								result.back().set_d_with_d_number_selection(quadruple.get(i), tangents.front());
 							}
 							return result;
 						}
