@@ -32,7 +32,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	{
 		for(std::size_t i=0;i<atoms.size();i++)
 		{
-			atoms[i].r=0;
+			atoms[i].r=1;
 		}
 	}
 

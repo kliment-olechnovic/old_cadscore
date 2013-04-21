@@ -19,7 +19,6 @@ public:
 
 	struct Result
 	{
-		std::set<std::size_t> hidden_spheres_ids;
 		QuadruplesLog quadruples_log;
 		QuadruplesMap quadruples_map;
 	};
@@ -28,12 +27,7 @@ public:
 	static Result construct(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing)
 	{
 		Result result;
-		BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
-		result.hidden_spheres_ids=apollonius_triangulation::find_all_hidden_spheres(bsh);
-		for(std::set<std::size_t>::const_iterator it=result.hidden_spheres_ids.begin();it!=result.hidden_spheres_ids.end();++it)
-		{
-			bsh.ignore_leaf_sphere(*it);
-		}
+		const BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
 		result.quadruples_map=apollonius_triangulation::find_valid_quadruples(bsh, result.quadruples_log);
 		return result;
 	}
@@ -101,7 +95,8 @@ public:
 		output << "updated_faces                   " << quadruples_log.updated_faces << "\n";
 		output << "triples_repetitions             " << quadruples_log.triples_repetitions << "\n";
 		output << "finding_first_faces_iterations  " << quadruples_log.finding_first_faces_iterations << "\n";
-		output << "ignored_spheres                 " << quadruples_log.ignored_spheres << "\n";
+		output << "hidden_spheres                  " << quadruples_log.hidden_spheres_ids.size() << "\n";
+		output << "ignored_spheres                 " << quadruples_log.ignored_spheres_ids.size() << "\n";
 	}
 
 private:
