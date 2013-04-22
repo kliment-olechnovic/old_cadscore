@@ -154,7 +154,7 @@ public:
 	{
 		return (
 				can_have_e_
-				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[0].second)<=threshold_distance_for_e_checking && minimal_distance_from_sphere_to_sphere(input_sphere, d_ids_and_tangent_spheres_[1].second)<=threshold_distance_for_e_checking))
+				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[0].second, threshold_distance_for_e_checking) && sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[1].second, threshold_distance_for_e_checking)))
 				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first!=npos && d_ids_and_tangent_spheres_[1].first!=npos) || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
 				);
 	}
@@ -166,7 +166,7 @@ public:
 				&& (e_id!=npos)
 				&& (!abc_ids_.contains(e_id))
 				&& (!can_have_d_ || (e_id!=d_ids_and_tangent_spheres_[0].first && e_id!=d_ids_and_tangent_spheres_[1].first))
-				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second)<=threshold_distance_for_e_checking && minimal_distance_from_sphere_to_sphere(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second)<=threshold_distance_for_e_checking))
+				&& (!can_have_d_ || (d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos) || (sphere_intersects_sphere_with_expansion(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second, threshold_distance_for_e_checking) && sphere_intersects_sphere_with_expansion(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second, threshold_distance_for_e_checking)))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 			)
 		{
