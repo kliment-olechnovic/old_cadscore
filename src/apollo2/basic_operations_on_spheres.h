@@ -56,25 +56,25 @@ double minimal_distance_from_sphere_to_sphere(const InputSphereTypeA& a, const I
 template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_intersects_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
-	return less(squared_distance_from_point_to_point(a, b), (a.r+b.r)*(a.r+b.r));
+	return less(distance_from_point_to_point(a, b), (a.r+b.r));
 }
 
 template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_intersects_sphere_with_expansion(const InputSphereTypeA& a, const InputSphereTypeB& b, const double expansion)
 {
-	return less(squared_distance_from_point_to_point(a, b), (a.r+b.r+expansion)*(a.r+b.r+expansion));
+	return less(distance_from_point_to_point(a, b), (a.r+b.r+expansion));
 }
 
 template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_touches_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
-	return equal(squared_distance_from_point_to_point(a, b), (a.r+b.r)*(a.r+b.r));
+	return equal(distance_from_point_to_point(a, b), (a.r+b.r));
 }
 
 template<typename InputSphereTypeA, typename InputSphereTypeB>
 bool sphere_contains_sphere(const InputSphereTypeA& a, const InputSphereTypeB& b)
 {
-	return (greater_or_equal(a.r, b.r) && less_or_equal(squared_distance_from_point_to_point(a,b), (a.r-b.r)*(a.r-b.r)));
+	return (greater_or_equal(a.r, b.r) && less_or_equal(distance_from_point_to_point(a, b), (a.r-b.r)));
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB, typename InputSphereTypeC>
