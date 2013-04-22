@@ -42,7 +42,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 
 	if(clo.isopt("--monitor"))
 	{
-		apollo2::ApolloniusTriangulation::print_quadruples_log(apollonius_triangulation_result.quadruples_log, std::clog);
+		apollo2::ApolloniusTriangulation::print_result_log(apollonius_triangulation_result, std::clog);
 	}
 }
 

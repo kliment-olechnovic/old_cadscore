@@ -19,16 +19,39 @@ public:
 
 	struct Result
 	{
-		QuadruplesLog quadruples_log;
 		QuadruplesMap quadruples_map;
+		QuadruplesLog quadruples_log;
+		std::set<std::size_t> hidden_spheres_ids;
+		std::set<std::size_t> ignored_spheres_ids;
 	};
 
 	template<typename SphereType>
 	static Result construct(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing)
 	{
 		Result result;
-		const BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
+		BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
+		result.hidden_spheres_ids=apollonius_triangulation::find_all_hidden_spheres(bsh);
+		for(std::set<std::size_t>::const_iterator it=result.hidden_spheres_ids.begin();it!=result.hidden_spheres_ids.end();++it)
+		{
+			bsh.ignore_leaf_sphere(*it);
+		}
 		result.quadruples_map=apollonius_triangulation::find_valid_quadruples(bsh, result.quadruples_log);
+		std::vector<int> spheres_inclusion_map(spheres.size(), 0);
+		for(QuadruplesMap::const_iterator it=result.quadruples_map.begin();it!=result.quadruples_map.end();++it)
+		{
+			const apollonius_triangulation::Quadruple& q=it->first;
+			for(int i=0;i<4;i++)
+			{
+				spheres_inclusion_map[q.get(i)]=1;
+			}
+		}
+		for(std::size_t i=0;i<spheres_inclusion_map.size();i++)
+		{
+			if(spheres_inclusion_map[i]==0 && result.hidden_spheres_ids.count(i)==0)
+			{
+				result.ignored_spheres_ids.insert(i);
+			}
+		}
 		return result;
 	}
 
@@ -86,17 +109,17 @@ public:
 		return quadruples_map;
 	}
 
-	static void print_quadruples_log(const QuadruplesLog& quadruples_log, std::ostream& output)
+	static void print_result_log(const Result& result, std::ostream& output)
 	{
-		output << "quadruples                      " << quadruples_log.quadruples << "\n";
-		output << "tangent_spheres                 " << quadruples_log.tangent_spheres << "\n";
-		output << "difficult_faces                 " << quadruples_log.difficult_faces << "\n";
-		output << "produced_faces                  " << quadruples_log.produced_faces << "\n";
-		output << "updated_faces                   " << quadruples_log.updated_faces << "\n";
-		output << "triples_repetitions             " << quadruples_log.triples_repetitions << "\n";
-		output << "finding_first_faces_iterations  " << quadruples_log.finding_first_faces_iterations << "\n";
-		output << "hidden_spheres                  " << quadruples_log.hidden_spheres_ids.size() << "\n";
-		output << "ignored_spheres                 " << quadruples_log.ignored_spheres_ids.size() << "\n";
+		output << "quadruples                      " << result.quadruples_log.quadruples << "\n";
+		output << "tangent_spheres                 " << result.quadruples_log.tangent_spheres << "\n";
+		output << "difficult_faces                 " << result.quadruples_log.difficult_faces << "\n";
+		output << "produced_faces                  " << result.quadruples_log.produced_faces << "\n";
+		output << "updated_faces                   " << result.quadruples_log.updated_faces << "\n";
+		output << "triples_repetitions             " << result.quadruples_log.triples_repetitions << "\n";
+		output << "finding_first_faces_iterations  " << result.quadruples_log.finding_first_faces_iterations << "\n";
+		output << "hidden_spheres                  " << result.hidden_spheres_ids.size() << "\n";
+		output << "ignored_spheres                 " << result.ignored_spheres_ids.size() << "\n";
 	}
 
 private:
