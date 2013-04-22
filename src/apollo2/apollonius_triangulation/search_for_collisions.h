@@ -74,11 +74,24 @@ static std::set<std::size_t> find_all_hidden_spheres(const BoundingSpheresHierar
 		{
 			if(i!=candidates[j])
 			{
-				if(sphere_contains_sphere(bsh.leaves_spheres()[i], bsh.leaves_spheres()[candidates[j]]))
+				const bool i_contains_candidate_j=sphere_contains_sphere(bsh.leaves_spheres()[i], bsh.leaves_spheres()[candidates[j]]);
+				const bool candidate_j_contains_i=sphere_contains_sphere(bsh.leaves_spheres()[candidates[j]], bsh.leaves_spheres()[i]);
+				if(i_contains_candidate_j && candidate_j_contains_i)
+				{
+					if(i<candidates[j])
+					{
+						result.insert(candidates[j]);
+					}
+					else
+					{
+						result.insert(i);
+					}
+				}
+				else if(i_contains_candidate_j)
 				{
 					result.insert(candidates[j]);
 				}
-				if(sphere_contains_sphere(bsh.leaves_spheres()[candidates[j]], bsh.leaves_spheres()[i]))
+				else if(candidate_j_contains_i)
 				{
 					result.insert(i);
 				}
