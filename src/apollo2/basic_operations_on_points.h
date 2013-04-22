@@ -44,16 +44,22 @@ OutputPointType inverted_point(const InputPointType& a)
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB>
-double distance_from_point_to_point(const InputPointTypeA& a, const InputPointTypeB& b)
+double squared_distance_from_point_to_point(const InputPointTypeA& a, const InputPointTypeB& b)
 {
 	const double dx=(a.x-b.x);
 	const double dy=(a.y-b.y);
 	const double dz=(a.z-b.z);
-	return sqrt(dx*dx+dy*dy+dz*dz);
+	return (dx*dx+dy*dy+dz*dz);
+}
+
+template<typename InputPointTypeA, typename InputPointTypeB>
+double distance_from_point_to_point(const InputPointTypeA& a, const InputPointTypeB& b)
+{
+	return sqrt(squared_distance_from_point_to_point(a, b));
 }
 
 template<typename InputPointType>
-double point_squared_module(const InputPointType& a)
+double squared_point_module(const InputPointType& a)
 {
 	return (a.x*a.x+a.y*a.y+a.z*a.z);
 }
@@ -61,7 +67,7 @@ double point_squared_module(const InputPointType& a)
 template<typename InputPointType>
 double point_module(const InputPointType& a)
 {
-	return sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+	return sqrt(squared_point_module(a));
 }
 
 template<typename InputPointTypeA, typename InputPointTypeB>
