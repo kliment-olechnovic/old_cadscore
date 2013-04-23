@@ -121,6 +121,7 @@ private:
 	{
 	public:
 		std::vector<std::size_t> children;
+		std::vector<std::size_t> leaves_ids;
 	};
 
 	struct NodeCoordinates
@@ -231,14 +232,33 @@ private:
 	{
 		std::vector< std::vector<Cluster> > clusters_layers;
 		double using_r=r;
-		clusters_layers.push_back(cluster_spheres_using_radius(spheres, using_r));
+		{
+			std::vector<Cluster> clusters=cluster_spheres_using_radius(spheres, using_r);
+			for(std::size_t i=0;i<clusters.size();i++)
+			{
+				clusters[i].leaves_ids=clusters[i].children;
+			}
+			clusters_layers.push_back(clusters);
+		}
 		bool need_more=clusters_layers.back().size()>min_number_of_clusters;
 		while(need_more)
 		{
 			using_r*=2;
-			const std::vector<Cluster> clusters=cluster_spheres_using_radius(clusters_layers.back(), using_r);
+			std::vector<Cluster> clusters=cluster_spheres_using_radius(clusters_layers.back(), using_r);
 			if(clusters.size()<clusters_layers.back().size() && clusters.size()>min_number_of_clusters)
 			{
+				for(std::size_t i=0;i<clusters.size();i++)
+				{
+					for(std::size_t j=0;j<clusters[i].children.size();j++)
+					{
+						clusters[i].leaves_ids.insert(clusters[i].leaves_ids.end(), clusters_layers.back()[clusters[i].children[j]].leaves_ids.begin(), clusters_layers.back()[clusters[i].children[j]].leaves_ids.end());
+					}
+					clusters[i].r=0.0;
+					for(std::size_t j=0;j<clusters[i].leaves_ids.size();j++)
+					{
+						clusters[i].r=std::max(clusters[i].r, maximal_distance_from_point_to_sphere(clusters[i], spheres[clusters[i].leaves_ids[j]]));
+					}
+				}
 				clusters_layers.push_back(clusters);
 			}
 			else
