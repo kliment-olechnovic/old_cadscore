@@ -154,7 +154,7 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector<SimpleSphere> select_centers_for_clusters(const std::vector<SphereType>& spheres, const double r)
+	static std::vector<SimpleSphere> select_centers_for_clusters(const std::vector<SphereType>& spheres, const double expansion)
 	{
 		std::vector<SimpleSphere> centers;
 		if(!spheres.empty())
@@ -166,12 +166,11 @@ private:
 				const std::size_t i=global_traversal[k];
 				if(allowed[i])
 				{
-					const SimpleSphere center=custom_sphere_from_object<SimpleSphere>(spheres[i]);
-					centers.push_back(center);
+					centers.push_back(spheres[i]);
 					allowed[i]=false;
 					for(std::size_t j=0;j<spheres.size();j++)
 					{
-						if(maximal_distance_from_point_to_sphere(center, spheres[j])<r*2)
+						if(sphere_intersects_sphere_with_expansion(spheres[i], spheres[j], expansion))
 						{
 							allowed[j]=false;
 						}
@@ -222,18 +221,17 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector<Cluster> cluster_spheres_using_radius(const std::vector<SphereType>& spheres, const double radius)
+	static std::vector<Cluster> cluster_spheres_using_radius_expansion(const std::vector<SphereType>& spheres, const double radius_expansion)
 	{
-		return cluster_spheres_using_centers(spheres, select_centers_for_clusters(spheres, radius));
+		return cluster_spheres_using_centers(spheres, select_centers_for_clusters(spheres, radius_expansion));
 	}
 
 	template<typename SphereType>
 	static std::vector< std::vector<Cluster> > cluster_spheres_in_layers(const std::vector<SphereType>& spheres, const double r, const std::size_t min_number_of_clusters)
 	{
 		std::vector< std::vector<Cluster> > clusters_layers;
-		double using_r=r;
 		{
-			std::vector<Cluster> clusters=cluster_spheres_using_radius(spheres, using_r);
+			std::vector<Cluster> clusters=cluster_spheres_using_radius_expansion(spheres, r);
 			for(std::size_t i=0;i<clusters.size();i++)
 			{
 				clusters[i].leaves_ids=clusters[i].children;
@@ -243,8 +241,7 @@ private:
 		bool need_more=clusters_layers.back().size()>min_number_of_clusters;
 		while(need_more)
 		{
-			using_r*=2;
-			std::vector<Cluster> clusters=cluster_spheres_using_radius(clusters_layers.back(), using_r);
+			std::vector<Cluster> clusters=cluster_spheres_using_radius_expansion(clusters_layers.back(), 0.0);
 			if(clusters.size()<clusters_layers.back().size() && clusters.size()>min_number_of_clusters)
 			{
 				for(std::size_t i=0;i<clusters.size();i++)
