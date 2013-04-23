@@ -18,7 +18,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		apollo2::comparison_epsilon_reference()=epsilon;
 	}
 
-	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.0;
+	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
 	const bool as_points=clo.isopt("--as-points");
 
 	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
