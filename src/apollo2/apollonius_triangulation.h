@@ -114,6 +114,7 @@ public:
 		output << "quadruples                      " << result.quadruples_log.quadruples << "\n";
 		output << "tangent_spheres                 " << result.quadruples_log.tangent_spheres << "\n";
 		output << "difficult_faces                 " << result.quadruples_log.difficult_faces << "\n";
+		output << "triples_repetitions             " << result.quadruples_log.triples_repetitions << "\n";
 		output << "finding_first_faces_iterations  " << result.quadruples_log.finding_first_faces_iterations << "\n";
 		output << "hidden_spheres                  " << result.hidden_spheres_ids.size() << "\n";
 		output << "ignored_spheres                 " << result.ignored_spheres_ids.size() << "\n";
