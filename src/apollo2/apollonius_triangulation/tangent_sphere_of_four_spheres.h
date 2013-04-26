@@ -3,9 +3,12 @@
 
 #include <vector>
 
-#include "basic_operations_on_spheres.h"
+#include "../basic_operations_on_spheres.h"
 
 namespace apollo2
+{
+
+namespace apollonius_triangulation
 {
 
 class TangentSphereOfFourSpheres
@@ -106,6 +109,8 @@ private:
 				sphere_touches_sphere(tangent, s4));
 	}
 };
+
+}
 
 }
 

@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "../tangent_plane_of_three_spheres.h"
-#include "../tangent_sphere_of_four_spheres.h"
+#include "tangent_plane_of_three_spheres.h"
+#include "tangent_sphere_of_four_spheres.h"
 
 #include "tuple.h"
 
