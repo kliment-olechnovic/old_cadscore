@@ -14,10 +14,10 @@ bool sphere_is_inside_shell_of_two_spheres(const InputSphereTypeA& a, const Inpu
 {
 	if(b.r<a.r)
 	{
-		return sphere_inside_shell_of_two_spheres(b, a, c);
+		return sphere_is_inside_shell_of_two_spheres(b, a, c);
 	}
 
-	if(c.r>b.r)
+	if(!less(c.r, b.r))
 	{
 		return false;
 	}
@@ -32,22 +32,31 @@ bool sphere_is_inside_shell_of_two_spheres(const InputSphereTypeA& a, const Inpu
 		return true;
 	}
 
-	const double distance_between_a_and_b_centers=distance_from_point_to_point(a, b);
-	const double transformed_b_r=(b.r-a.r);
-	const double tangent_line_length=sqrt(distance_between_a_and_b_centers*distance_between_a_and_b_centers-transformed_b_r*transformed_b_r);
-	SimplePoint shell_normal(0, 1, 0);
-	if(a.r!=b.r)
-	{
-		const double sin_value=(transformed_b_r/distance_between_a_and_b_centers);
-		shell_normal.x=(0-(transformed_b_r*sin_value));
-		shell_normal.y=(tangent_line_length*sin_value);
-	}
-	const SimplePoint tangent_line_unit_vector=(SimplePoint(distance_between_a_and_b_centers, 0, 0)+(shell_normal*transformed_b_r)).unit();
-	const double transformed_c_x=(SimplePoint(c)-SimplePoint(a))*((SimplePoint(b)-SimplePoint(a)).unit());
-	const double transformed_c_y=sqrt(squared_distance_from_point_to_point(a, c)-transformed_c_x*transformed_c_x);
-	const SimplePoint transformed_c(transformed_c_x, transformed_c_y, 0);
+//	return (sqrt(squared_distance_from_point_to_point(a, b)-(b.r-a.r)*(b.r-a.r))>(sqrt(squared_distance_from_point_to_point(a, c)-(a.r-c.r)*(a.r-c.r))+sqrt(squared_distance_from_point_to_point(b, c)-(b.r-c.r)*(b.r-c.r))));
 
-	return (less((transformed_c*shell_normal)+(c.r-a.r), 0) && less(transformed_c*tangent_line_unit_vector, tangent_line_length));
+	const SimplePoint tb(distance_from_point_to_point(a, b), 0, 0);
+	const double tb_r=(b.r-a.r);
+
+	const double tangent_line_length=sqrt(tb.x*tb.x-tb_r*tb_r);
+
+	SimplePoint shell_normal(0, 1, 0);
+	if(greater(tb_r, 0))
+	{
+		const double sin_value=(tb_r/tb.x);
+		shell_normal=SimplePoint((0-(tb_r*sin_value)), (tangent_line_length*sin_value), 0)*(1/tb_r);
+	}
+
+	const SimplePoint tangent_line_unit_vector=(tb+(shell_normal*tb_r)).unit();
+
+	const double tc_x=(sub_of_points<SimplePoint>(c, a))*(sub_of_points<SimplePoint>(b, a).unit());
+	const double tc_y=sqrt(squared_distance_from_point_to_point(a, c)-tc_x*tc_x);
+	const SimplePoint tc(tc_x, tc_y, 0);
+	const SimplePoint mtc=(tc-(shell_normal*a.r));
+
+	const double distance_from_c_to_tangent_line=(mtc*shell_normal)+c.r;
+	const double projection_of_c_on_tangent_line=mtc*tangent_line_unit_vector;
+
+	return (less(distance_from_c_to_tangent_line, 0) && greater(projection_of_c_on_tangent_line, 0) && less(projection_of_c_on_tangent_line, tangent_line_length));
 }
 
 }
