@@ -4,9 +4,12 @@
 #include <vector>
 #include <algorithm>
 
-#include "basic_operations_on_spheres.h"
+#include "../basic_operations_on_spheres.h"
 
 namespace apollo2
+{
+
+namespace apollonius_triangulation
 {
 
 class TangentPlaneOfThreeSpheres
@@ -103,6 +106,8 @@ private:
 		return results;
 	}
 };
+
+}
 
 }
 
