@@ -16,6 +16,8 @@ class ApolloniusTriangulation
 public:
 	typedef apollonius_triangulation::QuadruplesMap QuadruplesMap;
 	typedef apollonius_triangulation::QuadruplesLog QuadruplesLog;
+	typedef std::tr1::unordered_set<apollonius_triangulation::Pair, apollonius_triangulation::Pair::HashFunctor> PairsSet;
+	typedef std::tr1::unordered_set<apollonius_triangulation::Triple, apollonius_triangulation::Triple::HashFunctor> TriplesSet;
 
 	struct Result
 	{
@@ -50,6 +52,43 @@ public:
 			if(spheres_inclusion_map[i]==0 && result.hidden_spheres_ids.count(i)==0)
 			{
 				result.ignored_spheres_ids.insert(i);
+			}
+		}
+		return result;
+	}
+
+	static PairsSet collect_pairs_set_from_quadruples_map(const QuadruplesMap& quadruples_map)
+	{
+		PairsSet result;
+		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const apollonius_triangulation::Quadruple& quadruple=it->first;
+			for(int a=0;a<4;a++)
+			{
+				for(int b=a+1;b<4;b++)
+				{
+					result.insert(apollonius_triangulation::Pair(quadruple.get(a), quadruple.get(b)));
+				}
+			}
+		}
+		return result;
+	}
+
+	static TriplesSet collect_triples_set_from_quadruples_map(const QuadruplesMap& quadruples_map)
+	{
+		TriplesSet result;
+		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const apollonius_triangulation::Quadruple& quadruple=it->first;
+			for(int a=0;a<4;a++)
+			{
+				for(int b=a+1;b<4;b++)
+				{
+					for(int c=b+1;c<4;c++)
+					{
+						result.insert(apollonius_triangulation::Triple(quadruple.get(a), quadruple.get(b), quadruple.get(c)));
+					}
+				}
 			}
 		}
 		return result;
