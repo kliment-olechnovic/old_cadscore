@@ -24,7 +24,7 @@ std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<
 	std::vector< Face<SphereType> > result;
 	if(spheres.size()>=4 && starting_sphere_id<spheres.size())
 	{
-		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<SphereType, SphereType>, spheres[starting_sphere_id], std::tr1::placeholders::_1));
+		const std::vector<std::size_t> traversal=BoundingSpheresHierarchy<SphereType>::sort_objects_by_distance_to_one_of_them(spheres, starting_sphere_id, minimal_distance_from_sphere_to_sphere<SphereType, SphereType>);
 		for(std::size_t u=4;u<traversal.size();u++)
 		{
 			for(std::size_t a=0;a<(fix_starting_sphere_id ? 1 : u);a++)
