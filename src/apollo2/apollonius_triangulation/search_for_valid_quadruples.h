@@ -54,6 +54,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 			Face<Sphere> face=stack.back();
 			stack.pop_back();
 			stack_map.erase(face.abc_ids());
+			processed_triples_set.insert(face.abc_ids());
 			if(!face.can_have_d())
 			{
 				log.difficult_faces++;
@@ -111,7 +112,6 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 					}
 				}
 			}
-			processed_triples_set.insert(face.abc_ids());
 		}
 	}
 	return quadruples_map;
