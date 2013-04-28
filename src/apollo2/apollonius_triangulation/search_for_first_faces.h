@@ -31,19 +31,19 @@ std::vector< Face<SphereType> > find_first_faces(
 	if(spheres.size()>=4 && starting_sphere_id<spheres.size())
 	{
 		const std::vector<std::size_t> traversal=BoundingSpheresHierarchy<SphereType>::sort_objects_by_distance_to_one_of_them(spheres, starting_sphere_id, minimal_distance_from_sphere_to_sphere<SphereType, SphereType>, max_distance);
-		for(std::size_t u=4;u<traversal.size();u++)
+		for(std::size_t d=3;d+1<traversal.size();d++)
 		{
-			for(std::size_t a=0;a<(fix_starting_sphere_id ? 1 : u);a++)
+			for(std::size_t a=0;a<(fix_starting_sphere_id ? 1 : d);a++)
 			{
-				for(std::size_t b=a+1;b+1<u;b++)
+				for(std::size_t b=a+1;b<d;b++)
 				{
-					for(std::size_t c=b+1;c+1<u;c++)
+					for(std::size_t c=b+1;c<d;c++)
 					{
 						iterations_count++;
 						const Triple triple(traversal[a], traversal[b], traversal[c]);
 						if(forbidden_triples_set.count(triple)==0)
 						{
-							Quadruple quadruple(triple, traversal[u-1]);
+							Quadruple quadruple(triple, traversal[d]);
 							const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
 							if(tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
 							{
