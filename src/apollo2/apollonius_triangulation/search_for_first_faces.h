@@ -17,16 +17,17 @@ namespace apollonius_triangulation
 {
 
 template<typename SphereType>
-static std::vector<Triple> find_first_faces_triples(const BoundingSpheresHierarchy<SphereType>& bsh, const std::vector<SphereType>& spheres, const std::size_t starting_sphere_id, std::size_t& iterations_count)
+std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, const std::size_t starting_sphere_id, const bool fix_starting_sphere_id, std::size_t& iterations_count)
 {
+	const std::vector<SphereType>& spheres=bsh.leaves_spheres();
 	iterations_count=0;
-	std::vector<Triple> result;
+	std::vector< Face<SphereType> > result;
 	if(spheres.size()>=4 && starting_sphere_id<spheres.size())
 	{
 		const std::vector<std::size_t> traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(minimal_distance_from_sphere_to_sphere<SphereType, SphereType>, spheres[starting_sphere_id], std::tr1::placeholders::_1));
 		for(std::size_t u=4;u<traversal.size();u++)
 		{
-			for(std::size_t a=0;a<u;a++)
+			for(std::size_t a=0;a<(fix_starting_sphere_id ? 1 : u);a++)
 			{
 				for(std::size_t b=a+1;b+1<u;b++)
 				{
@@ -39,7 +40,7 @@ static std::vector<Triple> find_first_faces_triples(const BoundingSpheresHierarc
 						{
 							for(int i=0;i<4;i++)
 							{
-								result.push_back(quadruple.exclude(i));
+								result.push_back(Face<SphereType>(bsh.leaves_spheres(), quadruple.exclude(i), bsh.min_input_radius()));
 							}
 							return result;
 						}
@@ -47,18 +48,6 @@ static std::vector<Triple> find_first_faces_triples(const BoundingSpheresHierarc
 				}
 			}
 		}
-	}
-	return result;
-}
-
-template<typename SphereType>
-std::vector< Face<SphereType> > find_first_faces(const BoundingSpheresHierarchy<SphereType>& bsh, const std::size_t starting_sphere_id, std::size_t& iterations_count)
-{
-	std::vector< Face<SphereType> > result;
-	const std::vector<Triple> triples=find_first_faces_triples(bsh, bsh.leaves_spheres(), starting_sphere_id, iterations_count);
-	for(std::size_t i=0;i<triples.size();i++)
-	{
-		result.push_back(Face<SphereType>(bsh.leaves_spheres(), triples[i], bsh.min_input_radius()));
 	}
 	return result;
 }
