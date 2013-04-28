@@ -36,13 +36,14 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 	typedef SphereType Sphere;
 	typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
 	typedef std::tr1::unordered_map<Triple, std::size_t, Triple::HashFunctor> TriplesMap;
-	typedef std::vector< std::tr1::unordered_set<std::size_t> > Graph;
 
 	log=QuadruplesLog();
 	QuadruplesMap quadruples_map;
 	TriplesSet processed_triples_set;
+	std::vector<int> spheres_usage_mapping(bsh.leaves_spheres().size(), 0);
+	std::set<std::size_t> ignorable_spheres_ids;
 	std::vector< Face<Sphere> > stack=find_first_faces(bsh, 0, log.finding_first_faces_iterations, processed_triples_set);
-	if(!stack.empty())
+	while(!stack.empty())
 	{
 		TriplesMap stack_map;
 		for(std::size_t i=0;i<stack.size();i++)
@@ -75,6 +76,10 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 						log.quadruples++;
 						log.tangent_spheres++;
 						quadruples_map[quadruple].push_back(quadruple_tangent_sphere);
+						for(int a=0;a<4;a++)
+						{
+							spheres_usage_mapping[quadruple.get(a)]++;
+						}
 					}
 					else
 					{
@@ -109,6 +114,34 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 					else
 					{
 						log.triples_repetitions++;
+					}
+				}
+			}
+		}
+		for(std::size_t i=0;i<spheres_usage_mapping.size() && stack.empty();i++)
+		{
+			if(spheres_usage_mapping[i]==0 && ignorable_spheres_ids.count(i)==0)
+			{
+				const std::vector<Sphere>& all_spheres=bsh.leaves_spheres();
+				const std::vector<std::size_t> colliding_neighbours=find_all_collisions(bsh, all_spheres[i]);
+				bool hidden=false;
+				for(std::size_t j=0;j<colliding_neighbours.size() && !hidden;j++)
+				{
+					if(colliding_neighbours[j]!=i && sphere_contains_sphere(all_spheres[colliding_neighbours[j]], all_spheres[i]))
+					{
+						hidden=true;
+					}
+				}
+				if(hidden)
+				{
+					ignorable_spheres_ids.insert(i);
+				}
+				else
+				{
+					stack=find_first_faces(bsh, i, log.finding_first_faces_iterations, processed_triples_set, true, true, 50);
+					if(stack.empty())
+					{
+						ignorable_spheres_ids.insert(i);
 					}
 				}
 			}
