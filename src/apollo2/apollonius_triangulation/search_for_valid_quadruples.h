@@ -132,18 +132,11 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 						hidden=true;
 					}
 				}
-				if(hidden)
-				{
-					ignorable_spheres_ids.insert(i);
-				}
-				else
+				if(!hidden)
 				{
 					stack=find_first_faces(bsh, i, log.finding_first_faces_iterations, true, true, 50);
-					if(stack.empty())
-					{
-						ignorable_spheres_ids.insert(i);
-					}
 				}
+				ignorable_spheres_ids.insert(i);
 			}
 		}
 	}
