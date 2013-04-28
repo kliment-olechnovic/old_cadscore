@@ -2,10 +2,9 @@
 #define APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_
 
 #include <vector>
-#include <tr1/functional>
+#include <algorithm>
 
 #include "basic_operations_on_spheres.h"
-#include "utilities.h"
 
 namespace apollo2
 {
@@ -113,6 +112,36 @@ public:
 		return results;
 	}
 
+	template<typename ListType, typename FunctorType>
+	static std::vector<std::size_t> sort_objects_by_distance_to_one_of_them(const ListType& list, const std::size_t starting_id, const FunctorType& functor, const double max_distance=std::numeric_limits<double>::max())
+	{
+		std::vector<std::size_t> result;
+		if(starting_id<list.size())
+		{
+			std::vector< std::pair<double, std::size_t> > distances;
+			distances.reserve(list.size()-1);
+			for(std::size_t i=0;i<list.size();i++)
+			{
+				if(i!=starting_id)
+				{
+					const double distance=functor(list[starting_id], list[i]);
+					if(distance<=max_distance)
+					{
+						distances.push_back(std::make_pair(distance, i));
+					}
+				}
+			}
+			std::sort(distances.begin(), distances.end());
+			result.reserve(distances.size()+1);
+			result.push_back(starting_id);
+			for(std::size_t i=0;i<distances.size();i++)
+			{
+				result.push_back(distances[i].second);
+			}
+		}
+		return result;
+	}
+
 private:
 	BoundingSpheresHierarchy(const BoundingSpheresHierarchy&);
 	const BoundingSpheresHierarchy& operator=(const BoundingSpheresHierarchy&);
@@ -160,7 +189,7 @@ private:
 		if(!spheres.empty())
 		{
 			std::vector<bool> allowed(spheres.size(), true);
-			const std::vector<std::size_t> global_traversal=sort_objects_by_functor_result(spheres, std::tr1::bind(maximal_distance_from_point_to_sphere<SphereType, SphereType>, spheres[0], std::tr1::placeholders::_1));
+			const std::vector<std::size_t> global_traversal=sort_objects_by_distance_to_one_of_them(spheres, 0, maximal_distance_from_point_to_sphere<SphereType, SphereType>);
 			for(std::size_t k=0;k<spheres.size();k++)
 			{
 				const std::size_t i=global_traversal[k];
