@@ -41,7 +41,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 	log=QuadruplesLog();
 	QuadruplesMap quadruples_map;
 	TriplesSet processed_triples_set;
-	std::vector< Face<Sphere> > stack=find_first_faces(bsh, 0, false, log.finding_first_faces_iterations);
+	std::vector< Face<Sphere> > stack=find_first_faces(bsh, 0, log.finding_first_faces_iterations, processed_triples_set);
 	if(!stack.empty())
 	{
 		TriplesMap stack_map;
