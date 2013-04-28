@@ -16,12 +16,11 @@ namespace apollo2
 namespace apollonius_triangulation
 {
 
-template<typename SphereType, typename TriplesSetType>
+template<typename SphereType>
 std::vector< Face<SphereType> > find_first_faces(
 		const BoundingSpheresHierarchy<SphereType>& bsh,
 		const std::size_t starting_sphere_id,
 		std::size_t& iterations_count,
-		const TriplesSetType& forbidden_triples_set,
 		const bool fix_starting_sphere_id=false,
 		const bool allow_quadruples_with_two_tangent_spheres=false,
 		const std::size_t max_size_of_traversal=std::numeric_limits<std::size_t>::max(),
@@ -42,17 +41,14 @@ std::vector< Face<SphereType> > find_first_faces(
 					{
 						iterations_count++;
 						const Triple triple(traversal[a], traversal[b], traversal[c]);
-						if(forbidden_triples_set.count(triple)==0)
+						const Quadruple quadruple(triple, traversal[d]);
+						const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
+						if((tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
+								|| (allow_quadruples_with_two_tangent_spheres && tangents.size()==2
+										&& (find_any_collision(bsh, tangents.back()).empty() || find_any_collision(bsh, tangents.front()).empty())))
 						{
-							Quadruple quadruple(triple, traversal[d]);
-							const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(spheres[quadruple.get(0)], spheres[quadruple.get(1)], spheres[quadruple.get(2)], spheres[quadruple.get(3)]);
-							if((tangents.size()==1 && find_any_collision(bsh, tangents.front()).empty())
-									|| (allow_quadruples_with_two_tangent_spheres && tangents.size()==2
-											&& (find_any_collision(bsh, tangents.back()).empty() || find_any_collision(bsh, tangents.front()).empty())))
-							{
-								result.push_back(Face<SphereType>(bsh.leaves_spheres(), triple, bsh.min_input_radius()));
-								return result;
-							}
+							result.push_back(Face<SphereType>(bsh.leaves_spheres(), triple, bsh.min_input_radius()));
+							return result;
 						}
 					}
 				}
