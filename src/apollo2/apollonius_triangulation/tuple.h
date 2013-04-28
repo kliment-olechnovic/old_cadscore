@@ -51,25 +51,25 @@ public:
 
 	Tuple(const std::size_t a, const std::size_t b)
 	{
-		v_[0]=a;
-		v_[1]=b;
+		if(0<N) v_[0]=a;
+		if(1<N) v_[1]=b;
 		sort();
 	}
 
 	Tuple(const std::size_t a, const std::size_t b, const std::size_t c)
 	{
-		v_[0]=a;
-		v_[1]=b;
-		v_[2]=c;
+		if(0<N) v_[0]=a;
+		if(1<N) v_[1]=b;
+		if(2<N) v_[2]=c;
 		sort();
 	}
 
 	Tuple(const std::size_t a, const std::size_t b, const std::size_t c, const std::size_t d)
 	{
-		v_[0]=a;
-		v_[1]=b;
-		v_[2]=c;
-		v_[3]=d;
+		if(0<N) v_[0]=a;
+		if(1<N) v_[1]=b;
+		if(2<N) v_[2]=c;
+		if(3<N) v_[3]=d;
 		sort();
 	}
 
