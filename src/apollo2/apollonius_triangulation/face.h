@@ -153,6 +153,7 @@ public:
 		return (
 				can_have_e_
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[0].second, threshold_distance_for_e_checking) || sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[1].second, threshold_distance_for_e_checking))
+				&& (!can_have_d_ || tangent_planes_disks_.size()!=2 || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 0) || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 1))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
 				);
 	}
@@ -259,6 +260,19 @@ private:
 				tangent_planes_disks_.clear();
 			}
 		}
+	}
+
+	template<typename InputSphereType>
+	bool sphere_hits_cylinder_of_tangent_plane_disk(const InputSphereType& input_sphere, const std::size_t d_number) const
+	{
+		if(d_number<2 && tangent_planes_disks_.size()==2)
+		{
+			const double squared_distance_to_disk_center=squared_distance_from_point_to_point(input_sphere, tangent_planes_disks_[d_number]);
+			const double projection_on_disk_normal=dot_product(tangent_planes_[d_number].second, sub_of_points<PODPoint>(input_sphere, tangent_planes_disks_[d_number]));
+			const double projection_on_disk_plane=sqrt(squared_distance_to_disk_center-projection_on_disk_normal*projection_on_disk_normal);
+			return less(projection_on_disk_plane-input_sphere.r, tangent_planes_disks_[d_number].r);
+		}
+		return false;
 	}
 
 	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
