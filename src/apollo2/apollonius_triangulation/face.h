@@ -247,9 +247,16 @@ private:
 			const std::vector<SimpleSphere> minimal_tangent_sphere=TangentSphereOfThreeSpheres::calculate((*a_sphere_), (*b_sphere_), (*c_sphere_));
 			if(minimal_tangent_sphere.size()==1)
 			{
-				middle_region_appriximation_sphere_.first=true;
-				middle_region_appriximation_sphere_.second=minimal_tangent_sphere.front();
-				middle_region_appriximation_sphere_.second.r+=std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)));
+				const std::vector<SimpleSphere> disk=TangentSphereOfThreeSpheres::calculate(
+						SimpleSphere(SimplePoint(*a_sphere_)+(tangent_planes_[0].second*(a_sphere_->r)), 0),
+						SimpleSphere(SimplePoint(*b_sphere_)+(tangent_planes_[0].second*(b_sphere_->r)), 0),
+						SimpleSphere(SimplePoint(*c_sphere_)+(tangent_planes_[0].second*(c_sphere_->r)), 0));
+				if(disk.size()==1)
+				{
+					middle_region_appriximation_sphere_.first=true;
+					middle_region_appriximation_sphere_.second=minimal_tangent_sphere.front();
+					middle_region_appriximation_sphere_.second.r=distance_from_point_to_point(minimal_tangent_sphere.front(), disk.front())+disk.front().r;
+				}
 			}
 		}
 	}
