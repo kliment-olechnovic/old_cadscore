@@ -5,6 +5,7 @@
 
 #include "tangent_plane_of_three_spheres.h"
 #include "tangent_sphere_of_four_spheres.h"
+#include "tangent_sphere_of_three_spheres.h"
 
 #include "tuple.h"
 
@@ -36,11 +37,8 @@ public:
 		if(can_have_d_)
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
-			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
-			if(halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
-			{
-				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
-			}
+			init_abc_centers_plane_normal();
+			init_tangent_planes_disks();
 		}
 		else
 		{
@@ -227,6 +225,42 @@ public:
 	}
 
 private:
+	void init_abc_centers_plane_normal()
+	{
+		if(can_have_d_)
+		{
+			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
+			if(halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
+			{
+				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
+			}
+		}
+	}
+
+	void init_tangent_planes_disks()
+	{
+		tangent_planes_disks_.clear();
+		if(can_have_d_)
+		{
+			tangent_planes_disks_.reserve(2);
+			for(int i=0;i<2;i++)
+			{
+				const std::vector<SimpleSphere> disk=TangentSphereOfThreeSpheres::calculate(
+						SimpleSphere(SimplePoint(*a_sphere_)+(tangent_planes_[i].second*(a_sphere_->r)), 0),
+						SimpleSphere(SimplePoint(*b_sphere_)+(tangent_planes_[i].second*(b_sphere_->r)), 0),
+						SimpleSphere(SimplePoint(*c_sphere_)+(tangent_planes_[i].second*(c_sphere_->r)), 0));
+				if(disk.size()==1)
+				{
+					tangent_planes_disks_.push_back(disk.front());
+				}
+			}
+			if(tangent_planes_disks_.size()!=2)
+			{
+				tangent_planes_disks_.clear();
+			}
+		}
+	}
+
 	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
 	{
 		std::vector< std::pair<std::size_t, SimpleSphere> > recorded_ids_and_tangent_spheres;
@@ -271,6 +305,7 @@ private:
 	bool can_have_e_;
 	double threshold_distance_for_e_checking;
 	SimplePoint abc_centers_plane_normal_;
+	std::vector<SimpleSphere> tangent_planes_disks_;
 };
 
 }

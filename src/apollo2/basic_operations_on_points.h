@@ -133,6 +133,12 @@ int halfspace_of_point(const InputPointTypeA& plane_point, const InputPointTypeB
 	return 0;
 }
 
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC, typename InputPointTypeD>
+double signed_volume_of_tetrahedron(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c, const InputPointTypeD& d)
+{
+	return (dot_product(sub_of_points<PODPoint>(a, d), cross_product<PODPoint>(sub_of_points<PODPoint>(b, d), sub_of_points<PODPoint>(c, d)))/6);
+}
+
 struct SimplePoint
 {
 	double x;
