@@ -38,7 +38,7 @@ public:
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
 			init_abc_centers_plane_normal();
-			init_tangent_planes_disks();
+			init_middle_region_appriximation_sphere_();
 		}
 		else
 		{
@@ -152,9 +152,9 @@ public:
 	{
 		return (
 				can_have_e_
+				&& (!can_have_d_ || !middle_region_appriximation_sphere_.first || sphere_intersects_sphere(middle_region_appriximation_sphere_.second, input_sphere))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[0].second, threshold_distance_for_e_checking) || sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[1].second, threshold_distance_for_e_checking))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
-				&& (!can_have_d_ || tangent_planes_disks_.size()!=2 || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 0) || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 1))
 				);
 	}
 
@@ -165,6 +165,7 @@ public:
 				&& (e_id!=npos)
 				&& (!abc_ids_.contains(e_id))
 				&& (!can_have_d_ || (e_id!=d_ids_and_tangent_spheres_[0].first && e_id!=d_ids_and_tangent_spheres_[1].first))
+				&& (!can_have_d_ || !middle_region_appriximation_sphere_.first || sphere_intersects_sphere(middle_region_appriximation_sphere_.second, spheres_->at(e_id)))
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere_with_expansion(spheres_->at(e_id), d_ids_and_tangent_spheres_[0].second, threshold_distance_for_e_checking) || sphere_intersects_sphere_with_expansion(spheres_->at(e_id), d_ids_and_tangent_spheres_[1].second, threshold_distance_for_e_checking))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, spheres_->at(e_id))==-1 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, spheres_->at(e_id))==-1))
 			)
@@ -238,41 +239,19 @@ private:
 		}
 	}
 
-	void init_tangent_planes_disks()
+	void init_middle_region_appriximation_sphere_()
 	{
-		tangent_planes_disks_.clear();
+		middle_region_appriximation_sphere_.first=false;
 		if(can_have_d_)
 		{
-			tangent_planes_disks_.reserve(2);
-			for(int i=0;i<2;i++)
+			const std::vector<SimpleSphere> minimal_tangent_sphere=TangentSphereOfThreeSpheres::calculate((*a_sphere_), (*b_sphere_), (*c_sphere_));
+			if(minimal_tangent_sphere.size()==1)
 			{
-				const std::vector<SimpleSphere> disk=TangentSphereOfThreeSpheres::calculate(
-						SimpleSphere(SimplePoint(*a_sphere_)+(tangent_planes_[i].second*(a_sphere_->r)), 0),
-						SimpleSphere(SimplePoint(*b_sphere_)+(tangent_planes_[i].second*(b_sphere_->r)), 0),
-						SimpleSphere(SimplePoint(*c_sphere_)+(tangent_planes_[i].second*(c_sphere_->r)), 0));
-				if(disk.size()==1)
-				{
-					tangent_planes_disks_.push_back(disk.front());
-				}
-			}
-			if(tangent_planes_disks_.size()!=2)
-			{
-				tangent_planes_disks_.clear();
+				middle_region_appriximation_sphere_.first=true;
+				middle_region_appriximation_sphere_.second=minimal_tangent_sphere.front();
+				middle_region_appriximation_sphere_.second.r+=std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)));
 			}
 		}
-	}
-
-	template<typename InputSphereType>
-	bool sphere_hits_cylinder_of_tangent_plane_disk(const InputSphereType& input_sphere, const std::size_t d_number) const
-	{
-		if(d_number<2 && tangent_planes_disks_.size()==2)
-		{
-			const double squared_distance_to_disk_center=squared_distance_from_point_to_point(input_sphere, tangent_planes_disks_[d_number]);
-			const double projection_on_disk_normal=dot_product(tangent_planes_[d_number].second, sub_of_points<PODPoint>(input_sphere, tangent_planes_disks_[d_number]));
-			const double projection_on_disk_plane=sqrt(squared_distance_to_disk_center-projection_on_disk_normal*projection_on_disk_normal);
-			return less(projection_on_disk_plane-input_sphere.r, tangent_planes_disks_[d_number].r);
-		}
-		return false;
 	}
 
 	std::vector< std::pair<std::size_t, SimpleSphere> > collect_all_recorded_ids_and_tangent_spheres(const bool with_d0, const bool with_d1, const bool with_e) const
@@ -319,7 +298,7 @@ private:
 	bool can_have_e_;
 	double threshold_distance_for_e_checking;
 	SimplePoint abc_centers_plane_normal_;
-	std::vector<SimpleSphere> tangent_planes_disks_;
+	std::pair<bool, SimpleSphere> middle_region_appriximation_sphere_;
 };
 
 }
