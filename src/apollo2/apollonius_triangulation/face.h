@@ -153,8 +153,8 @@ public:
 		return (
 				can_have_e_
 				&& (!can_have_d_ || d_ids_and_tangent_spheres_[0].first==npos || d_ids_and_tangent_spheres_[1].first==npos || sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[0].second, threshold_distance_for_e_checking) || sphere_intersects_sphere_with_expansion(input_sphere, d_ids_and_tangent_spheres_[1].second, threshold_distance_for_e_checking))
-				&& (!can_have_d_ || tangent_planes_disks_.size()!=2 || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 0) || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 1))
 				&& (!can_have_d_ || (halfspace_of_sphere(tangent_planes_[0].first, tangent_planes_[0].second, input_sphere)<=0 && halfspace_of_sphere(tangent_planes_[1].first, tangent_planes_[1].second, input_sphere)<=0))
+				&& (!can_have_d_ || tangent_planes_disks_.size()!=2 || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 0) || sphere_hits_cylinder_of_tangent_plane_disk(input_sphere, 1))
 				);
 	}
 
