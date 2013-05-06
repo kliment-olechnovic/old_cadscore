@@ -51,7 +51,16 @@ public:
 			std::vector< std::vector<int> > scores_matrix(seq1.size()+1, std::vector<int>(seq2.size()+1, 0));
 			std::vector< std::vector<int> > directions_matrix(seq1.size()+1, std::vector<int>(seq2.size()+1, 0));
 			int overall_max_score=0;
-			std::pair<std::size_t, std::size_t> overall_max_score_position(0, 0);
+			for(std::size_t i=1;i<=seq1.size();i++)
+			{
+				scores_matrix[i][0]=((i==1) ? scorer.gap_start() : (scores_matrix[i-1][0]+scorer.gap_extension()));
+				directions_matrix[i][0]=1;
+			}
+			for(std::size_t j=1;j<=seq2.size();j++)
+			{
+				scores_matrix[0][j]=((j==1) ? scorer.gap_start() : (scores_matrix[0][j-1]+scorer.gap_extension()));
+				directions_matrix[0][j]=2;
+			}
 			for(std::size_t i=1;i<=seq1.size();i++)
 			{
 				for(std::size_t j=1;j<=seq2.size();j++)
@@ -62,14 +71,9 @@ public:
 					const int deletion_score=scores_matrix[i-1][j]+(directions_matrix[i-1][j]!=1 ? scorer.gap_start() : scorer.gap_extension());
 					const int insertion_score=scores_matrix[i][j-1]+(directions_matrix[i][j-1]!=2 ? scorer.gap_start() : scorer.gap_extension());
 					const int max_score=std::max(match_score, std::max(deletion_score, insertion_score));
-					const int current_score=max_score;
-					scores_matrix[i][j]=current_score;
+					scores_matrix[i][j]=max_score;
 					directions_matrix[i][j]=(max_score==insertion_score ? 2 : (max_score==deletion_score ? 1 : 0));
-					if(overall_max_score<=current_score)
-					{
-						overall_max_score=current_score;
-						overall_max_score_position=std::make_pair(i, j);
-					}
+					overall_max_score=std::max(overall_max_score, max_score);
 				}
 			}
 
