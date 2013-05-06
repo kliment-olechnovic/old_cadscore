@@ -31,7 +31,7 @@ public:
 		c_sphere_(&(spheres_->at(abc_ids_.get(2)))),
 		tangent_planes_(TangentPlaneOfThreeSpheres::calculate((*a_sphere_), (*b_sphere_), (*c_sphere_))),
 		can_have_d_(tangent_planes_.size()==2),
-		can_have_e_(greater(a_sphere_->r, min_sphere_radius) || greater(b_sphere_->r, min_sphere_radius) || greater(c_sphere_->r, min_sphere_radius)),
+		can_have_e_(!can_have_d_ || greater(a_sphere_->r, min_sphere_radius) || greater(b_sphere_->r, min_sphere_radius) || greater(c_sphere_->r, min_sphere_radius)),
 		threshold_distance_for_e_checking(std::max(0.0, std::max(a_sphere_->r, std::max(b_sphere_->r, c_sphere_->r)))*2-2*min_sphere_radius)
 	{
 		if(can_have_d_)
