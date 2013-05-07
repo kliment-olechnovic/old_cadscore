@@ -10,7 +10,7 @@
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--epsilon: --bsi-init-radius: --as-points --print-log --check");
+	clo.check_allowed_options("--epsilon: --bsi-init-radius: --as-points --skip-output --print-log --check");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -20,6 +20,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
 	const bool as_points=clo.isopt("--as-points");
+	const bool skip_output=clo.isopt("--skip-output");
 	const bool print_log=clo.isopt("--print-log");
 	const bool check=clo.isopt("--check");
 
@@ -40,7 +41,10 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 
 	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct(atoms, bsi_init_radius);
 
-	apollo2::ApolloniusTriangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
+	if(!skip_output)
+	{
+		apollo2::ApolloniusTriangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
+	}
 
 	if(print_log)
 	{
@@ -52,4 +56,3 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		std::cerr << "check " << (apollo2::ApolloniusTriangulation::check_quadruples_map(atoms, apollonius_triangulation_result.quadruples_map)) << "\n";
 	}
 }
-
