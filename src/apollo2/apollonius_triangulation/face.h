@@ -6,7 +6,6 @@
 #include "tangent_plane_of_three_spheres.h"
 #include "tangent_sphere_of_four_spheres.h"
 #include "tangent_sphere_of_three_spheres.h"
-
 #include "tuple.h"
 
 namespace apollo2
@@ -78,14 +77,33 @@ public:
 			)
 		{
 			const std::vector<SimpleSphere> tangent_spheres=TangentSphereOfFourSpheres::calculate<SimpleSphere>((*a_sphere_), (*b_sphere_), (*c_sphere_), spheres_->at(d_id));
-			for(std::size_t i=0;i<tangent_spheres.size();i++)
+			if(!tangent_spheres.empty())
 			{
+				std::size_t i=0;
+				if(tangent_spheres.size()==2)
+				{
+					const int mult=(d_number==0 ? 1 : -1);
+					const double hs0=halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_spheres[0])*mult;
+					const double hs1=halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_spheres[1])*mult;
+					if(hs0==1 && hs1==-1)
+					{
+						i=0;
+					}
+					else if(hs0==-1 && hs1==1)
+					{
+						i=1;
+					}
+					else if(hs0==-1 && hs1==-1)
+					{
+						i=(tangent_spheres[0].r<tangent_spheres[1].r ? 0 : 1);
+					}
+					else if(hs0==1 && hs1==1)
+					{
+						i=(tangent_spheres[0].r>tangent_spheres[1].r ? 0 : 1);
+					}
+				}
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
-				if(
-						(!sphere_intersects_recorded_sphere(d_ids_and_tangent_spheres_, tangent_sphere, d_number))
-						&& (!sphere_intersects_recorded_sphere(e_ids_and_tangent_spheres_, tangent_sphere, npos))
-						&& (tangent_spheres.size()==1 || (halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_sphere)==(d_number==0 ? 1 : -1)))
-					)
+				if(!sphere_intersects_recorded_sphere(d_ids_and_tangent_spheres_, tangent_sphere) && !sphere_intersects_recorded_sphere(e_ids_and_tangent_spheres_, tangent_sphere))
 				{
 					return std::make_pair(true, tangent_sphere);
 				}
@@ -175,10 +193,7 @@ public:
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
-				if(
-						(!sphere_intersects_recorded_sphere(d_ids_and_tangent_spheres_, tangent_sphere, npos))
-						&& (!sphere_intersects_recorded_sphere(e_ids_and_tangent_spheres_, tangent_sphere, npos))
-					)
+				if(!sphere_intersects_recorded_sphere(d_ids_and_tangent_spheres_, tangent_sphere) && !sphere_intersects_recorded_sphere(e_ids_and_tangent_spheres_, tangent_sphere))
 				{
 					valid_tangent_spheres.push_back(tangent_sphere);
 				}
@@ -281,11 +296,11 @@ private:
 	}
 
 	template<typename InputSphereType>
-	bool sphere_intersects_recorded_sphere(const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const InputSphereType& input_sphere, const std::size_t excluding_position) const
+	bool sphere_intersects_recorded_sphere(const std::vector< std::pair<std::size_t, SimpleSphere> >& recorded_ids_and_tangent_spheres, const InputSphereType& input_sphere) const
 	{
 		for(std::size_t i=0;i<recorded_ids_and_tangent_spheres.size();i++)
 		{
-			if(i!=excluding_position && recorded_ids_and_tangent_spheres[i].first!=npos && sphere_intersects_sphere(input_sphere, spheres_->at(recorded_ids_and_tangent_spheres[i].first)))
+			if(recorded_ids_and_tangent_spheres[i].first!=npos && sphere_intersects_sphere(input_sphere, spheres_->at(recorded_ids_and_tangent_spheres[i].first)))
 			{
 				return true;
 			}
