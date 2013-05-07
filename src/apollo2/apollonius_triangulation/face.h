@@ -36,7 +36,7 @@ public:
 		if(can_have_d_)
 		{
 			d_ids_and_tangent_spheres_.resize(2, std::pair<std::size_t, SimpleSphere>(npos, SimpleSphere()));
-			init_abc_centers_plane_normal();
+			init_central_planes();
 			init_middle_region_appriximation_sphere_();
 		}
 		else
@@ -82,9 +82,8 @@ public:
 				std::size_t i=0;
 				if(tangent_spheres.size()==2)
 				{
-					const int mult=(d_number==0 ? 1 : -1);
-					const double hs0=halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_spheres[0])*mult;
-					const double hs1=halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_spheres[1])*mult;
+					const double hs0=halfspace_of_point(central_planes_[d_number].first, central_planes_[d_number].second, tangent_spheres[0]);
+					const double hs1=halfspace_of_point(central_planes_[d_number].first, central_planes_[d_number].second, tangent_spheres[1]);
 					if(hs0==1 && hs1==-1)
 					{
 						i=0;
@@ -242,15 +241,16 @@ public:
 	}
 
 private:
-	void init_abc_centers_plane_normal()
+	void init_central_planes()
 	{
+		central_planes_.clear();
 		if(can_have_d_)
 		{
-			abc_centers_plane_normal_=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
-			if(halfspace_of_point((*a_sphere_), abc_centers_plane_normal_, tangent_planes_[0].first+tangent_planes_[0].second)!=1)
-			{
-				abc_centers_plane_normal_=abc_centers_plane_normal_.inverted();
-			}
+			central_planes_.resize(2);
+			const SimplePoint centeral_plane_normal=plane_normal_from_three_points<SimplePoint>((*a_sphere_), (*b_sphere_), (*c_sphere_));
+			const bool consistent_orientation=(halfspace_of_point((*a_sphere_), centeral_plane_normal, (tangent_planes_[0].first+tangent_planes_[0].second))==1);
+			central_planes_[0]=std::make_pair(SimplePoint(*a_sphere_), consistent_orientation ? centeral_plane_normal : centeral_plane_normal.inverted());
+			central_planes_[1]=std::make_pair(SimplePoint(*a_sphere_), consistent_orientation ? centeral_plane_normal.inverted() : centeral_plane_normal);
 		}
 	}
 
@@ -314,12 +314,12 @@ private:
 	const Sphere* b_sphere_;
 	const Sphere* c_sphere_;
 	std::vector< std::pair<SimplePoint, SimplePoint> > tangent_planes_;
+	std::vector< std::pair<SimplePoint, SimplePoint> > central_planes_;
 	std::vector< std::pair<std::size_t, SimpleSphere> > d_ids_and_tangent_spheres_;
 	std::vector< std::pair<std::size_t, SimpleSphere> > e_ids_and_tangent_spheres_;
 	bool can_have_d_;
 	bool can_have_e_;
 	double threshold_distance_for_e_checking;
-	SimplePoint abc_centers_plane_normal_;
 	std::pair<bool, SimpleSphere> middle_region_appriximation_sphere_;
 };
 
