@@ -10,7 +10,7 @@
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--epsilon: --bsi-init-radius: --as-points --skip-output --print-log --check");
+	clo.check_allowed_options("--epsilon: --bsi-init-radius: --use-one-radius --skip-output --print-log --check");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -19,7 +19,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	}
 
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
-	const bool as_points=clo.isopt("--as-points");
+	const bool use_one_radius=clo.isopt("--use-one-radius");
 	const bool skip_output=clo.isopt("--skip-output");
 	const bool print_log=clo.isopt("--print-log");
 	const bool check=clo.isopt("--check");
@@ -31,7 +31,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	if(as_points>0)
+	if(use_one_radius>0)
 	{
 		for(std::size_t i=0;i<atoms.size();i++)
 		{
@@ -48,11 +48,12 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 
 	if(print_log)
 	{
+		std::clog << "atoms " <<  atoms.size() << "\n";
 		apollo2::ApolloniusTriangulation::print_result_log(apollonius_triangulation_result, std::clog);
 	}
 
 	if(check)
 	{
-		std::cerr << "check " << (apollo2::ApolloniusTriangulation::check_quadruples_map(atoms, apollonius_triangulation_result.quadruples_map)) << "\n";
+		std::clog << "check " << (apollo2::ApolloniusTriangulation::check_quadruples_map(atoms, apollonius_triangulation_result.quadruples_map)) << "\n";
 	}
 }
