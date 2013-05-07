@@ -22,6 +22,7 @@ typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple:
 struct QuadruplesLog
 {
 	std::size_t quadruples;
+	std::size_t processed_faces;
 	std::size_t tangent_spheres;
 	std::size_t difficult_faces;
 	std::size_t produced_faces;
@@ -56,6 +57,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 			stack.pop_back();
 			stack_map.erase(face.abc_ids());
 			processed_triples_set.insert(face.abc_ids());
+			log.processed_faces++;
 			if(!face.can_have_d())
 			{
 				log.difficult_faces++;
