@@ -159,6 +159,39 @@ public:
 		output << "ignored_spheres                 " << result.ignored_spheres_ids.size() << "\n";
 	}
 
+	template<typename SphereType>
+	static bool check_quadruples_map(const std::vector<SphereType>& spheres, const QuadruplesMap& quadruples_map)
+	{
+		for(typename QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		{
+			const QuadruplesMap::key_type& q=it->first;
+			const QuadruplesMap::mapped_type& ts=it->second;
+			if(q.has_repetetions() || ts.empty() || ts.size()>2 || (ts.size()==2 && spheres_equal(ts.front(), ts.back())))
+			{
+				return false;
+			}
+			for(std::size_t i=0;i<ts.size();i++)
+			{
+				const SimpleSphere& t=ts[i];
+				for(int j=0;j<4;j++)
+				{
+					if(!sphere_touches_sphere(t, spheres[q.get(j)]))
+					{
+						return false;
+					}
+				}
+				for(std::size_t j=0;j<spheres.size();j++)
+				{
+					if(sphere_intersects_sphere(t, spheres[j]))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 private:
 	typedef std::map<QuadruplesMap::key_type, QuadruplesMap::mapped_type> QuadruplesOrderedMap;
 
