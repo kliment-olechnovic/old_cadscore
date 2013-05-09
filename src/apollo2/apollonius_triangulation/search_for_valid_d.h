@@ -32,6 +32,7 @@ struct LeafCheckerForValidD
 {
 	Face<SphereType>& face;
 	const std::size_t d_number;
+	std::tr1::unordered_set<std::size_t> safety_monitor;
 
 	LeafCheckerForValidD(Face<SphereType>& target, const std::size_t d_number) : face(target), d_number(d_number)
 	{
@@ -42,9 +43,10 @@ struct LeafCheckerForValidD
 		if(face.has_d(d_number) && sphere_intersects_sphere(sphere, face.get_d_tangent_sphere(d_number)))
 		{
 			const std::pair<bool, SimpleSphere> check_result=face.check_candidate_for_d(id, d_number);
-			if(check_result.first)
+			if(check_result.first && safety_monitor.count(id)==0)
 			{
 				face.set_d(id, d_number, check_result.second);
+				safety_monitor.insert(id);
 				return std::make_pair(true, true);
 			}
 			else
