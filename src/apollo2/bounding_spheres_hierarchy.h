@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 #include "basic_operations_on_spheres.h"
 
