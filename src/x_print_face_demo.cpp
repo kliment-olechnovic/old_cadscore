@@ -144,6 +144,15 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 			opengl_printer.print_alpha(0.5);
 			opengl_printer.print_tringle_fan(vertices, tangent_planes[i].second, auxiliaries::Color::from_code(i==0 ? 0x37DE6A : 0xFF9C40));
 		}
+
+		std::size_t i=0;
+		while(i<(curve.size()/2))
+		{
+			opengl_printer.print_alpha(0.1);
+			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0xFFFFFF));
+			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0xFFFFFF));
+			i+=30;
+		}
 	}
 
 	std::cout << "cmd.set('ray_shadows', 'off')\n\n";
