@@ -63,6 +63,11 @@ public:
 		string_stream_ << "    SPHERE, " << point_to_string(sphere) << ", " << sphere.r << ",\n";
 	}
 
+	void print_alpha(const double alpha)
+	{
+		string_stream_ << "    ALPHA, " << alpha << ",\n";
+	}
+
 private:
 	OpenGLPrinter(const OpenGLPrinter& /*opengl_printer*/);
 	OpenGLPrinter& operator=(const OpenGLPrinter& /*opengl_printer*/);
