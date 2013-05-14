@@ -132,31 +132,23 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 				opengl_printer.print_triangle_strip(vertices, normals);
 			}
 		}
-	}
 
-	for(int i=0;i<2;i++)
-	{
-		std::vector<apollo2::SimplePoint> touches;
-		for(std::size_t j=0;j<generators.size();j++)
+		for(int i=0;i<2;i++)
 		{
-			touches.push_back(apollo2::SimplePoint(generators[j])+(tangent_planes[i].second*generators[j].r));
+			std::vector<apollo2::SimplePoint> vertices=circles_vertices[i==0 ? 0 : circles_vertices.size()-1];
+			std::vector<apollo2::SimplePoint> normals=circles_normals[i==0 ? 0 : circles_normals.size()-1];
+			for(std::size_t j=0;j<vertices.size();j++)
+			{
+				vertices[j]=vertices[j]+(normals[j]*2.5);
+			}
+			opengl_printer.print_alpha(0.5);
+			opengl_printer.print_tringle_fan(vertices, tangent_planes[i].second, auxiliaries::Color::from_code(i==0 ? 0x37DE6A : 0xFF9C40));
 		}
-		apollo2::SimplePoint mass_center;
-		for(std::size_t j=0;j<touches.size();j++)
-		{
-			mass_center=mass_center+touches[j];
-		}
-		mass_center=mass_center*(1.0/3.0);
-		for(std::size_t j=0;j<touches.size();j++)
-		{
-			touches[j]=touches[j]+((touches[j]-mass_center).unit()*(3+generators[j].r));
-		}
-		opengl_printer.print_alpha(0.5);
-		opengl_printer.print_tringle_fan(touches, tangent_planes[i].second, auxiliaries::Color::from_code(i==0 ? 0x37DE6A : 0xFF9C40));
 	}
 
 	std::cout << "cmd.set('ray_shadows', 'off')\n\n";
 	std::cout << "cmd.set('ray_shadow', 'off')\n\n";
 	std::cout << "cmd.set('two_sided_lighting', 'on')\n\n";
 	std::cout << "cmd.set('cgo_line_width', 3)\n\n";
+	std::cout << "cmd.set('bg_rgb', [1,1,1])\n\n";
 }
