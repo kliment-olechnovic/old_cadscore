@@ -38,6 +38,25 @@ public:
 		return input_radii_range_.second;
 	}
 
+	std::size_t levels() const
+	{
+		return clusters_layers_.size();
+	}
+
+	std::vector<SimpleSphere> collect_bounding_spheres(const std::size_t level) const
+	{
+		std::vector<SimpleSphere> result;
+		if(level<clusters_layers_.size())
+		{
+			result.reserve(clusters_layers_[level].size());
+			for(std::size_t i=0;i<clusters_layers_[level].size();i++)
+			{
+				result.push_back(SimpleSphere(clusters_layers_[level][i]));
+			}
+		}
+		return result;
+	}
+
 	void ignore_leaf_sphere(const std::size_t leaf_sphere_id)
 	{
 		if(!clusters_layers_.empty())
