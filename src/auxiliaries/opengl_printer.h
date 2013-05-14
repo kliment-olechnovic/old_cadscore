@@ -68,6 +68,25 @@ public:
 		string_stream_ << "    ALPHA, " << alpha << ",\n";
 	}
 
+	void print_color(const auxiliaries::Color& color)
+	{
+		string_stream_ << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
+	}
+
+	template<typename PointType>
+	void print_line_strip(const std::vector<PointType>& vertices)
+	{
+		if(!vertices.empty())
+		{
+			string_stream_ << "    BEGIN, LINE_STRIP,\n";
+			for(std::size_t i=0;i<vertices.size();i++)
+			{
+				string_stream_ << "    VERTEX, " << point_to_string(vertices[i]) << ",\n";
+			}
+			string_stream_ << "    END,\n";
+		}
+	}
+
 private:
 	OpenGLPrinter(const OpenGLPrinter& /*opengl_printer*/);
 	OpenGLPrinter& operator=(const OpenGLPrinter& /*opengl_printer*/);
