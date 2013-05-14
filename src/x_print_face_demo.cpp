@@ -2,6 +2,8 @@
 
 #include "apollo2/apollonius_triangulation/tangent_sphere_of_three_spheres.h"
 
+#include "apollo/rotation.h"
+
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/opengl_printer.h"
 
@@ -31,6 +33,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		opengl_printer.print_sphere(apollo2::SimpleSphere(min_tangent, 0.1), auxiliaries::Color::from_code(0xA61700));
 
 		std::deque<apollo2::SimplePoint> curve;
+		std::deque<double> radii;
 		{
 			const double r_mult=1.01;
 			const double r_max=5;
@@ -45,15 +48,73 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 						if(h<0)
 						{
 							curve.push_front(apollo2::SimplePoint(tangent_spheres[i]));
+							radii.push_front(r);
 						}
 						else
 						{
 							curve.push_back(apollo2::SimplePoint(tangent_spheres[i]));
+							radii.push_back(r);
 						}
 					}
 				}
 			}
 		}
+
 		opengl_printer.print_line_strip(std::vector<apollo2::SimplePoint>(curve.begin(), curve.end()));
+
+		std::vector< std::vector<apollo2::SimplePoint> > circles_vertices;
+		std::vector< std::vector<apollo2::SimplePoint> > circles_normals;
+		for(std::size_t i=0;i<curve.size();i++)
+		{
+			const apollo2::SimpleSphere tangent(curve[i], radii[i]);
+			std::vector<apollo2::SimpleSphere> touches;
+			for(std::size_t j=0;j<generators.size();j++)
+			{
+				apollo2::SimplePoint a(tangent);
+				apollo2::SimplePoint b(generators[j]);
+				apollo2::SimplePoint ab=((b-a).unit())*tangent.r;
+				touches.push_back(apollo2::SimpleSphere(a+ab, 0.0));
+			}
+			const std::vector<apollo2::SimpleSphere> circles=apollo2::apollonius_triangulation::TangentSphereOfThreeSpheres::calculate(touches[0], touches[1], touches[2]);
+			if(circles.size()==1)
+			{
+				const apollo2::SimpleSphere& circle=circles.front();
+				const apollo2::SimplePoint orientation=apollo2::plane_normal_from_three_points<apollo2::SimplePoint>(touches[0], touches[1], touches[2]);
+				const apollo2::SimplePoint first_point(apollo2::SimplePoint(circle)-apollo2::SimplePoint(touches[0]));
+				apollo::Rotation rotation(apollo2::custom_point_from_object<apollo::SimplePoint>(orientation), 0);
+				const double angle_step=10;
+				std::vector<apollo2::SimplePoint> circle_vertices;
+				for(rotation.angle=0;rotation.angle<=360;rotation.angle+=angle_step)
+				{
+					circle_vertices.push_back(apollo2::SimplePoint(circle)+rotation.rotate<apollo2::SimplePoint>(first_point));
+				}
+				std::vector<apollo2::SimplePoint> circle_normals;
+				for(std::size_t j=0;j<circle_vertices.size();j++)
+				{
+					circle_normals.push_back((circle_vertices[j]-apollo2::SimplePoint(circle)).unit());
+				}
+				circles_vertices.push_back(circle_vertices);
+				circles_normals.push_back(circle_normals);
+			}
+		}
+
+		opengl_printer.print_color(auxiliaries::Color::from_code(0xFF5A40));
+		for(std::size_t i=0;i+1<circles_vertices.size();i++)
+		{
+			std::size_t j=i+1;
+			std::vector<apollo2::SimplePoint> vertices;
+			std::vector<apollo2::SimplePoint> normals;
+			if(circles_vertices[i].size()==circles_vertices[j].size())
+			{
+				for(std::size_t e=0;e<circles_vertices[i].size();e++)
+				{
+					vertices.push_back(circles_vertices[i][e]-(circles_normals[i][e]*0.01));
+					vertices.push_back(circles_vertices[j][e]-(circles_normals[j][e]*0.01));
+					normals.push_back(circles_normals[i][e]);
+					normals.push_back(circles_normals[j][e]);
+				}
+				opengl_printer.print_triangle_strip(vertices, normals);
+			}
+		}
 	}
 }
