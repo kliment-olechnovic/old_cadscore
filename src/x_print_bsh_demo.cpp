@@ -1,5 +1,3 @@
-#include <cstdlib>
-
 #include "protein/atom.h"
 
 #include "apollo2/bounding_spheres_hierarchy.h"

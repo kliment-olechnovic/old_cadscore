@@ -74,11 +74,76 @@ public:
 				const double real_l1_offset=virtual_y*x2/y2;
 				const double real_l2=sqrt(real_l1_offset*real_l1_offset+virtual_y*virtual_y);
 				const double real_l1=virtual_x-real_l1_offset;
-				const SimpleSphere candidate=SimpleSphere(SimplePoint(sm)+(sub_of_points<SimplePoint>(s1, sm).unit()*real_l1)+(sub_of_points<SimplePoint>(s2, sm).unit()*real_l2), (r-sm.r));
-				if(check_tangent_sphere(sm, s1, s2, candidate))
+				const SimpleSphere candidate(SimplePoint(sm)+(sub_of_points<SimplePoint>(s1, sm).unit()*real_l1)+(sub_of_points<SimplePoint>(s2, sm).unit()*real_l2), (r-sm.r));
+				if(check_tangent_sphere(sm, s1, s2, candidate) && equal(fabs(signed_volume_of_tetrahedron(sm, s1, s2, candidate)), 0))
 				{
 					results.push_back(candidate);
 				}
+			}
+		}
+
+		return results;
+	}
+
+	template<typename InputSphereTypeA, typename InputSphereTypeB, typename InputSphereTypeC>
+	static inline std::vector<SimpleSphere> calculate(const InputSphereTypeA& sm, const InputSphereTypeB& s1, const InputSphereTypeC& s2, const double custom_tangent_sphere_radius)
+	{
+		{
+			const double min_r=std::min(sm.r, std::min(s1.r, s2.r));
+			if(sm.r!=min_r)
+			{
+				if(s1.r==min_r) return calculate(s1, sm, s2, custom_tangent_sphere_radius);
+				if(s2.r==min_r) return calculate(s2, sm, s1, custom_tangent_sphere_radius);
+			}
+		}
+
+		const double r=custom_tangent_sphere_radius+sm.r;
+
+		const double x1=s1.x-sm.x;
+		const double y1=s1.y-sm.y;
+		const double z1=s1.z-sm.z;
+		const double r1=s1.r-sm.r;
+
+		const double x2=s2.x-sm.x;
+		const double y2=s2.y-sm.y;
+		const double z2=s2.z-sm.z;
+		const double r2=s2.r-sm.r;
+
+		const double a1=2*x1;
+		const double b1=2*y1;
+		const double c1=2*z1;
+		const double o1=(r+r1)*(r+r1)-(r*r)-(x1*x1+y1*y1+z1*z1);
+
+		const double a2=2*x2;
+		const double b2=2*y2;
+		const double c2=2*z2;
+		const double o2=(r+r2)*(r+r2)-(r*r)-(x2*x2+y2*y2+z2*z2);
+
+		const double ux=(c2*b1-c1*b2)/(a1*b2-a2*b1);
+		const double vx=(o2*b1-o1*b2)/(a1*b2-a2*b1);
+
+		const double uy=(c2*a1-c1*a2)/(b1*a2-b2*a1);
+		const double vy=(o2*a1-o1*a2)/(b1*a2-b2*a1);
+
+		const double a=(ux*ux+uy*uy+1);
+		const double b=2*(ux*vx+uy*vy);
+		const double c=(vx*vx+vy*vy-r*r);
+
+		const double D = b*b-4*a*c;
+
+		std::vector<double> zs;
+		if(greater_or_equal(D, 0)) {zs.push_back((-b-sqrt(fabs(D)))/(2*a));}
+		if(greater(D, 0))  {zs.push_back((-b+sqrt(fabs(D)))/(2*a));}
+
+		std::vector<SimpleSphere> results;
+		results.reserve(zs.size());
+		for(std::size_t i=0;i<zs.size();i++)
+		{
+			const double z=zs[i];
+			const SimpleSphere candidate((ux*z+vx+sm.x), (uy*z+vy+sm.y), (z+sm.z), (r-sm.r));
+			if(equal(candidate.r, custom_tangent_sphere_radius) && check_tangent_sphere(sm, s1, s2, candidate))
+			{
+				results.push_back(candidate);
 			}
 		}
 
@@ -91,8 +156,7 @@ private:
 	{
 		return (sphere_touches_sphere(tangent_sphere, s1) &&
 				sphere_touches_sphere(tangent_sphere, s2) &&
-				sphere_touches_sphere(tangent_sphere, s3) &&
-				equal(fabs(signed_volume_of_tetrahedron(s1, s2, s3, tangent_sphere)), 0));
+				sphere_touches_sphere(tangent_sphere, s3));
 	}
 };
 
