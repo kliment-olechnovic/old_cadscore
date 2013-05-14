@@ -149,8 +149,8 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		while(i<(curve.size()/2))
 		{
 			opengl_printer.print_alpha(0.1);
-			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0xFFFFFF));
-			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0xFFFFFF));
+			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0x37DE6A));
+			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0xFF9C40));
 			i+=30;
 		}
 	}
