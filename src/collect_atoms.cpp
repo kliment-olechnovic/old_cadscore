@@ -45,7 +45,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 
 void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--radius-classes: --radius-members: --HETATM --HOH --rename-chain: --auto-rename-chains");
+	clo.check_allowed_options("--radius-classes: --radius-members: --HETATM --HOH --rename-chain: --auto-rename-chains --include-insertions");
 
 	std::string radius_classes_file_name="";
 	std::string radius_members_file_name="";
@@ -59,10 +59,11 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 	const bool include_water=clo.isopt("--HOH");
 	const std::string simple_chain_renaming=clo.isopt("--rename-chain") ? clo.arg<std::string>("--rename-chain") : std::string("");
 	const bool auto_rename_chains=clo.isopt("--auto-rename-chains");
+	const bool include_insertions=clo.isopt("--include-insertions");
 
 	const protein::VanDerWaalsRadiusAssigner radius_assigner=construct_radius_assigner(radius_classes_file_name, radius_members_file_name);
 
-	std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, include_heteroatoms, include_water);
+	std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(std::cin, radius_assigner, include_heteroatoms, include_water, include_insertions);
 
 	protein::AtomsClassification::classify_atoms(atoms);
 
