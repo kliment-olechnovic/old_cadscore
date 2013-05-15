@@ -38,7 +38,7 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 				std::ifstream input(filename.c_str());
 				if(input.good())
 				{
-					const std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(input, radius_assigner, read_heteroatoms, false);
+					const std::vector<protein::Atom> atoms=protein::AtomsReading::read_atoms_from_PDB_file_stream(input, radius_assigner, read_heteroatoms, false, false);
 					if(!atoms.empty())
 					{
 						std::vector<apollo::SimpleSphere>& chain_spheres=chains[filename];
