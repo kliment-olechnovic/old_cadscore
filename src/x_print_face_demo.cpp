@@ -149,7 +149,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 				normals.push_back(tangent_planes[i].second);
 				normals.push_back(tangent_planes[i].second);
 			}
-			opengl_printer3.print_color(auxiliaries::Color::from_code(i==0 ? 0x64DE89 : 0xFFB673));
+			opengl_printer3.print_color(auxiliaries::Color::from_code(i==0 ? 0xFFB673 : 0x64DE89));
 			opengl_printer3.print_triangle_strip(vertices, normals);
 		}
 
@@ -157,8 +157,8 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		while(i<(curve.size()/2))
 		{
 			opengl_printer4.print_alpha(0.2);
-			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0x37DE6A));
-			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0xFF9C40));
+			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0xFF9C40));
+			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0x37DE6A));
 			i+=30;
 		}
 	}
@@ -168,4 +168,5 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 	std::cout << "cmd.set('two_sided_lighting', 'on')\n\n";
 	std::cout << "cmd.set('cgo_line_width', 3)\n\n";
 	std::cout << "cmd.set('bg_rgb', [1,1,1])\n\n";
+	std::cout << "cmd.set('ambient', 0.3)\n\n";
 }
