@@ -20,11 +20,14 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 	std::cout << "from pymol.cgo import *\n";
 	std::cout << "from pymol import cmd\n\n";
 
-	auxiliaries::OpenGLPrinter opengl_printer("obj1", "cgo1");
+	auxiliaries::OpenGLPrinter opengl_printer1("obj1", "cgo1");
+	auxiliaries::OpenGLPrinter opengl_printer2("obj2", "cgo2");
+	auxiliaries::OpenGLPrinter opengl_printer3("obj3", "cgo3");
+	auxiliaries::OpenGLPrinter opengl_printer4("obj4", "cgo4");
 
 	for(std::size_t i=0;i<generators.size();i++)
 	{
-		opengl_printer.print_sphere(apollo2::SimpleSphere(generators[i], generators[i].r-0.01), auxiliaries::Color::from_code(0x36BBCE));
+		opengl_printer1.print_sphere(apollo2::SimpleSphere(generators[i], generators[i].r-0.01), auxiliaries::Color::from_code(0x36BBCE));
 	}
 
 	std::vector< std::pair<apollo2::SimplePoint, apollo2::SimplePoint> > tangent_planes=apollo2::apollonius_triangulation::TangentPlaneOfThreeSpheres::calculate(generators[0], generators[1], generators[2]);
@@ -37,7 +40,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		}
 
 		const apollo2::SimpleSphere min_tangent=min_tangents.front();
-		opengl_printer.print_sphere(apollo2::SimpleSphere(min_tangent, 0.1), auxiliaries::Color::from_code(0xA61700));
+		opengl_printer1.print_sphere(apollo2::SimpleSphere(min_tangent, 0.1), auxiliaries::Color::from_code(0xA61700));
 
 		std::deque<apollo2::SimplePoint> curve;
 		std::deque<double> radii;
@@ -66,7 +69,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 			}
 		}
 
-		opengl_printer.print_line_strip(std::vector<apollo2::SimplePoint>(curve.begin(), curve.end()));
+		opengl_printer1.print_line_strip(std::vector<apollo2::SimplePoint>(curve.begin(), curve.end()));
 
 		std::vector< std::vector<apollo2::SimplePoint> > circles_vertices;
 		std::vector< std::vector<apollo2::SimplePoint> > circles_normals;
@@ -114,7 +117,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 			}
 		}
 
-		opengl_printer.print_color(auxiliaries::Color::from_code(0xFF5A40));
+		opengl_printer2.print_color(auxiliaries::Color::from_code(0xFF5A40));
 		for(std::size_t i=0;i+1<circles_vertices.size();i++)
 		{
 			std::size_t j=i+1;
@@ -129,28 +132,33 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 					normals.push_back(circles_normals[i][e]);
 					normals.push_back(circles_normals[j][e]);
 				}
-				opengl_printer.print_triangle_strip(vertices, normals);
+				opengl_printer2.print_triangle_strip(vertices, normals);
 			}
 		}
 
 		for(int i=0;i<2;i++)
 		{
-			std::vector<apollo2::SimplePoint> vertices=circles_vertices[i==0 ? 0 : circles_vertices.size()-1];
-			std::vector<apollo2::SimplePoint> normals=circles_normals[i==0 ? 0 : circles_normals.size()-1];
-			for(std::size_t j=0;j<vertices.size();j++)
+			std::vector<apollo2::SimplePoint> vertices_inner=circles_vertices[i==0 ? 0 : circles_vertices.size()-1];
+			std::vector<apollo2::SimplePoint> normals_inner=circles_normals[i==0 ? 0 : circles_normals.size()-1];
+			std::vector<apollo2::SimplePoint> vertices;
+			std::vector<apollo2::SimplePoint> normals;
+			for(std::size_t j=0;j<vertices_inner.size();j++)
 			{
-				vertices[j]=vertices[j]+(normals[j]*2.5);
+				vertices.push_back(vertices_inner[j]);
+				vertices.push_back(vertices_inner[j]+(normals_inner[j]*2.5));
+				normals.push_back(tangent_planes[i].second);
+				normals.push_back(tangent_planes[i].second);
 			}
-			opengl_printer.print_alpha(0.5);
-			opengl_printer.print_tringle_fan(vertices, tangent_planes[i].second, auxiliaries::Color::from_code(i==0 ? 0x37DE6A : 0xFF9C40));
+			opengl_printer3.print_color(auxiliaries::Color::from_code(i==0 ? 0x64DE89 : 0xFFB673));
+			opengl_printer3.print_triangle_strip(vertices, normals);
 		}
 
 		std::size_t i=0;
 		while(i<(curve.size()/2))
 		{
-			opengl_printer.print_alpha(0.1);
-			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0x37DE6A));
-			opengl_printer.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0xFF9C40));
+			opengl_printer4.print_alpha(0.2);
+			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0x37DE6A));
+			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0xFF9C40));
 			i+=30;
 		}
 	}
