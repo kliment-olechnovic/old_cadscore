@@ -1,12 +1,30 @@
 #include <iostream>
-#include <map>
-
-#include "protein/atom.h"
+#include <sstream>
 
 #include "apollo2/apollonius_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+
+std::vector<apollo2::SimpleSphere> read_spheres_from_stream(std::istream& input)
+{
+	std::vector<apollo2::SimpleSphere> result;
+	while(input.good())
+	{
+		std::string line;
+		std::getline(input, line);
+		if(!line.empty())
+		{
+			std::istringstream line_input(line);
+			apollo2::SimpleSphere sphere;
+			line_input >> sphere.x >> sphere.y >> sphere.z >> sphere.r;
+			if(!line_input.fail())
+			{
+				result.push_back(sphere);
+			}
+		}
+	}
+	return result;
+}
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
@@ -24,7 +42,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	const bool print_log=clo.isopt("--print-log");
 	const bool check=clo.isopt("--check");
 
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	std::vector<apollo2::SimpleSphere> atoms=read_spheres_from_stream(std::cin);
 
 	if(atoms.size()<4)
 	{

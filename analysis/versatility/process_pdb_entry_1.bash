@@ -25,7 +25,7 @@ OUTPUT_GOOD_LOG="$OUTPUT_DIRECTORY/$PDB_FILE_BASENAME.voroprot2.good.log"
 OUTPUT_BAD_LOG="$OUTPUT_DIRECTORY/$PDB_FILE_BASENAME.voroprot2.bad.log"
 OUTPUT_ERR="$OUTPUT_DIRECTORY/$PDB_FILE_BASENAME.voroprot2.err"
 
-zcat "$PDB_FILE_ZIPPED" | awk '/^END/{exit}1' | egrep '^ATOM' | $VOROPROT --mode collect-atoms --radius-classes "resources/vdwr_classes" --radius-members "resources/vdwr_members" --include-insertions > $ATOMS_FILE
+zcat "$PDB_FILE_ZIPPED" | awk '/^END/{exit}1' | egrep '^ATOM' | $VOROPROT --mode collect-atoms --radius-classes "resources/vdwr_classes" --radius-members "resources/vdwr_members" --include-insertions | tail -n+3 | awk '{print $6 " " $7 " " $8 " " $9}' > $ATOMS_FILE
 
 ( time -p (cat $ATOMS_FILE | $VOROPROT --mode x-calc-quadruples-2 --print-log --clog-file $CALC_LOG > /dev/null 2> $CALC_ERR) ) 2> $TIME_LOG
 
