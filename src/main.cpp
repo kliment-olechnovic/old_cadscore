@@ -30,6 +30,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo);
+void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& clo);
 void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo);
 void x_print_face_demo(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo);
@@ -96,6 +97,7 @@ int main(const int argc, const char** argv)
 		modes_map["summarize-inter-atom-contacts"]=ModeFunctionPointer(summarize_inter_atom_contacts);
 
 		modes_map["x-calc-quadruples-2"]=ModeFunctionPointer(x_calc_quadruples_2);
+		modes_map["x-compare-two-sets-of-quadruples-2"]=ModeFunctionPointer(x_compare_two_sets_of_quadruples_2);
 		modes_map["x-print-bsh-demo"]=ModeFunctionPointer(x_print_bsh_demo);
 		modes_map["x-print-face-demo"]=ModeFunctionPointer(x_print_face_demo);
 		modes_map["x-print-inter-residue-contacts-graph"]=ModeFunctionPointer(x_print_inter_residue_contacts_graph);
