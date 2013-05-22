@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
+#include <map>
 
 #include "apollonius_triangulation/search_for_valid_quadruples.h"
 #include "bounding_spheres_hierarchy.h"
