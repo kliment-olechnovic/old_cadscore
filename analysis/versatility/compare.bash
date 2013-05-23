@@ -43,7 +43,13 @@ then
   
   echo "input $PDB_FILE_BASENAME" > $OUTPUT_RESULTS
   cat $QTFIER_CALC_LOG $VOROPROT_CALC_LOG >> $OUTPUT_RESULTS
-  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES >> $OUTPUT_RESULTS
+  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES --perturbation 0.001  >> $OUTPUT_RESULTS
+  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES --perturbation 0.01 | tail -1  >> $OUTPUT_RESULTS
+  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES --perturbation 0.1 | tail -1 >> $OUTPUT_RESULTS
 fi
 
 rm -r "$TMP_DIR"
+
+echo
+cat $OUTPUT_RESULTS
+echo
