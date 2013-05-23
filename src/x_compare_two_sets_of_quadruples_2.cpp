@@ -54,36 +54,61 @@ void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& c
 	std::vector<apollo2::apollonius_triangulation::Quadruple>::iterator it=std::set_difference(quadruples1.begin(), quadruples1.end(), quadruples2.begin(), quadruples2.end(), difference.begin());
 	difference.resize(it-difference.begin());
 
-	std::vector<apollo2::apollonius_triangulation::Quadruple> unconfirmed_difference;
-	std::vector<apollo2::apollonius_triangulation::Quadruple> confirmed_difference;
+	std::vector<apollo2::apollonius_triangulation::Quadruple> valid_difference;
 	for(std::size_t i=0;i<difference.size();i++)
 	{
-		apollo2::apollonius_triangulation::Quadruple q=difference[i];
+		const apollo2::apollonius_triangulation::Quadruple q=difference[i];
 		if(q.get(0)<atoms.size() && q.get(1)<atoms.size() && q.get(2)<atoms.size() && q.get(3)<atoms.size())
 		{
 			const std::vector<apollo2::SimpleSphere> tangents=apollo2::apollonius_triangulation::TangentSphereOfFourSpheres::calculate<apollo2::SimpleSphere>(atoms.at(q.get(0)), atoms.at(q.get(1)), atoms.at(q.get(2)), atoms.at(q.get(3)));
-			if(tangents.size()>0)
+			bool valid=false;
+			for(std::size_t j=0;j<tangents.size() && !valid;j++)
 			{
-				if(apollo2::apollonius_triangulation::find_any_collision(bsh, tangents[0]).size()>0)
+				const apollo2::SimpleSphere& tangent=tangents[j];
+				if(apollo2::apollonius_triangulation::find_any_collision(bsh, tangent).empty())
 				{
-					confirmed_difference.push_back(q);
-				}
-				else if(tangents.size()==2 && apollo2::apollonius_triangulation::find_any_collision(bsh, tangents[1]).size()>0)
-				{
-					confirmed_difference.push_back(q);
-				}
-				else
-				{
-					unconfirmed_difference.push_back(q);
+					const std::vector<std::size_t> neighbors=apollo2::apollonius_triangulation::find_all_collisions(bsh, apollo2::SimpleSphere(tangent, tangent.r+0.01));
+					if(neighbors.size()==4)
+					{
+						valid=true;
+					}
+					else if(neighbors.size()>4)
+					{
+						bool found=false;
+						for(std::size_t a=0;a<neighbors.size() && !found;a++)
+						{
+							for(std::size_t b=a+1;b<neighbors.size() && !found;b++)
+							{
+								for(std::size_t c=b+1;c<neighbors.size() && !found;c++)
+								{
+									for(std::size_t d=c+1;d<neighbors.size() && !found;d++)
+									{
+										const apollo2::apollonius_triangulation::Quadruple tq(neighbors[a], neighbors[b], neighbors[c], neighbors[d]);
+										for(std::size_t e=0;e<quadruples2.size() && !found;e++)
+										{
+											if(quadruples2[e]==tq)
+											{
+												found=true;
+											}
+										}
+									}
+								}
+							}
+						}
+						if(!found)
+						{
+							valid=true;
+						}
+					}
 				}
 			}
-			else
+			if(valid)
 			{
-				unconfirmed_difference.push_back(q);
+				valid_difference.push_back(q);
 			}
 		}
 	}
 
-	std::cout << "unconfirmed_difference " << unconfirmed_difference.size() << "\n";
-	std::cout << "confirmed_difference " << confirmed_difference.size() << "\n";
+	std::cout << "all_differences " << difference.size() << "\n";
+	std::cout << "valid_differences " << valid_difference.size() << "\n";
 }
