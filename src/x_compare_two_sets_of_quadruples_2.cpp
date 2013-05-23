@@ -36,10 +36,11 @@ std::vector<apollo2::apollonius_triangulation::Quadruple> read_quadruples_from_s
 
 void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--file1: --file2:");
+	clo.check_allowed_options("--file1: --file2: --perturbation:");
 
 	std::string file1=clo.arg<std::string>("--file1");
 	std::string file2=clo.arg<std::string>("--file2");
+	const double perturbation=clo.arg<double>("--perturbation");
 
 	std::vector<apollo2::SimpleSphere> atoms=read_spheres_from_stream(std::cin);
 	apollo2::BoundingSpheresHierarchy<apollo2::SimpleSphere> bsh(atoms, 3.5, 1);
@@ -67,7 +68,7 @@ void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& c
 				const apollo2::SimpleSphere& tangent=tangents[j];
 				if(apollo2::apollonius_triangulation::find_any_collision(bsh, tangent).empty())
 				{
-					const std::vector<std::size_t> neighbors=apollo2::apollonius_triangulation::find_all_collisions(bsh, apollo2::SimpleSphere(tangent, tangent.r+0.01));
+					const std::vector<std::size_t> neighbors=apollo2::apollonius_triangulation::find_all_collisions(bsh, apollo2::SimpleSphere(tangent, tangent.r+perturbation));
 					if(neighbors.size()==4)
 					{
 						valid=true;
@@ -110,5 +111,5 @@ void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& c
 	}
 
 	std::cout << "all_differences " << difference.size() << "\n";
-	std::cout << "valid_differences " << valid_difference.size() << "\n";
+	std::cout << "valid_differences_by_" << perturbation << " " << valid_difference.size() << "\n";
 }
