@@ -6,7 +6,7 @@ namespace apollo2
 
 inline double& comparison_epsilon_reference()
 {
-	static double e=0.00001;
+	static double e=0.00000001;
 	return e;
 }
 
