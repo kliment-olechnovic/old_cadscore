@@ -87,8 +87,8 @@ private:
 		const double D=b*b-4*a*c;
 
 		std::vector<double> zs;
-		if(greater_or_equal(D,0)) {zs.push_back((-b-sqrt(D))/(2*a));}
-		if(greater(D,0))  {zs.push_back((-b+sqrt(D))/(2*a));}
+		if(greater_or_equal(D,0)) {zs.push_back((-b-sqrt(fabs(D)))/(2*a));}
+		if(greater(D,0))  {zs.push_back((-b+sqrt(fabs(D)))/(2*a));}
 
 		std::vector<OutputPointType> results;
 		results.reserve(zs.size());
