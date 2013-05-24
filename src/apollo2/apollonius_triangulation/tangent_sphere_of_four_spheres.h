@@ -78,16 +78,16 @@ public:
 		const double D = b*b-4*a*c;
 
 		std::vector<double> radiuses;
-		if(greater_or_equal(D,0))
+		if(D>=0.0)
 		{
-			if(equal(D,0))
+			if(D==0.0)
 			{
 				radiuses.push_back((-b)/(2*a));
 			}
 			else
 			{
-				radiuses.push_back((-b-sqrt(fabs(D)))/(2*a));
-				radiuses.push_back((-b+sqrt(fabs(D)))/(2*a));
+				radiuses.push_back((-b-sqrt(D))/(2*a));
+				radiuses.push_back((-b+sqrt(D))/(2*a));
 			}
 		}
 
