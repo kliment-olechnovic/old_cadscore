@@ -48,9 +48,7 @@ then
   cat $QTFIER_CALC_TIME | sed 's/^/qtfier_/' >> $OUTPUT_RESULTS
   cat $VOROPROT_CALC_LOG >> $OUTPUT_RESULTS
   cat $VOROPROT_CALC_TIME >> $OUTPUT_RESULTS
-  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES --perturbation 0.001  >> $OUTPUT_RESULTS
-  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES --perturbation 0.01 | tail -1  >> $OUTPUT_RESULTS
-  cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES --perturbation 0.1 | tail -1 >> $OUTPUT_RESULTS
+  time -p ( cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES >> $OUTPUT_RESULTS )
   
   echo
   cat $OUTPUT_RESULTS
