@@ -32,7 +32,7 @@ OUTPUT_RESULTS="$OUTPUT_DIRECTORY/$PDB_FILE_BASENAME.results"
 
 cat "$PDB_FILE_UNZIPPED" | awk '/^END/{exit}1' | egrep '^ATOM' > $QTFIER_INPUT_FILE
 
-( time -p (timeout 1200 $QTFIER $QTFIER_INPUT_FILE $TMP_DIR/ &> /dev/null) ) 2> $QTFIER_CALC_TIME
+( time -p (timeout 600 $QTFIER $QTFIER_INPUT_FILE $TMP_DIR/ &> /dev/null) ) 2> $QTFIER_CALC_TIME
 cat $QTFIER_CALC_RESULTS | egrep '^QTCELL' | awk '{print ($3-1) " " ($4-1) " " ($5-1) " " ($6-1)}' | awk '{split($0,array," "); asort(array); printf array[1] " " array[2] " " array[3] " " array[4] "\n"}' | sort > $QTFIER_CALC_QUADRUPLES
 cat $QTFIER_CALC_RESULTS | egrep '^MODEL' | awk '{print "qtfier_atoms " $3}' > $QTFIER_CALC_LOG
 cat $QTFIER_CALC_RESULTS | egrep '^MODEL' | awk '{print "qtfier_vertices " $4}' >> $QTFIER_CALC_LOG
@@ -40,7 +40,7 @@ cat $QTFIER_CALC_RESULTS | egrep '^MODEL' | awk '{print "qtfier_vertices " $4}' 
 if [ -s $QTFIER_CALC_LOG ]
 then
   cat $QTFIER_CALC_RESULTS | egrep '^QTVTX' | awk '{print $4 " " $5 " " $6 " " $7}' > $VOROPROT_INPUT_FILE
-  ( time -p (cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-calc-quadruples-2 --print-log --clog-file $VOROPROT_CALC_LOG > $VOROPROT_CALC_RESULTS ) ) 2> $VOROPROT_CALC_TIME
+  ( time -p (cat $VOROPROT_INPUT_FILE | timeout 600 $VOROPROT --mode x-calc-quadruples-2 --print-log --clog-file $VOROPROT_CALC_LOG > $VOROPROT_CALC_RESULTS ) ) 2> $VOROPROT_CALC_TIME
   cat $VOROPROT_CALC_RESULTS | awk '{print $1 " " $2 " " $3 " " $4}' | awk '{split($0,array," "); asort(array); printf array[1] " " array[2] " " array[3] " " array[4] "\n"}' | sort > $VOROPROT_CALC_QUADRUPLES
   
   echo "input $PDB_FILE_BASENAME" > $OUTPUT_RESULTS
