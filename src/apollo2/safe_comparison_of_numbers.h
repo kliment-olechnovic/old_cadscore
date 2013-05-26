@@ -17,7 +17,7 @@ inline double comparison_epsilon()
 
 inline bool equal(const double a, const double b)
 {
-	return (((a-b)<comparison_epsilon()) && ((b-a)<comparison_epsilon()));
+	return (((a-b)<=comparison_epsilon()) && ((b-a)<=comparison_epsilon()));
 }
 
 inline bool less(const double a, const double b)
