@@ -28,7 +28,7 @@ std::vector<apollo2::SimpleSphere> read_spheres_from_stream(std::istream& input)
 
 void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--epsilon: --bsi-init-radius: --use-one-radius --skip-output --print-log --check");
+	clo.check_allowed_options("--epsilon: --bsi-init-radius: --use-one-radius --augment --skip-output --print-log --check");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -38,6 +38,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
 	const bool use_one_radius=clo.isopt("--use-one-radius");
+	const bool augment=clo.isopt("--augment");
 	const bool skip_output=clo.isopt("--skip-output");
 	const bool print_log=clo.isopt("--print-log");
 	const bool check=clo.isopt("--check");
@@ -57,7 +58,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct(atoms, bsi_init_radius);
+	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct(atoms, bsi_init_radius, augment);
 
 	if(!skip_output)
 	{
