@@ -162,7 +162,7 @@ static QuadruplesMap augment_valid_quadruples(const BoundingSpheresHierarchy<Sph
 		{
 			const SimpleSphere& tangent_sphere=tangent_spheres[i];
 			const SimpleSphere expanded_tangent_sphere(tangent_sphere, tangent_sphere.r+(3*comparison_epsilon()));
-			const std::vector<std::size_t> expanded_collisions=apollonius_triangulation::find_all_collisions(bsh, expanded_tangent_sphere);
+			const std::vector<std::size_t> expanded_collisions=find_all_collisions(bsh, expanded_tangent_sphere);
 			std::vector<std::size_t> refined_collisions;
 			for(std::size_t j=0;j<expanded_collisions.size();j++)
 			{
@@ -181,7 +181,7 @@ static QuadruplesMap augment_valid_quadruples(const BoundingSpheresHierarchy<Sph
 						{
 							for(std::size_t d=c+1;d<refined_collisions.size();d++)
 							{
-								const apollonius_triangulation::Quadruple quadruple(refined_collisions[a], refined_collisions[b], refined_collisions[c], refined_collisions[d]);
+								const Quadruple quadruple(refined_collisions[a], refined_collisions[b], refined_collisions[c], refined_collisions[d]);
 								QuadruplesMap::iterator aqm_it=augmented_quadruples_map.find(quadruple);
 								if(aqm_it==augmented_quadruples_map.end())
 								{
