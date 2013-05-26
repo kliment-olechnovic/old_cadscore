@@ -155,7 +155,6 @@ public:
 
 	static void print_result_log(const Result& result, std::ostream& output)
 	{
-		output << "all_quadruples " << result.quadruples_map.size() << "\n";
 		output << "quadruples " << result.quadruples_log.quadruples << "\n";
 		output << "tangent_spheres " << result.quadruples_log.tangent_spheres << "\n";
 		output << "augmented_quadruples " << result.quadruples_log.augmented_quadruples << "\n";
