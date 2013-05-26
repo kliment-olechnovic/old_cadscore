@@ -31,7 +31,12 @@ std::vector<apollo2::apollonius_triangulation::Quadruple> read_quadruples_from_s
 			}
 		}
 	}
-	std::sort(result.begin(), result.end());
+	if(!result.empty())
+	{
+		std::sort(result.begin(), result.end());
+		std::vector<apollo2::apollonius_triangulation::Quadruple>::iterator it=std::unique(result.begin(), result.end());
+		result.resize(it-result.begin());
+	}
 	return result;
 }
 
