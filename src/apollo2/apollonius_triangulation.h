@@ -162,6 +162,7 @@ public:
 		output << "first_faces_iterations " << result.quadruples_log.finding_first_faces_iterations << "\n";
 		output << "hidden_spheres " << result.hidden_spheres_ids.size() << "\n";
 		output << "ignored_spheres " << result.ignored_spheres_ids.size() << "\n";
+		output << "used_epsilon " << comparison_epsilon() << "\n";
 	}
 
 	template<typename SphereType>
