@@ -40,7 +40,7 @@ cat $QTFIER_CALC_RESULTS | egrep '^MODEL' | awk '{print "qtfier_vertices " $4}' 
 if [ -s $QTFIER_CALC_LOG ]
 then
   cat $QTFIER_CALC_RESULTS | egrep '^QTVTX' | awk '{print $4 " " $5 " " $6 " " $7}' > $VOROPROT_INPUT_FILE
-  ( time -p (cat $VOROPROT_INPUT_FILE | timeout 600 $VOROPROT --mode x-calc-quadruples-2 --print-log --clog-file $VOROPROT_CALC_LOG > $VOROPROT_CALC_RESULTS ) ) 2> $VOROPROT_CALC_TIME
+  ( time -p (cat $VOROPROT_INPUT_FILE | timeout 600 $VOROPROT --mode x-calc-quadruples-2 --augment --print-log --clog-file $VOROPROT_CALC_LOG > $VOROPROT_CALC_RESULTS ) ) 2> $VOROPROT_CALC_TIME
   cat $VOROPROT_CALC_RESULTS | awk '{print $1 " " $2 " " $3 " " $4}' | awk '{split($0,array," "); asort(array); printf array[1] " " array[2] " " array[3] " " array[4] "\n"}' | sort > $VOROPROT_CALC_QUADRUPLES
   
   echo "input $PDB_FILE_BASENAME" > $OUTPUT_RESULTS
