@@ -30,7 +30,7 @@ VOROPROT_CALC_LOG="$VOROPROT_CALC_RESULTS.log"
 VOROPROT_CALC_TIME="$VOROPROT_CALC_RESULTS.time"
 OUTPUT_RESULTS="$OUTPUT_DIRECTORY/$PDB_FILE_BASENAME.results"
 
-cat "$PDB_FILE_UNZIPPED" | awk '/^END/{exit}1' | egrep '^ATOM' > $QTFIER_INPUT_FILE
+cat "$PDB_FILE_UNZIPPED" | awk '/^END/{exit}1' | egrep '^ATOM' | egrep -v '.{76} H' > $QTFIER_INPUT_FILE
 
 ( time -p (timeout 600 $QTFIER $QTFIER_INPUT_FILE $TMP_DIR/ &> /dev/null) ) 2> $QTFIER_CALC_TIME
 cat $QTFIER_CALC_RESULTS | egrep '^QTCELL' | awk '{print ($3-1) " " ($4-1) " " ($5-1) " " ($6-1)}' | awk '{split($0,array," "); asort(array); printf array[1] " " array[2] " " array[3] " " array[4] "\n"}' | sort > $QTFIER_CALC_QUADRUPLES
