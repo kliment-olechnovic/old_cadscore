@@ -63,7 +63,6 @@ private:
 			return std::make_pair(e_added, false);
 		}
 	};
-
 };
 
 }
