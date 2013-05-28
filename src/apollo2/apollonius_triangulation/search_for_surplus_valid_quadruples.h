@@ -1,11 +1,6 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_SURPLUS_VALID_QUADRUPLES_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_SURPLUS_VALID_QUADRUPLES_H_
 
-#include <vector>
-
-#include "../bounding_spheres_hierarchy.h"
-#include "../search_for_spherical_collisions.h"
-
 namespace apollo2
 {
 

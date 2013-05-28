@@ -1,13 +1,6 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_FACE_2_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_FACE_2_H_
 
-#include <vector>
-
-#include "../tangent_plane_of_three_spheres.h"
-#include "../tangent_sphere_of_four_spheres.h"
-#include "../tangent_sphere_of_three_spheres.h"
-#include "../tuple.h"
-
 namespace apollo2
 {
 

@@ -1,8 +1,6 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_ANY_D_OF_FACE_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_ANY_D_OF_FACE_H_
 
-#include "../bounding_spheres_hierarchy.h"
-
 #include "face.h"
 
 namespace apollo2
