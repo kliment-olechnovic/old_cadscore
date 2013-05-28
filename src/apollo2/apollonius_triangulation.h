@@ -36,7 +36,7 @@ public:
 	{
 		Result result;
 		BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
-		result.hidden_spheres_ids=apollonius_triangulation::find_all_hidden_spheres(bsh);
+		result.hidden_spheres_ids=SearchForSphericalCollisions::find_all_hidden_spheres(bsh);
 		for(std::set<std::size_t>::const_iterator it=result.hidden_spheres_ids.begin();it!=result.hidden_spheres_ids.end();++it)
 		{
 			bsh.ignore_leaf_sphere(*it);
@@ -282,8 +282,8 @@ public:
 					{
 						const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(bsh.leaves_spheres().at(q.get(0)), bsh.leaves_spheres().at(q.get(1)), bsh.leaves_spheres().at(q.get(2)), bsh.leaves_spheres().at(q.get(3)));
 						if(
-								(tangents.size()==1 && apollonius_triangulation::find_any_collision(bsh, tangents.front()).empty())
-								|| (tangents.size()==2 && (apollonius_triangulation::find_any_collision(bsh, tangents.front()).empty() || apollonius_triangulation::find_any_collision(bsh, tangents.back()).empty()))
+								(tangents.size()==1 && SearchForSphericalCollisions::find_any_collision(bsh, tangents.front()).empty())
+								|| (tangents.size()==2 && (SearchForSphericalCollisions::find_any_collision(bsh, tangents.front()).empty() || SearchForSphericalCollisions::find_any_collision(bsh, tangents.back()).empty()))
 							)
 						{
 							result.confirmed_differences.push_back(q);
@@ -323,7 +323,7 @@ private:
 				for(std::size_t j=0;j<tangent_spheres.size();j++)
 				{
 					const SimpleSphere& tangent_sphere=tangent_spheres[j];
-					if(apollonius_triangulation::find_any_collision(bsh, tangent_sphere).empty())
+					if(SearchForSphericalCollisions::find_any_collision(bsh, tangent_sphere).empty())
 					{
 						result.push_back(tangent_sphere);
 					}
