@@ -2,21 +2,18 @@
 
 #include "protein/atom.h"
 
-#include "apollo/spheres_hierarchy.h"
-#include "apollo/apollonius_triangulation.h"
+#include "apollo2/apollonius_triangulation.h"
 #include "apollo/hyperbolic_cell_face.h"
 
 #include "contacto/inter_atom_contact.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/set_io.h"
 
 void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
-	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
+
 	typedef apollo::HyperbolicCellFace CellFace;
 
 	clo.check_allowed_options("--probe: --step: --projections:");
@@ -32,13 +29,11 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const Hierarchy hierarchy(atoms, 4.2, 1);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
-	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
+	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct(atoms, 3.5, false).quadruples_map);
 
 	std::set<contacto::InterAtomContact> inter_atom_contacts;
 
-	for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::size_t a_id=it->first.get(0);
 		const std::size_t b_id=it->first.get(1);
@@ -48,7 +43,7 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 
 		std::vector<const protein::Atom*> cs;
 		cs.reserve(it->second.size());
-		for(Apollo::PairsNeighboursMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+		for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
 		{
 			cs.push_back(&(atoms[*jt]));
 		}

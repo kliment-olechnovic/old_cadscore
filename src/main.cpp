@@ -19,8 +19,6 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo);
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo);
 void calc_quadruples(const auxiliaries::CommandLineOptions& clo);
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo);
-void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& clo);
-void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo);
 void collect_atoms(const auxiliaries::CommandLineOptions& clo);
 void collect_residue_ids(const auxiliaries::CommandLineOptions& clo);
 void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo);
@@ -36,12 +34,8 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo);
-void x_print_nucleotides_contacts_graphics(const auxiliaries::CommandLineOptions& clo);
-void x_print_nucleotides_planes(const auxiliaries::CommandLineOptions& clo);
 void x_print_optimal_rotation(const auxiliaries::CommandLineOptions& clo);
-void x_print_stacking_nucleotides_contacts(const auxiliaries::CommandLineOptions& clo);
 void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo);
-void x_print_tunnels_graphics(const auxiliaries::CommandLineOptions& clo);
 void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 void x_summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
 
@@ -86,8 +80,6 @@ int main(const int argc, const char** argv)
 		modes_map["calc-inter-residue-contacts"]=ModeFunctionPointer(calc_inter_residue_contacts);
 		modes_map["calc-quadruples"]=ModeFunctionPointer(calc_quadruples);
 		modes_map["categorize-inter-nucleotide-side-chain-contacts"]=ModeFunctionPointer(categorize_inter_nucleotide_side_chain_contacts);
-		modes_map["check-for-any-inter-chain-contact"]=ModeFunctionPointer(check_for_any_inter_chain_contact);
-		modes_map["check-for-inter-atom-clashes"]=ModeFunctionPointer(check_for_inter_atom_clashes);
 		modes_map["collect-atoms"]=ModeFunctionPointer(collect_atoms);
 		modes_map["collect-residue-ids"]=ModeFunctionPointer(collect_residue_ids);
 		modes_map["filter-atoms-by-name"]=ModeFunctionPointer(filter_atoms_by_name);
@@ -103,12 +95,8 @@ int main(const int argc, const char** argv)
 		modes_map["x-print-inter-residue-contacts-graph"]=ModeFunctionPointer(x_print_inter_residue_contacts_graph);
 		modes_map["x-print-inter-residue-contacts-map-image"]=ModeFunctionPointer(x_print_inter_residue_contacts_map_image);
 		modes_map["x-print-inter-residue-distance-map-image"]=ModeFunctionPointer(x_print_inter_residue_distance_map_image);
-		modes_map["x-print-nucleotides-contacts-graphics"]=ModeFunctionPointer(x_print_nucleotides_contacts_graphics);
-		modes_map["x-print-nucleotides-planes"]=ModeFunctionPointer(x_print_nucleotides_planes);
 		modes_map["x-print-optimal-rotation"]=ModeFunctionPointer(x_print_optimal_rotation);
-		modes_map["x-print-stacking-nucleotides-contacts"]=ModeFunctionPointer(x_print_stacking_nucleotides_contacts);
 		modes_map["x-print-topological-ordering-of-residues"]=ModeFunctionPointer(x_print_topological_ordering_of_residues);
-		modes_map["x-print-tunnels-graphics"]=ModeFunctionPointer(x_print_tunnels_graphics);
 		modes_map["x-renumber-residues-in-inter-atom-contacts"]=ModeFunctionPointer(x_renumber_residues_in_inter_atom_contacts);
 		modes_map["x-summarize-dssp-file"]=ModeFunctionPointer(x_summarize_dssp_file);
 

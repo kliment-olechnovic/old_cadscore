@@ -9,8 +9,7 @@
 #include "contacto/inter_residue_contact_dual_areas.h"
 #include "contacto/contact_classification.h"
 
-#include "apollo/spheres_hierarchy.h"
-#include "apollo/apollonius_triangulation.h"
+#include "apollo2/apollonius_triangulation.h"
 #include "apollo/hyperbolic_cell_face.h"
 
 #include "auxiliaries/command_line_options.h"
@@ -618,8 +617,6 @@ private:
 
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
-	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 	typedef apollo::HyperbolicCellFace CellFace;
 
 	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix:");
@@ -634,9 +631,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	const Hierarchy hierarchy(atoms, 4.2, 1);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, true);
-	const Apollo::PairsNeighboursMap pairs_neighbours_map=Apollo::collect_pairs_neighbours_from_quadruples(quadruples_map);
+	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct(atoms, 3.5, false).quadruples_map);
 
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
@@ -655,7 +650,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else if(groups_option=="inter_chain_region")
 	{
 		std::set<protein::ResidueID> region_residue_ids;
-		for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+		for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
 			const protein::Atom& a=atoms[atoms_ids_pair.first];
@@ -679,7 +674,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef std::map< std::pair<std::string, std::string>, std::vector< std::pair<std::size_t, std::size_t> > > InterfacesMap;
 	InterfacesMap inter_chain_interfaces;
 
-	for(Apollo::PairsNeighboursMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
 
@@ -690,7 +685,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		{
 			std::vector<const protein::Atom*> cs;
 			cs.reserve(it->second.size());
-			for(Apollo::PairsNeighboursMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+			for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
 			{
 				cs.push_back(&(atoms[*jt]));
 			}
