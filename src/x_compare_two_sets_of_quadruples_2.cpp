@@ -54,7 +54,7 @@ void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& c
 	std::vector<apollo2::apollonius_triangulation::Quadruple> quadruples1=read_quadruples_from_stream(stream1);
 	std::vector<apollo2::apollonius_triangulation::Quadruple> quadruples2=read_quadruples_from_stream(stream2);
 
-	const apollo2::ComparisonOfSetsOfQuadruples::DifferencesBetweenSetsOfQuadruples differences=apollo2::ComparisonOfSetsOfQuadruples::calculate_directional_difference_between_two_sets_of_quadruples(atoms, 3.5, quadruples1, quadruples2);
+	const apollo2::DifferenceBetweenSetsOfQuadruples::Result differences=apollo2::DifferenceBetweenSetsOfQuadruples::calculate_directional_difference_between_two_sets_of_quadruples(atoms, 3.5, quadruples1, quadruples2);
 
 	std::cout << "all_differences " << differences.all_differences.size() << "\n";
 	std::cout << "confirmed_differences " << differences.confirmed_differences.size() << "\n";
