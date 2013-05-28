@@ -1,7 +1,7 @@
 #include <deque>
 
-#include "apollo2/apollonius_triangulation/tangent_plane_of_three_spheres.h"
-#include "apollo2/apollonius_triangulation/tangent_sphere_of_three_spheres.h"
+#include "apollo2/tangent_plane_of_three_spheres.h"
+#include "apollo2/tangent_sphere_of_three_spheres.h"
 
 #include "apollo/rotation.h"
 
@@ -30,8 +30,8 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		opengl_printer1.print_sphere(apollo2::SimpleSphere(generators[i], generators[i].r-0.01), auxiliaries::Color::from_code(0x36BBCE));
 	}
 
-	std::vector< std::pair<apollo2::SimplePoint, apollo2::SimplePoint> > tangent_planes=apollo2::apollonius_triangulation::TangentPlaneOfThreeSpheres::calculate(generators[0], generators[1], generators[2]);
-	const std::vector<apollo2::SimpleSphere> min_tangents=apollo2::apollonius_triangulation::TangentSphereOfThreeSpheres::calculate(generators[0], generators[1], generators[2]);
+	std::vector< std::pair<apollo2::SimplePoint, apollo2::SimplePoint> > tangent_planes=apollo2::TangentPlaneOfThreeSpheres::calculate(generators[0], generators[1], generators[2]);
+	const std::vector<apollo2::SimpleSphere> min_tangents=apollo2::TangentSphereOfThreeSpheres::calculate(generators[0], generators[1], generators[2]);
 	if(tangent_planes.size()==2 && min_tangents.size()==1)
 	{
 		if(apollo2::halfspace_of_point(generators[0], apollo2::plane_normal_from_three_points<apollo2::SimplePoint>(generators[0], generators[1], generators[2]), tangent_planes[0].first+tangent_planes[0].second)>0)
@@ -49,7 +49,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 			const double r_max=7;
 			for(double r=min_tangent.r;r<r_max;r=r*r_mult)
 			{
-				const std::vector<apollo2::SimpleSphere> tangent_spheres=apollo2::apollonius_triangulation::TangentSphereOfThreeSpheres::calculate(generators[0], generators[1], generators[2], r);
+				const std::vector<apollo2::SimpleSphere> tangent_spheres=apollo2::TangentSphereOfThreeSpheres::calculate(generators[0], generators[1], generators[2], r);
 				if(tangent_spheres.size()==2)
 				{
 					for(std::size_t i=0;i<tangent_spheres.size();i++)
@@ -94,7 +94,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 					touches.push_back(apollo2::SimpleSphere(a+ab, 0.0));
 				}
 			}
-			const std::vector<apollo2::SimpleSphere> circles=apollo2::apollonius_triangulation::TangentSphereOfThreeSpheres::calculate(touches[0], touches[1], touches[2]);
+			const std::vector<apollo2::SimpleSphere> circles=apollo2::TangentSphereOfThreeSpheres::calculate(touches[0], touches[1], touches[2]);
 			if(circles.size()==1)
 			{
 				const apollo2::SimpleSphere& circle=circles.front();

@@ -20,8 +20,8 @@ public:
 	typedef apollonius_triangulation::QuadruplesLog QuadruplesLog;
 	typedef std::tr1::unordered_map<std::size_t, std::tr1::unordered_set<std::size_t> > NeighborsMap;
 	typedef std::vector< std::vector<std::size_t> > NeighborsGraph;
-	typedef std::tr1::unordered_map<apollonius_triangulation::Pair, std::tr1::unordered_set<std::size_t>, apollonius_triangulation::Pair::HashFunctor> PairsNeighborsMap;
-	typedef std::tr1::unordered_map<apollonius_triangulation::Triple, std::tr1::unordered_set<std::size_t>, apollonius_triangulation::Triple::HashFunctor> TriplesNeighborsMap;
+	typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> PairsNeighborsMap;
+	typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> TriplesNeighborsMap;
 
 	struct Result
 	{
@@ -49,7 +49,7 @@ public:
 		std::vector<int> spheres_inclusion_map(spheres.size(), 0);
 		for(QuadruplesMap::const_iterator it=result.quadruples_map.begin();it!=result.quadruples_map.end();++it)
 		{
-			const apollonius_triangulation::Quadruple& q=it->first;
+			const Quadruple& q=it->first;
 			for(int i=0;i<4;i++)
 			{
 				spheres_inclusion_map[q.get(i)]=1;
@@ -70,7 +70,7 @@ public:
 		NeighborsMap neighbors_map;
 		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
-			const apollonius_triangulation::Quadruple& quadruple=it->first;
+			const Quadruple& quadruple=it->first;
 			for(int a=0;a<4;a++)
 			{
 				for(int b=a+1;b<4;b++)
@@ -101,12 +101,12 @@ public:
 		PairsNeighborsMap pairs_neighbors_map;
 		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
-			const apollonius_triangulation::Quadruple& quadruple=it->first;
+			const Quadruple& quadruple=it->first;
 			for(int a=0;a<4;a++)
 			{
 				for(int b=a+1;b<4;b++)
 				{
-					const apollonius_triangulation::Pair pair(quadruple.get(a), quadruple.get(b));
+					const Pair pair(quadruple.get(a), quadruple.get(b));
 					for(int c=0;c<4;c++)
 					{
 						if(c!=a && c!=b)
@@ -125,7 +125,7 @@ public:
 		TriplesNeighborsMap triples_neighbors_map;
 		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
-			const apollonius_triangulation::Quadruple& quadruple=it->first;
+			const Quadruple& quadruple=it->first;
 			for(int a=0;a<4;a++)
 			{
 				triples_neighbors_map[quadruple.exclude(a)].insert(quadruple.get(a));
@@ -141,7 +141,7 @@ public:
 		const QuadruplesOrderedMap quadruples_ordered_map=collect_ordered_map_of_quadruples(quadruples_map);
 		for(QuadruplesOrderedMap::const_iterator it=quadruples_ordered_map.begin();it!=quadruples_ordered_map.end();++it)
 		{
-			const apollonius_triangulation::Quadruple& quadruple=it->first;
+			const Quadruple& quadruple=it->first;
 			const std::vector<SimpleSphere>& tangent_spheres=it->second;
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
@@ -181,7 +181,7 @@ public:
 				}
 				if(valid)
 				{
-					quadruples_map[apollonius_triangulation::Quadruple(q[0], q[1], q[2], q[3])].push_back(SimpleSphere(s[0], s[1], s[2], s[3]));
+					quadruples_map[Quadruple(q[0], q[1], q[2], q[3])].push_back(SimpleSphere(s[0], s[1], s[2], s[3]));
 				}
 			}
 		}
@@ -254,8 +254,8 @@ class DifferenceBetweenSetsOfQuadruples
 public:
 	struct Result
 	{
-		std::vector<apollonius_triangulation::Quadruple> all_differences;
-		std::vector<apollonius_triangulation::Quadruple> confirmed_differences;
+		std::vector<Quadruple> all_differences;
+		std::vector<Quadruple> confirmed_differences;
 	};
 
 	template<typename SphereType, typename InputQuadruples>
@@ -264,11 +264,11 @@ public:
 		Result result;
 		if(!input_quadruples1.empty())
 		{
-			const std::vector<apollonius_triangulation::Quadruple> quadruples1=get_sorted_unique_quadruples(input_quadruples1);
-			const std::vector<apollonius_triangulation::Quadruple> quadruples2=get_sorted_unique_quadruples(input_quadruples2);
+			const std::vector<Quadruple> quadruples1=get_sorted_unique_quadruples(input_quadruples1);
+			const std::vector<Quadruple> quadruples2=get_sorted_unique_quadruples(input_quadruples2);
 
 			result.all_differences.resize(quadruples1.size());
-			std::vector<apollonius_triangulation::Quadruple>::iterator it=std::set_difference(quadruples1.begin(), quadruples1.end(), quadruples2.begin(), quadruples2.end(), result.all_differences.begin());
+			std::vector<Quadruple>::iterator it=std::set_difference(quadruples1.begin(), quadruples1.end(), quadruples2.begin(), quadruples2.end(), result.all_differences.begin());
 			result.all_differences.resize(it-result.all_differences.begin());
 
 			if(!result.all_differences.empty())
@@ -277,10 +277,10 @@ public:
 				const std::vector<SimpleSphere> empty_tangent_spheres2=get_empty_tangent_spheres_from_quadruples(bsh, quadruples2);
 				for(std::size_t i=0;i<result.all_differences.size();i++)
 				{
-					const apollonius_triangulation::Quadruple q=result.all_differences[i];
+					const Quadruple q=result.all_differences[i];
 					if(q.get(0)<bsh.leaves_spheres().size() && q.get(1)<bsh.leaves_spheres().size() && q.get(2)<bsh.leaves_spheres().size() && q.get(3)<bsh.leaves_spheres().size())
 					{
-						const std::vector<SimpleSphere> tangents=apollonius_triangulation::TangentSphereOfFourSpheres::calculate<SimpleSphere>(bsh.leaves_spheres().at(q.get(0)), bsh.leaves_spheres().at(q.get(1)), bsh.leaves_spheres().at(q.get(2)), bsh.leaves_spheres().at(q.get(3)));
+						const std::vector<SimpleSphere> tangents=TangentSphereOfFourSpheres::calculate<SimpleSphere>(bsh.leaves_spheres().at(q.get(0)), bsh.leaves_spheres().at(q.get(1)), bsh.leaves_spheres().at(q.get(2)), bsh.leaves_spheres().at(q.get(3)));
 						if(
 								(tangents.size()==1 && apollonius_triangulation::find_any_collision(bsh, tangents.front()).empty())
 								|| (tangents.size()==2 && (apollonius_triangulation::find_any_collision(bsh, tangents.front()).empty() || apollonius_triangulation::find_any_collision(bsh, tangents.back()).empty()))
@@ -297,13 +297,13 @@ public:
 
 private:
 	template<typename InputQuadruples>
-	static std::vector<apollonius_triangulation::Quadruple> get_sorted_unique_quadruples(const InputQuadruples& input_quadruples)
+	static std::vector<Quadruple> get_sorted_unique_quadruples(const InputQuadruples& input_quadruples)
 	{
-		std::vector<apollonius_triangulation::Quadruple> result(input_quadruples.begin(), input_quadruples.end());
+		std::vector<Quadruple> result(input_quadruples.begin(), input_quadruples.end());
 		if(!result.empty())
 		{
 			std::sort(result.begin(), result.end());
-			std::vector<apollonius_triangulation::Quadruple>::iterator it=std::unique(result.begin(), result.end());
+			std::vector<Quadruple>::iterator it=std::unique(result.begin(), result.end());
 			result.resize(it-result.begin());
 		}
 		return result;
@@ -316,10 +316,10 @@ private:
 		result.reserve(quadruples.size()+(quadruples.size()/10));
 		for(typename InputQuadruples::const_iterator it=quadruples.begin();it!=quadruples.end();++it)
 		{
-			const apollonius_triangulation::Quadruple& q=(*it);
+			const Quadruple& q=(*it);
 			if(q.get(0)<bsh.leaves_spheres().size() && q.get(1)<bsh.leaves_spheres().size() && q.get(2)<bsh.leaves_spheres().size() && q.get(3)<bsh.leaves_spheres().size())
 			{
-				const std::vector<SimpleSphere> tangent_spheres=apollonius_triangulation::TangentSphereOfFourSpheres::calculate<SimpleSphere>(bsh.leaves_spheres().at(q.get(0)), bsh.leaves_spheres().at(q.get(1)), bsh.leaves_spheres().at(q.get(2)), bsh.leaves_spheres().at(q.get(3)));
+				const std::vector<SimpleSphere> tangent_spheres=TangentSphereOfFourSpheres::calculate<SimpleSphere>(bsh.leaves_spheres().at(q.get(0)), bsh.leaves_spheres().at(q.get(1)), bsh.leaves_spheres().at(q.get(2)), bsh.leaves_spheres().at(q.get(3)));
 				for(std::size_t j=0;j<tangent_spheres.size();j++)
 				{
 					const SimpleSphere& tangent_sphere=tangent_spheres[j];
