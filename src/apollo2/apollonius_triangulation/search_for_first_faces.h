@@ -5,7 +5,6 @@
 
 #include <tr1/functional>
 
-#include "../bounding_spheres_hierarchy.h"
 #include "../search_for_spherical_collisions.h"
 
 #include "face.h"
