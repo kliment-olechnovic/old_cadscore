@@ -9,9 +9,9 @@
 
 std::vector<apollo2::SimpleSphere> read_spheres_from_stream(std::istream& input);
 
-std::vector<apollo2::apollonius_triangulation::Quadruple> read_quadruples_from_stream(std::istream& input)
+std::vector<apollo2::Quadruple> read_quadruples_from_stream(std::istream& input)
 {
-	std::vector<apollo2::apollonius_triangulation::Quadruple> result;
+	std::vector<apollo2::Quadruple> result;
 	while(input.good())
 	{
 		std::string line;
@@ -26,14 +26,14 @@ std::vector<apollo2::apollonius_triangulation::Quadruple> read_quadruples_from_s
 			}
 			if(!line_input.fail())
 			{
-				result.push_back(apollo2::apollonius_triangulation::Quadruple(numbers));
+				result.push_back(apollo2::Quadruple(numbers));
 			}
 		}
 	}
 	if(!result.empty())
 	{
 		std::sort(result.begin(), result.end());
-		std::vector<apollo2::apollonius_triangulation::Quadruple>::iterator it=std::unique(result.begin(), result.end());
+		std::vector<apollo2::Quadruple>::iterator it=std::unique(result.begin(), result.end());
 		result.resize(it-result.begin());
 	}
 	return result;
@@ -51,8 +51,8 @@ void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& c
 	std::ifstream stream1(file1.c_str(), std::ifstream::in);
 	std::ifstream stream2(file2.c_str(), std::ifstream::in);
 
-	std::vector<apollo2::apollonius_triangulation::Quadruple> quadruples1=read_quadruples_from_stream(stream1);
-	std::vector<apollo2::apollonius_triangulation::Quadruple> quadruples2=read_quadruples_from_stream(stream2);
+	std::vector<apollo2::Quadruple> quadruples1=read_quadruples_from_stream(stream1);
+	std::vector<apollo2::Quadruple> quadruples2=read_quadruples_from_stream(stream2);
 
 	const apollo2::DifferenceBetweenSetsOfQuadruples::Result differences=apollo2::DifferenceBetweenSetsOfQuadruples::calculate_directional_difference_between_two_sets_of_quadruples(atoms, 3.5, quadruples1, quadruples2);
 

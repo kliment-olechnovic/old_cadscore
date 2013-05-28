@@ -1,15 +1,12 @@
-#ifndef APOLLO2_APOLLONIUS_TRIANGULATION_TANGENT_PLANE_OF_THREE_SPHERES_H_
-#define APOLLO2_APOLLONIUS_TRIANGULATION_TANGENT_PLANE_OF_THREE_SPHERES_H_
+#ifndef APOLLO2_TANGENT_PLANE_OF_THREE_SPHERES_H_
+#define APOLLO2_TANGENT_PLANE_OF_THREE_SPHERES_H_
 
 #include <vector>
 #include <algorithm>
 
-#include "../basic_operations_on_spheres.h"
+#include "basic_operations_on_spheres.h"
 
 namespace apollo2
-{
-
-namespace apollonius_triangulation
 {
 
 class TangentPlaneOfThreeSpheres
@@ -119,6 +116,4 @@ private:
 
 }
 
-}
-
-#endif /* APOLLO2_APOLLONIUS_TRIANGULATION_TANGENT_PLANE_OF_THREE_SPHERES_H_ */
+#endif /* APOLLO2_TANGENT_PLANE_OF_THREE_SPHERES_H_ */

@@ -1,13 +1,10 @@
-#ifndef APOLLO2_APOLLONIUS_TRIANGULATION_TUPLE_H_
-#define APOLLO2_APOLLONIUS_TRIANGULATION_TUPLE_H_
+#ifndef APOLLO2_TUPLE_H_
+#define APOLLO2_TUPLE_H_
 
 #include <vector>
 #include <algorithm>
 
 namespace apollo2
-{
-
-namespace apollonius_triangulation
 {
 
 template<unsigned int N>
@@ -179,6 +176,4 @@ typedef Tuple<4> Quadruple;
 
 }
 
-}
-
-#endif /* APOLLO2_APOLLONIUS_TRIANGULATION_TUPLE_H_ */
+#endif /* APOLLO2_TUPLE_H_ */
