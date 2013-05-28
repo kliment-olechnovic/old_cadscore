@@ -9,6 +9,7 @@
 #include "spheres_basic_operations.h"
 #include "hyperboloids_basic_operations.h"
 #include "rotation.h"
+#include "tuples.h"
 
 namespace apollo
 {
