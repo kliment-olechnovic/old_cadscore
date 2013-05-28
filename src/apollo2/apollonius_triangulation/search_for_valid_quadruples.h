@@ -7,9 +7,9 @@
 #include <tr1/unordered_map>
 
 #include "search_for_first_faces.h"
-#include "search_for_any_d.h"
-#include "search_for_valid_d.h"
-#include "search_for_valid_e.h"
+#include "search_for_any_d_of_face.h"
+#include "search_for_valid_d_of_face.h"
+#include "search_for_valid_e_of_face.h"
 
 namespace apollo2
 {
@@ -68,9 +68,9 @@ QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& 
 			{
 				log.difficult_faces++;
 			}
-			const bool found_d0=face.can_have_d() && !face.has_d(0) && find_any_d<Sphere>(bsh, face, 0) && find_valid_d<Sphere>(bsh, face, 0);
-			const bool found_d1=face.can_have_d() && !face.has_d(1) && find_any_d<Sphere>(bsh, face, 1) && find_valid_d<Sphere>(bsh, face, 1);
-			const bool found_e=face.can_have_e() && find_valid_e<Sphere>(bsh, face);
+			const bool found_d0=face.can_have_d() && !face.has_d(0) && SearchForAnyDOfFace::find_any_d<Sphere>(bsh, face, 0) && SearchForValidDOfFace::find_valid_d<Sphere>(bsh, face, 0);
+			const bool found_d1=face.can_have_d() && !face.has_d(1) && SearchForAnyDOfFace::find_any_d<Sphere>(bsh, face, 1) && SearchForValidDOfFace::find_valid_d<Sphere>(bsh, face, 1);
+			const bool found_e=face.can_have_e() && SearchForValidEOfFace::find_valid_e<Sphere>(bsh, face);
 			if(found_d0 || found_d1 || found_e)
 			{
 				const std::vector< std::pair<Quadruple, SimpleSphere> > produced_quadruples=face.produce_quadruples(found_d0, found_d1, found_e);
