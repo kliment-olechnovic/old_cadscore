@@ -92,7 +92,6 @@ private:
 			return std::make_pair(false, false);
 		}
 	};
-
 };
 
 }
