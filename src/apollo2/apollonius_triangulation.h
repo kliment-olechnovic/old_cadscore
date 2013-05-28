@@ -7,8 +7,9 @@
 #include <map>
 #include <algorithm>
 
-#include "apollonius_triangulation/search_for_valid_quadruples.h"
 #include "bounding_spheres_hierarchy.h"
+#include "apollonius_triangulation/search_for_valid_quadruples.h"
+#include "apollonius_triangulation/search_for_surplus_valid_quadruples.h"
 
 namespace apollo2
 {
@@ -44,7 +45,7 @@ public:
 		result.quadruples_map=apollonius_triangulation::find_valid_quadruples(bsh, result.quadruples_log);
 		if(perform_augmentation)
 		{
-			result.quadruples_map=apollonius_triangulation::augment_valid_quadruples(bsh, result.quadruples_map, result.quadruples_log);
+			result.quadruples_map=apollonius_triangulation::find_surplus_valid_quadruples(bsh, result.quadruples_map, result.quadruples_log);
 		}
 		std::vector<int> spheres_inclusion_map(spheres.size(), 0);
 		for(QuadruplesMap::const_iterator it=result.quadruples_map.begin();it!=result.quadruples_map.end();++it)
@@ -192,8 +193,8 @@ public:
 	{
 		output << "quadruples " << result.quadruples_log.quadruples << "\n";
 		output << "tangent_spheres " << result.quadruples_log.tangent_spheres << "\n";
-		output << "augmented_quadruples " << result.quadruples_log.augmented_quadruples << "\n";
-		output << "augmented_tangent_spheres " << result.quadruples_log.augmented_tangent_spheres << "\n";
+		output << "surplus_quadruples " << result.quadruples_log.surplus_quadruples << "\n";
+		output << "surplus_tangent_spheres " << result.quadruples_log.surplus_tangent_spheres << "\n";
 		output << "processed_faces " << result.quadruples_log.processed_faces << "\n";
 		output << "difficult_faces " << result.quadruples_log.difficult_faces << "\n";
 		output << "first_faces_iterations " << result.quadruples_log.finding_first_faces_iterations << "\n";
