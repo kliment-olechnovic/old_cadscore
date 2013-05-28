@@ -34,7 +34,7 @@ struct QuadruplesLog
 };
 
 template<typename SphereType>
-static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, QuadruplesLog& log)
+QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, QuadruplesLog& log)
 {
 	typedef SphereType Sphere;
 	typedef std::tr1::unordered_set<Triple, Triple::HashFunctor> TriplesSet;
@@ -152,7 +152,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 }
 
 template<typename SphereType>
-static QuadruplesMap augment_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, const QuadruplesMap& quadruples_map, QuadruplesLog& quadruples_log)
+QuadruplesMap augment_valid_quadruples(const BoundingSpheresHierarchy<SphereType>& bsh, const QuadruplesMap& quadruples_map, QuadruplesLog& quadruples_log)
 {
 	QuadruplesMap augmented_quadruples_map=quadruples_map;
 	for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)

@@ -1,7 +1,6 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_E_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_E_H_
 
-#include "../bounding_spheres_hierarchy.h"
 #include "../search_for_spherical_collisions.h"
 
 #include "face.h"
