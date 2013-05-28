@@ -249,19 +249,19 @@ private:
 	}
 };
 
-class ComparisonOfSetsOfQuadruples
+class DifferenceBetweenSetsOfQuadruples
 {
 public:
-	struct DifferencesBetweenSetsOfQuadruples
+	struct Result
 	{
 		std::vector<apollonius_triangulation::Quadruple> all_differences;
 		std::vector<apollonius_triangulation::Quadruple> confirmed_differences;
 	};
 
 	template<typename SphereType, typename InputQuadruples>
-	static DifferencesBetweenSetsOfQuadruples calculate_directional_difference_between_two_sets_of_quadruples(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing, const InputQuadruples& input_quadruples1, const InputQuadruples& input_quadruples2)
+	static Result calculate_directional_difference_between_two_sets_of_quadruples(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing, const InputQuadruples& input_quadruples1, const InputQuadruples& input_quadruples2)
 	{
-		DifferencesBetweenSetsOfQuadruples result;
+		Result result;
 		if(!input_quadruples1.empty())
 		{
 			const std::vector<apollonius_triangulation::Quadruple> quadruples1=get_sorted_unique_quadruples(input_quadruples1);
