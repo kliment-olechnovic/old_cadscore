@@ -7,7 +7,16 @@
 #include <map>
 #include <algorithm>
 
+#include <tr1/unordered_map>
+#include <tr1/unordered_set>
+
+#include "tuple.h"
 #include "bounding_spheres_hierarchy.h"
+#include "search_for_spherical_collisions.h"
+#include "tangent_plane_of_three_spheres.h"
+#include "tangent_sphere_of_four_spheres.h"
+#include "tangent_sphere_of_three_spheres.h"
+
 #include "apollonius_triangulation/search_for_valid_quadruples.h"
 #include "apollonius_triangulation/search_for_surplus_valid_quadruples.h"
 

@@ -1,13 +1,6 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_QUADRUPLES_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_VALID_QUADRUPLES_H_
 
-#include <vector>
-
-#include <tr1/unordered_set>
-#include <tr1/unordered_map>
-
-#include "../bounding_spheres_hierarchy.h"
-
 #include "search_for_first_faces.h"
 #include "search_for_any_d_of_face.h"
 #include "search_for_valid_d_of_face.h"

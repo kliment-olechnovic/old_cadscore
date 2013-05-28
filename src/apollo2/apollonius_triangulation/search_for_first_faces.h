@@ -1,13 +1,6 @@
 #ifndef APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_FIRST_FACES_H_
 #define APOLLO2_APOLLONIUS_TRIANGULATION_SEARCH_FOR_FIRST_FACES_H_
 
-#include <vector>
-
-#include <tr1/functional>
-
-#include "../bounding_spheres_hierarchy.h"
-#include "../search_for_spherical_collisions.h"
-
 #include "face.h"
 
 namespace apollo2
