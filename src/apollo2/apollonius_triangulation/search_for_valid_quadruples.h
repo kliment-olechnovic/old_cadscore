@@ -131,7 +131,7 @@ static QuadruplesMap find_valid_quadruples(const BoundingSpheresHierarchy<Sphere
 			if(spheres_usage_mapping[i]==0 && ignorable_spheres_ids.count(i)==0)
 			{
 				const std::vector<Sphere>& all_spheres=bsh.leaves_spheres();
-				const std::vector<std::size_t> colliding_neighbours=find_all_collisions(bsh, all_spheres[i]);
+				const std::vector<std::size_t> colliding_neighbours=SearchForSphericalCollisions::find_all_collisions(bsh, all_spheres[i]);
 				bool hidden=false;
 				for(std::size_t j=0;j<colliding_neighbours.size() && !hidden;j++)
 				{
@@ -162,7 +162,7 @@ static QuadruplesMap augment_valid_quadruples(const BoundingSpheresHierarchy<Sph
 		{
 			const SimpleSphere& tangent_sphere=tangent_spheres[i];
 			const SimpleSphere expanded_tangent_sphere(tangent_sphere, tangent_sphere.r+(3*comparison_epsilon()));
-			const std::vector<std::size_t> expanded_collisions=find_all_collisions(bsh, expanded_tangent_sphere);
+			const std::vector<std::size_t> expanded_collisions=SearchForSphericalCollisions::find_all_collisions(bsh, expanded_tangent_sphere);
 			std::vector<std::size_t> refined_collisions;
 			for(std::size_t j=0;j<expanded_collisions.size();j++)
 			{
