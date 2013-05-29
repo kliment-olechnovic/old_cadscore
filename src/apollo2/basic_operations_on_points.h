@@ -145,6 +145,25 @@ double triangle_area(const InputPointTypeA& a, const InputPointTypeB& b, const I
 	return (point_module(cross_product<PODPoint>(sub_of_points<PODPoint>(b, a), sub_of_points<PODPoint>(c, a)))/2.0);
 }
 
+template<typename OutputPointType, typename InputPointType>
+OutputPointType any_normal_of_vector(const InputPointType& a)
+{
+	PODPoint b=custom_point_from_object<PODPoint>(a);
+	if(!equal(b.x, 0.0))
+	{
+		b.x=0.0-b.x;
+	}
+	else if(!equal(b.y, 0.0))
+	{
+		b.y=0.0-b.y;
+	}
+	else
+	{
+		b.z=0.0-b.z;
+	}
+	return unit_point<OutputPointType>(cross_product<OutputPointType>(a, b));
+}
+
 struct SimplePoint
 {
 	double x;
@@ -187,6 +206,11 @@ struct SimplePoint
 	SimplePoint operator*(const double k) const
 	{
 		return point_and_number_product<SimplePoint>(*this, k);
+	}
+
+	SimplePoint operator&(const SimplePoint& b) const
+	{
+		return cross_product<SimplePoint>(*this, b);
 	}
 
 	double module() const

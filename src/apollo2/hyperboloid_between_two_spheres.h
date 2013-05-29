@@ -21,7 +21,7 @@ public:
 		}
 		else
 		{
-			const SimplePoint dv=(custom_point_from_object<SimplePoint>(s1)-custom_point_from_object<SimplePoint>(s2))/2;
+			const SimplePoint dv=(custom_point_from_object<SimplePoint>(s1)-custom_point_from_object<SimplePoint>(s2))*(0.5);
 			const SimplePoint c=custom_point_from_object<SimplePoint>(s2)+dv;
 			const SimplePoint cp=p-c;
 			const double lz=dv.unit()*cp;

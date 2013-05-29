@@ -1,7 +1,7 @@
 #include "protein/atom.h"
 #include "protein/nucleotide_plane.h"
 
-#include "apollo/spheres_basic_operations.h"
+#include "apollo2/basic_operations_on_spheres.h"
 
 #include "contacto/contact_id.h"
 #include "contacto/inter_residue_contact_areas.h"
@@ -12,7 +12,7 @@
 
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef protein::NucleotidePlane<apollo::SimplePoint> Plane;
+	typedef protein::NucleotidePlane<apollo2::SimplePoint> Plane;
 
 	clo.check_allowed_options("");
 
@@ -47,11 +47,11 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 				}
 				if(!sc_atoms_ids_b.empty())
 				{
-					const int first_halfspace=apollo::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[0]]);
+					const int first_halfspace=apollo2::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[0]]);
 					bool one_halfspace=(first_halfspace!=0);
 					for(std::size_t i=1;i<sc_atoms_ids_b.size() && one_halfspace;i++)
 					{
-						const int atom_halfspace=apollo::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
+						const int atom_halfspace=apollo2::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
 						if(atom_halfspace!=first_halfspace)
 						{
 							one_halfspace=false;

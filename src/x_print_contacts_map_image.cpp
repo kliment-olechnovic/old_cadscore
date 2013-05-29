@@ -6,7 +6,7 @@
 #include "protein/residue_id.h"
 #include "protein/residue_ids_collection.h"
 
-#include "apollo/spheres_basic_operations.h"
+#include "apollo2/basic_operations_on_spheres.h"
 
 #include "contacto/contact_id.h"
 #include "contacto/inter_residue_contact_areas.h"
@@ -103,7 +103,7 @@ void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOpti
 				{
 					for(std::size_t n=0;n<atoms_j.size();n++)
 					{
-						min_distance=std::min(min_distance, apollo::minimal_distance_from_sphere_to_sphere(atoms[atoms_i[m]], atoms[atoms_j[n]]));
+						min_distance=std::min(min_distance, apollo2::minimal_distance_from_sphere_to_sphere(atoms[atoms_i[m]], atoms[atoms_j[n]]));
 					}
 				}
 				distance_map[i][j]=min_distance;

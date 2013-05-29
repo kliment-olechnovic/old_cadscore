@@ -3,7 +3,7 @@
 #include "protein/atom.h"
 
 #include "apollo2/apollonius_triangulation.h"
-#include "apollo/hyperbolic_cell_face.h"
+#include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
 
 #include "contacto/inter_atom_contact.h"
 
@@ -13,8 +13,7 @@
 
 void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 {
-
-	typedef apollo::HyperbolicCellFace CellFace;
+	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
 
 	clo.check_allowed_options("--probe: --step: --projections:");
 
@@ -49,7 +48,7 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 		}
 
 		const double face_area=CellFace::construct(a, b, cs, probe_radius, step_length, projections_count).area();
-		if(apollo::greater(face_area, 0.0))
+		if(apollo2::greater(face_area, 0.0))
 		{
 			inter_atom_contacts.insert(contacto::InterAtomContact(a_id, b_id, face_area));
 			inter_atom_contacts.insert(contacto::InterAtomContact(b_id, a_id, face_area));

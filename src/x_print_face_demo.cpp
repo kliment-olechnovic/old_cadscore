@@ -2,8 +2,7 @@
 
 #include "apollo2/tangent_plane_of_three_spheres.h"
 #include "apollo2/tangent_sphere_of_three_spheres.h"
-
-#include "apollo/rotation.h"
+#include "apollo2/rotation.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/opengl_printer.h"
@@ -100,7 +99,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 				const apollo2::SimpleSphere& circle=circles.front();
 				const apollo2::SimplePoint orientation=apollo2::plane_normal_from_three_points<apollo2::SimplePoint>(touches[0], touches[1], touches[2]);
 				const apollo2::SimplePoint first_point(apollo2::SimplePoint(circle)-apollo2::SimplePoint(touches[0]));
-				apollo::Rotation rotation(apollo2::custom_point_from_object<apollo::SimplePoint>(orientation), 0);
+				apollo2::Rotation rotation(apollo2::custom_point_from_object<apollo2::SimplePoint>(orientation), 0);
 				const double angle_step=10;
 				std::vector<apollo2::SimplePoint> circle_vertices;
 				for(rotation.angle=0;rotation.angle<=360;rotation.angle+=angle_step)

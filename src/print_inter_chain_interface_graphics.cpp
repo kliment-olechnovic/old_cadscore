@@ -10,7 +10,7 @@
 #include "contacto/contact_classification.h"
 
 #include "apollo2/apollonius_triangulation.h"
-#include "apollo/hyperbolic_cell_face.h"
+#include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/file_header.h"
@@ -617,7 +617,7 @@ private:
 
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo::HyperbolicCellFace CellFace;
+	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
 
 	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix:");
 
@@ -656,7 +656,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& a=atoms[atoms_ids_pair.first];
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			if(a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?" &&
-					apollo::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2)
+					apollo2::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2)
 			{
 				region_residue_ids.insert(protein::ResidueID::from_atom(a));
 				region_residue_ids.insert(protein::ResidueID::from_atom(b));
@@ -760,7 +760,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& a=atoms[atoms_ids_pair.first];
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
-			const apollo::SimplePoint normal=apollo::sub_of_points<apollo::SimplePoint>(b, a).unit();
+			const apollo2::SimplePoint normal=apollo2::sub_of_points<apollo2::SimplePoint>(b, a).unit();
 			opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal, face_colorizer->color(a, b));
 		}
 	}

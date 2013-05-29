@@ -4,7 +4,7 @@
 
 #include "protein/pdb_parsing.h"
 
-#include "apollo/points_basic_operations.h"
+#include "apollo2/basic_operations_on_points.h"
 
 #include "auxiliaries/command_line_options.h"
 
@@ -121,7 +121,7 @@ void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOpti
 				{
 					const int i_right=nodes_vector[i].second.right;
 					const int j_left=nodes_vector[j].second.left;
-					if(i_right>=0 && j_left>=0 && apollo::distance_from_point_to_point(records[i_right], records[j_left])<bond_distance)
+					if(i_right>=0 && j_left>=0 && apollo2::distance_from_point_to_point(records[i_right], records[j_left])<bond_distance)
 					{
 						found=true;
 						bonds[i].right=j;
