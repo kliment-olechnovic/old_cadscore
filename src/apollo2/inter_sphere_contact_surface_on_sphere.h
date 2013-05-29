@@ -1,46 +1,20 @@
-#ifndef APOLLO_CONTACT_SURFACE_H_
-#define APOLLO_CONTACT_SURFACE_H_
+#ifndef APOLLO2_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_
+#define APOLLO2_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_
 
 #include <vector>
-#include <set>
 #include <map>
 
-#include "points_basic_operations.h"
-#include "spheres_basic_operations.h"
+#include "basic_operations_on_spheres.h"
 #include "subdivided_icosahedron.h"
-#include "hyperboloids_basic_operations.h"
-#include "tuples.h"
+#include "hyperboloid_between_two_spheres.h"
 
-namespace apollo
+namespace apollo2
 {
 
-class ContactSurface
+class InterSphereContactSurfaceOnSphere
 {
 public:
-	struct Triangle
-	{
-		SimplePoint a;
-		SimplePoint b;
-		SimplePoint c;
-
-		Triangle(const SimplePoint& a, const SimplePoint& b, const SimplePoint& c) : a(a), b(b), c(c)
-		{
-		}
-	};
-
-	typedef std::vector< std::pair<std::size_t, Triangle> > SurfaceTriangles;
-
 	typedef std::map<std::size_t, double> SurfaceArea;
-
-	template<typename SphereType>
-	static std::vector<SurfaceTriangles> construct_surface_triangles(
-			const std::vector<SphereType>& spheres,
-			const std::vector< std::vector<std::size_t> >& graph,
-			const std::size_t subdivision_depth,
-			const double probe_radius)
-	{
-		return construct_surfaces<SurfaceTrianglesOutputFunctor>(spheres, graph, subdivision_depth, probe_radius);
-	}
 
 	template<typename SphereType>
 	static std::vector<SurfaceArea> calculate_surface_areas(
@@ -87,21 +61,6 @@ public:
 	}
 
 private:
-	ContactSurface()
-	{
-	}
-
-	struct SurfaceTrianglesOutputFunctor
-	{
-		typedef SurfaceTriangles ResultType;
-		ResultType result;
-
-		void operator()(const std::size_t id, const SimplePoint& a, const SimplePoint& b, const SimplePoint& c)
-		{
-			result.push_back(std::make_pair(id, Triangle(a, b, c)));
-		}
-	};
-
 	struct SurfaceAreaOutputFunctor
 	{
 		typedef SurfaceArea ResultType;
@@ -185,11 +144,11 @@ private:
 				const SimplePoint& pb=sih.vertices()[b];
 				const SimplePoint& pc=sih.vertices()[c];
 
-				const SimplePoint a_b_border=pa+((pb-pa).unit()*intersect_vector_with_hyperboloid(pa, pb, spheres[influences[a]], spheres[influences[b]]));
-				const SimplePoint a_c_border=pa+((pc-pa).unit()*intersect_vector_with_hyperboloid(pa, pc, spheres[influences[a]], spheres[influences[c]]));
-				const SimplePoint b_c_border=pb+((pc-pb).unit()*intersect_vector_with_hyperboloid(pb, pc, spheres[influences[b]], spheres[influences[c]]));
+				const SimplePoint a_b_border=pa+((pb-pa).unit()*HyperboloidBetweenTwoSpheres::intersect_vector_with_hyperboloid(pa, pb, spheres[influences[a]], spheres[influences[b]]));
+				const SimplePoint a_c_border=pa+((pc-pa).unit()*HyperboloidBetweenTwoSpheres::intersect_vector_with_hyperboloid(pa, pc, spheres[influences[a]], spheres[influences[c]]));
+				const SimplePoint b_c_border=pb+((pc-pb).unit()*HyperboloidBetweenTwoSpheres::intersect_vector_with_hyperboloid(pb, pc, spheres[influences[b]], spheres[influences[c]]));
 
-				const SimplePoint middle=(a_b_border+a_c_border+b_c_border)/3;
+				const SimplePoint middle=(a_b_border+a_c_border+b_c_border)*(1.0/3.0);
 
 				output_functor(influences[a], pa, a_b_border, a_c_border);
 				output_functor(influences[a], middle, a_b_border, a_c_border);
@@ -222,8 +181,8 @@ private:
 				const SimplePoint& pd1=sih.vertices()[d1];
 				const SimplePoint& pd2=sih.vertices()[d2];
 
-				const SimplePoint s_d1_border=ps+((pd1-ps).unit()*intersect_vector_with_hyperboloid(ps, pd1, spheres[influences[s]], spheres[influences[d1]]));
-				const SimplePoint s_d2_border=ps+((pd2-ps).unit()*intersect_vector_with_hyperboloid(ps, pd2, spheres[influences[s]], spheres[influences[d2]]));
+				const SimplePoint s_d1_border=ps+((pd1-ps).unit()*HyperboloidBetweenTwoSpheres::intersect_vector_with_hyperboloid(ps, pd1, spheres[influences[s]], spheres[influences[d1]]));
+				const SimplePoint s_d2_border=ps+((pd2-ps).unit()*HyperboloidBetweenTwoSpheres::intersect_vector_with_hyperboloid(ps, pd2, spheres[influences[s]], spheres[influences[d2]]));
 
 				output_functor(influences[s], ps, s_d1_border, s_d2_border);
 				output_functor(influences[d1], pd1, s_d1_border, s_d2_border);
@@ -235,4 +194,4 @@ private:
 
 }
 
-#endif /* APOLLO_CONTACT_SURFACE_H_ */
+#endif /* APOLLO2_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_ */

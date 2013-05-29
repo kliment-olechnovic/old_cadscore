@@ -1,13 +1,12 @@
-#ifndef APOLLO_SUBDIVIDED_ICOSAHEDRON_H_
-#define APOLLO_SUBDIVIDED_ICOSAHEDRON_H_
+#ifndef APOLLO2_SUBDIVIDED_ICOSAHEDRON_H_
+#define APOLLO2_SUBDIVIDED_ICOSAHEDRON_H_
 
 #include <cmath>
-#include <tr1/unordered_map>
 
-#include "points_basic_operations.h"
-#include "tuples.h"
+#include "basic_operations_on_points.h"
+#include "tuple.h"
 
-namespace apollo
+namespace apollo2
 {
 
 class SubdividedIcosahedron
@@ -30,26 +29,26 @@ public:
 		vertices_.push_back(SimplePoint( 0, t,-1).unit());
 		vertices_.push_back(SimplePoint( 0,-t,-1).unit());
 
-		triples_.push_back(make_triple(0, 8, 4));
-		triples_.push_back(make_triple(1, 10, 7));
-		triples_.push_back(make_triple(2, 9, 11));
-		triples_.push_back(make_triple(7, 3, 1));
-		triples_.push_back(make_triple(0, 5, 10));
-		triples_.push_back(make_triple(3, 9, 6));
-		triples_.push_back(make_triple(3, 11, 9));
-		triples_.push_back(make_triple(8, 6, 4));
-		triples_.push_back(make_triple(2, 4, 9));
-		triples_.push_back(make_triple(3, 7, 11));
-		triples_.push_back(make_triple(4, 2, 0));
-		triples_.push_back(make_triple(9, 4, 6));
-		triples_.push_back(make_triple(2, 11, 5));
-		triples_.push_back(make_triple(0, 10, 8));
-		triples_.push_back(make_triple(5, 0, 2));
-		triples_.push_back(make_triple(10, 5, 7));
-		triples_.push_back(make_triple(1, 6, 8));
-		triples_.push_back(make_triple(1, 8, 10));
-		triples_.push_back(make_triple(6, 1, 3));
-		triples_.push_back(make_triple(11, 7, 5));
+		triples_.push_back(Triple(0, 8, 4));
+		triples_.push_back(Triple(1, 10, 7));
+		triples_.push_back(Triple(2, 9, 11));
+		triples_.push_back(Triple(7, 3, 1));
+		triples_.push_back(Triple(0, 5, 10));
+		triples_.push_back(Triple(3, 9, 6));
+		triples_.push_back(Triple(3, 11, 9));
+		triples_.push_back(Triple(8, 6, 4));
+		triples_.push_back(Triple(2, 4, 9));
+		triples_.push_back(Triple(3, 7, 11));
+		triples_.push_back(Triple(4, 2, 0));
+		triples_.push_back(Triple(9, 4, 6));
+		triples_.push_back(Triple(2, 11, 5));
+		triples_.push_back(Triple(0, 10, 8));
+		triples_.push_back(Triple(5, 0, 2));
+		triples_.push_back(Triple(10, 5, 7));
+		triples_.push_back(Triple(1, 6, 8));
+		triples_.push_back(Triple(1, 8, 10));
+		triples_.push_back(Triple(6, 1, 3));
+		triples_.push_back(Triple(11, 7, 5));
 
 		for(std::size_t i=0;i<depth;i++)
 		{
@@ -106,7 +105,7 @@ private:
 				if(it==pairs_vertices.end())
 				{
 					middle_point_ids[j]=vertices_.size();
-					vertices_.push_back(((vertices_[pair.get(0)]+vertices_[pair.get(1)])/2).unit());
+					vertices_.push_back(((vertices_[pair.get(0)]+vertices_[pair.get(1)])*(0.5)).unit());
 					pairs_vertices[pair]=middle_point_ids[j];
 				}
 				else
@@ -114,10 +113,10 @@ private:
 					middle_point_ids[j]=it->second;
 				}
 			}
-			new_triples.push_back(make_triple(triple.get(0), middle_point_ids[1], middle_point_ids[2]));
-			new_triples.push_back(make_triple(triple.get(1), middle_point_ids[0], middle_point_ids[2]));
-			new_triples.push_back(make_triple(triple.get(2), middle_point_ids[0], middle_point_ids[1]));
-			new_triples.push_back(make_triple(middle_point_ids[0], middle_point_ids[1], middle_point_ids[2]));
+			new_triples.push_back(Triple(triple.get(0), middle_point_ids[1], middle_point_ids[2]));
+			new_triples.push_back(Triple(triple.get(1), middle_point_ids[0], middle_point_ids[2]));
+			new_triples.push_back(Triple(triple.get(2), middle_point_ids[0], middle_point_ids[1]));
+			new_triples.push_back(Triple(middle_point_ids[0], middle_point_ids[1], middle_point_ids[2]));
 		}
 		triples_=new_triples;
 	}
@@ -129,4 +128,4 @@ private:
 
 }
 
-#endif /* APOLLO_SUBDIVIDED_ICOSAHEDRON_H_ */
+#endif /* APOLLO2_SUBDIVIDED_ICOSAHEDRON_H_ */
