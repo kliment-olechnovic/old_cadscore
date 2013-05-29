@@ -31,18 +31,34 @@ public:
 	typedef std::vector< std::vector<std::size_t> > NeighborsGraph;
 	typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> PairsNeighborsMap;
 	typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> TriplesNeighborsMap;
+	typedef apollonius_triangulation::SearchForValidQuadruples::Log QuadruplesLog;
+	typedef apollonius_triangulation::SearchForSurplusValidQuadruples::Log SurplusQuadruplesLog;
 
 	struct Result
 	{
 		QuadruplesMap quadruples_map;
-		apollonius_triangulation::SearchForValidQuadruples::Log quadruples_log;
-		apollonius_triangulation::SearchForSurplusValidQuadruples::Log surplus_quadruples_log;
+		QuadruplesLog quadruples_log;
+		SurplusQuadruplesLog surplus_quadruples_log;
 		std::set<std::size_t> hidden_spheres_ids;
 		std::set<std::size_t> ignored_spheres_ids;
+
+		void print_status(std::ostream& output) const
+		{
+			output << "quadruples " << quadruples_log.quadruples << "\n";
+			output << "tangent_spheres " << quadruples_log.tangent_spheres << "\n";
+			output << "processed_faces " << quadruples_log.processed_faces << "\n";
+			output << "difficult_faces " << quadruples_log.difficult_faces << "\n";
+			output << "first_faces_iterations " << quadruples_log.finding_first_faces_iterations << "\n";
+			output << "surplus_quadruples " << surplus_quadruples_log.surplus_quadruples << "\n";
+			output << "surplus_tangent_spheres " << surplus_quadruples_log.surplus_tangent_spheres << "\n";
+			output << "hidden_spheres " << hidden_spheres_ids.size() << "\n";
+			output << "ignored_spheres " << ignored_spheres_ids.size() << "\n";
+			output << "using_epsilon " << comparison_epsilon() << "\n";
+		}
 	};
 
 	template<typename SphereType>
-	static Result construct(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing, const bool perform_augmentation)
+	static Result construct_result(const std::vector<SphereType>& spheres, const double initial_radius_for_spheres_bucketing, const bool perform_augmentation)
 	{
 		Result result;
 		BoundingSpheresHierarchy<SphereType> bsh(spheres, initial_radius_for_spheres_bucketing, 1);
@@ -196,20 +212,6 @@ public:
 			}
 		}
 		return quadruples_map;
-	}
-
-	static void print_result_log(const Result& result, std::ostream& output)
-	{
-		output << "quadruples " << result.quadruples_log.quadruples << "\n";
-		output << "tangent_spheres " << result.quadruples_log.tangent_spheres << "\n";
-		output << "processed_faces " << result.quadruples_log.processed_faces << "\n";
-		output << "difficult_faces " << result.quadruples_log.difficult_faces << "\n";
-		output << "first_faces_iterations " << result.quadruples_log.finding_first_faces_iterations << "\n";
-		output << "surplus_quadruples " << result.surplus_quadruples_log.surplus_quadruples << "\n";
-		output << "surplus_tangent_spheres " << result.surplus_quadruples_log.surplus_tangent_spheres << "\n";
-		output << "hidden_spheres " << result.hidden_spheres_ids.size() << "\n";
-		output << "ignored_spheres " << result.ignored_spheres_ids.size() << "\n";
-		output << "used_epsilon " << comparison_epsilon() << "\n";
 	}
 
 	template<typename SphereType>

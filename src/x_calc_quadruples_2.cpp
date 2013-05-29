@@ -58,7 +58,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct(atoms, bsi_init_radius, augment);
+	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct_result(atoms, bsi_init_radius, augment);
 
 	if(!skip_output)
 	{
@@ -68,7 +68,7 @@ void x_calc_quadruples_2(const auxiliaries::CommandLineOptions& clo)
 	if(print_log)
 	{
 		std::clog << "atoms " <<  atoms.size() << "\n";
-		apollo2::ApolloniusTriangulation::print_result_log(apollonius_triangulation_result, std::clog);
+		apollonius_triangulation_result.print_status(std::clog);
 	}
 
 	if(check)

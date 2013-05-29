@@ -631,7 +631,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct(atoms, 3.5, false).quadruples_map);
+	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map);
 
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
