@@ -64,7 +64,7 @@ public:
 					{
 						for(std::list<SimplePoint>::iterator it=contour.begin();it!=contour.end();++it)
 						{
-							const double delta=comparison_epsilon()*j;
+							const double delta=0.00001*j;
 							double* coord_ptr=(j%3==0 ? &(it->x) : (j%3==1 ? &(it->y) : &(it->z)));
 							(*coord_ptr)+=delta;
 						}
