@@ -139,6 +139,12 @@ double signed_volume_of_tetrahedron(const InputPointTypeA& a, const InputPointTy
 	return (dot_product(sub_of_points<PODPoint>(a, d), cross_product<PODPoint>(sub_of_points<PODPoint>(b, d), sub_of_points<PODPoint>(c, d)))/6);
 }
 
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double triangle_area(const InputPointTypeA& a, const InputPointTypeB& b, const InputPointTypeC& c)
+{
+	return (point_module(cross_product<PODPoint>(sub_of_points<PODPoint>(b, a), sub_of_points<PODPoint>(c, a)))/2.0);
+}
+
 struct SimplePoint
 {
 	double x;

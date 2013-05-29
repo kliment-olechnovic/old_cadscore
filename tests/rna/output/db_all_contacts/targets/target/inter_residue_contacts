@@ -2052,16 +2052,16 @@ na_stacking_down 43.3103
 Z 26 Z 25
 11
 AA 327.419
-AM 177.533
-AS 149.886
+AM 177.44
+AS 149.979
 MA 164.595
 MM 155.599
 MS 8.99596
 SA 162.824
-SM 21.934
-SS 140.89
-na_stacking 140.89
-na_stacking_down 140.89
+SM 21.8414
+SS 140.983
+na_stacking 140.983
+na_stacking_down 140.983
 
 Z 26 Z 26
 3
@@ -5119,24 +5119,24 @@ na_siding 6.75554
 
 Z 72 Z 2
 5
-AA 63.8513
-AS 63.8513
-SA 63.8513
-SS 63.8513
-na_siding 63.8513
+AA 63.7667
+AS 63.7667
+SA 63.7667
+SS 63.7667
+na_siding 63.7667
 
 Z 72 Z 3
 10
-AA 51.3659
+AA 51.4504
 AM 1.63939
-AS 49.7265
+AS 49.811
 MA 1.92746
 MS 1.92746
-SA 49.4384
+SA 49.523
 SM 1.63939
-SS 47.799
-na_stacking 47.799
-na_stacking_down 47.799
+SS 47.8836
+na_stacking 47.8836
+na_stacking_down 47.8836
 
 Z 72 Z 71
 11
@@ -5225,11 +5225,11 @@ na_stacking_down 203.996
 
 Z 74 Z 1
 5
-AA 80.1271
-AS 80.1271
-SA 80.1271
-SS 80.1271
-na_siding 80.1271
+AA 80.1431
+AS 80.1431
+SA 80.1431
+SS 80.1431
+na_siding 80.1431
 
 Z 74 Z 73
 11
@@ -5247,9 +5247,9 @@ na_stacking_up 209.969
 
 Z 74 Z 74
 3
-AW 210.3
+AW 210.284
 MW 151.256
-SW 59.0443
+SW 59.0282
 
 Z 74 Z 75
 11

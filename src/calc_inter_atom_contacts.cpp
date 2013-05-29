@@ -3,7 +3,7 @@
 #include "protein/atom.h"
 
 #include "apollo2/apollonius_triangulation.h"
-#include "apollo/contact_surface.h"
+#include "apollo2/inter_sphere_contact_surface_on_sphere.h"
 
 #include "contacto/inter_atom_contact.h"
 
@@ -34,8 +34,8 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts=apollo::ContactSurface::construct_inter_sphere_contacts_from_surface_areas<contacto::InterAtomContact>(
-			apollo::ContactSurface::calculate_surface_areas(atoms, graph, subdivision_depth, probe_radius));
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts=apollo2::InterSphereContactSurfaceOnSphere::construct_inter_sphere_contacts_from_surface_areas<contacto::InterAtomContact>(
+			apollo2::InterSphereContactSurfaceOnSphere::calculate_surface_areas(atoms, graph, subdivision_depth, probe_radius));
 
 	if(atoms.empty() || inter_atom_contacts.empty())
 	{
