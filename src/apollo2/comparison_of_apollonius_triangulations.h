@@ -1,5 +1,5 @@
-#ifndef APOLLO2_APOLLONIUS_TRIANGULATIONS_COMPARISON_H_
-#define APOLLO2_APOLLONIUS_TRIANGULATIONS_COMPARISON_H_
+#ifndef APOLLO2_COMPARISON_OF_APOLLONIUS_TRIANGULATIONS_H_
+#define APOLLO2_COMPARISON_OF_APOLLONIUS_TRIANGULATIONS_H_
 
 #include <vector>
 #include <algorithm>
@@ -12,7 +12,7 @@
 namespace apollo2
 {
 
-class ApolloniusTriangulationsComparison
+class ComparisonOfApolloniusTriangulations
 {
 public:
 	struct Result
@@ -99,4 +99,4 @@ private:
 
 }
 
-#endif /* APOLLO2_APOLLONIUS_TRIANGULATIONS_COMPARISON_H_ */
+#endif /* APOLLO2_COMPARISON_OF_APOLLONIUS_TRIANGULATIONS_H_ */

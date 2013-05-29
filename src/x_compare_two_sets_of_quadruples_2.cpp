@@ -3,7 +3,7 @@
 #include <sstream>
 #include <limits>
 
-#include "apollo2/apollonius_triangulations_comparison.h"
+#include "apollo2/comparison_of_apollonius_triangulations.h"
 
 #include "auxiliaries/command_line_options.h"
 
@@ -54,7 +54,7 @@ void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& c
 	std::vector<apollo2::Quadruple> quadruples1=read_quadruples_from_stream(stream1);
 	std::vector<apollo2::Quadruple> quadruples2=read_quadruples_from_stream(stream2);
 
-	const apollo2::ApolloniusTriangulationsComparison::Result differences=apollo2::ApolloniusTriangulationsComparison::calculate_directional_difference_between_two_sets_of_quadruples(atoms, 3.5, quadruples1, quadruples2);
+	const apollo2::ComparisonOfApolloniusTriangulations::Result differences=apollo2::ComparisonOfApolloniusTriangulations::calculate_directional_difference_between_two_sets_of_quadruples(atoms, 3.5, quadruples1, quadruples2);
 
 	std::cout << "all_differences " << differences.all_differences.size() << "\n";
 	std::cout << "confirmed_differences " << differences.confirmed_differences.size() << "\n";
