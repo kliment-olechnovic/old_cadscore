@@ -29,7 +29,7 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct(atoms, 3.5, false).quadruples_map);
+	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map);
 
 	std::set<contacto::InterAtomContact> inter_atom_contacts;
 

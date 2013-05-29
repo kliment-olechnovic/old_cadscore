@@ -24,7 +24,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const std::vector< std::vector<std::size_t> > graph=apollo2::ApolloniusTriangulation::collect_neighbors_graph_from_neighbors_map(apollo2::ApolloniusTriangulation::collect_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct(atoms, 3.5, false).quadruples_map), atoms.size());
+	const std::vector< std::vector<std::size_t> > graph=apollo2::ApolloniusTriangulation::collect_neighbors_graph_from_neighbors_map(apollo2::ApolloniusTriangulation::collect_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map), atoms.size());
 
 	for(std::size_t i=0;i<graph.size();i++)
 	{
