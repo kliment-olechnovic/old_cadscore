@@ -1,28 +1,27 @@
-#ifndef HYPERBOLIC_CELL_FACE_H_
-#define HYPERBOLIC_CELL_FACE_H_
+#ifndef APOLLO2_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_
+#define APOLLO2_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_
 
 #include <list>
 #include <vector>
 #include <deque>
 
-#include "points_basic_operations.h"
-#include "spheres_basic_operations.h"
-#include "hyperboloids_basic_operations.h"
+#include "basic_operations_on_spheres.h"
+#include "hyperboloid_between_two_spheres.h"
 #include "rotation.h"
-#include "tuples.h"
+#include "tuple.h"
 
-namespace apollo
+namespace apollo2
 {
 
-class HyperbolicCellFace
+class InterSphereContactFaceOnHyperboloid
 {
 public:
-	HyperbolicCellFace()
+	InterSphereContactFaceOnHyperboloid()
 	{
 	}
 
 	template<typename SphereType>
-	static HyperbolicCellFace construct(
+	static InterSphereContactFaceOnHyperboloid construct(
 			const SphereType& a,
 			const SphereType& b,
 			std::vector<const SphereType*> list_of_c,
@@ -30,7 +29,7 @@ public:
 			const double step,
 			const int projections)
 	{
-		HyperbolicCellFace hcf;
+		InterSphereContactFaceOnHyperboloid hcf;
 		hcf.s1_=custom_sphere_from_object<SimpleSphere>(a);
 		hcf.s2_=custom_sphere_from_object<SimpleSphere>(b);
 		const SimpleSphere a_expanded=custom_sphere_from_point<SimpleSphere>(a, a.r+probe);
@@ -51,7 +50,7 @@ public:
 				{
 					Rotation rotation(sub_of_points<SimplePoint>(b, a).unit(), 0);
 					const SimplePoint first_point=any_normal_of_vector<SimplePoint>(rotation.axis)*hcf.intersection_circle_.r;
-					const double angle_step=std::max(std::min(360*(using_step/(2*PI*hcf.intersection_circle_.r)), 60.0), 5.0);
+					const double angle_step=std::max(std::min(360*(using_step/(2*Rotation::pi()*hcf.intersection_circle_.r)), 60.0), 5.0);
 					for(rotation.angle=1.0*j;rotation.angle<360;rotation.angle+=angle_step)
 					{
 						contour.push_back(custom_point_from_object<SimplePoint>(hcf.intersection_circle_)+rotation.rotate<SimplePoint>(first_point));
@@ -65,7 +64,7 @@ public:
 					{
 						for(std::list<SimplePoint>::iterator it=contour.begin();it!=contour.end();++it)
 						{
-							const double delta=epsilon()*j;
+							const double delta=comparison_epsilon()*j;
 							double* coord_ptr=(j%3==0 ? &(it->x) : (j%3==1 ? &(it->y) : &(it->z)));
 							(*coord_ptr)+=delta;
 						}
@@ -138,6 +137,18 @@ public:
 	}
 
 private:
+	template<typename OutputSphereType, typename InputSphereTypeA, typename InputSphereTypeB>
+	static OutputSphereType spheres_intersection_circle(const InputSphereTypeA& a, const InputSphereTypeB& b)
+	{
+		const SimplePoint ap=custom_point_from_object<SimplePoint>(a);
+		const SimplePoint bp=custom_point_from_object<SimplePoint>(b);
+		const SimplePoint cv=bp-ap;
+		const double cm=cv.module();
+		const double cos_g=(a.r*a.r+cm*cm-b.r*b.r)/(2*a.r*cm);
+		const double sin_g=sqrt(1-cos_g*cos_g);
+		return custom_sphere_from_point<OutputSphereType>(ap+(cv.unit()*(a.r*cos_g)), a.r*sin_g);
+	}
+
 	template<typename SphereType>
 	static std::size_t update_contour(
 			const SphereType& a,
@@ -190,7 +201,7 @@ private:
 				const bool right_halfspace=minimal_distance_from_point_to_sphere(right_point, c)<minimal_distance_from_point_to_sphere(right_point, a);
 				if(left_halfspace!=right_halfspace)
 				{
-					const double pos=intersect_vector_with_hyperboloid(left_point, right_point, a, c);
+					const double pos=HyperboloidBetweenTwoSpheres::intersect_vector_with_hyperboloid(left_point, right_point, a, c);
 					if(pos>0.0)
 					{
 						const SimplePoint intersection_point=left_point+((right_point-left_point).unit()*pos);
@@ -230,9 +241,9 @@ private:
 					SimplePoint& point=*(intersection_iterators[j].first);
 					for(int i=0;i<projections;i++)
 					{
-						point=project_point_on_hyperboloid(point, b, c);
-						point=project_point_on_hyperboloid(point, a, c);
-						point=project_point_on_hyperboloid(point, a, b);
+						point=HyperboloidBetweenTwoSpheres::project_point_on_hyperboloid(point, b, c);
+						point=HyperboloidBetweenTwoSpheres::project_point_on_hyperboloid(point, a, c);
+						point=HyperboloidBetweenTwoSpheres::project_point_on_hyperboloid(point, a, b);
 					}
 				}
 
@@ -268,9 +279,9 @@ private:
 							SimplePoint p=left_point+(direction*pos);
 							for(int i=0;i<projections;i++)
 							{
-								p=project_point_on_hyperboloid(p, a, c);
-								p=project_point_on_hyperboloid(p, a, b);
-								p=project_point_on_hyperboloid(p, b, c);
+								p=HyperboloidBetweenTwoSpheres::project_point_on_hyperboloid(p, a, c);
+								p=HyperboloidBetweenTwoSpheres::project_point_on_hyperboloid(p, a, b);
+								p=HyperboloidBetweenTwoSpheres::project_point_on_hyperboloid(p, b, c);
 							}
 							contour.insert(second_intersection, p);
 						}
@@ -297,15 +308,15 @@ private:
 		{
 			mass_center=mass_center+mesh_vertices[i];
 		}
-		mass_center=mass_center/mesh_vertices.size();
+		mass_center=mass_center*(1.0/static_cast<double>(mesh_vertices.size()));
 		mesh_vertices.push_back(mass_center);
 
 		mesh_triples.reserve(contour_points.size());
 		for(std::size_t i=0;i+1<contour_points.size();i++)
 		{
-			mesh_triples.push_back(make_triple(i, i+1, contour_points.size()));
+			mesh_triples.push_back(Triple(i, i+1, contour_points.size()));
 		}
-		mesh_triples.push_back(make_triple(0, contour_points.size()-1, contour_points.size()));
+		mesh_triples.push_back(Triple(0, contour_points.size()-1, contour_points.size()));
 	}
 
 	SimpleSphere s1_;
@@ -318,4 +329,4 @@ private:
 
 }
 
-#endif /* HYPERBOLIC_CELL_FACE_H_ */
+#endif /* APOLLO2_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_ */

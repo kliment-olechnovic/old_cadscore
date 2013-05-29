@@ -1,9 +1,7 @@
-#ifndef APOLLO_QUATERNION_H_
-#define APOLLO_QUATERNION_H_
+#ifndef APOLLO2_QUATERNION_H_
+#define APOLLO2_QUATERNION_H_
 
-#include "points_basic_operations.h"
-
-namespace apollo
+namespace apollo2
 {
 
 struct Quaternion
@@ -22,15 +20,8 @@ struct Quaternion
 	}
 
 	template<typename InputPointType>
-	static Quaternion from_point(const double a, const InputPointType& p)
+	Quaternion(const double a, const InputPointType& p) : a(a), b(p.x), c(p.y), d(p.z)
 	{
-		return Quaternion(a, p.x, p.y, p.z);
-	}
-
-	template<typename OutputPointType>
-	OutputPointType point() const
-	{
-		return custom_point<OutputPointType>(b, c, d);
 	}
 
 	Quaternion operator*(const Quaternion& q) const
@@ -50,4 +41,4 @@ struct Quaternion
 
 }
 
-#endif /* APOLLO_QUATERNION_H_ */
+#endif /* APOLLO2_QUATERNION_H_ */

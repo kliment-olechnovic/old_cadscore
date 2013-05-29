@@ -44,7 +44,7 @@ struct NucleotidePlane
 						const PointType pb(b.x, b.y, b.z);
 						const PointType pc(c.x, c.y, c.z);
 						NucleotidePlane& plane=planes[residue_id];
-						plane.point=((pa+pb)+pc)/3.0;
+						plane.point=((pa+pb)+pc)*(1.0/3.0);
 						plane.normal=((pb-pa)&(pc-pa)).unit();
 					}
 				}
