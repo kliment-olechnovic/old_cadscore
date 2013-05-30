@@ -13,7 +13,6 @@
 #include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/map_io.h"
 #include "auxiliaries/opengl_printer.h"

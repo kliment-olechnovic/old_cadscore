@@ -9,7 +9,6 @@
 #include "contacto/contact_classification.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/map_io.h"
 
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo)
