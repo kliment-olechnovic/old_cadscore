@@ -10,7 +10,6 @@
 #include "contacto/residue_contact_area_difference_basic_scoring_functors.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/map_io.h"
 

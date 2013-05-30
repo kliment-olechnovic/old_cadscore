@@ -4,7 +4,6 @@
 #include "protein/residue_ids_collection.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)

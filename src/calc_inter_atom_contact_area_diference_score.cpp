@@ -11,7 +11,6 @@
 #include "contacto/ratio.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/map_io.h"
 
