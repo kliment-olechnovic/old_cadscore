@@ -19,6 +19,7 @@ do
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -j > $OUTPUT_DIR/hyperfaces_$(basename $MODEL) &
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -s > $OUTPUT_DIR/contacts_summary_$(basename $MODEL) &
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -t > $OUTPUT_DIR/hyperfaces_summary_$(basename $MODEL) &
+  $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -w > $OUTPUT_DIR/check_for_any_inter_chain_contact_$(basename $MODEL) &
   $CADSCORE_BIN_DIR/Voroprot2_print_interfaces_as_PyMol_graphics.bash -i $MODEL -f residue_id -s residue_id -g "(A50-A60)(B70-B80)" > $OUTPUT_DIR/graphics_$(basename $MODEL) &
 done
 
