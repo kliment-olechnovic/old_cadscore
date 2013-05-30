@@ -7,8 +7,9 @@
 namespace apollo2
 {
 
-struct Rotation
+class Rotation
 {
+public:
 	SimplePoint axis;
 	double angle;
 
@@ -32,8 +33,8 @@ struct Rotation
 		if(axis.module()>0)
 		{
 			const double radians_angle_half=angle*pi()/360.0;
-			const Quaternion q1(cos(radians_angle_half), axis.unit()*sin(radians_angle_half));
-			const Quaternion q2(0, p);
+			const Quaternion q1=quaternion_from_value_and_point(cos(radians_angle_half), axis.unit()*sin(radians_angle_half));
+			const Quaternion q2=quaternion_from_value_and_point(0, p);
 			const Quaternion q3=((q1*q2)*(!q1));
 			return custom_point<OutputPointType>(q3.b, q3.c, q3.d);
 		}
@@ -41,6 +42,13 @@ struct Rotation
 		{
 			return p;
 		}
+	}
+
+private:
+	template<typename InputPointType>
+	static Quaternion quaternion_from_value_and_point(const double a, const InputPointType& p)
+	{
+		return Quaternion(a, p.x, p.y, p.z);
 	}
 };
 
