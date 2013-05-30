@@ -14,6 +14,9 @@
 #include "auxiliaries/vector_io.h"
 #include "auxiliaries/map_io.h"
 
+namespace
+{
+
 std::map<contacto::ContactID<protein::AtomID>, double> construct_inter_atom_contacts_map(const std::vector<protein::Atom>& atoms, const std::vector<contacto::InterAtomContact>& inter_atom_contacts, bool inter_chain)
 {
 	std::map<contacto::ContactID<protein::AtomID>, double> contacts_map;
@@ -62,6 +65,8 @@ void print_atoms_local_scores_as_pdb(const std::vector<protein::Atom>& atoms, co
 		std::cout << a.string_for_PDB_file(value) << "\n";
 	}
 	std::cout << "END\n";
+}
+
 }
 
 void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLineOptions& clo)
