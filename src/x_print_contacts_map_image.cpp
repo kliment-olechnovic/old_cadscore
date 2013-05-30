@@ -14,9 +14,130 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/map_io.h"
 #include "auxiliaries/vector_io.h"
-#include "auxiliaries/xml_writer.h"
 #include "auxiliaries/color.h"
-#include "auxiliaries/ppm_image_writer.h"
+
+namespace
+{
+
+class XMLWriter
+{
+public:
+	XMLWriter(const std::string& type) : type_(type)
+	{
+	}
+
+	template<typename T>
+	XMLWriter& set(const std::string& name, const T& value, const std::string& units="")
+	{
+		std::ostringstream output;
+		output << value << units;
+		parameters_[name]=output.str();
+		return (*this);
+	}
+
+	void set(const std::string& contents)
+	{
+		contents_=contents;
+	}
+
+	void add_child(const XMLWriter& child)
+	{
+		children_.push_back(child);
+	}
+
+	void write(std::ostream& output, const std::size_t tabs=0) const
+	{
+		output << std::string(tabs, ' ') << "<" << type_;
+		for(std::map<std::string, std::string>::const_iterator it=parameters_.begin();it!=parameters_.end();++it)
+		{
+			output << " " << it->first << "=\"" << it->second << "\"";
+		}
+		if(contents_.empty() && children_.empty())
+		{
+			output << "/>\n";
+		}
+		else
+		{
+			output << ">\n";
+			if(!contents_.empty())
+			{
+				output << std::string(tabs+2, ' ') << contents_ << "\n";
+			}
+			for(std::size_t i=0;i<children_.size();i++)
+			{
+				children_[i].write(output, tabs+2);
+			}
+			output << "</" << type_ << ">\n";
+		}
+	}
+
+private:
+	std::string type_;
+	std::map<std::string, std::string> parameters_;
+	std::string contents_;
+	std::vector<XMLWriter> children_;
+};
+
+class PPMImageWriter
+{
+public:
+	PPMImageWriter(const std::size_t height, const std::size_t width) :
+		height_(height),
+		width_(width),
+		pixels_(height, std::vector<auxiliaries::Color>(width))
+	{
+	}
+
+	std::size_t height()
+	{
+		return height_;
+	}
+
+	std::size_t width()
+	{
+		return width_;
+	}
+
+	auxiliaries::Color& color(const std::size_t i, const std::size_t j)
+	{
+		return pixels_.at(i).at(j);
+	}
+
+	const auxiliaries::Color& const_color(const std::size_t i, const std::size_t j) const
+	{
+		return pixels_.at(i).at(j);
+	}
+
+	void write(std::ostream& output) const
+	{
+		output << "P6\n" << width_ << " " << height_ << "\n255\n";
+		const std::size_t line_size=width_*3;
+		char* line=new char[line_size];
+		for(std::size_t i=0;i<height_;i++)
+		{
+			for(std::size_t j=0;j<width_;j++)
+			{
+				const auxiliaries::Color& c=const_color(i, j);
+				line[j*3+0]=static_cast<char>(c.r);
+				line[j*3+1]=static_cast<char>(c.g);
+				line[j*3+2]=static_cast<char>(c.b);
+			}
+			output.write(line, line_size);
+		}
+		delete[] line;
+	}
+
+private:
+	PPMImageWriter(const PPMImageWriter&)
+	{
+	}
+
+	std::size_t height_;
+	std::size_t width_;
+	std::vector< std::vector<auxiliaries::Color> > pixels_;
+};
+
+}
 
 void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo)
 {
@@ -49,9 +170,9 @@ void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOpti
 		max_area=std::max(max_area, it->second.area(contact_class));
 	}
 
-	auxiliaries::XMLWriter svg("svg");
+	XMLWriter svg("svg");
 	svg.set("width", axis.size()).set("height", axis.size());
-	svg.add_child(auxiliaries::XMLWriter("rect").set("x", 0).set("y", 0).set("width", axis.size()).set("height", axis.size()).set("fill", "black"));
+	svg.add_child(XMLWriter("rect").set("x", 0).set("y", 0).set("width", axis.size()).set("height", axis.size()).set("fill", "black"));
 	for(InterResidueContacts::const_iterator it=inter_residue_contacts.begin();it!=inter_residue_contacts.end();++it)
 	{
 		const std::size_t x=axis[it->first.a];
@@ -62,7 +183,7 @@ void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOpti
 			const auxiliaries::Color color=(color_by_area ? auxiliaries::Color::from_temperature_to_blue_white_red(max_area>0.0 ? area/max_area : 0.0) : auxiliaries::Color(255, 255, 255));
 			std::ostringstream color_output;
 			color_output << "rgb(" << static_cast<unsigned int>(color.r) << "," << static_cast<unsigned int>(color.g) << "," << static_cast<unsigned int>(color.b) << ")";
-			svg.add_child(auxiliaries::XMLWriter("rect").set("x", x).set("y", y).set("width", 1).set("height", 1).set("fill", color_output.str()));
+			svg.add_child(XMLWriter("rect").set("x", x).set("y", y).set("width", 1).set("height", 1).set("fill", color_output.str()));
 		}
 	}
 	svg.write(std::cout);
@@ -117,7 +238,7 @@ void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOpti
 
 	const double usable_max_distance=(max_distance>0.0 ? max_distance : observed_max_distance);
 
-	auxiliaries::PPMImageWriter image_writer(distance_map.size(), distance_map.size());
+	PPMImageWriter image_writer(distance_map.size(), distance_map.size());
 	for(std::size_t i=0;i<distance_map.size();i++)
 	{
 		for(std::size_t j=0;j<distance_map.size();j++)
