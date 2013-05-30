@@ -2,7 +2,6 @@
 #include "protein/residue_id.h"
 #include "protein/residue_summary.h"
 
-#include "contacto/inter_residue_contact_dual_areas.h"
 #include "contacto/residue_contact_area_difference_profile.h"
 #include "contacto/residue_contact_area_difference_basic_scoring_functors.h"
 
