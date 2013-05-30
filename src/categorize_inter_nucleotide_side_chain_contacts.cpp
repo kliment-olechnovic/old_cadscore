@@ -13,11 +13,10 @@
 namespace
 {
 
-template<typename PointType>
 struct NucleotidePlane
 {
-	PointType point;
-	PointType normal;
+	apollo2::SimplePoint point;
+	apollo2::SimplePoint normal;
 
 	static std::map<protein::ResidueID, NucleotidePlane> calc_nucleotides_planes(const std::vector<protein::Atom>& atoms)
 	{
@@ -46,9 +45,9 @@ struct NucleotidePlane
 						const protein::Atom& a=atoms[abc[0]];
 						const protein::Atom& b=atoms[abc[1]];
 						const protein::Atom& c=atoms[abc[2]];
-						const PointType pa(a.x, a.y, a.z);
-						const PointType pb(b.x, b.y, b.z);
-						const PointType pc(c.x, c.y, c.z);
+						const apollo2::SimplePoint pa(a.x, a.y, a.z);
+						const apollo2::SimplePoint pb(b.x, b.y, b.z);
+						const apollo2::SimplePoint pc(c.x, c.y, c.z);
 						NucleotidePlane& plane=planes[residue_id];
 						plane.point=((pa+pb)+pc)*(1.0/3.0);
 						plane.normal=((pb-pa)&(pc-pa)).unit();
@@ -78,8 +77,6 @@ struct NucleotidePlane
 
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef NucleotidePlane<apollo2::SimplePoint> Plane;
-
 	clo.check_allowed_options("");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
@@ -87,7 +84,7 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=
 			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
-	const std::map< protein::ResidueID, Plane > nucleotides_planes=Plane::calc_nucleotides_planes(atoms);
+	const std::map< protein::ResidueID, NucleotidePlane > nucleotides_planes=NucleotidePlane::calc_nucleotides_planes(atoms);
 
 	const std::map< protein::ResidueID, std::vector<std::size_t> > residue_ids_atoms=protein::group_atoms_indices_by_residue_ids(atoms);
 
@@ -100,7 +97,7 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 			const protein::ResidueID& rid_b=it->first.b;
 			if(nucleotides_planes.count(rid_a)==1 && residue_ids_atoms.count(rid_b)==1)
 			{
-				const Plane& plane_a=nucleotides_planes.find(rid_a)->second;
+				const NucleotidePlane& plane_a=nucleotides_planes.find(rid_a)->second;
 				const std::vector<std::size_t> atoms_ids_b=residue_ids_atoms.find(rid_b)->second;
 				std::vector<std::size_t> sc_atoms_ids_b;
 				for(std::size_t i=0;i<atoms_ids_b.size();i++)
