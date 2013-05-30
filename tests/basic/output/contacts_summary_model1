@@ -1,0 +1,30 @@
+summary_values
+28
+all_AA 147730
+all_AM 76907.3
+all_AS 70822.4
+all_MA 84864.1
+all_MM 54178
+all_MS 30686.2
+all_SA 62865.5
+all_SM 22729.3
+all_SS 40136.2
+inter_chain_A_B_AA 2733.13
+inter_chain_A_B_AM 1087.76
+inter_chain_A_B_AS 1645.37
+inter_chain_A_B_MA 1160.2
+inter_chain_A_B_MM 440.041
+inter_chain_A_B_MS 720.162
+inter_chain_A_B_SA 1572.92
+inter_chain_A_B_SM 647.719
+inter_chain_A_B_SS 925.204
+inter_chain_B_A_AA 2899.49
+inter_chain_B_A_AM 1011.28
+inter_chain_B_A_AS 1888.2
+inter_chain_B_A_MA 1297.37
+inter_chain_B_A_MM 407.443
+inter_chain_B_A_MS 889.93
+inter_chain_B_A_SA 1602.11
+inter_chain_B_A_SM 603.838
+inter_chain_B_A_SS 998.273
+sas 22574.2
