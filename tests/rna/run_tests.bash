@@ -17,6 +17,8 @@ for MODEL in $INPUT_DIR/*
 do
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -q > $OUTPUT_DIR/quadruples_$(basename $MODEL) &
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -j > $OUTPUT_DIR/hyperfaces_$(basename $MODEL) &
+  $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -s > $OUTPUT_DIR/contacts_summary_$(basename $MODEL) &
+  $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -t > $OUTPUT_DIR/hyperfaces_summary_$(basename $MODEL) &
 done
 
 

@@ -19,6 +19,8 @@ $0 parameters:
     -c    flag to print inter-atom contacts
     -r    flag to print inter-residue contacts
     -j    flag to print inter-atom cells faces areas
+    -s    flag to print inter-atom contacts summary
+    -t    flag to print inter-atom cells faces summary
     -v    path to atomic radii files directory
   
   Other:
@@ -55,8 +57,10 @@ QUADRUPLES=false
 INTER_ATOM_CONTACTS=false
 INTER_RESIDUE_CONTACTS=false
 INTER_ATOM_FACES=false
+INTER_ATOM_CONTACTS_SUMMARY=false
+INTER_ATOM_FACES_SUMMARY=false
 
-while getopts "hf:laqcrjv:e:b:p" OPTION
+while getopts "hf:laqcrjstv:e:b:p" OPTION
 do
   case $OPTION in
     h)
@@ -95,6 +99,12 @@ do
       ;;
     j)
       INTER_ATOM_FACES=true
+      ;;
+    s)
+      INTER_ATOM_CONTACTS_SUMMARY=true
+      ;;
+    t)
+      INTER_ATOM_FACES_SUMMARY=true
       ;;
     ?)
       exit 1
@@ -140,4 +150,14 @@ fi
 if $INTER_ATOM_FACES
 then
   cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces
+fi
+
+if $INTER_ATOM_CONTACTS_SUMMARY
+then
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode summarize-inter-atom-contacts
+fi
+
+if $INTER_ATOM_FACES_SUMMARY
+then
+  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces | $VOROPROT --mode summarize-inter-atom-contacts
 fi
