@@ -15,7 +15,7 @@ namespace auxiliaries
 class OpenGLPrinter
 {
 public:
-	OpenGLPrinter(const std::string& obj_name, const std::string& cgo_name) : obj_name_(obj_name), cgo_name_(cgo_name)
+	OpenGLPrinter(std::ostream& output_stream, const std::string& obj_name, const std::string& cgo_name) : output_stream_(output_stream), obj_name_(obj_name), cgo_name_(cgo_name)
 	{
 		string_stream_ << obj_name_ << " = [\n";
 	}
@@ -23,7 +23,7 @@ public:
 	~OpenGLPrinter()
 	{
 		string_stream_ << "]\ncmd.load_cgo(" << obj_name_ << ", '" << cgo_name_ << "')\n";
-		std::cout << string_stream_.str() << "\n";
+		output_stream_ << string_stream_.str() << "\n";
 	}
 
 	template<typename PointType>
@@ -115,6 +115,7 @@ private:
 		return output.str();
 	}
 
+	std::ostream& output_stream_;
 	const std::string obj_name_;
 	const std::string cgo_name_;
 	std::ostringstream string_stream_;

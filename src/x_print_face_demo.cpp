@@ -19,10 +19,10 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 	std::cout << "from pymol.cgo import *\n";
 	std::cout << "from pymol import cmd\n\n";
 
-	auxiliaries::OpenGLPrinter opengl_printer1("obj1", "cgo1");
-	auxiliaries::OpenGLPrinter opengl_printer2("obj2", "cgo2");
-	auxiliaries::OpenGLPrinter opengl_printer3("obj3", "cgo3");
-	auxiliaries::OpenGLPrinter opengl_printer4("obj4", "cgo4");
+	auxiliaries::OpenGLPrinter opengl_printer1(std::cout, "obj1", "cgo1");
+	auxiliaries::OpenGLPrinter opengl_printer2(std::cout, "obj2", "cgo2");
+	auxiliaries::OpenGLPrinter opengl_printer3(std::cout, "obj3", "cgo3");
+	auxiliaries::OpenGLPrinter opengl_printer4(std::cout, "obj4", "cgo4");
 
 	for(std::size_t i=0;i<generators.size();i++)
 	{
