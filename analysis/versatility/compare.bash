@@ -1,6 +1,7 @@
 #!/bin/bash
 
 VOROPROT="./voroprot2"
+VOROPROT_EPSILON="0.00000001"
 QTFIER="./QTFier32"
 
 OUTPUT_DIRECTORY=$1
@@ -49,7 +50,7 @@ cat $QTFIER_CALC_RESULTS | egrep '^MODEL' | awk '{print "qtfier_vertices " $4}' 
 if [ -s $QTFIER_CALC_LOG ]
 then
   cat $QTFIER_CALC_RESULTS | egrep '^QTVTX' | awk '{print $4 " " $5 " " $6 " " $7}' > $VOROPROT_INPUT_FILE
-  ( time -p (cat $VOROPROT_INPUT_FILE | timeout 600 $VOROPROT --mode x-calc-quadruples-2 --augment --print-log --clog-file $VOROPROT_CALC_LOG > $VOROPROT_CALC_RESULTS) ) 2> $VOROPROT_CALC_TIME
+  ( time -p (cat $VOROPROT_INPUT_FILE | timeout 600 $VOROPROT --mode calc-quadruples --epsilon $VOROPROT_EPSILON --raw-input --augment --print-log --clog-file $VOROPROT_CALC_LOG > $VOROPROT_CALC_RESULTS) ) 2> $VOROPROT_CALC_TIME
   cat $VOROPROT_CALC_RESULTS | awk '{print $1 " " $2 " " $3 " " $4}' | awk '{split($0,array," "); asort(array); printf array[1] " " array[2] " " array[3] " " array[4] "\n"}' | sort > $VOROPROT_CALC_QUADRUPLES
   
   echo "input $PDB_FILE_BASENAME" > $OUTPUT_RESULTS
@@ -58,7 +59,7 @@ then
   
   cat $QTFIER_CALC_LOG >> $OUTPUT_RESULTS
   cat $QTFIER_CALC_TIME | sed 's/^/qtfier_/' >> $OUTPUT_RESULTS
-  time -p ( cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples-2 --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES | sed 's/^/qtfier_/' >> $OUTPUT_RESULTS )
+  time -p ( cat $VOROPROT_INPUT_FILE | $VOROPROT --mode x-compare-two-sets-of-quadruples --epsilon $VOROPROT_EPSILON --file1 $QTFIER_CALC_QUADRUPLES --file2 $VOROPROT_CALC_QUADRUPLES | sed 's/^/qtfier_/' >> $OUTPUT_RESULTS )
   
   if [ -n "$AWVORONOI_DIR" ]
   then
