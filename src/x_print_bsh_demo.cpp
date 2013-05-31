@@ -26,7 +26,7 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 			obj_name << "obj_as";
 			std::ostringstream cgo_name;
 			cgo_name << "cgo_as";
-			auxiliaries::OpenGLPrinter opengl_printer(obj_name.str(), cgo_name.str());
+			auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
 			for(std::size_t i=0;i<atoms.size();i++)
 			{
 				opengl_printer.print_sphere(atoms[i], auxiliaries::Color::from_code(0x36BBCE));
@@ -40,7 +40,7 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 			obj_name << "obj_bs" << l;
 			std::ostringstream cgo_name;
 			cgo_name << "cgo_bs" << l;
-			auxiliaries::OpenGLPrinter opengl_printer(obj_name.str(), cgo_name.str());
+			auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
 			for(std::size_t i=0;i<bs.size();i++)
 			{
 				opengl_printer.print_sphere(bs[i], auxiliaries::Color::from_code(0x37DE6A));
