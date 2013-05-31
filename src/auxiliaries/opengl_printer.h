@@ -7,8 +7,6 @@
 #include <iostream>
 #include <limits>
 
-#include "color.h"
-
 namespace auxiliaries
 {
 
@@ -26,15 +24,30 @@ public:
 		output_stream_ << string_stream_.str() << "\n";
 	}
 
+	void print_color(const double r, const double g, const double b)
+	{
+		string_stream_ << "    COLOR, " << r << ", " << g << ", " << b << ",\n";
+	}
+
+	template<typename ColorType>
+	void print_color(const ColorType& color)
+	{
+		print_color(color.r_double(), color.g_double(), color.b_double());
+	}
+
+	void print_alpha(const double alpha)
+	{
+		string_stream_ << "    ALPHA, " << alpha << ",\n";
+	}
+
 	template<typename PointType>
-	void print_tringle_fan(const std::vector<PointType>& mesh_vertices, const PointType& normal, const auxiliaries::Color& color)
+	void print_tringle_fan(const std::vector<PointType>& mesh_vertices, const PointType& normal)
 	{
 		if(!mesh_vertices.empty())
 		{
 			const PointType shift=normal*0.001;
 
 			string_stream_ << "    BEGIN, TRIANGLE_FAN,\n";
-			string_stream_ << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
 			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
 			string_stream_ << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
 			for(std::size_t i=0;i+1<mesh_vertices.size();i++)
@@ -48,8 +61,8 @@ public:
 		}
 	}
 
-	template<typename PointType>
-	void print_cylinder(const PointType& start, const PointType& end, const double radius, const auxiliaries::Color& start_color, const auxiliaries::Color& end_color)
+	template<typename PointType, typename ColorType>
+	void print_cylinder(const PointType& start, const PointType& end, const double radius, const ColorType& start_color, const ColorType& end_color)
 	{
 		string_stream_ << "    CYLINDER, " << point_to_string(start) << ", " << point_to_string(end) << ", " << radius << ", ";
 		string_stream_ << start_color.r_double() << ", " << start_color.g_double() << ", " << start_color.b_double() << ", ";
@@ -57,20 +70,9 @@ public:
 	}
 
 	template<typename SphereType>
-	void print_sphere(const SphereType& sphere, const auxiliaries::Color& color)
+	void print_sphere(const SphereType& sphere)
 	{
-		string_stream_ << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
 		string_stream_ << "    SPHERE, " << point_to_string(sphere) << ", " << sphere.r << ",\n";
-	}
-
-	void print_alpha(const double alpha)
-	{
-		string_stream_ << "    ALPHA, " << alpha << ",\n";
-	}
-
-	void print_color(const auxiliaries::Color& color)
-	{
-		string_stream_ << "    COLOR, " << color.r_double() << ", " << color.g_double() << ", " << color.b_double() << ",\n";
 	}
 
 	template<typename PointType>
