@@ -76,7 +76,7 @@ struct NucleotidePlane
 
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("");
+	clo.check_allowed_options("--diagnostic-output");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -140,5 +140,43 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 		}
 	}
 
-	auxiliaries::STDContainersIO::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
+	if(clo.isopt("--diagnostic-output"))
+	{
+		std::vector<std::string> contact_types_of_interest;
+		contact_types_of_interest.push_back("na_stacking");
+		contact_types_of_interest.push_back("na_siding");
+		for(std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >::iterator it=inter_residue_contacts.begin();it!=inter_residue_contacts.end();++it)
+		{
+			for(std::size_t i=0;i<contact_types_of_interest.size();i++)
+			{
+				const std::string& contact_type=contact_types_of_interest[i];
+				const double area=it->second.area(contact_type);
+				if(area>0.0)
+				{
+					const protein::ResidueID& rid_a=it->first.a;
+					const protein::ResidueID& rid_b=it->first.b;
+					if(residue_ids_atoms.count(rid_a)>0 && residue_ids_atoms.count(rid_b)>0)
+					{
+						const std::vector<std::size_t>& atoms_ids_a=residue_ids_atoms.find(rid_a)->second;
+						const std::vector<std::size_t>& atoms_ids_b=residue_ids_atoms.find(rid_b)->second;
+						if(!atoms_ids_a.empty() && !atoms_ids_b.empty())
+						{
+							const std::size_t atom_id_a=atoms_ids_a.front();
+							const std::size_t atom_id_b=atoms_ids_b.front();
+							if(atom_id_a<atoms.size() && atom_id_b<atoms.size())
+							{
+								std::cout << rid_a.chain_id << " " << rid_a.residue_number << " " << atoms[atom_id_a].residue_name << " ";
+								std::cout << rid_b.chain_id << " " << rid_b.residue_number << " " << atoms[atom_id_b].residue_name << " ";
+								std::cout << contact_type << " " << area << "\n";
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		auxiliaries::STDContainersIO::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
+	}
 }
