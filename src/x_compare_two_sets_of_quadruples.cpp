@@ -65,7 +65,13 @@ std::vector<apollo2::Quadruple> read_quadruples_from_stream(std::istream& input)
 
 void x_compare_two_sets_of_quadruples(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--file1: --file2:");
+	clo.check_allowed_options("--epsilon: --file1: --file2:");
+
+	if(clo.isopt("--epsilon"))
+	{
+		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
+		apollo2::comparison_epsilon_reference()=epsilon;
+	}
 
 	std::string file1=clo.arg<std::string>("--file1");
 	std::string file2=clo.arg<std::string>("--file2");
