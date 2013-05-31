@@ -19,8 +19,7 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(bsh.levels()>0)
 	{
-		std::cout << "from pymol.cgo import *\n";
-		std::cout << "from pymol import cmd\n\n";
+		auxiliaries::OpenGLPrinter::print_setup(std::cout);
 
 		{
 			std::ostringstream obj_name;
