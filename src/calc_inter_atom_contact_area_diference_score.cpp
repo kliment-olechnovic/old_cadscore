@@ -11,8 +11,7 @@
 #include "contacto/ratio.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 namespace
 {
@@ -81,13 +80,13 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 	const bool print_global=clo.isopt("--global") || !print_any_local;
 	const bool inter_chain=clo.isopt("--inter-chain");
 
-	const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms_1=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
 
-	const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms_2=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
 
 	typedef std::map< contacto::ContactID<protein::AtomID>, std::pair<double, double> > CombinedContactsMap;
 
@@ -122,7 +121,7 @@ void calc_inter_atom_contact_area_difference_score(const auxiliaries::CommandLin
 
 		if(print_local)
 		{
-			auxiliaries::print_map(std::cout, "inter_atom_cad_local_scores", local_ratios, false);
+			auxiliaries::STDContainersIO::print_map(std::cout, "inter_atom_cad_local_scores", local_ratios, false);
 		}
 
 		if(print_local_as_pdb_of_target)

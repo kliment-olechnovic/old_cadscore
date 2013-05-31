@@ -6,7 +6,7 @@
 #include "contacto/residue_contact_area_difference_basic_scoring_functors.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions& clo)
 {
@@ -15,9 +15,9 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 	const int scoring_mode=clo.isopt("--type") ? clo.arg_in_interval<int>("--type", 0, 2) : 0;
 
 	const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", false);
+			auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", false);
 
-	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "target residue identifiers", "residue_ids", false);
+	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::STDContainersIO::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "target residue identifiers", "residue_ids", false);
 
 	std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile;
 	if(scoring_mode==0)
@@ -46,7 +46,7 @@ void calc_contact_area_difference_profile(const auxiliaries::CommandLineOptions&
 	}
 	else
 	{
-		auxiliaries::print_map(std::cout, "cad_profile", residue_contact_area_difference_profile, true);
+		auxiliaries::STDContainersIO::print_map(std::cout, "cad_profile", residue_contact_area_difference_profile, true);
 	}
 }
 

@@ -6,7 +6,7 @@
 #include "apollo2/search_for_spherical_collisions.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 namespace
 {
@@ -51,7 +51,7 @@ void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
 	const bool inter_chain=clo.isopt("--inter-chain");
 	const bool only_main_chain=clo.isopt("--only-main-chain");
 
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	if(only_main_chain)
 	{

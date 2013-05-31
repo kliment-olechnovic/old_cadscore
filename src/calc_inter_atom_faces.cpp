@@ -8,8 +8,7 @@
 #include "contacto/inter_atom_contact.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/set_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 {
@@ -21,7 +20,7 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.7;
 	const int projections_count=clo.isopt("--projections") ? clo.arg_with_min_value<int>("--projections", 5) : 5;
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	if(atoms.size()<4)
 	{
@@ -61,7 +60,7 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		auxiliaries::print_vector(std::cout, "atoms", atoms);
-		auxiliaries::print_set(std::cout, "contacts", inter_atom_contacts);
+		auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", atoms);
+		auxiliaries::STDContainersIO::print_set(std::cout, "contacts", inter_atom_contacts);
 	}
 }

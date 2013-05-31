@@ -8,7 +8,7 @@
 #include "apollo2/search_for_spherical_collisions.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& radius_classes_file_name, const std::string& radius_members_file_name);
 
@@ -63,11 +63,11 @@ void check_for_any_inter_chain_contact(const auxiliaries::CommandLineOptions& cl
 	}
 	else
 	{
-		std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
+		std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
 
-		while(auxiliaries::check_file_header(std::cin, "atoms"))
+		while(auxiliaries::STDContainersIO::check_file_header(std::cin, "atoms"))
 		{
-			std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
+			std::vector<protein::Atom> more_atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
 			atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
 		}
 

@@ -10,8 +10,7 @@
 #include "contacto/inter_atom_contact.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-
+#include "auxiliaries/std_containers_io.h"
 namespace
 {
 
@@ -292,10 +291,10 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
 	const int gap_extension_score=clo.arg_or_default_value<int>("--gap-extension", -1);
 
-	std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
-	std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
+	std::vector<protein::Atom> atoms_1=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
+	std::vector<protein::Atom> atoms_2=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
 
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=protein::collect_residue_ids_from_atoms(atoms_1);
 	const std::map<protein::ResidueID, std::vector<std::size_t> > residue_ids_indices_1=protein::group_atoms_indices_by_residue_ids(atoms_1);
@@ -410,8 +409,8 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 		std::clog << "\n";
 	}
 
-	auxiliaries::print_vector(std::cout, "atoms", atoms_1);
-	auxiliaries::print_vector(std::cout, "contacts", inter_atom_contacts_1);
-	auxiliaries::print_vector(std::cout, "atoms", atoms_2);
-	auxiliaries::print_vector(std::cout, "contacts", inter_atom_contacts_2);
+	auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", atoms_1);
+	auxiliaries::STDContainersIO::print_vector(std::cout, "contacts", inter_atom_contacts_1);
+	auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", atoms_2);
+	auxiliaries::STDContainersIO::print_vector(std::cout, "contacts", inter_atom_contacts_2);
 }

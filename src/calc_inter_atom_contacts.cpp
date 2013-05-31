@@ -8,7 +8,7 @@
 #include "contacto/inter_atom_contact.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
@@ -17,7 +17,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 	const std::size_t subdivision_depth=clo.isopt("--depth") ? clo.arg_in_interval<std::size_t>("--depth", 1, 4) : 3;
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	if(atoms.size()<4)
 	{
@@ -43,7 +43,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		auxiliaries::print_vector(std::cout, "atoms", atoms);
-		auxiliaries::print_vector(std::cout, "contacts", inter_atom_contacts);
+		auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", atoms);
+		auxiliaries::STDContainersIO::print_vector(std::cout, "contacts", inter_atom_contacts);
 	}
 }

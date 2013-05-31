@@ -12,8 +12,7 @@
 #include "contacto/inter_residue_contact_areas.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/map_io.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 #include "auxiliaries/color.h"
 
 namespace
@@ -148,7 +147,7 @@ void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOpti
 	const std::string contact_class=clo.arg<std::string>("--contact-class");
 	const bool color_by_area=clo.isopt("--color-by-area");
 
-	const InterResidueContacts inter_residue_contacts=auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
+	const InterResidueContacts inter_residue_contacts=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
 	std::map<protein::ResidueID, std::size_t> axis;
 	for(InterResidueContacts::const_iterator it=inter_residue_contacts.begin();it!=inter_residue_contacts.end();++it)
@@ -195,7 +194,7 @@ void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOpti
 
 	const double max_distance=clo.isopt("--max-distance") ? clo.arg_with_min_value<double>("--max-distance", 0.1) : -1.0;
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const std::map<protein::ResidueID, std::vector<std::size_t> > residue_ids_atoms=protein::group_atoms_indices_by_residue_ids(atoms);
 

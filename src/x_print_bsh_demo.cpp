@@ -3,7 +3,7 @@
 #include "apollo2/bounding_spheres_hierarchy.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 #include "auxiliaries/opengl_printer.h"
 
 void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
@@ -13,7 +13,7 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
 	const std::size_t max_level=clo.isopt("--max-level") ? clo.arg_with_min_value<std::size_t>("--max-level", 0) : 0;
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 	const apollo2::BoundingSpheresHierarchy<protein::Atom> bsh(atoms, bsi_init_radius, 1);
 
 	if(bsh.levels()>0)
