@@ -745,8 +745,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< NameColorizerForPymol<std::string> >());
 	}
 
-	std::cout << "from pymol.cgo import *\n";
-	std::cout << "from pymol import cmd\n\n";
+	auxiliaries::OpenGLPrinter::print_setup(std::cout);
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{

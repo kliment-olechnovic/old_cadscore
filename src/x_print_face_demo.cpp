@@ -17,8 +17,7 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 	generators.push_back(apollo2::SimpleSphere(-1, 2, 0, 1.0));
 	generators.push_back(apollo2::SimpleSphere(-1, -1, 0, 1.3));
 
-	std::cout << "from pymol.cgo import *\n";
-	std::cout << "from pymol import cmd\n\n";
+	auxiliaries::OpenGLPrinter::print_setup(std::cout);
 
 	auxiliaries::OpenGLPrinter opengl_printer1(std::cout, "obj1", "cgo1");
 	auxiliaries::OpenGLPrinter opengl_printer2(std::cout, "obj2", "cgo2");

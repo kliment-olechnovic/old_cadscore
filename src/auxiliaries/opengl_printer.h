@@ -24,6 +24,17 @@ public:
 		output_stream_ << string_stream_.str() << "\n";
 	}
 
+	static void print_setup(std::ostream& output_stream)
+	{
+		output_stream << "from pymol.cgo import *\n";
+		output_stream << "from pymol import cmd\n\n";
+	}
+
+	void print_alpha(const double alpha)
+	{
+		string_stream_ << "    ALPHA, " << alpha << ",\n";
+	}
+
 	void print_color(const double r, const double g, const double b)
 	{
 		string_stream_ << "    COLOR, " << r << ", " << g << ", " << b << ",\n";
@@ -35,30 +46,10 @@ public:
 		print_color(color.r_double(), color.g_double(), color.b_double());
 	}
 
-	void print_alpha(const double alpha)
+	template<typename SphereType>
+	void print_sphere(const SphereType& sphere)
 	{
-		string_stream_ << "    ALPHA, " << alpha << ",\n";
-	}
-
-	template<typename PointType>
-	void print_tringle_fan(const std::vector<PointType>& mesh_vertices, const PointType& normal)
-	{
-		if(!mesh_vertices.empty())
-		{
-			const PointType shift=normal*0.001;
-
-			string_stream_ << "    BEGIN, TRIANGLE_FAN,\n";
-			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
-			string_stream_ << "    VERTEX, " << point_to_string(mesh_vertices.back()+shift) << ",\n";
-			for(std::size_t i=0;i+1<mesh_vertices.size();i++)
-			{
-				string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
-				string_stream_ << "    VERTEX, " << point_to_string(mesh_vertices[i]+shift) << ",\n";
-			}
-			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
-			string_stream_ << "    VERTEX, " << point_to_string(mesh_vertices.front()+shift) << ",\n";
-			string_stream_ << "    END,\n";
-		}
+		string_stream_ << "    SPHERE, " << point_to_string(sphere) << ", " << sphere.r << ",\n";
 	}
 
 	template<typename PointType, typename ColorType>
@@ -69,10 +60,25 @@ public:
 		string_stream_ << end_color.r_double() << ", " << end_color.g_double() << ", " << end_color.b_double() << ",\n";
 	}
 
-	template<typename SphereType>
-	void print_sphere(const SphereType& sphere)
+	template<typename PointType>
+	void print_tringle_fan(const std::vector<PointType>& vertices, const PointType& normal)
 	{
-		string_stream_ << "    SPHERE, " << point_to_string(sphere) << ", " << sphere.r << ",\n";
+		if(!vertices.empty())
+		{
+			const PointType shift=normal*0.001;
+
+			string_stream_ << "    BEGIN, TRIANGLE_FAN,\n";
+			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
+			string_stream_ << "    VERTEX, " << point_to_string(vertices.back()+shift) << ",\n";
+			for(std::size_t i=0;i+1<vertices.size();i++)
+			{
+				string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
+				string_stream_ << "    VERTEX, " << point_to_string(vertices[i]+shift) << ",\n";
+			}
+			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
+			string_stream_ << "    VERTEX, " << point_to_string(vertices.front()+shift) << ",\n";
+			string_stream_ << "    END,\n";
+		}
 	}
 
 	template<typename PointType>
