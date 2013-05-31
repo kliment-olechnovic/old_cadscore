@@ -10,6 +10,27 @@
 namespace
 {
 
+std::vector<apollo2::SimpleSphere> read_raw_spheres_from_stream(std::istream& input)
+{
+	std::vector<apollo2::SimpleSphere> result;
+	while(input.good())
+	{
+		std::string line;
+		std::getline(input, line);
+		if(!line.empty())
+		{
+			std::istringstream line_input(line);
+			apollo2::SimpleSphere sphere;
+			line_input >> sphere.x >> sphere.y >> sphere.z >> sphere.r;
+			if(!line_input.fail())
+			{
+				result.push_back(sphere);
+			}
+		}
+	}
+	return result;
+}
+
 template<typename SphereType>
 void calc_quadruples(
 		const std::vector<SphereType>& input_atoms,
@@ -63,7 +84,7 @@ void calc_quadruples(
 
 void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--epsilon: --bsi-init-radius: --use-one-radius --augment --skip-output --print-log --check");
+	clo.check_allowed_options("--epsilon: --bsi-init-radius: --raw-input --use-one-radius --augment --skip-output --print-log --check");
 
 	if(clo.isopt("--epsilon"))
 	{
@@ -72,13 +93,19 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	}
 
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
+	const bool raw_input=clo.isopt("--raw-input");
 	const bool use_one_radius=clo.isopt("--use-one-radius");
 	const bool augment=clo.isopt("--augment");
 	const bool skip_output=clo.isopt("--skip-output");
 	const bool print_log=clo.isopt("--print-log");
 	const bool check=clo.isopt("--check");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
-
-	calc_quadruples(atoms, bsi_init_radius, use_one_radius, augment, skip_output, print_log, check);
+	if(raw_input)
+	{
+		calc_quadruples(read_raw_spheres_from_stream(std::cin), bsi_init_radius, use_one_radius, augment, skip_output, print_log, check);
+	}
+	else
+	{
+		calc_quadruples(auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false), bsi_init_radius, use_one_radius, augment, skip_output, print_log, check);
+	}
 }
