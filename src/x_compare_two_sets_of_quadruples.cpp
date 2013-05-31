@@ -7,7 +7,29 @@
 
 #include "auxiliaries/command_line_options.h"
 
-std::vector<apollo2::SimpleSphere> read_spheres_from_stream(std::istream& input);
+namespace
+{
+
+std::vector<apollo2::SimpleSphere> read_spheres_from_stream(std::istream& input)
+{
+	std::vector<apollo2::SimpleSphere> result;
+	while(input.good())
+	{
+		std::string line;
+		std::getline(input, line);
+		if(!line.empty())
+		{
+			std::istringstream line_input(line);
+			apollo2::SimpleSphere sphere;
+			line_input >> sphere.x >> sphere.y >> sphere.z >> sphere.r;
+			if(!line_input.fail())
+			{
+				result.push_back(sphere);
+			}
+		}
+	}
+	return result;
+}
 
 std::vector<apollo2::Quadruple> read_quadruples_from_stream(std::istream& input)
 {
@@ -39,7 +61,9 @@ std::vector<apollo2::Quadruple> read_quadruples_from_stream(std::istream& input)
 	return result;
 }
 
-void x_compare_two_sets_of_quadruples_2(const auxiliaries::CommandLineOptions& clo)
+}
+
+void x_compare_two_sets_of_quadruples(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("--file1: --file2:");
 
