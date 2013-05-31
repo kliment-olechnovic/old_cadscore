@@ -6,6 +6,7 @@
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/opengl_printer.h"
+#include "auxiliaries/color.h"
 
 void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 {
@@ -26,7 +27,8 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 
 	for(std::size_t i=0;i<generators.size();i++)
 	{
-		opengl_printer1.print_sphere(apollo2::SimpleSphere(generators[i], generators[i].r-0.01), auxiliaries::Color::from_code(0x36BBCE));
+		opengl_printer1.print_color(auxiliaries::Color::from_code(0x36BBCE));
+		opengl_printer1.print_sphere(apollo2::SimpleSphere(generators[i], generators[i].r-0.01));
 	}
 
 	std::vector< std::pair<apollo2::SimplePoint, apollo2::SimplePoint> > tangent_planes=apollo2::TangentPlaneOfThreeSpheres::calculate(generators[0], generators[1], generators[2]);
@@ -39,7 +41,8 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		}
 
 		const apollo2::SimpleSphere min_tangent=min_tangents.front();
-		opengl_printer1.print_sphere(apollo2::SimpleSphere(min_tangent, 0.1), auxiliaries::Color::from_code(0xA61700));
+		opengl_printer1.print_color(auxiliaries::Color::from_code(0xA61700));
+		opengl_printer1.print_sphere(apollo2::SimpleSphere(min_tangent, 0.1));
 
 		std::deque<apollo2::SimplePoint> curve;
 		std::deque<double> radii;
@@ -156,8 +159,10 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 		while(i<(curve.size()/2))
 		{
 			opengl_printer4.print_alpha(0.2);
-			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01), auxiliaries::Color::from_code(0xFF9C40));
-			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01), auxiliaries::Color::from_code(0x37DE6A));
+			opengl_printer4.print_color(auxiliaries::Color::from_code(0xFF9C40));
+			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[i], radii[i]-0.01));
+			opengl_printer4.print_color(auxiliaries::Color::from_code(0x37DE6A));
+			opengl_printer4.print_sphere(apollo2::SimpleSphere(curve[curve.size()-1-i], radii[curve.size()-1-i]-0.01));
 			i+=30;
 		}
 	}

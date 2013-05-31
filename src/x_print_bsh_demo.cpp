@@ -5,6 +5,7 @@
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/std_containers_io.h"
 #include "auxiliaries/opengl_printer.h"
+#include "auxiliaries/color.h"
 
 void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 {
@@ -29,7 +30,8 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 			auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
 			for(std::size_t i=0;i<atoms.size();i++)
 			{
-				opengl_printer.print_sphere(atoms[i], auxiliaries::Color::from_code(0x36BBCE));
+				opengl_printer.print_color(auxiliaries::Color::from_code(0x36BBCE));
+				opengl_printer.print_sphere(atoms[i]);
 			}
 		}
 
@@ -43,7 +45,8 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 			auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
 			for(std::size_t i=0;i<bs.size();i++)
 			{
-				opengl_printer.print_sphere(bs[i], auxiliaries::Color::from_code(0x37DE6A));
+				opengl_printer.print_color(auxiliaries::Color::from_code(0x37DE6A));
+				opengl_printer.print_sphere(bs[i]);
 			}
 		}
 	}
