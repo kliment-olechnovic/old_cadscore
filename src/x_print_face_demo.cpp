@@ -3,9 +3,9 @@
 #include "apollo2/tangent_plane_of_three_spheres.h"
 #include "apollo2/tangent_sphere_of_three_spheres.h"
 #include "apollo2/rotation.h"
+#include "apollo2/opengl_printer.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/opengl_printer.h"
 #include "auxiliaries/color.h"
 
 void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
@@ -17,12 +17,12 @@ void x_print_face_demo(const auxiliaries::CommandLineOptions& clo)
 	generators.push_back(apollo2::SimpleSphere(-1, 2, 0, 1.0));
 	generators.push_back(apollo2::SimpleSphere(-1, -1, 0, 1.3));
 
-	auxiliaries::OpenGLPrinter::print_setup(std::cout);
+	apollo2::OpenGLPrinter::print_setup(std::cout);
 
-	auxiliaries::OpenGLPrinter opengl_printer1(std::cout, "obj1", "cgo1");
-	auxiliaries::OpenGLPrinter opengl_printer2(std::cout, "obj2", "cgo2");
-	auxiliaries::OpenGLPrinter opengl_printer3(std::cout, "obj3", "cgo3");
-	auxiliaries::OpenGLPrinter opengl_printer4(std::cout, "obj4", "cgo4");
+	apollo2::OpenGLPrinter opengl_printer1(std::cout, "obj1", "cgo1");
+	apollo2::OpenGLPrinter opengl_printer2(std::cout, "obj2", "cgo2");
+	apollo2::OpenGLPrinter opengl_printer3(std::cout, "obj3", "cgo3");
+	apollo2::OpenGLPrinter opengl_printer4(std::cout, "obj4", "cgo4");
 
 	for(std::size_t i=0;i<generators.size();i++)
 	{

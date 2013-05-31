@@ -11,10 +11,10 @@
 
 #include "apollo2/apollonius_triangulation.h"
 #include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
+#include "apollo2/opengl_printer.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/std_containers_io.h"
-#include "auxiliaries/opengl_printer.h"
 #include "auxiliaries/color.h"
 
 namespace
@@ -745,13 +745,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< NameColorizerForPymol<std::string> >());
 	}
 
-	auxiliaries::OpenGLPrinter::print_setup(std::cout);
+	apollo2::OpenGLPrinter::print_setup(std::cout);
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string obj_name=output_names_prefix+std::string("obj_")+it->first.first+"_"+it->first.second;
 		const std::string cgo_name=output_names_prefix+std::string("iface_")+it->first.first+"_"+it->first.second;
-		auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name, cgo_name);
+		apollo2::OpenGLPrinter opengl_printer(std::cout, obj_name, cgo_name);
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=it->second[i];
