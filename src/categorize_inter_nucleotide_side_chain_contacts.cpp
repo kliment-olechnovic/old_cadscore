@@ -7,8 +7,7 @@
 #include "contacto/inter_residue_contact_areas.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 namespace
 {
@@ -79,10 +78,10 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 {
 	clo.check_allowed_options("");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=
-			auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
+			auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
 	const std::map< protein::ResidueID, NucleotidePlane > nucleotides_planes=NucleotidePlane::calc_nucleotides_planes(atoms);
 
@@ -141,5 +140,5 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 		}
 	}
 
-	auxiliaries::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
+	auxiliaries::STDContainersIO::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
 }

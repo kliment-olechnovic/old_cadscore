@@ -10,8 +10,7 @@
 #include "protein/residue_ids_collection.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 #include "resources/vdwr.h"
 
@@ -116,7 +115,7 @@ void collect_atoms(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		auxiliaries::print_vector(std::cout, "atoms", atoms);
+		auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", atoms);
 	}
 }
 
@@ -124,7 +123,7 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids=protein::collect_residue_ids_from_atoms(atoms);
 
@@ -134,18 +133,18 @@ void collect_residue_ids(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		auxiliaries::print_map(std::cout, "residue_ids", residue_ids, false);
+		auxiliaries::STDContainersIO::print_map(std::cout, "residue_ids", residue_ids, false);
 	}
 }
 
 void merge_atoms(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
-	while(auxiliaries::check_file_header(std::cin, "atoms"))
+	std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", true);
+	while(auxiliaries::STDContainersIO::check_file_header(std::cin, "atoms"))
 	{
-		std::vector<protein::Atom> more_atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
+		std::vector<protein::Atom> more_atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "more atoms", "", true);
 		atoms.insert(atoms.end(), more_atoms.begin(), more_atoms.end());
 	}
-	auxiliaries::print_vector(std::cout, "atoms", atoms);
+	auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", atoms);
 }

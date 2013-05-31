@@ -7,7 +7,7 @@
 #include "contacto/inter_residue_contact_areas.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo)
 {
@@ -17,7 +17,7 @@ void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions&
 
 	const std::string category=clo.arg_or_default_value<std::string>("--category", "AA");
 
-	const InterResidueContacts inter_residue_contacts=auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
+	const InterResidueContacts inter_residue_contacts=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "inter-residue contacts", "residue_contacts", false);
 
 	for(InterResidueContacts::const_iterator it=inter_residue_contacts.begin();it!=inter_residue_contacts.end();++it)
 	{

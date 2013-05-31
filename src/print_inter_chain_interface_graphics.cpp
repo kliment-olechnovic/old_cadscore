@@ -13,8 +13,7 @@
 #include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 #include "auxiliaries/opengl_printer.h"
 
 namespace
@@ -628,7 +627,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 	const std::string output_names_prefix=clo.isopt("--output-names-prefix") ? clo.arg<std::string>("--output-names-prefix") : std::string("");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map);
 
@@ -723,13 +722,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else if(face_coloring_mode=="inter_residue_contact_scores" || face_coloring_mode=="inter_residue_contact_AA_scores")
 	{
 		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
+				auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
 		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_scores"));
 	}
 	else if(face_coloring_mode=="inter_residue_contact_area_pairs" || face_coloring_mode=="inter_residue_contact_AA_area_pairs")
 	{
 		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
-				auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
+				auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
 		face_colorizer.reset(new ContactColorizerByInterResidueContactAreaPair(combined_inter_residue_contacts, face_coloring_mode=="inter_residue_contact_AA_area_pairs"));
 	}
 	else if(face_coloring_mode=="residue_id")

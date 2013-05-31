@@ -5,7 +5,7 @@
 #include "apollo2/apollonius_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 {
@@ -24,7 +24,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	const bool print_log=clo.isopt("--print-log");
 	const bool check=clo.isopt("--check");
 
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	if(atoms.size()<4)
 	{
