@@ -1,10 +1,10 @@
 #include "protein/atom.h"
 
 #include "apollo2/bounding_spheres_hierarchy.h"
+#include "apollo2/opengl_printer.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/std_containers_io.h"
-#include "auxiliaries/opengl_printer.h"
 #include "auxiliaries/color.h"
 
 void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
@@ -19,14 +19,14 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 
 	if(bsh.levels()>0)
 	{
-		auxiliaries::OpenGLPrinter::print_setup(std::cout);
+		apollo2::OpenGLPrinter::print_setup(std::cout);
 
 		{
 			std::ostringstream obj_name;
 			obj_name << "obj_as";
 			std::ostringstream cgo_name;
 			cgo_name << "cgo_as";
-			auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
+			apollo2::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
 			for(std::size_t i=0;i<atoms.size();i++)
 			{
 				opengl_printer.print_color(auxiliaries::Color::from_code(0x36BBCE));
@@ -41,7 +41,7 @@ void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo)
 			obj_name << "obj_bs" << l;
 			std::ostringstream cgo_name;
 			cgo_name << "cgo_bs" << l;
-			auxiliaries::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
+			apollo2::OpenGLPrinter opengl_printer(std::cout, obj_name.str(), cgo_name.str());
 			for(std::size_t i=0;i<bs.size();i++)
 			{
 				opengl_printer.print_color(auxiliaries::Color::from_code(0x37DE6A));

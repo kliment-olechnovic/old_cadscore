@@ -1,13 +1,13 @@
-#ifndef AUXILIARIES_OPENGL_PRINTER_H_
-#define AUXILIARIES_OPENGL_PRINTER_H_
+#ifndef APOLLO2_OPENGL_PRINTER_H_
+#define APOLLO2_OPENGL_PRINTER_H_
 
-#include <vector>
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 #include <limits>
 
-namespace auxiliaries
+namespace apollo2
 {
 
 class OpenGLPrinter
@@ -131,4 +131,4 @@ private:
 
 }
 
-#endif /* AUXILIARIES_OPENGL_PRINTER_H_ */
+#endif /* APOLLO2_OPENGL_PRINTER_H_ */
