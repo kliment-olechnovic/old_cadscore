@@ -6,10 +6,12 @@ t_side_mcannotate=read.table("../reformatting_annotations/output/side_by_mc_anno
 ids_stack_mcannotate=union(t_stack_mcannotate$contact_id, t_stack_mcannotate$contact_id);
 ids_side_mcannotate=union(t_side_mcannotate$contact_id, t_side_mcannotate$contact_id);
 ids_mcannotate=union(ids_stack_mcannotate, ids_side_mcannotate);
+pdb_ids_mcannotate=union(t_stack_mcannotate$pdb_id, t_side_mcannotate$pdb_id);
 
 #################
 
 t_any=t_contacts;
+t_any=t_any[which(is.element(t_any$pdb_id, pdb_ids_mcannotate)),];
 t_stack=t_any[which(t_any$contact_type=="stack"),];
 t_side=t_any[which(t_any$contact_type=="side"),];
 
