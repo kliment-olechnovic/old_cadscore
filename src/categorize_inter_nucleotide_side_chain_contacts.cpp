@@ -167,7 +167,7 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 							{
 								std::cout << rid_a.chain_id << " " << rid_a.residue_number << " " << atoms[atom_id_a].residue_name << " ";
 								std::cout << rid_b.chain_id << " " << rid_b.residue_number << " " << atoms[atom_id_b].residue_name << " ";
-								std::cout << contact_type << " " << area << "\n";
+								std::cout << contact_type << " " << area << " " << (rid_a<rid_b ? "left_to_right" : "right_to_left") << "\n";
 							}
 						}
 					}
