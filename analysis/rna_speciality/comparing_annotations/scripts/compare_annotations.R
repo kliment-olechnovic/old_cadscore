@@ -92,3 +92,19 @@ plot(density(t_stack_sel[, "contact_area"]), col="black", xlab="Area", main="Den
 points(density(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"]), col="red", type="l");
 points(density(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"]), col="green", type="l");
 points(density(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"]), col="blue", type="l");
+
+h_breaks=0:20*(300/20);
+h_xx=hist(t_stack_sel[, "contact_area"], breaks=h_breaks);
+h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], breaks=h_breaks);
+h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=h_breaks);
+h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=h_breaks);
+
+plot(h_xx$mids, h_xx$counts, type="h", lwd="5");
+points(h_BB$mids, h_BB$counts+h_bB$counts+h_bb$counts, type="h", lwd="5", col="blue");
+points(h_bB$mids, h_bB$counts+h_bb$counts, type="h", lwd="5", col="green");
+points(h_bb$mids, h_bb$counts, type="h", lwd="5", col="red");
+
+plot(h_xx$mids, h_xx$counts, type="h", lwd="5");
+points(h_BB$mids+2, h_BB$counts, type="h", lwd="5", col="blue");
+points(h_bB$mids+4, h_bB$counts, type="h", lwd="5", col="green");
+points(h_bb$mids+6, h_bb$counts, type="h", lwd="5", col="red");
