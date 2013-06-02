@@ -17,6 +17,11 @@ allowed_basenames=c("A", "U", "G", "C");
 t_any=t_any[which(is.element(t_any$first_base_name, allowed_basenames)),];
 t_any=t_any[which(is.element(t_any$second_base_name, allowed_basenames)),];
 
+t_any$first_base_name[which(is.element(t_any$first_base_name, c("A", "G")))]="B";
+t_any$first_base_name[which(is.element(t_any$first_base_name, c("U", "C")))]="b";
+t_any$second_base_name[which(is.element(t_any$second_base_name, c("A", "G")))]="B";
+t_any$second_base_name[which(is.element(t_any$second_base_name, c("U", "C")))]="b";
+
 basepairs=rep("xx", length(t_any[[1]]));
 for(i in 1:length(basepairs))
 {
@@ -80,3 +85,10 @@ points(ds_side_sel$x, ds_side_sel$y*length(t_side_sel[[1]]), type="l", col="red"
 
 plot(ds_side$x, ds_side$y*length(t_side[[1]])*ds_side$x, type="l", col="blue", xlim=c(0, 250), main="Densities for contributions of siding areas", xlab="Area", ylab="Area * Frequency");
 points(ds_side_sel$x, ds_side_sel$y*length(t_side_sel[[1]])*ds_side_sel$x, type="l", col="red");
+
+#################
+
+plot(density(t_stack_sel[, "contact_area"]), col="black", xlab="Area", main="Densities for stacking areas of three classes", xlim=c(0, 250), ylim=c(0, 0.035));
+points(density(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"]), col="red", type="l");
+points(density(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"]), col="green", type="l");
+points(density(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"]), col="blue", type="l");
