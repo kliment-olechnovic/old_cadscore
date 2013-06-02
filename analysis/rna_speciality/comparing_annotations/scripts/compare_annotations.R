@@ -12,6 +12,26 @@ pdb_ids_mcannotate=union(t_stack_mcannotate$pdb_id, t_side_mcannotate$pdb_id);
 
 t_any=t_contacts;
 t_any=t_any[which(is.element(t_any$pdb_id, pdb_ids_mcannotate)),];
+
+allowed_basenames=c("A", "U", "G", "C");
+t_any=t_any[which(is.element(t_any$first_base_name, allowed_basenames)),];
+t_any=t_any[which(is.element(t_any$second_base_name, allowed_basenames)),];
+
+basepairs=rep("xx", length(t_any[[1]]));
+for(i in 1:length(basepairs))
+{
+  if(t_any$first_base_name[i]<t_any$second_base_name[i])
+  {
+    basepairs[i]=paste(t_any$first_base_name[i], t_any$second_base_name[i], sep="");
+  }
+  else
+  {
+    basepairs[i]=paste(t_any$second_base_name[i], t_any$first_base_name[i], sep="");
+  }
+}
+t_any$basepairs=basepairs;
+t_any$basepairs_factors=factor(t_any$basepairs);
+
 t_stack=t_any[which(t_any$contact_type=="stack"),];
 t_side=t_any[which(t_any$contact_type=="side"),];
 
@@ -19,7 +39,7 @@ t_any_sel=t_any[which(is.element(t_any$contact_id, ids_mcannotate)),];
 t_stack_sel=t_stack[which(is.element(t_stack$contact_id, ids_stack_mcannotate)),];
 t_side_sel=t_side[which(is.element(t_side$contact_id, ids_side_mcannotate)),];
 
-#####
+#################
 
 hist(t_any$contact_area, breaks=100, xlab="Area", main="Histogram of all areas", xlim=c(0, 250));
 hist(t_any_sel$contact_area, breaks=100, add=TRUE, col="red");
