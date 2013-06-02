@@ -100,3 +100,26 @@ plot(h_xx$mids, h_xx$counts, type="l", lwd="5");
 points(h_BB$mids, h_BB$counts, type="l", lwd="5", col="blue");
 points(h_bB$mids, h_bB$counts, type="l", lwd="5", col="green");
 points(h_bb$mids, h_bb$counts, type="l", lwd="5", col="red");
+
+#################
+
+roman_codes=c("P_I", "P_II", "P_III", "P_IV", "P_V", "P_VI", "P_VII", "P_VIII", "P_IX", "P_X", "P_XI", "P_XII", "P_XIII", "P_XIV", "P_XV", "P_XVI", "P_XVII", "P_XVIII", "P_XIX", "P_XX", "P_XXI", "P_XXII", "P_XXIII", "P_XXIV", "P_XXV", "P_XXVI", "P_XXVII", "P_XXVIII");
+
+roman_subsel1=which(is.element(t_side_mcannotate$prop5, roman_codes));
+roman_subsel2=which(is.element(t_side_mcannotate$prop6, roman_codes));
+roman_sel=union(roman_subsel1, roman_subsel2);
+nonroman_sel=setdiff(1:length(t_side_mcannotate[[1]]), roman_sel);
+
+roman_ids_side_mcannotate=t_side_mcannotate$contact_id[roman_sel];
+roman_ids_side_mcannotate=union(roman_ids_side_mcannotate, roman_ids_side_mcannotate);
+roman_t_side_sel=t_side[which(is.element(t_side$contact_id, roman_ids_side_mcannotate)),];
+
+nonroman_ids_side_mcannotate=t_side_mcannotate$contact_id[nonroman_sel];
+nonroman_ids_side_mcannotate=union(nonroman_ids_side_mcannotate, nonroman_ids_side_mcannotate);
+nonroman_t_side_sel=t_side[which(is.element(t_side$contact_id, nonroman_ids_side_mcannotate)),];
+
+h_breaks=0:20*(200/20);
+roman_h=hist(roman_t_side_sel$contact_area[which(roman_t_side_sel$contact_area<max(h_breaks))], breaks=h_breaks);
+nonroman_h=hist(nonroman_t_side_sel$contact_area[which(nonroman_t_side_sel$contact_area<max(h_breaks))], breaks=h_breaks);
+
+barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c("red", "blue"));
