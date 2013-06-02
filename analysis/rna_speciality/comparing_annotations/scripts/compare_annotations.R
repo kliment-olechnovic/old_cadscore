@@ -88,23 +88,15 @@ points(ds_side_sel$x, ds_side_sel$y*length(t_side_sel[[1]])*ds_side_sel$x, type=
 
 #################
 
-plot(density(t_stack_sel[, "contact_area"]), col="black", xlab="Area", main="Densities for stacking areas of three classes", xlim=c(0, 250), ylim=c(0, 0.035));
-points(density(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"]), col="red", type="l");
-points(density(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"]), col="green", type="l");
-points(density(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"]), col="blue", type="l");
-
-h_breaks=0:20*(300/20);
+h_breaks=0:30*(300/30);
 h_xx=hist(t_stack_sel[, "contact_area"], breaks=h_breaks);
 h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], breaks=h_breaks);
 h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=h_breaks);
 h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=h_breaks);
 
-plot(h_xx$mids, h_xx$counts, type="h", lwd="5");
-points(h_BB$mids, h_BB$counts+h_bB$counts+h_bb$counts, type="h", lwd="5", col="blue");
-points(h_bB$mids, h_bB$counts+h_bb$counts, type="h", lwd="5", col="green");
-points(h_bb$mids, h_bb$counts, type="h", lwd="5", col="red");
+barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_xx$mids, col=c("red", "green", "blue"));
 
-plot(h_xx$mids, h_xx$counts, type="h", lwd="5");
-points(h_BB$mids+2, h_BB$counts, type="h", lwd="5", col="blue");
-points(h_bB$mids+4, h_bB$counts, type="h", lwd="5", col="green");
-points(h_bb$mids+6, h_bb$counts, type="h", lwd="5", col="red");
+plot(h_xx$mids, h_xx$counts, type="l", lwd="5");
+points(h_BB$mids, h_BB$counts, type="l", lwd="5", col="blue");
+points(h_bB$mids, h_bB$counts, type="l", lwd="5", col="green");
+points(h_bb$mids, h_bb$counts, type="l", lwd="5", col="red");
