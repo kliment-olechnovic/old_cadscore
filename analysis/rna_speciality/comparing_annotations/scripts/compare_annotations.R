@@ -53,29 +53,31 @@ hist_bins=50;
 hist_breaks=(0:hist_bins)*(max_contact_area/hist_bins);
 hist_x=hist_breaks[1:(length(hist_breaks)-1)];
 
+spec_cols=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5));
+
 #################
 
 hist_any=hist(t_any$contact_area, breaks=hist_breaks, xlim=c(0, max_contact_area), xlab="Area", main="Histogram of all areas");
-hist_any_sel=hist(t_any_sel$contact_area, breaks=hist_breaks, add=TRUE, col=rgb(1, 0, 0, 0.5));
+hist_any_sel=hist(t_any_sel$contact_area, breaks=hist_breaks, add=TRUE, col=spec_cols[1]);
 
 plot(hist_x, hist_any$counts*hist_x, xlim=c(0, max_contact_area), type="l", col="black", xlab="Area", ylab="Frequency*Area", main="Contributions of all areas");
-points(hist_x, hist_any_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd=5);
+points(hist_x, hist_any_sel$counts*hist_x, type="l", col=spec_cols[1], lwd=5);
 
 #####
 
 hist_stack=hist(t_stack$contact_area, breaks=hist_breaks, xlim=c(0, max_contact_area), xlab="Area", main="Histogram of stacking areas");
-hist_stack_sel=hist(t_stack_sel$contact_area, breaks=hist_breaks, add=TRUE, col=rgb(1, 0, 0, 0.5));
+hist_stack_sel=hist(t_stack_sel$contact_area, breaks=hist_breaks, add=TRUE, col=spec_cols[1]);
 
 plot(hist_x, hist_stack$counts*hist_x, xlim=c(0, max_contact_area), type="l", col="black", xlab="Area", ylab="Frequency*Area", main="Contributions of stacking areas");
-points(hist_x, hist_stack_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd=5);
+points(hist_x, hist_stack_sel$counts*hist_x, type="l", col=spec_cols[1], lwd=5);
 
 #####
 
 hist_side=hist(t_side$contact_area, breaks=hist_breaks, xlim=c(0, max_contact_area), xlab="Area", main="Histogram of siding areas");
-hist_side_sel=hist(t_side_sel$contact_area, breaks=hist_breaks, add=TRUE, col=rgb(1, 0, 0, 0.5));
+hist_side_sel=hist(t_side_sel$contact_area, breaks=hist_breaks, add=TRUE, col=spec_cols[1]);
 
 plot(hist_x, hist_side$counts*hist_x, xlim=c(0, max_contact_area), type="l", col="black", xlab="Area", ylab="Frequency*Area", main="Contributions of siding areas");
-points(hist_x, hist_side_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd=5);
+points(hist_x, hist_side_sel$counts*hist_x, type="l", col=spec_cols[1], lwd=5);
 
 #################
 
@@ -83,8 +85,8 @@ h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], break
 h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 
-barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_bb$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
-legend(0, 2500, c("pyrimidine-pyrimidine", "pyrimidine-purine", "purine-purine"), pch=c(15, 15, 15), col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)));
+barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_bb$mids, col=spec_cols, border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
+legend(0, 2500, c("pyrimidine-pyrimidine", "pyrimidine-purine", "purine-purine"), pch=c(15, 15, 15), col=spec_cols);
 
 #################
 
@@ -109,5 +111,5 @@ nonroman_t_side_sel=t_side[which(is.element(t_side$contact_id, nonroman_ids_side
 roman_h=hist(roman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 
-barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
-legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15), col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5)));
+barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=spec_cols[1:2], border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
+legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15), col=spec_cols[1:2]);
