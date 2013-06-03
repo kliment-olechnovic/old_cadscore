@@ -52,17 +52,18 @@ t_side_sel=t_side[which(is.element(t_side$contact_id, ids_side_mcannotate)),];
 length(t_stack_mcannotate[[1]]);
 missed_stack=t_stack_mcannotate[which(is.element(t_stack_mcannotate$contact_id, setdiff(ids_stack_mcannotate, t_any$contact_id))),];
 length(missed_stack[[1]]);
-#write.table(missed_stack, "missed_mc_annotate_stacking_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(missed_stack, "missed_mc_annotate_stacking_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 length(t_side_mcannotate[[1]]);
 missed_side=t_side_mcannotate[which(is.element(t_side_mcannotate$contact_id, setdiff(ids_side_mcannotate, t_any$contact_id))),];
 length(missed_side[[1]]);
-#write.table(missed_side, "missed_mc_annotate_siding_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(missed_side, "missed_mc_annotate_siding_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 #################
 
 hist_bins=50;
-hist_breaks=(0:hist_bins)*(max_contact_area/hist_bins);
+hist_bin_size=(max_contact_area/hist_bins);
+hist_breaks=(0:hist_bins)*hist_bin_size;
 hist_x=hist_breaks[1:(length(hist_breaks)-1)];
 
 spec_cols=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.6), rgb(0, 0, 1, 0.7));
@@ -125,3 +126,11 @@ nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE
 
 barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=spec_cols[1:2], border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
 legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15), col=spec_cols[1:2]);
+
+#################
+
+t_stack_sel_sorted=t_stack_sel[order(t_stack_sel$contact_area), c("contact_id", "contact_area")];
+write.table(t_stack_sel_sorted, "sorted_stack_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
+
+t_side_sel_sorted=t_side_sel[order(t_side_sel$contact_area), c("contact_id", "contact_area")];
+write.table(t_side_sel_sorted, "sorted_side_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
