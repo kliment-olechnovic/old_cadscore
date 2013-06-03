@@ -1626,7 +1626,6 @@
 1NYI.pdb A23-B104 : G-C Ww/Ww pairing antiparallel cis XIX 
 1NYI.pdb A24-B103 : G-C Ww/Ww pairing antiparallel cis XIX 
 1NYI.pdb A25-B102 : C-G Ww/Ww pairing antiparallel cis XIX 
-1NYI.pdb A26-A500 : C-G Ww/Ww pairing antiparallel cis XIX 
 1NYI.pdb B108-B119 : A-U Wh/Wh pairing antiparallel cis one_hbond 
 1NYI.pdb B109-B118 : C-G Ww/Ww pairing antiparallel cis XIX 
 1NYI.pdb B110-B117 : U-A Ww/Ww pairing antiparallel cis XX 
@@ -2387,7 +2386,6 @@
 1Y26.pdb X20-X76 : U-A Ww/Ww pairing antiparallel cis XX 
 1Y26.pdb X21-X75 : A-U Ww/Ww pairing antiparallel cis XX 
 1Y26.pdb X22-X52 : U-A Ww/Ww pairing antiparallel cis XX 
-1Y26.pdb X22-X90 : U-A O2'/Hh inward pairing 
 1Y26.pdb X23-X46 : A-G Ww/Ss Bh/O2' pairing parallel trans X 
 1Y26.pdb X25-X45 : U-A Ww/Ww pairing antiparallel cis XX 
 1Y26.pdb X25-X54 : U-C O2P/Bh pairing 
@@ -2409,7 +2407,6 @@
 1Y26.pdb X47-X51 : U-U Ww/Hw pairing antiparallel trans one_hbond 81 
 1Y26.pdb X49-X76 : U-A Ww/Ss pairing antiparallel cis 43 
 1Y26.pdb X50-X75 : C-U Wh/Ss Ww/O2' pairing antiparallel cis one_hbond 
-1Y26.pdb X51-X90 : U-A Ww/Ss pairing parallel one_hbond 42 
 1Y26.pdb X54-X72 : C-G Ww/Ww pairing antiparallel cis XIX 
 1Y26.pdb X55-X71 : A-U Ww/Ww pairing antiparallel cis XX 
 1Y26.pdb X56-X70 : A-U Ww/Ww pairing antiparallel cis XX 
@@ -2417,7 +2414,6 @@
 1Y26.pdb X58-X68 : A-U Ww/Ww pairing antiparallel cis XX 
 1Y26.pdb X59-X67 : G-C Ww/Ww pairing antiparallel cis XIX 
 1Y26.pdb X61-X65 : C-A O2'/Ww pairing 
-1Y26.pdb X74-X90 : U-A Ww/Ww pairing antiparallel XX 
 1Y27.pdb X15-X81 : G-C Ww/Ww pairing antiparallel cis XIX 
 1Y27.pdb X16-X80 : A-U Ww/Ww pairing antiparallel cis XX 
 1Y27.pdb X17-X79 : U-G Ws/Ww pairing antiparallel cis XXVIII 
@@ -2426,7 +2422,6 @@
 1Y27.pdb X20-X76 : U-A Ww/Ww pairing antiparallel cis XX 
 1Y27.pdb X21-X75 : A-U Ww/Ww pairing antiparallel cis XX 
 1Y27.pdb X22-X52 : U-A Ww/Ww pairing antiparallel cis XX 
-1Y27.pdb X22-X90 : U-G O2'/Hh inward pairing 
 1Y27.pdb X23-X46 : A-G Ww/Ss Bh/O2' pairing parallel trans X 
 1Y27.pdb X25-X45 : U-A Ww/Ww pairing antiparallel cis XX 
 1Y27.pdb X25-X54 : U-C O2P/Bh pairing 
@@ -2450,7 +2445,6 @@
 1Y27.pdb X47-X51 : U-U Ww/Hw pairing antiparallel trans one_hbond 81 
 1Y27.pdb X49-X76 : U-A Ww/Ss pairing antiparallel cis 43 
 1Y27.pdb X50-X75 : C-U Wh/Ss Ww/O2' pairing antiparallel cis one_hbond 
-1Y27.pdb X51-X90 : U-G Ws/Ss pairing parallel 86 
 1Y27.pdb X54-X72 : C-G Ww/Ww pairing antiparallel cis XIX 
 1Y27.pdb X55-X71 : G-C Ww/Ww pairing antiparallel cis XIX 
 1Y27.pdb X56-X70 : G-C Ww/Ww pairing antiparallel cis XIX 
@@ -2459,7 +2453,6 @@
 1Y27.pdb X59-X67 : A-U Ww/Ww pairing antiparallel cis XX 
 1Y27.pdb X61-X65 : C-A O2'/Ww pairing 
 1Y27.pdb X62-X63 : G-U Ss/Hh adjacent_5p pairing parallel cis 89 
-1Y27.pdb X74-X90 : C-G Ww/Ww pairing antiparallel XIX 
 1Y3O.pdb A10-B15 : G-C Ww/Ww pairing antiparallel cis XIX 
 1Y3O.pdb A11-B14 : U-A Ww/Ww pairing antiparallel cis XX 
 1Y3O.pdb A12-B13 : G-C Ww/Ww pairing antiparallel cis XIX 
@@ -19256,50 +19249,21 @@
 405D.pdb A7-B26 : U-A Ww/Ww pairing antiparallel cis XX 
 405D.pdb A8-B25 : U-A Ww/Ww pairing antiparallel cis XX 
 405D.pdb A9-B24 : A-U Ww/Ww pairing antiparallel cis XX 
-406D.pdb A10-E25 : G-U Ww/Ws pairing antiparallel cis one_hbond 
-406D.pdb A10-E25 : G-U Ww/Ws pairing antiparallel cis XXVIII 
 406D.pdb A10-E25 : G-U Ww/Ws pairing antiparallel cis XXVIII 
 406D.pdb A11-E24 : U-A Ww/Ww pairing antiparallel cis XX 
-406D.pdb A11-E24 : U-A Ww/Ww pairing antiparallel cis XX 
-406D.pdb A11-E24 : U-A Ww/Ww pairing antiparallel cis XX 
-406D.pdb A13-E22 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A13-E22 : C-G Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A13-E22 : C-G Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A14-E21 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A14-E21 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A14-E21 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A15-E20 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A15-E20 : G-C Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A15-E20 : G-C Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A16-E19 : U-A Ww/Ww pairing antiparallel cis XX 
-406D.pdb A16-E19 : U-A Ww/Ww pairing antiparallel cis XX 
-406D.pdb A16-E19 : U-A Ww/Ww pairing antiparallel cis XX 
-406D.pdb A17-E18 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A17-E18 : G-C Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A17-E18 : G-C Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A1-E34 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A1-E34 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A1-E34 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A2-E33 : A-U Ww/Ww pairing antiparallel cis XX 
-406D.pdb A2-E33 : A-U Ww/Ww pairing antiparallel cis XX 
 406D.pdb A2-E33 : A-U Ww/Ww pairing antiparallel cis XX 
 406D.pdb A3-E32 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A3-E32 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A3-E32 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A4-E31 : C-G Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A4-E31 : C-G Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A4-E31 : C-G Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A5-E30 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A5-E30 : G-C Ww/Ww pairing antiparallel cis XIX 
-406D.pdb A5-E30 : G-C Ww/Ww pairing antiparallel cis XIX 
 406D.pdb A7-E28 : A-U Ww/Ww pairing antiparallel cis XX 
-406D.pdb A7-E28 : A-U Ww/Ww pairing antiparallel cis XX 
-406D.pdb A7-E28 : A-U Ww/Ww pairing antiparallel cis XX 
-406D.pdb A8-E27 : U-G Ws/Ww pairing antiparallel cis one_hbond 
 406D.pdb A8-E27 : U-G Ws/Ww pairing antiparallel cis XXVIII 
 406D.pdb A9-E26 : G-G Ww/Hh pairing parallel cis one_hbond 111 
-406D.pdb A9-E26 : G-G Ww/Hh pairing parallel cis one_hbond 111 
-406D.pdb A9-E26 : G-G Ww/Hh pairing parallel cis VI 
 409D.pdb A1-B16 : C-G Ww/Ww pairing antiparallel cis XIX 
 409D.pdb A2-B15 : C-G Ww/Ww pairing antiparallel cis XIX 
 409D.pdb A3-B14 : C-G Ww/Ww pairing antiparallel cis XIX 
