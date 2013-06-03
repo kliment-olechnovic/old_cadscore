@@ -51,48 +51,31 @@ t_side_sel=t_side[which(is.element(t_side$contact_id, ids_side_mcannotate)),];
 
 hist_bins=50;
 hist_breaks=(0:hist_bins)*(max_contact_area/hist_bins);
+hist_x=hist_breaks[1:(length(hist_breaks)-1)];
 
 #################
 
-hist(t_any$contact_area, breaks=hist_breaks, xlab="Area", main="Histogram of all areas", xlim=c(0, max_contact_area));
-hist(t_any_sel$contact_area, breaks=hist_breaks, add=TRUE, col="red");
+hist_any=hist(t_any$contact_area, breaks=hist_breaks, xlim=c(0, max_contact_area), xlab="Area", main="Histogram of all areas");
+hist_any_sel=hist(t_any_sel$contact_area, breaks=hist_breaks, add=TRUE, col=rgb(1, 0, 0, 0.5));
 
-ds_any=density(t_any$contact_area);
-ds_any_sel=density(t_any_sel$contact_area);
-
-plot(ds_any$x, ds_any$y*length(t_any[[1]]), type="l", col="blue", xlim=c(0, max_contact_area), main="Densities for all areas", xlab="Area", ylab="Frequency");
-points(ds_any_sel$x, ds_any_sel$y*length(t_any_sel[[1]]), type="l", col="red");
-
-plot(ds_any$x, ds_any$y*length(t_any[[1]])*ds_any$x, type="l", col="blue", xlim=c(0, max_contact_area), main="Densities for all contributions of areas", xlab="Area", ylab="Area * Frequency");
-points(ds_any_sel$x, ds_any_sel$y*length(t_any_sel[[1]])*ds_any_sel$x, type="l", col="red");
+plot(hist_x, hist_any$counts*hist_x, xlim=c(0, max_contact_area), type="l", col="black", xlab="Area", ylab="Frequency*Area", main="Contributions of all areas");
+points(hist_x, hist_any_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd=5);
 
 #####
 
-hist(t_stack$contact_area, breaks=hist_breaks, xlab="Area", main="Histogram of stacking areas", xlim=c(0, max_contact_area));
-hist(t_stack_sel$contact_area, breaks=hist_breaks, add=TRUE, col="red");
+hist_stack=hist(t_stack$contact_area, breaks=hist_breaks, xlim=c(0, max_contact_area), xlab="Area", main="Histogram of stacking areas");
+hist_stack_sel=hist(t_stack_sel$contact_area, breaks=hist_breaks, add=TRUE, col=rgb(1, 0, 0, 0.5));
 
-ds_stack=density(t_stack$contact_area);
-ds_stack_sel=density(t_stack_sel$contact_area);
-
-plot(ds_stack$x, ds_stack$y*length(t_stack[[1]]), type="l", col="blue", xlim=c(0, max_contact_area), main="Densities for stacking areas", xlab="Area", ylab="Frequency");
-points(ds_stack_sel$x, ds_stack_sel$y*length(t_stack_sel[[1]]), type="l", col="red");
-
-plot(ds_stack$x, ds_stack$y*length(t_stack[[1]])*ds_stack$x, type="l", col="blue", xlim=c(0, max_contact_area), main="Densities for contributions of stacking areas", xlab="Area", ylab="Area * Frequency");
-points(ds_stack_sel$x, ds_stack_sel$y*length(t_stack_sel[[1]])*ds_stack_sel$x, type="l", col="red");
+plot(hist_x, hist_stack$counts*hist_x, xlim=c(0, max_contact_area), type="l", col="black", xlab="Area", ylab="Frequency*Area", main="Contributions of stacking areas");
+points(hist_x, hist_stack_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd=5);
 
 #####
 
-hist(t_side$contact_area, breaks=hist_breaks, xlab="Area", main="Histogram of siding areas", xlim=c(0, max_contact_area));
-hist(t_side_sel$contact_area, breaks=hist_breaks, add=TRUE, col="red");
+hist_side=hist(t_side$contact_area, breaks=hist_breaks, xlim=c(0, max_contact_area), xlab="Area", main="Histogram of siding areas");
+hist_side_sel=hist(t_side_sel$contact_area, breaks=hist_breaks, add=TRUE, col=rgb(1, 0, 0, 0.5));
 
-ds_side=density(t_side$contact_area);
-ds_side_sel=density(t_side_sel$contact_area);
-
-plot(ds_side$x, ds_side$y*length(t_side[[1]]), type="l", col="blue", xlim=c(0, max_contact_area), main="Densities for siding areas", xlab="Area", ylab="Frequency");
-points(ds_side_sel$x, ds_side_sel$y*length(t_side_sel[[1]]), type="l", col="red");
-
-plot(ds_side$x, ds_side$y*length(t_side[[1]])*ds_side$x, type="l", col="blue", xlim=c(0, max_contact_area), main="Densities for contributions of siding areas", xlab="Area", ylab="Area * Frequency");
-points(ds_side_sel$x, ds_side_sel$y*length(t_side_sel[[1]])*ds_side_sel$x, type="l", col="red");
+plot(hist_x, hist_side$counts*hist_x, xlim=c(0, max_contact_area), type="l", col="black", xlab="Area", ylab="Frequency*Area", main="Contributions of siding areas");
+points(hist_x, hist_side_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd=5);
 
 #################
 
@@ -101,12 +84,12 @@ h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], break
 h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 
-barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_xx$mids, col=c("red", "green", "blue"));
+barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_xx$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
 
-plot(h_xx$mids, h_xx$counts, type="l", lwd="5");
-points(h_BB$mids, h_BB$counts, type="l", lwd="5", col="blue");
-points(h_bB$mids, h_bB$counts, type="l", lwd="5", col="green");
-points(h_bb$mids, h_bb$counts, type="l", lwd="5", col="red");
+plot(h_xx$mids, h_xx$counts, xlim=c(0, max_contact_area), type="l", lwd="1", xlab="Area", ylab="Frequency", main="Frequences of stacking areas of various types");
+points(h_BB$mids, h_BB$counts, type="l", lwd="5", col=rgb(1, 0, 0, 0.5));
+points(h_bB$mids, h_bB$counts, type="l", lwd="5", col=rgb(0, 1, 0, 0.5));
+points(h_bb$mids, h_bb$counts, type="l", lwd="5", col=rgb(0, 0, 1, 0.5));
 
 #################
 
@@ -131,4 +114,8 @@ nonroman_t_side_sel=t_side[which(is.element(t_side$contact_id, nonroman_ids_side
 roman_h=hist(roman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 
-barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c("red", "blue"));
+barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
+
+plot(hist_side_sel$mids, hist_side_sel$counts, xlim=c(0, max_contact_area), type="l", lwd="1", xlab="Area", ylab="Frequency", main="Frequences of siding areas of various types");
+points(roman_h$mids, roman_h$counts, type="l", lwd="5", col=rgb(1, 0, 0, 0.5));
+points(nonroman_h$mids, nonroman_h$counts, type="l", lwd="5", col=rgb(0, 1, 0, 0.5));
