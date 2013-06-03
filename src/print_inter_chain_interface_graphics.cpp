@@ -869,7 +869,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		std::cout << "cmd.color('gray')\n\n";
 		std::cout << "cmd.hide('nonbonded')\n\n";
 		std::cout << "cmd.hide('lines')\n\n";
-		std::cout << "cmd.show('ribbon')\n\n";
 
 		selection_colorizer->list_colors();
 
@@ -924,9 +923,5 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		}
 
 		std::cout << "cmd.deselect()\n\n";
-		std::cout << "cmd.center()\n\n";
-		std::cout << "cmd.zoom()\n\n";
-
-		std::cout << "cmd.set('ray_shadows', 'off')\n\n";
 	}
 }
