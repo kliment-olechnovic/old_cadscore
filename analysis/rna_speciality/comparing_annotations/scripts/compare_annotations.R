@@ -49,6 +49,18 @@ t_side_sel=t_side[which(is.element(t_side$contact_id, ids_side_mcannotate)),];
 
 #################
 
+length(t_stack_mcannotate[[1]]);
+missed_stack=t_stack_mcannotate[which(is.element(t_stack_mcannotate$contact_id, setdiff(ids_stack_mcannotate, t_any$contact_id))),];
+length(missed_stack[[1]]);
+#write.table(missed_stack, "missed_mc_annotate_stacking_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
+
+length(t_side_mcannotate[[1]]);
+missed_side=t_side_mcannotate[which(is.element(t_side_mcannotate$contact_id, setdiff(ids_side_mcannotate, t_any$contact_id))),];
+length(missed_side[[1]]);
+#write.table(missed_side, "missed_mc_annotate_siding_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
+
+#################
+
 hist_bins=50;
 hist_breaks=(0:hist_bins)*(max_contact_area/hist_bins);
 hist_x=hist_breaks[1:(length(hist_breaks)-1)];
