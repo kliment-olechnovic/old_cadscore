@@ -3889,8 +3889,6 @@ cmd.hide('nonbonded')
 
 cmd.hide('lines')
 
-cmd.show('ribbon')
-
 cmd.set_color('custom_color_184_8_187', [ 0.721569, 0.0313725, 0.733333 ])
 cmd.set_color('custom_color_202_223_66', [ 0.792157, 0.87451, 0.258824 ])
 cmd.set_color('custom_color_221_181_201', [ 0.866667, 0.709804, 0.788235 ])
@@ -4258,10 +4256,4 @@ cmd.color('custom_color_118_203_156', 'resi 80 and chain B')
 cmd.show('sticks', 'iface_sel_1_0')
 
 cmd.deselect()
-
-cmd.center()
-
-cmd.zoom()
-
-cmd.set('ray_shadows', 'off')
 
