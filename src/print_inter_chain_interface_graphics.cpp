@@ -538,8 +538,7 @@ public:
 	bool accept(const protein::Atom& a, const protein::Atom& b) const
 	{
 		return (protein::ResidueID::from_atom(a)!=protein::ResidueID::from_atom(b) &&
-				(!only_side_chain_contacts_ ||
-						(a.location_class==protein::Atom::side_chain && b.location_class==protein::Atom::side_chain)));
+				(!only_side_chain_contacts_ || (a.location_class==protein::Atom::side_chain && b.location_class==protein::Atom::side_chain)));
 	}
 
 	std::string assign_group_name(const protein::Atom& /*a*/) const
@@ -554,23 +553,26 @@ private:
 class ContactAccepterForInterInterval : public ContactAccepterInterface
 {
 public:
-	ContactAccepterForInterInterval(const std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > >& intervals) : intervals_(intervals)
+	ContactAccepterForInterInterval(const std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > >& intervals, bool only_side_chain_contacts) : intervals_(intervals), only_side_chain_contacts_(only_side_chain_contacts)
 	{
 	}
 
 	bool accept(const protein::Atom& a, const protein::Atom& b) const
 	{
-		const int a_iid=interval_id(a);
-		const int b_iid=interval_id(b);
-		if(a_iid!=b_iid)
+		if((!only_side_chain_contacts_ || (a.location_class==protein::Atom::side_chain && b.location_class==protein::Atom::side_chain)))
 		{
-			if(a_iid>=0 && b_iid>=0)
+			const int a_iid=interval_id(a);
+			const int b_iid=interval_id(b);
+			if(a_iid!=b_iid)
 			{
-				return true;
-			}
-			else if(intervals_.size()==1)
-			{
-				return true;
+				if(a_iid>=0 && b_iid>=0)
+				{
+					return true;
+				}
+				else if(intervals_.size()==1)
+				{
+					return true;
+				}
 			}
 		}
 		return false;
@@ -610,6 +612,7 @@ private:
 	}
 
 	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals_;
+	bool only_side_chain_contacts_;
 };
 
 std::string atom_name_without_single_quote(const std::string& full_atom_name)
@@ -652,12 +655,20 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
 	{
-		std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals;
-		if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(groups_option, intervals) || intervals.empty())
+		std::string intervals_string=groups_option;
+		bool only_sidechains=false;
+		std::size_t spec_pos=groups_option.find("_SS");
+		if(spec_pos!=std::string::npos)
 		{
-			throw std::runtime_error(std::string("Invalid intervals string: ")+groups_option);
+			intervals_string=groups_option.substr(0, spec_pos);
+			only_sidechains=true;
 		}
-		contact_accepter.reset(new ContactAccepterForInterInterval(intervals));
+		std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals;
+		if(!protein::ResidueIDsIntervalsReader::read_residue_ids_intervals(intervals_string, intervals) || intervals.empty())
+		{
+			throw std::runtime_error(std::string("Invalid intervals string: ")+intervals_string);
+		}
+		contact_accepter.reset(new ContactAccepterForInterInterval(intervals, only_sidechains));
 	}
 	else if(groups_option=="inter_residue" || groups_option=="inter_residue_SS")
 	{
