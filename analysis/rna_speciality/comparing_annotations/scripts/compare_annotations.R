@@ -53,7 +53,7 @@ hist_bins=50;
 hist_breaks=(0:hist_bins)*(max_contact_area/hist_bins);
 hist_x=hist_breaks[1:(length(hist_breaks)-1)];
 
-spec_cols=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5));
+spec_cols=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.6), rgb(0, 0, 1, 0.7));
 
 #################
 
