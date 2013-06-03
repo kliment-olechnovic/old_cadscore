@@ -84,6 +84,7 @@ h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], break
 h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 
 barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_bb$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
+legend(0, 2500, c("pyrimidine-pyrimidine", "pyrimidine-purine", "purine-purine"), pch=c(15, 15, 15), col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)));
 
 #################
 
@@ -109,3 +110,4 @@ roman_h=hist(roman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 
 barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
+legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15), col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5)));
