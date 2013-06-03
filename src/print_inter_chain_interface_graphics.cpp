@@ -612,6 +612,23 @@ private:
 	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals_;
 };
 
+std::string atom_name_without_single_quote(const std::string& full_atom_name)
+{
+	const std::size_t quote_pos=full_atom_name.find('\'', 0);
+	if(quote_pos==std::string::npos)
+	{
+		return full_atom_name;
+	}
+	else if(quote_pos==0)
+	{
+		return (full_atom_name.size()>1 ? full_atom_name.substr(1) : std::string("Q"));
+	}
+	else
+	{
+		return full_atom_name.substr(0, quote_pos);
+	}
+}
+
 }
 
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
@@ -838,7 +855,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 						const std::pair<std::size_t, std::size_t>& atoms_ids_pair=atoms_ids_pairs[i];
 						const protein::Atom& a=atoms[atoms_ids_pair.first];
 						const protein::Atom& b=atoms[atoms_ids_pair.second];
-						std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and name " << (a.atom_name) << " and chain " << a.chain_id << "')\n";
+						std::cout << "cmd.color('" << selection_colorizer->color_string(a, b) << "', 'resi " << a.residue_number << " and name " << atom_name_without_single_quote(a.atom_name) << " and chain " << a.chain_id << "')\n";
 					}
 				}
 				else if(!atoms_ids_pairs.empty())
