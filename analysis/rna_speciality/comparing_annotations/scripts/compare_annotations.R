@@ -105,9 +105,12 @@ points(h_bb$mids, h_bb$counts, type="l", lwd="5", col="red");
 
 roman_codes=c("P_I", "P_II", "P_III", "P_IV", "P_V", "P_VI", "P_VII", "P_VIII", "P_IX", "P_X", "P_XI", "P_XII", "P_XIII", "P_XIV", "P_XV", "P_XVI", "P_XVII", "P_XVIII", "P_XIX", "P_XX", "P_XXI", "P_XXII", "P_XXIII", "P_XXIV", "P_XXV", "P_XXVI", "P_XXVII", "P_XXVIII");
 
-roman_subsel1=which(is.element(t_side_mcannotate$prop5, roman_codes));
-roman_subsel2=which(is.element(t_side_mcannotate$prop6, roman_codes));
-roman_sel=union(roman_subsel1, roman_subsel2);
+roman_sel=which(is.element(t_side_mcannotate$prop5, roman_codes));
+roman_sel=union(roman_sel, which(is.element(t_side_mcannotate$prop6, roman_codes)));
+roman_sel=union(roman_sel, which(is.element(t_side_mcannotate$prop7, roman_codes)));
+roman_sel=union(roman_sel, which(is.element(t_side_mcannotate$prop8, roman_codes)));
+roman_sel=union(roman_sel, which(is.element(t_side_mcannotate$prop9, roman_codes)));
+roman_sel=union(roman_sel, which(is.element(t_side_mcannotate$prop10, roman_codes)));
 nonroman_sel=setdiff(1:length(t_side_mcannotate[[1]]), roman_sel);
 
 roman_ids_side_mcannotate=t_side_mcannotate$contact_id[roman_sel];
