@@ -96,10 +96,10 @@ points(ds_side_sel$x, ds_side_sel$y*length(t_side_sel[[1]])*ds_side_sel$x, type=
 
 #################
 
-h_xx=hist(t_stack_sel[, "contact_area"], breaks=hist_breaks);
-h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], breaks=hist_breaks);
-h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=hist_breaks);
-h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=hist_breaks);
+h_xx=hist(t_stack_sel[, "contact_area"], breaks=hist_breaks, plot=FALSE);
+h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], breaks=hist_breaks, plot=FALSE);
+h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
+h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 
 barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_xx$mids, col=c("red", "green", "blue"));
 
@@ -128,7 +128,7 @@ nonroman_ids_side_mcannotate=t_side_mcannotate$contact_id[nonroman_sel];
 nonroman_ids_side_mcannotate=union(nonroman_ids_side_mcannotate, nonroman_ids_side_mcannotate);
 nonroman_t_side_sel=t_side[which(is.element(t_side$contact_id, nonroman_ids_side_mcannotate)),];
 
-roman_h=hist(roman_t_side_sel$contact_area, breaks=hist_breaks);
-nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks);
+roman_h=hist(roman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
+nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 
 barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c("red", "blue"));
