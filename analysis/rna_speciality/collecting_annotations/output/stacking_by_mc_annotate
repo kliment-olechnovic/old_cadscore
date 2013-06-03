@@ -2606,7 +2606,6 @@
 1NYI.pdb A23-A24 : adjacent_5p upward 
 1NYI.pdb A24-A25 : adjacent_5p upward 
 1NYI.pdb A25-A26 : adjacent_5p upward 
-1NYI.pdb A500-B102 : upward 
 1NYI.pdb B102-B103 : adjacent_5p upward 
 1NYI.pdb B104-B105 : adjacent_5p upward 
 1NYI.pdb B106-B107 : adjacent_5p upward 
@@ -3916,9 +3915,7 @@
 1Y26.pdb X19-X78 : outward 
 1Y26.pdb X20-X21 : adjacent_5p upward 
 1Y26.pdb X21-X76 : outward 
-1Y26.pdb X21-X90 : upward 
 1Y26.pdb X22-X23 : adjacent_5p downward 
-1Y26.pdb X22-X90 : inward pairing 
 1Y26.pdb X23-X25 : outward 
 1Y26.pdb X24-X72 : inward 
 1Y26.pdb X24-X73 : outward 
@@ -3971,9 +3968,7 @@
 1Y27.pdb X19-X78 : outward 
 1Y27.pdb X20-X21 : adjacent_5p upward 
 1Y27.pdb X21-X76 : outward 
-1Y27.pdb X21-X90 : upward 
 1Y27.pdb X22-X23 : adjacent_5p downward 
-1Y27.pdb X22-X90 : inward pairing 
 1Y27.pdb X24-X72 : inward 
 1Y27.pdb X24-X73 : outward 
 1Y27.pdb X25-X26 : adjacent_5p upward 
@@ -28730,89 +28725,32 @@
 405D.pdb B29-B30 : adjacent_5p upward 
 405D.pdb B31-B32 : adjacent_5p upward 
 406D.pdb A10-A11 : adjacent_5p upward 
-406D.pdb A10-A11 : adjacent_5p upward 
-406D.pdb A10-A11 : adjacent_5p upward 
 406D.pdb A10-E26 : downward 
-406D.pdb A10-E26 : downward 
-406D.pdb A13-E23 : outward 
-406D.pdb A13-E23 : outward 
-406D.pdb A14-A15 : adjacent_5p upward 
-406D.pdb A14-A15 : adjacent_5p upward 
 406D.pdb A14-A15 : adjacent_5p upward 
 406D.pdb A14-E22 : outward 
-406D.pdb A14-E22 : outward 
-406D.pdb A14-E22 : outward 
 406D.pdb A15-A16 : adjacent_5p upward 
-406D.pdb A15-A16 : adjacent_5p upward 
-406D.pdb A15-A16 : adjacent_5p upward 
-406D.pdb A16-A17 : adjacent_5p upward 
-406D.pdb A17-E19 : outward 
-406D.pdb A17-E19 : outward 
 406D.pdb A17-E19 : outward 
 406D.pdb A1-A2 : adjacent_5p upward 
-406D.pdb A1-A2 : adjacent_5p upward 
-406D.pdb A2-A3 : adjacent_5p upward 
-406D.pdb A2-A3 : adjacent_5p upward 
 406D.pdb A2-A3 : adjacent_5p upward 
 406D.pdb A2-E34 : outward 
-406D.pdb A2-E34 : outward 
-406D.pdb A2-E34 : outward 
-406D.pdb A3-A4 : adjacent_5p upward 
-406D.pdb A3-A4 : adjacent_5p upward 
 406D.pdb A3-A4 : adjacent_5p upward 
 406D.pdb A4-A5 : adjacent_5p upward 
-406D.pdb A4-A5 : adjacent_5p upward 
-406D.pdb A5-A6 : adjacent_5p upward 
-406D.pdb A5-A6 : adjacent_5p upward 
 406D.pdb A5-A6 : adjacent_5p upward 
 406D.pdb A5-E31 : outward 
-406D.pdb A5-E31 : outward 
-406D.pdb A5-E31 : outward 
-406D.pdb A6-A7 : adjacent_5p upward 
-406D.pdb A6-A7 : adjacent_5p upward 
 406D.pdb A6-A7 : adjacent_5p upward 
 406D.pdb A7-A8 : adjacent_5p upward 
-406D.pdb A7-A8 : adjacent_5p upward 
-406D.pdb A7-A8 : adjacent_5p upward 
-406D.pdb A9-A10 : adjacent_5p upward 
-406D.pdb A9-A10 : adjacent_5p upward 
 406D.pdb A9-A10 : adjacent_5p upward 
 406D.pdb A9-E27 : outward 
-406D.pdb A9-E27 : outward 
-406D.pdb A9-E27 : outward 
-406D.pdb E18-E19 : adjacent_5p upward 
-406D.pdb E19-E20 : adjacent_5p upward 
-406D.pdb E19-E20 : adjacent_5p upward 
 406D.pdb E19-E20 : adjacent_5p upward 
 406D.pdb E20-E21 : adjacent_5p upward 
-406D.pdb E20-E21 : adjacent_5p upward 
-406D.pdb E21-E22 : adjacent_5p upward 
 406D.pdb E21-E22 : adjacent_5p upward 
 406D.pdb E22-E23 : adjacent_5p upward 
-406D.pdb E22-E23 : adjacent_5p upward 
-406D.pdb E22-E23 : adjacent_5p upward 
-406D.pdb E23-E24 : adjacent_5p upward 
-406D.pdb E23-E24 : adjacent_5p upward 
 406D.pdb E23-E24 : adjacent_5p upward 
 406D.pdb E24-E25 : adjacent_5p upward 
-406D.pdb E24-E25 : adjacent_5p upward 
-406D.pdb E24-E25 : adjacent_5p upward 
 406D.pdb E25-E26 : adjacent_5p inward 
-406D.pdb E25-E26 : adjacent_5p inward 
-406D.pdb E25-E26 : adjacent_5p inward 
-406D.pdb E26-E27 : adjacent_5p outward 
 406D.pdb E27-E28 : adjacent_5p upward 
-406D.pdb E27-E28 : adjacent_5p upward 
-406D.pdb E27-E28 : adjacent_5p upward 
-406D.pdb E30-E31 : adjacent_5p upward 
-406D.pdb E30-E31 : adjacent_5p upward 
-406D.pdb E31-E32 : adjacent_5p upward 
-406D.pdb E31-E32 : adjacent_5p upward 
 406D.pdb E31-E32 : adjacent_5p upward 
 406D.pdb E32-E33 : adjacent_5p upward 
-406D.pdb E32-E33 : adjacent_5p upward 
-406D.pdb E32-E33 : adjacent_5p upward 
-406D.pdb E33-E34 : adjacent_5p upward 
 406D.pdb E33-E34 : adjacent_5p upward 
 409D.pdb A6-A7 : adjacent_5p upward 
 409D.pdb A7-A8 : adjacent_5p upward 
