@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <memory>
 
 #include "protein/atom.h"
@@ -289,6 +291,37 @@ public:
 	}
 
 	virtual void list_colors() const = 0;
+};
+
+class ContactColorizerByCustomSingleColor : public ContactColorizerInterface
+{
+public:
+	ContactColorizerByCustomSingleColor(const std::string& color_code_string) : color_(255, 255, 255)
+	{
+		std::istringstream input(color_code_string);
+		if(input.good())
+		{
+			int color_code=0xFFFFFF;
+			input >> std::hex >> color_code;
+			if(!input.fail() && color_code>0)
+			{
+				color_=auxiliaries::Color::from_code(color_code);
+			}
+		}
+	}
+
+	auxiliaries::Color color(const protein::Atom& /*a*/, const protein::Atom& /*b*/) const
+	{
+		return color_;
+	}
+
+	virtual void list_colors() const
+	{
+		ColorManagementForPymol::list_color(color_);
+	}
+
+private:
+	auxiliaries::Color color_;
 };
 
 template<class ResidueNameColorizerType>
@@ -768,6 +801,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		face_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
 	}
+	else if(face_coloring_mode.substr(0,2)=="0x")
+	{
+		face_colorizer.reset(new ContactColorizerByCustomSingleColor(face_coloring_mode));
+	}
 	else
 	{
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< NameColorizerForPymol<std::string> >());
@@ -818,6 +855,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		else if(selection_coloring_mode=="atom_id")
 		{
 			selection_colorizer.reset(new ContactColorizerByFirstAtomID(atoms));
+		}
+		else if(selection_coloring_mode.substr(0,2)=="0x")
+		{
+			selection_colorizer.reset(new ContactColorizerByCustomSingleColor(selection_coloring_mode));
 		}
 		else
 		{
