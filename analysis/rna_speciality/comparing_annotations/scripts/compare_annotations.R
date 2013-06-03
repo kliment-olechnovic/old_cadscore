@@ -79,17 +79,11 @@ points(hist_x, hist_side_sel$counts*hist_x, type="l", col=rgb(1, 0, 0, 0.5), lwd
 
 #################
 
-h_xx=hist(t_stack_sel[, "contact_area"], breaks=hist_breaks, plot=FALSE);
 h_bb=hist(t_stack_sel[which(t_stack_sel$basepairs=="bb"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 h_bB=hist(t_stack_sel[which(t_stack_sel$basepairs=="bB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], breaks=hist_breaks, plot=FALSE);
 
-barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_xx$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
-
-plot(h_xx$mids, h_xx$counts, xlim=c(0, max_contact_area), type="l", lwd="1", xlab="Area", ylab="Frequency", main="Frequences of stacking areas of various types");
-points(h_BB$mids, h_BB$counts, type="l", lwd="5", col=rgb(1, 0, 0, 0.5));
-points(h_bB$mids, h_bB$counts, type="l", lwd="5", col=rgb(0, 1, 0, 0.5));
-points(h_bb$mids, h_bb$counts, type="l", lwd="5", col=rgb(0, 0, 1, 0.5));
+barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_bb$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5), rgb(0, 0, 1, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
 
 #################
 
@@ -115,7 +109,3 @@ roman_h=hist(roman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE);
 
 barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=c(rgb(1, 0, 0, 0.5), rgb(0, 1, 0, 0.5)), border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
-
-plot(hist_side_sel$mids, hist_side_sel$counts, xlim=c(0, max_contact_area), type="l", lwd="1", xlab="Area", ylab="Frequency", main="Frequences of siding areas of various types");
-points(roman_h$mids, roman_h$counts, type="l", lwd="5", col=rgb(1, 0, 0, 0.5));
-points(nonroman_h$mids, nonroman_h$counts, type="l", lwd="5", col=rgb(0, 1, 0, 0.5));
