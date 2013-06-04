@@ -112,7 +112,7 @@ public:
 	};
 
 	template<typename T, typename Scorer>
-	static std::vector< std::pair<int, int> > construct_global_sequence_alignment(const T& seq1, const T& seq2, const Scorer& scorer)
+	static std::vector< std::pair<int, int> > construct_global_sequence_alignment(const T& seq1, const T& seq2, const Scorer& scorer, int* result_score=0)
 	{
 		std::vector< std::pair<int, int> > alignment;
 		if(!seq1.empty() && !seq2.empty())
@@ -144,6 +144,11 @@ public:
 					directions_matrix[i][j]=(max_score==insertion_score ? 2 : (max_score==deletion_score ? 1 : 0));
 					overall_max_score=std::max(overall_max_score, max_score);
 				}
+			}
+
+			if(result_score!=0)
+			{
+				*result_score=overall_max_score;
 			}
 
 			int i=static_cast<int>(seq1.size());

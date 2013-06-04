@@ -1,0 +1,193 @@
+#include <iostream>
+#include <limits>
+
+#include "protein/atom.h"
+#include "protein/residue_ids_collection.h"
+#include "protein/sequence_tools.h"
+
+#include "auxiliaries/command_line_options.h"
+#include "auxiliaries/std_containers_io.h"
+
+namespace
+{
+
+struct Residue
+{
+	protein::ResidueID id;
+	protein::ResidueSummary summary;
+	Residue(const protein::ResidueID& id, const protein::ResidueSummary& summary) : id(id), summary(summary)
+	{
+	}
+};
+
+typedef std::vector<Residue> ResidueVector;
+
+struct Overlay
+{
+	int score;
+	std::map<protein::ResidueID, protein::ResidueID> model_to_target;
+	Overlay() : score(0)
+	{
+	}
+
+	static Overlay combine_overlays(const Overlay& a, const Overlay& b)
+	{
+		Overlay ab=a;
+		ab.score+=b.score;
+		ab.model_to_target.insert(b.model_to_target.begin(), b.model_to_target.end());
+		return ab;
+	}
+};
+
+ResidueVector collect_residues(const std::vector<protein::Atom>& atoms)
+{
+	const std::map<protein::ResidueID, protein::ResidueSummary> residues_map=protein::collect_residue_ids_from_atoms(atoms);
+	ResidueVector residues;
+	for(std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residues_map.begin();it!=residues_map.end();++it)
+	{
+		residues.push_back(Residue(it->first, it->second));
+	}
+	return residues;
+}
+
+std::vector<ResidueVector> subdivide_residues_by_chain(const ResidueVector& residues)
+{
+	std::map<std::string, ResidueVector> chains_map;
+	for(ResidueVector::const_iterator it=residues.begin();it!=residues.end();++it)
+	{
+		chains_map[it->id.chain_id].push_back(*it);
+	}
+	std::vector<ResidueVector> divided_residues;
+	for(std::map<std::string, ResidueVector>::const_iterator it=chains_map.begin();it!=chains_map.end();++it)
+	{
+		divided_residues.push_back(it->second);
+	}
+	return divided_residues;
+}
+
+std::string collect_sequence_from_residues(const ResidueVector& residues)
+{
+	std::ostringstream output;
+	for(ResidueVector::const_iterator it=residues.begin();it!=residues.end();++it)
+	{
+		output << protein::sequence_tools::LettersCoding::convert_residue_codes_big_to_small(it->summary.name);
+	}
+	return output.str();
+}
+
+Overlay produce_overlay(const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer& scorer, const ResidueVector& target_residues, const ResidueVector& model_residues, std::pair<ResidueVector, ResidueVector>& leftovers)
+{
+	const std::string target_sequence=collect_sequence_from_residues(target_residues);
+	const std::string model_sequence=collect_sequence_from_residues(model_residues);
+	Overlay overlay;
+	const std::vector< std::pair<int, int> > alignment=protein::sequence_tools::PairwiseSequenceAlignment::construct_global_sequence_alignment(target_sequence, model_sequence, scorer, &overlay.score);
+	int min_aligned_index=model_residues.size();
+	int max_aligned_index=-1;
+	for(std::vector< std::pair<int, int> >::const_iterator it=alignment.begin();it!=alignment.end();++it)
+	{
+		if(it->first>=0 && it->second>=0)
+		{
+			overlay.model_to_target[model_residues[it->second].id]=target_residues[it->first].id;
+			min_aligned_index=std::min(min_aligned_index, it->second);
+			max_aligned_index=std::max(max_aligned_index, it->second);
+		}
+	}
+	leftovers.first.clear();
+	leftovers.second.clear();
+	for(int i=0;i<min_aligned_index;i++)
+	{
+		leftovers.first.push_back(model_residues[i]);
+	}
+	if(max_aligned_index>=0)
+	{
+		for(std::size_t i=static_cast<std::size_t>(max_aligned_index+1);i<model_residues.size();i++)
+		{
+			leftovers.second.push_back(model_residues[i]);
+		}
+	}
+	return overlay;
+}
+
+void recursive_calculate_best_combined_overlay(
+		const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer& scorer,
+		const std::vector<ResidueVector>& target_divided_residues,
+		const std::size_t i,
+		const std::vector<ResidueVector>& model_divided_residues,
+		const Overlay& previous_overlay,
+		Overlay& currently_best_overlay)
+{
+	if(i>=target_divided_residues.size())
+	{
+		if(previous_overlay.score>currently_best_overlay.score)
+		{
+			currently_best_overlay=previous_overlay;
+		}
+	}
+	else
+	{
+		for(std::size_t j=0;j<model_divided_residues.size();j++)
+		{
+			std::pair<ResidueVector, ResidueVector> leftovers;
+			const Overlay new_overlay=produce_overlay(scorer, target_divided_residues[i], model_divided_residues[j], leftovers);
+			std::vector<ResidueVector> new_model_divided_residues;
+			for(std::size_t e=0;e<model_divided_residues.size();e++)
+			{
+				if(e!=j)
+				{
+					new_model_divided_residues.push_back(model_divided_residues[e]);
+				}
+				else
+				{
+					if(!leftovers.first.empty())
+					{
+						new_model_divided_residues.push_back(leftovers.first);
+					}
+					if(!leftovers.second.empty())
+					{
+						new_model_divided_residues.push_back(leftovers.second);
+					}
+				}
+			}
+			recursive_calculate_best_combined_overlay(scorer, target_divided_residues, i+1, new_model_divided_residues, Overlay::combine_overlays(previous_overlay, new_overlay), currently_best_overlay);
+		}
+	}
+}
+
+}
+
+void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension:");
+
+	const int match_score=clo.arg_or_default_value<int>("--match", 10);
+	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -10);
+	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
+	const int gap_extension_score=clo.arg_or_default_value<int>("--gap-extension", -1);
+
+	const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, gap_start_score, gap_extension_score);
+
+	const std::vector<protein::Atom> target_atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+	const std::vector<protein::Atom> model_atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
+
+	const ResidueVector target_residues=collect_residues(target_atoms);
+	const ResidueVector model_residues=collect_residues(model_atoms);
+
+	std::cout << "target_residues " << target_residues.size() << "\n";
+	std::cout << "model_residues " << model_residues.size() << "\n";
+
+	const std::vector<ResidueVector> target_divided_residues=subdivide_residues_by_chain(target_residues);
+	const std::vector<ResidueVector> model_divided_residues=subdivide_residues_by_chain(model_residues);
+
+	std::cout << "target_divided_residues " << target_divided_residues.size() << "\n";
+	std::cout << "model_divided_residues " << model_divided_residues.size() << "\n";
+
+	Overlay best_combined_overlay;
+	recursive_calculate_best_combined_overlay(scorer, target_divided_residues, 0, model_divided_residues, Overlay(), best_combined_overlay);
+
+	std::cout << "score " << best_combined_overlay.score << "\n";
+	std::cout << "mapped_model_residues " << best_combined_overlay.model_to_target.size() << "\n";
+	for(std::map<protein::ResidueID, protein::ResidueID>::const_iterator it=best_combined_overlay.model_to_target.begin();it!=best_combined_overlay.model_to_target.end();++it)
+	{
+		std::cout << it->first.chain_id << " " << it->first.residue_number << "   " << it->second.chain_id << " " << it->second.residue_number << "\n";
+	}
+}
