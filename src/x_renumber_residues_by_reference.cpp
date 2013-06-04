@@ -157,12 +157,14 @@ void recursive_calculate_best_combined_overlay(
 
 void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension:");
+	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension: --print-summary-log --print-detailed-log");
 
 	const int match_score=clo.arg_or_default_value<int>("--match", 10);
 	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -10);
 	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
 	const int gap_extension_score=clo.arg_or_default_value<int>("--gap-extension", -1);
+	const bool print_summary_log=clo.isopt("--print-summary-log");
+	const bool print_detailed_log=clo.isopt("--print-detailed-log");
 
 	const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, gap_start_score, gap_extension_score);
 
@@ -172,22 +174,29 @@ void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo
 	const ResidueVector target_residues=collect_residues(target_atoms);
 	const ResidueVector model_residues=collect_residues(model_atoms);
 
-	std::cout << "target_residues " << target_residues.size() << "\n";
-	std::cout << "model_residues " << model_residues.size() << "\n";
-
 	const std::vector<ResidueVector> target_divided_residues=subdivide_residues_by_chain(target_residues);
 	const std::vector<ResidueVector> model_divided_residues=subdivide_residues_by_chain(model_residues);
-
-	std::cout << "target_divided_residues " << target_divided_residues.size() << "\n";
-	std::cout << "model_divided_residues " << model_divided_residues.size() << "\n";
 
 	Overlay best_combined_overlay;
 	recursive_calculate_best_combined_overlay(scorer, target_divided_residues, 0, model_divided_residues, Overlay(), best_combined_overlay);
 
-	std::cout << "score " << best_combined_overlay.score << "\n";
-	std::cout << "mapped_model_residues " << best_combined_overlay.model_to_target.size() << "\n";
-	for(std::map<protein::ResidueID, protein::ResidueID>::const_iterator it=best_combined_overlay.model_to_target.begin();it!=best_combined_overlay.model_to_target.end();++it)
+	if(print_summary_log)
 	{
-		std::cout << it->first.chain_id << " " << it->first.residue_number << "   " << it->second.chain_id << " " << it->second.residue_number << "\n";
+		std::clog << "target_atoms " << target_atoms.size() << "\n";
+		std::clog << "model_atoms " << model_atoms.size() << "\n";
+		std::clog << "target_residues " << target_residues.size() << "\n";
+		std::clog << "model_residues " << model_residues.size() << "\n";
+		std::clog << "target_divided_residues " << target_divided_residues.size() << "\n";
+		std::clog << "model_divided_residues " << model_divided_residues.size() << "\n";
+		std::clog << "score " << best_combined_overlay.score << "\n";
+		std::clog << "mapped_model_residues " << best_combined_overlay.model_to_target.size() << "\n";
+	}
+
+	if(print_detailed_log)
+	{
+		for(std::map<protein::ResidueID, protein::ResidueID>::const_iterator it=best_combined_overlay.model_to_target.begin();it!=best_combined_overlay.model_to_target.end();++it)
+		{
+			std::clog << it->first.chain_id << " " << it->first.residue_number << "   " << it->second.chain_id << " " << it->second.residue_number << "\n";
+		}
 	}
 }
