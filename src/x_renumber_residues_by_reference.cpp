@@ -206,6 +206,29 @@ void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo
 		std::clog << "model_chains " << model_divided_residues.size() << "\n";
 		std::clog << "best_alignments_score " << best_combined_overlay.score << "\n";
 		std::clog << "mapped_model_residues " << best_combined_overlay.model_to_target.size() << "\n";
+
+		std::clog << "Target   ";
+		for(std::size_t i=0;i<target_divided_residues.size();i++)
+		{
+			if(!target_divided_residues[i].empty())
+			{
+				std::clog << target_divided_residues[i][0].id.chain_id << ":" << collect_sequence_from_residues(target_divided_residues[i]) << " ";
+			}
+		}
+		std::clog << "\n";
+		if(!renumbered_model_atoms.empty())
+		{
+			const std::vector<ResidueVector> renumbered_model_divided_residues=subdivide_residues_by_chain(collect_residues(renumbered_model_atoms));
+			std::clog << "Model    ";
+			for(std::size_t i=0;i<renumbered_model_divided_residues.size();i++)
+			{
+				if(!renumbered_model_divided_residues[i].empty())
+				{
+					std::clog << renumbered_model_divided_residues[i][0].id.chain_id << ":" << collect_sequence_from_residues(renumbered_model_divided_residues[i]) << " ";
+				}
+			}
+			std::clog << "\n";
+		}
 	}
 
 	if(print_detailed_log)
