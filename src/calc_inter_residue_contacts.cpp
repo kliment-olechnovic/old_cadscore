@@ -128,7 +128,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 
 		if(renaming_allowed)
 		{
-			std::map<double, CombinedInterResidueContacts> variations;
+			std::pair<double, CombinedInterResidueContacts> best_variation(-1.0, CombinedInterResidueContacts());
 			std::vector<std::string> chain_names_permutation=chain_names_1;
 			do
 			{
@@ -163,7 +163,12 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 				const contacto::Ratio ratio=global_score.ratio("AA");
 				if(ratio.reference>0.0)
 				{
-					variations[(1-(ratio.difference/ratio.reference))]=combined_inter_residue_contacts;
+					const double score_from_ratio=(1-(ratio.difference/ratio.reference));
+					if(score_from_ratio>best_variation.first)
+					{
+						best_variation.first=score_from_ratio;
+						best_variation.second=combined_inter_residue_contacts;
+					}
 				}
 
 				std::clog << "Tried renaming chains: ( ";
@@ -180,9 +185,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 			}
 			while(std::next_permutation(chain_names_permutation.begin(), chain_names_permutation.end()));
 
-			if(!variations.empty())
+			if(best_variation.first>=0.0)
 			{
-				resulting_combined_inter_residue_contacts=variations.rbegin()->second;
+				resulting_combined_inter_residue_contacts=best_variation.second;
 			}
 
 			renaming_performed=true;
