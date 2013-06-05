@@ -1,5 +1,4 @@
 #include <iostream>
-#include <limits>
 
 #include "protein/atom.h"
 #include "protein/residue_ids_collection.h"
@@ -75,34 +74,27 @@ std::string collect_sequence_from_residues(const ResidueVector& residues)
 	return output.str();
 }
 
-Overlay produce_overlay(const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer& scorer, const ResidueVector& target_residues, const ResidueVector& model_residues, std::pair<ResidueVector, ResidueVector>& leftovers)
+Overlay produce_overlay(const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer& scorer, const ResidueVector& target_residues, const ResidueVector& model_residues, std::vector<ResidueVector>& leftovers)
 {
 	const std::string target_sequence=collect_sequence_from_residues(target_residues);
 	const std::string model_sequence=collect_sequence_from_residues(model_residues);
 	Overlay overlay;
 	const std::vector< std::pair<int, int> > alignment=protein::sequence_tools::PairwiseSequenceAlignment::construct_global_sequence_alignment(target_sequence, model_sequence, scorer, &overlay.score);
-	int min_aligned_index=model_residues.size();
-	int max_aligned_index=-1;
-	for(std::vector< std::pair<int, int> >::const_iterator it=alignment.begin();it!=alignment.end();++it)
+	leftovers.clear();
+	for(std::size_t i=0;i<alignment.size();i++)
 	{
-		if(it->first>=0 && it->second>=0)
+		const std::pair<int, int>& pairing=alignment[i];
+		if(pairing.first>=0 && pairing.second>=0)
 		{
-			overlay.model_to_target[model_residues[it->second].id]=target_residues[it->first].id;
-			min_aligned_index=std::min(min_aligned_index, it->second);
-			max_aligned_index=std::max(max_aligned_index, it->second);
+			overlay.model_to_target[model_residues[pairing.second].id]=target_residues[pairing.first].id;
 		}
-	}
-	leftovers.first.clear();
-	leftovers.second.clear();
-	for(int i=0;i<min_aligned_index;i++)
-	{
-		leftovers.first.push_back(model_residues[i]);
-	}
-	if(max_aligned_index>=0)
-	{
-		for(std::size_t i=static_cast<std::size_t>(max_aligned_index+1);i<model_residues.size();i++)
+		if(pairing.first<0 && pairing.second>=0)
 		{
-			leftovers.second.push_back(model_residues[i]);
+			if(leftovers.empty() || (i>0 && alignment[i-1].first>=0))
+			{
+				leftovers.push_back(ResidueVector());
+			}
+			leftovers.back().push_back(model_residues[pairing.second]);
 		}
 	}
 	return overlay;
@@ -127,7 +119,7 @@ void recursive_calculate_best_combined_overlay(
 	{
 		for(std::size_t j=0;j<model_divided_residues.size();j++)
 		{
-			std::pair<ResidueVector, ResidueVector> leftovers;
+			std::vector<ResidueVector> leftovers;
 			const Overlay new_overlay=produce_overlay(scorer, target_divided_residues[i], model_divided_residues[j], leftovers);
 			std::vector<ResidueVector> new_model_divided_residues;
 			for(std::size_t e=0;e<model_divided_residues.size();e++)
@@ -136,16 +128,9 @@ void recursive_calculate_best_combined_overlay(
 				{
 					new_model_divided_residues.push_back(model_divided_residues[e]);
 				}
-				else
+				else if(!leftovers.empty())
 				{
-					if(!leftovers.first.empty())
-					{
-						new_model_divided_residues.push_back(leftovers.first);
-					}
-					if(!leftovers.second.empty())
-					{
-						new_model_divided_residues.push_back(leftovers.second);
-					}
+					new_model_divided_residues.insert(new_model_divided_residues.end(), leftovers.begin(), leftovers.end());
 				}
 			}
 			recursive_calculate_best_combined_overlay(scorer, target_divided_residues, i+1, new_model_divided_residues, Overlay::combine_overlays(previous_overlay, new_overlay), currently_best_overlay);
