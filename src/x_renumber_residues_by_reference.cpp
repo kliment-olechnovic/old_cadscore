@@ -102,6 +102,7 @@ Overlay produce_overlay(const protein::sequence_tools::PairwiseSequenceAlignment
 
 void recursive_calculate_best_combined_overlay(
 		const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer& scorer,
+		const bool use_only_single_longest_leftover,
 		const std::vector<ResidueVector>& target_divided_residues,
 		const std::size_t i,
 		const std::vector<ResidueVector>& model_divided_residues,
@@ -130,10 +131,27 @@ void recursive_calculate_best_combined_overlay(
 				}
 				else if(!leftovers.empty())
 				{
-					new_model_divided_residues.insert(new_model_divided_residues.end(), leftovers.begin(), leftovers.end());
+					if(use_only_single_longest_leftover)
+					{
+						std::size_t max_id=0;
+						std::size_t max_length=leftovers[max_id].size();
+						for(std::size_t l=1;l<leftovers.size();l++)
+						{
+							if(leftovers[l].size()>max_length)
+							{
+								max_length=leftovers[l].size();
+								max_id=l;
+							}
+						}
+						new_model_divided_residues.push_back(leftovers[max_id]);
+					}
+					else
+					{
+						new_model_divided_residues.insert(new_model_divided_residues.end(), leftovers.begin(), leftovers.end());
+					}
 				}
 			}
-			recursive_calculate_best_combined_overlay(scorer, target_divided_residues, i+1, new_model_divided_residues, Overlay::combine_overlays(previous_overlay, new_overlay), currently_best_overlay);
+			recursive_calculate_best_combined_overlay(scorer, use_only_single_longest_leftover, target_divided_residues, i+1, new_model_divided_residues, Overlay::combine_overlays(previous_overlay, new_overlay), currently_best_overlay);
 		}
 	}
 }
@@ -142,15 +160,16 @@ void recursive_calculate_best_combined_overlay(
 
 void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension: --output-in-pdb-format --print-summary-log --print-detailed-log");
+	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension: --use-only-single-longest-leftover --output-in-pdb-format --print-summary-log --print-detailed-log");
 
 	const int match_score=clo.arg_or_default_value<int>("--match", 10);
 	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -10);
 	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
 	const int gap_extension_score=clo.arg_or_default_value<int>("--gap-extension", -1);
+	const bool use_only_single_longest_leftover=clo.isopt("--use-only-single-longest-leftover");
+	const bool output_in_pdb_format=clo.isopt("--output-in-pdb-format");
 	const bool print_summary_log=clo.isopt("--print-summary-log");
 	const bool print_detailed_log=clo.isopt("--print-detailed-log");
-	const bool output_in_pdb_format=clo.isopt("--output-in-pdb-format");
 
 	const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, gap_start_score, gap_extension_score);
 
@@ -164,7 +183,7 @@ void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo
 	const std::vector<ResidueVector> model_divided_residues=subdivide_residues_by_chain(model_residues);
 
 	Overlay best_combined_overlay;
-	recursive_calculate_best_combined_overlay(scorer, target_divided_residues, 0, model_divided_residues, Overlay(), best_combined_overlay);
+	recursive_calculate_best_combined_overlay(scorer, use_only_single_longest_leftover, target_divided_residues, 0, model_divided_residues, Overlay(), best_combined_overlay);
 
 	std::vector<protein::Atom> renumbered_model_atoms;
 	for(std::vector<protein::Atom>::const_iterator it=model_atoms.begin();it!=model_atoms.end();++it)
