@@ -108,7 +108,7 @@ void recursive_calculate_best_combined_overlay(
 		const Overlay& previous_overlay,
 		Overlay& currently_best_overlay)
 {
-	if(i>=target_divided_residues.size())
+	if(i>=target_divided_residues.size() || model_divided_residues.empty())
 	{
 		if(previous_overlay.score>currently_best_overlay.score)
 		{
@@ -135,6 +135,7 @@ void recursive_calculate_best_combined_overlay(
 			}
 			recursive_calculate_best_combined_overlay(scorer, target_divided_residues, i+1, new_model_divided_residues, Overlay::combine_overlays(previous_overlay, new_overlay), currently_best_overlay);
 		}
+		recursive_calculate_best_combined_overlay(scorer, target_divided_residues, i+1, model_divided_residues, previous_overlay, currently_best_overlay);
 	}
 }
 
@@ -207,6 +208,15 @@ void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo
 		std::clog << "best_alignments_score " << best_combined_overlay.score << "\n";
 		std::clog << "mapped_model_residues " << best_combined_overlay.model_to_target.size() << "\n";
 
+		std::clog << "target_sequence         ";
+		for(std::size_t i=0;i<target_divided_residues.size();i++)
+		{
+			if(!target_divided_residues[i].empty())
+			{
+				std::clog << target_divided_residues[i][0].id.chain_id << ":" << collect_sequence_from_residues(target_divided_residues[i]) << " ";
+			}
+		}
+		std::clog << "\n";
 		std::clog << "model_sequence          ";
 		for(std::size_t i=0;i<model_divided_residues.size();i++)
 		{
