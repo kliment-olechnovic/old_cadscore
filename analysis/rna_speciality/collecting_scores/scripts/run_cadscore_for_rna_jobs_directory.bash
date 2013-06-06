@@ -13,7 +13,7 @@ fi
 RENUMBERED_INPUT_DIR="$OUTPUT_DIR/renumbered_input"
 mkdir -p $RENUMBERED_INPUT_DIR
 
-find $JOBS_DIR -mindepth 1 -maxdepth 1 -type d  | while read JOB_DIR
+find $JOBS_DIR -mindepth 1 -maxdepth 1 -type d  | sort | while read JOB_DIR
 do
   find "$JOB_DIR/target" -type f | while read TARGET_FILE
   do
@@ -22,7 +22,7 @@ do
       MODEL_BASENAME=$(basename $MODEL_FILE)
       RENUMBERED_MODEL_FILE="$RENUMBERED_INPUT_DIR/$MODEL_BASENAME"
       echo "Processing target $(basename $TARGET_FILE) model $(basename $MODEL_FILE):"
-      (cat $TARGET_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms ; cat $MODEL_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms) | $CADSCORE_BIN_DIR/voroprot2 --mode x-renumber-residues-by-reference --print-summary-log --output-in-pdb-format > $RENUMBERED_MODEL_FILE
+      (cat $TARGET_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms ; cat $MODEL_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms) | $CADSCORE_BIN_DIR/voroprot2 --mode x-renumber-residues-by-reference --match 10 --mismatch -20 --gap-start -50 --gap-extension 0 --print-summary-log --output-in-pdb-format > $RENUMBERED_MODEL_FILE
       $CADSCORE_BIN_DIR/CADscore_calc.bash -D $OUTPUT_DIR/db -t $TARGET_FILE -m $RENUMBERED_MODEL_FILE -a -n -u
       echo ""
     done
