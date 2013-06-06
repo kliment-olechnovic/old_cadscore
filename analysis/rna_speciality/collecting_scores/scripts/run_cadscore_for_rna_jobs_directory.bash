@@ -23,10 +23,10 @@ do
       RENUMBERED_MODEL_FILE="$RENUMBERED_INPUT_DIR/$MODEL_BASENAME"
       echo "Processing target $(basename $TARGET_FILE) model $(basename $MODEL_FILE):"
       (cat $TARGET_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms ; cat $MODEL_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms) | $CADSCORE_BIN_DIR/voroprot2 --mode x-renumber-residues-by-reference --match 10 --mismatch -20 --gap-start -50 --gap-extension 0 --print-summary-log --output-in-pdb-format > $RENUMBERED_MODEL_FILE
-      $CADSCORE_BIN_DIR/CADscore_calc.bash -D $OUTPUT_DIR/db -t $TARGET_FILE -m $RENUMBERED_MODEL_FILE -a -n -u
+      $CADSCORE_BIN_DIR/CADscore_calc.bash -D $OUTPUT_DIR/db -t $TARGET_FILE -m $RENUMBERED_MODEL_FILE -a -n -u -q -e "rnadi.bash" -y -g
       echo ""
     done
   done
 done
 
-$CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/db | sort -r | column -t > $OUTPUT_DIR/scores
+$CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/db | sort -r | column -t > $OUTPUT_DIR/calculated_scores
