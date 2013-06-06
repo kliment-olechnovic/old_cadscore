@@ -79,7 +79,7 @@ Overlay produce_overlay(const protein::sequence_tools::PairwiseSequenceAlignment
 	const std::string target_sequence=collect_sequence_from_residues(target_residues);
 	const std::string model_sequence=collect_sequence_from_residues(model_residues);
 	Overlay overlay;
-	const std::vector< std::pair<int, int> > alignment=protein::sequence_tools::PairwiseSequenceAlignment::construct_global_sequence_alignment(target_sequence, model_sequence, scorer, &overlay.score);
+	const std::vector< std::pair<int, int> > alignment=protein::sequence_tools::PairwiseSequenceAlignment::construct_sequence_alignment(target_sequence, model_sequence, scorer, true, &overlay.score);
 	leftovers.clear();
 	for(std::size_t i=0;i<alignment.size();i++)
 	{

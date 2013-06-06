@@ -112,14 +112,13 @@ public:
 	};
 
 	template<typename T, typename Scorer>
-	static std::vector< std::pair<int, int> > construct_global_sequence_alignment(const T& seq1, const T& seq2, const Scorer& scorer, int* result_score=0)
+	static std::vector< std::pair<int, int> > construct_sequence_alignment(const T& seq1, const T& seq2, const Scorer& scorer, const bool local=false, int* result_score=0)
 	{
 		std::vector< std::pair<int, int> > alignment;
 		if(!seq1.empty() && !seq2.empty())
 		{
 			std::vector< std::vector<int> > scores_matrix(seq1.size()+1, std::vector<int>(seq2.size()+1, 0));
 			std::vector< std::vector<int> > directions_matrix(seq1.size()+1, std::vector<int>(seq2.size()+1, 0));
-			int overall_max_score=0;
 			for(std::size_t i=1;i<=seq1.size();i++)
 			{
 				scores_matrix[i][0]=((i==1) ? scorer.gap_start() : (scores_matrix[i-1][0]+scorer.gap_extension()));
@@ -130,6 +129,7 @@ public:
 				scores_matrix[0][j]=((j==1) ? scorer.gap_start() : (scores_matrix[0][j-1]+scorer.gap_extension()));
 				directions_matrix[0][j]=2;
 			}
+			std::pair<std::size_t, std::size_t> result_score_pos(0, 0);
 			for(std::size_t i=1;i<=seq1.size();i++)
 			{
 				for(std::size_t j=1;j<=seq2.size();j++)
@@ -140,20 +140,37 @@ public:
 					const int deletion_score=scores_matrix[i-1][j]+(directions_matrix[i-1][j]!=1 ? scorer.gap_start() : scorer.gap_extension());
 					const int insertion_score=scores_matrix[i][j-1]+(directions_matrix[i][j-1]!=2 ? scorer.gap_start() : scorer.gap_extension());
 					const int max_score=std::max(match_score, std::max(deletion_score, insertion_score));
-					scores_matrix[i][j]=max_score;
 					directions_matrix[i][j]=(max_score==insertion_score ? 2 : (max_score==deletion_score ? 1 : 0));
-					overall_max_score=std::max(overall_max_score, max_score);
+					scores_matrix[i][j]=(local ? std::max(0, max_score) : max_score);
+					if(local && scores_matrix[i][j]>scores_matrix[result_score_pos.first][result_score_pos.second])
+					{
+						result_score_pos=std::make_pair(i, j);
+					}
 				}
 			}
-
+			if(!local)
+			{
+				result_score_pos.first=seq1.size();
+				result_score_pos.second=seq2.size();
+			}
 			if(result_score!=0)
 			{
-				*result_score=overall_max_score;
+				*result_score=scores_matrix[result_score_pos.first][result_score_pos.second];
 			}
 
 			int i=static_cast<int>(seq1.size());
 			int j=static_cast<int>(seq2.size());
-			while(i>0 && j>0)
+			while(i>static_cast<int>(result_score_pos.first))
+			{
+				i--;
+				alignment.push_back(std::make_pair(i, -1));
+			}
+			while(j>static_cast<int>(result_score_pos.second))
+			{
+				j--;
+				alignment.push_back(std::make_pair(-1, j));
+			}
+			while(i>0 && j>0 && (!local || scores_matrix[i][j]>0))
 			{
 				const int dir=directions_matrix[i][j];
 				if(dir==0)
@@ -213,12 +230,6 @@ public:
 		output << "\n";
 
 		return true;
-	}
-
-	template<typename Scorer>
-	static bool print_global_sequence_alignment(const std::string& seq1, const std::string& seq2, const Scorer& scorer, std::ostream& output)
-	{
-		return print_sequence_alignment(seq1, seq2, construct_global_sequence_alignment(seq1, seq2, scorer), output);
 	}
 
 	static std::vector< std::pair<int, int> > read_sequence_alignment(const std::string& alignment_seq1, const std::string& alignment_seq2)

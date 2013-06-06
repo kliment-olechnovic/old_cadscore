@@ -120,9 +120,9 @@ void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOp
 
 		const protein::sequence_tools::PairwiseSequenceAlignment::SimpleScorer scorer(match_score, mismatch_score, gap_start_score, gap_extension_score);
 		std::vector< std::pair<int, int> > alignments[3];
-		alignments[0]=protein::sequence_tools::PairwiseSequenceAlignment::construct_global_sequence_alignment(sequence_string_from_atoms_1, sequence_string_from_input_alignment_1, scorer);
+		alignments[0]=protein::sequence_tools::PairwiseSequenceAlignment::construct_sequence_alignment(sequence_string_from_atoms_1, sequence_string_from_input_alignment_1, scorer);
 		alignments[1]=protein::sequence_tools::PairwiseSequenceAlignment::read_sequence_alignment(input_alignment_string_1, input_alignment_string_2);
-		alignments[2]=protein::sequence_tools::PairwiseSequenceAlignment::construct_global_sequence_alignment(sequence_string_from_input_alignment_2, sequence_string_from_atoms_2, scorer);
+		alignments[2]=protein::sequence_tools::PairwiseSequenceAlignment::construct_sequence_alignment(sequence_string_from_input_alignment_2, sequence_string_from_atoms_2, scorer);
 
 		for(int j=0;j<2;j++)
 		{
