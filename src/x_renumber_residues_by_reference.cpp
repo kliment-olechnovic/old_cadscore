@@ -235,16 +235,21 @@ void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo
 			}
 		}
 		std::clog << "\n";
-		std::clog << "model_assigned_chains     ";
+		std::clog << "model_assigned_chains   ";
 		for(std::size_t i=0;i<model_divided_residues.size();i++)
 		{
 			if(!model_divided_residues[i].empty())
 			{
+				std::clog << "  ";
 				for(std::size_t j=0;j<model_divided_residues[i].size();j++)
 				{
 					if(best_combined_overlay.model_to_target.count(model_divided_residues[i][j].id)>0)
 					{
 						std::clog << best_combined_overlay.model_to_target.find(model_divided_residues[i][j].id)->second.chain_id;
+					}
+					else
+					{
+						std::clog << "-";
 					}
 				}
 				std::clog << " ";
