@@ -117,10 +117,12 @@ void recursive_calculate_best_combined_overlay(
 	}
 	else
 	{
-		for(std::size_t j=0;j<model_divided_residues.size();j++)
+		bool ideal_produced_overlay=false;
+		for(std::size_t j=0;j<model_divided_residues.size() && !ideal_produced_overlay;j++)
 		{
 			std::vector<ResidueVector> leftovers;
 			const Overlay new_overlay=produce_overlay(scorer, target_divided_residues[i], model_divided_residues[j], leftovers);
+			ideal_produced_overlay=(target_divided_residues[i].size()==model_divided_residues[j].size() && new_overlay.score==(scorer.match(1, 1)*target_divided_residues[i].size()));
 			std::vector<ResidueVector> new_model_divided_residues;
 			for(std::size_t e=0;e<model_divided_residues.size();e++)
 			{
