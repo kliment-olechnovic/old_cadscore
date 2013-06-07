@@ -17,7 +17,7 @@ do
     find "$JOB_DIR/model" -type f | while read MODEL_FILE
     do
       echo "Processing target $(basename $TARGET_FILE) model $(basename $MODEL_FILE):"
-      $CADSCORE_BIN_DIR/CADscore_calc.bash -D $OUTPUT_DIR/db -t $TARGET_FILE -m $MODEL_FILE -a -n -u -q -e "rnadi.bash" -y -g
+      $CADSCORE_BIN_DIR/CADscore_calc.bash -D $OUTPUT_DIR/db -t $TARGET_FILE -m $MODEL_FILE -a -n -u -q -e "rnadi.bash" -y -g -x
       echo ""
     done
   done
