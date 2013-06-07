@@ -29,4 +29,4 @@ do
   done
 done
 
-$CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/db | sort -r | column -t > $OUTPUT_DIR/calculated_scores
+$CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/db | sed 's/.pdb//g' | sort -r | column -t > $OUTPUT_DIR/calculated_scores
