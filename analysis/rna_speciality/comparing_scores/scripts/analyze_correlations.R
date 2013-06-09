@@ -3,7 +3,7 @@ input_table_file=args[1];
 output_directory=args[2];
 
 t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
-t=t[which(t$t_res/t$m_res>0.95),];
+t=t[which(t$m_res_used/t$t_res_used>0.95),];
 t=t[which(t$target!="4_solution_0"),];
 t$rna_di=t$rna_rmsd/t$rna_inf;
 
@@ -41,7 +41,9 @@ else if(refscore_name=="title")
 }
 else if(refscore_name!=score_name)
 {
-  good_sel=which(t[, refscore_name]>0);
+  finite_sel=which(is.finite(t[, refscore_name]));
+  positive_sel=which(t[, refscore_name]>0);
+  good_sel=intersect(finite_sel, positive_sel);
   x=t[good_sel, score_name];
   y=t[good_sel, refscore_name];
   
@@ -68,11 +70,11 @@ else if(refscore_name!=score_name)
   plot(x=x, y=y, xlim=x_bounds, ylim=y_bounds, col=blue_density_colors, pch=16, cex=1.0, xlab=score_name, ylab=refscore_name, main=plot_main_title);
   
   bg_color=rgb(0, 1, 0, 0.1)
-  if(abs(cor_pearson)<0.75)
+  if(max(abs(cor_pearson), abs(cor_spearman))<0.8)
   {
 	  bg_color=rgb(1, 1, 0, 0.1)
   }
-  if(abs(cor_pearson)<0.5)
+  if(max(abs(cor_pearson), abs(cor_spearman))<0.5)
   {
 	  bg_color=rgb(1, 0, 0, 0.1)
   }
