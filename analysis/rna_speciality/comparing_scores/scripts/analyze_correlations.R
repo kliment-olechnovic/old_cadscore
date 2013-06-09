@@ -24,7 +24,7 @@ for(refscore_name in refscore_names)
 {
 if(refscore_name!=score_name)
 {
-  good_sel=which(t[, refscore_name]>=0);
+  good_sel=which(t[, refscore_name]>0);
   x=t[good_sel, score_name];
   y=t[good_sel, refscore_name];
   
@@ -49,6 +49,17 @@ if(refscore_name!=score_name)
   blue_density_colors=densCols(x, y);
   plot_main_title=paste(score_name, " vs ", refscore_name, "\n", "Pearson c. c. = ", format(cor_pearson, digits=3), ", Spearman c. c. = ", format(cor_spearman, digits=3), sep="");
   plot(x=x, y=y, xlim=x_bounds, ylim=y_bounds, col=blue_density_colors, pch=16, cex=1.0, xlab=score_name, ylab=refscore_name, main=plot_main_title);
+  
+  bg_color=rgb(0, 1, 0, 0.1)
+  if(abs(cor_pearson)<0.75)
+  {
+	  bg_color=rgb(1, 1, 0, 0.1)
+  }
+  if(abs(cor_pearson)<0.5)
+  {
+	  bg_color=rgb(1, 0, 0, 0.1)
+  }
+  rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col=bg_color);
 }
 }
 }
