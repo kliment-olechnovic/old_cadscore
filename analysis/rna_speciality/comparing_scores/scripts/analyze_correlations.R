@@ -4,12 +4,13 @@ output_directory=args[2];
 
 t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
 t=t[which(t$t_res/t$m_res>0.95),];
+t=t[which(t$target!="4_solution_0"),];
 t$rna_di=t$rna_rmsd/t$rna_inf;
 
 dir.create(output_directory);
 
 cadscore_names=c("AA", "AM", "AS", "MA", "MM", "MS", "SA", "SM", "SS", "na_stacking", "na_stacking_down", "na_stacking_up", "na_siding");
-all_refscore_names=c("rna_inf", "rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp", "rna_rmsd", "ext_rmsd", "ext_di_all", "ext_inf_all", "ext_inf_wc", "ext_inf_nwc", "ext_inf_stacking", "TM_score", "TM_score_GDT_TS", "TM_score_GDT_HA");
+all_refscore_names=c("rna_di", "rna_inf", "rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp", "rna_rmsd", "ext_rmsd", "ext_di_all", "ext_inf_all", "ext_inf_wc", "ext_inf_nwc", "ext_inf_stacking", "TM_score", "TM_score_GDT_TS", "TM_score_GDT_HA");
 refscore_names=intersect(all_refscore_names, colnames(t));
 
 cor_table=c();
