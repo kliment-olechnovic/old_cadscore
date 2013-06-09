@@ -3,6 +3,7 @@ input_table_file=args[1];
 output_directory=args[2];
 
 t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
+t=t[which(t$t_res/t$m_res>0.95),];
 t$rna_di=t$rna_rmsd/t$rna_inf;
 
 dir.create(output_directory);
