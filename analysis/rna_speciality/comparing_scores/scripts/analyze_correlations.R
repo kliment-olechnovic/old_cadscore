@@ -13,6 +13,9 @@ cadscore_names=c("AA", "AM", "AS", "MA", "MM", "MS", "SA", "SM", "SS", "na_stack
 all_refscore_names=c("rna_di", "rna_inf", "rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp", "rna_rmsd", "ext_rmsd", "ext_di_all", "ext_inf_all", "ext_inf_wc", "ext_inf_nwc", "ext_inf_stacking", "TM_score", "TM_score_GDT_TS", "TM_score_GDT_HA");
 refscore_names=intersect(all_refscore_names, colnames(t));
 
+cadscore_names=c("title", cadscore_names);
+refscore_names=c("title", refscore_names);
+
 cor_table=c();
 
 png(paste(output_directory, "/cor_table.png", sep=""), height=4.8*length(cadscore_names), width=5.0*length(refscore_names), units="in", res=200);
@@ -22,7 +25,21 @@ for(score_name in cadscore_names)
 {
 for(refscore_name in refscore_names)
 {
-if(refscore_name!=score_name)
+if(score_name=="title" && refscore_name=="title")
+{
+  plot(x=c(0, 1), y=c(0, 1), type="n", xaxt="n", yaxt="n", ann=FALSE, main="");
+}
+else if(score_name=="title")
+{
+  plot(x=c(0, 1), y=c(0, 1), type="n", xaxt="n", yaxt="n", ann=FALSE, main="");
+  text(0.5, 0.5, refscore_name, cex=15.0/(nchar(refscore_name)^(1/2)));
+}
+else if(refscore_name=="title")
+{
+  plot(x=c(0, 1), y=c(0, 1), type="n", xaxt="n", yaxt="n", ann=FALSE, main="");
+  text(0.5, 0.5, score_name, cex=15.0/(nchar(score_name)^(1/2)));
+}
+else if(refscore_name!=score_name)
 {
   good_sel=which(t[, refscore_name]>0);
   x=t[good_sel, score_name];
