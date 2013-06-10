@@ -70,7 +70,7 @@ else if(refscore_name!=score_name)
   plot(x=x, y=y, xlim=x_bounds, ylim=y_bounds, col=blue_density_colors, pch=16, cex=1.0, xlab=score_name, ylab=refscore_name, main=plot_main_title);
   
   bg_color=rgb(0, 1, 0, 0.1)
-  if(max(abs(cor_pearson), abs(cor_spearman))<0.8)
+  if(max(abs(cor_pearson), abs(cor_spearman))<0.75)
   {
 	  bg_color=rgb(1, 1, 0, 0.1)
   }
