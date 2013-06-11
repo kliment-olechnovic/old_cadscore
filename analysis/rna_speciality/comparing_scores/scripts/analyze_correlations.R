@@ -5,7 +5,7 @@ output_directory=args[2];
 t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
 t=t[which(t$m_res_used/t$t_res_used>0.95),];
 t=t[which(t$target!="4_solution_0"),];
-t$rna_di=t$rna_rmsd/t$rna_inf;
+t$rna_di=t$rna_rmsd/t$rna_inf_norv;
 
 dir.create(output_directory);
 
