@@ -10,7 +10,7 @@ t$rna_di=t$rna_rmsd/t$rna_inf_norv;
 dir.create(output_directory);
 
 cadscore_names=c("AA", "AM", "AS", "MA", "MM", "MS", "SA", "SM", "SS", "na_stacking", "na_stacking_down", "na_stacking_up", "na_siding");
-all_refscore_names=c("rna_di", "rna_inf", "rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp", "rna_rmsd", "ext_rmsd", "ext_di_all", "ext_inf_all", "ext_inf_wc", "ext_inf_nwc", "ext_inf_stacking", "TM_score", "TM_score_GDT_TS", "TM_score_GDT_HA");
+all_refscore_names=c("rna_di", "rna_inf", "rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp", "rna_rmsd", "ext_rmsd", "ext_di_all", "ext_inf_all", "ext_inf_wc", "ext_inf_nwc", "ext_inf_stacking", "TM_score", "TM_score_GDT_TS", "TM_score_GDT_HA", "RMSD_C3", "GDT_C3", "RMSD_ALL", "GDT_ALL");
 refscore_names=intersect(all_refscore_names, colnames(t));
 
 cadscore_names=c("title", cadscore_names);
@@ -61,7 +61,7 @@ else if(refscore_name!=score_name)
   
   x_bounds=c(0, 1);
   y_bounds=c(0, 1);
-  if(is.element(refscore_name, c("rna_rmsd", "rna_di", "ext_rmsd", "ext_di_all")))
+  if(is.element(refscore_name, c("rna_rmsd", "rna_di", "ext_rmsd", "ext_di_all", "RMSD_C3", "RMSD_ALL")))
   {
 	  y_bounds=c(0, max(y));
   }
