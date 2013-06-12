@@ -9,6 +9,10 @@ t=t[which(is.finite(t$rna_inf_norv)),];
 t$rna_di=t$rna_rmsd/t$rna_inf_norv;
 t=t[which(is.finite(t$rna_di)),];
 
+length(t[[1]]);
+t=t[which(t$rna_rmsd<1),];
+length(t[[1]]);
+
 targets=union(t$target, t$target);
 
 mins_SS=c();
@@ -24,8 +28,6 @@ diffs_MP_pct_badangles=c();
 for(target in targets)
 {
 st=t[which(t$target==target),];
-N=length(st[[1]]);
-st=st[sample(1:N, 50),];
 N=length(st[[1]]);
 for(i in 1:N)
 {
@@ -66,9 +68,6 @@ vs=data.frame(
 ##############
 
 svs=vs;
-svs=svs[which(abs(svs$m_SS)>0.8),];
-svs=svs[which(abs(svs$m_rna_inf_norv)>0.8),];
-svs=svs[which(abs(svs$d_MP_clashscore)>sd(t$MP_clashscore)),];
 
 length(setdiff(intersect(svs$v_MP_clashscore, svs$v_SS), svs$v_rna_inf_norv));
 length(setdiff(intersect(svs$v_MP_clashscore, svs$v_rna_inf_norv), svs$v_SS));
@@ -82,9 +81,6 @@ length(setdiff(intersect(svs$v_MP_clashscore, svs$v_rna_di), svs$v_SS));
 ##############
 
 svs=vs;
-svs=svs[which(abs(svs$m_SS)>0.8),];
-svs=svs[which(abs(svs$m_rna_inf_norv)>0.8),];
-svs=svs[which(abs(svs$d_MP_pct_badangles)>sd(t$d_MP_pct_badangles)),];
 
 length(setdiff(intersect(svs$v_MP_pct_badangles, svs$v_SS), svs$v_rna_inf_norv));
 length(setdiff(intersect(svs$v_MP_pct_badangles, svs$v_rna_inf_norv), svs$v_SS));
@@ -94,4 +90,3 @@ length(setdiff(intersect(svs$v_MP_pct_badangles, svs$v_rna_rmsd), svs$v_SS));
 
 length(setdiff(intersect(svs$v_MP_pct_badangles, svs$v_SS), svs$v_rna_di));
 length(setdiff(intersect(svs$v_MP_pct_badangles, svs$v_rna_di), svs$v_SS));
-
