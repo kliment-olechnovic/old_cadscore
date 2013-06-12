@@ -22,6 +22,7 @@ for(target in targets)
 mins_AA=numeric(max_vector_size);
 mins_SS=numeric(max_vector_size);
 mins_rna_inf_norv=numeric(max_vector_size);
+mins_rna_rmsd=numeric(max_vector_size);
 maxs_rna_rmsd=numeric(max_vector_size);
 maxs_rna_di=numeric(max_vector_size);
 diffs_AA=numeric(max_vector_size);
@@ -48,6 +49,7 @@ for(target in targets)
 				mins_AA[k]=min(st$AA[i], st$AA[j]);
 				mins_SS[k]=min(st$SS[i], st$SS[j]);
 				mins_rna_inf_norv[k]=st$rna_inf_norv[j];
+				mins_rna_rmsd[k]=min(st$rna_rmsd[i], st$rna_rmsd[j]);
 				maxs_rna_rmsd[k]=max(st$rna_rmsd[i], st$rna_rmsd[j]);
 				maxs_rna_di[k]=max(st$rna_di[i], st$rna_di[j]);
 				diffs_AA[k]=st$AA[i]-st$AA[j];
@@ -67,6 +69,7 @@ pdt=data.frame(
 	mins_AA=mins_AA,
 	mins_SS=mins_SS,
 	mins_rna_inf_norv=mins_rna_inf_norv,
+	mins_rna_rmsd=mins_rna_rmsd,
 	maxs_rna_rmsd=maxs_rna_rmsd,
 	maxs_rna_di=maxs_rna_di,
 	diffs_AA=diffs_AA, 
