@@ -1,11 +1,15 @@
 rt=read.table("./output/decoys/pairs_differences_table.bak", header=TRUE, stringsAsFactors=FALSE);
 
 t=rt;
+t=t[which(t$mins_rna_rmsd<1),];
+t=t[which(abs(t$diffs_MP_clashscore)>1),];
+t=t[which(abs(t$diffs_MP_pct_badangles)>1),];
 
 N=length(t[[1]]);
+N
 ids=1:N;
 
-vs=data.frame(
+svs=data.frame(
 	AA=sign(t$diffs_AA)*ids, 
 	SS=sign(t$diffs_SS)*ids, 
 	rna_inf_norv=sign(t$diffs_rna_inf_norv)*ids, 
@@ -16,15 +20,22 @@ vs=data.frame(
 
 ##############
 
-sel=which(abs(t$diffs_rna_inf_norv)>0.0);
-sel=intersect(sel, which(abs(t$diffs_SS)>0.0));
-svs=vs[sel,];
+length(intersect(setdiff(svs$SS, svs$rna_inf_norv), svs$MP_clashscore));
+length(intersect(setdiff(svs$rna_inf_norv, svs$SS), svs$MP_clashscore));
 
-length(setdiff(intersect(svs$MP_clashscore, svs$SS), svs$rna_inf_norv));
-length(setdiff(intersect(svs$MP_clashscore, svs$rna_inf_norv), svs$SS));
+length(intersect(setdiff(svs$SS, svs$rna_rmsd), svs$MP_clashscore));
+length(intersect(setdiff(svs$rna_rmsd, svs$SS), svs$MP_clashscore));
 
-length(setdiff(intersect(svs$MP_clashscore, svs$SS), svs$rna_rmsd));
-length(setdiff(intersect(svs$MP_clashscore, svs$rna_rmsd), svs$SS));
+length(intersect(setdiff(svs$SS, svs$rna_di), svs$MP_clashscore));
+length(intersect(setdiff(svs$rna_di, svs$SS), svs$MP_clashscore));
 
-length(setdiff(intersect(svs$MP_clashscore, svs$SS), svs$rna_di));
-length(setdiff(intersect(svs$MP_clashscore, svs$rna_di), svs$SS));
+##############
+
+length(intersect(setdiff(svs$SS, svs$rna_inf_norv), svs$MP_pct_badangles));
+length(intersect(setdiff(svs$rna_inf_norv, svs$SS), svs$MP_pct_badangles));
+
+length(intersect(setdiff(svs$SS, svs$rna_rmsd), svs$MP_pct_badangles));
+length(intersect(setdiff(svs$rna_rmsd, svs$SS), svs$MP_pct_badangles));
+
+length(intersect(setdiff(svs$SS, svs$rna_di), svs$MP_pct_badangles));
+length(intersect(setdiff(svs$rna_di, svs$SS), svs$MP_pct_badangles));
