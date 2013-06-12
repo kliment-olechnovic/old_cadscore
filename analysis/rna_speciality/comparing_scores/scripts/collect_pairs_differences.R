@@ -1,0 +1,80 @@
+t=read.table("../collecting_scores/output/decoys/merged_scores", header=TRUE, stringsAsFactors=FALSE);
+
+t=t[which(t$m_res_used/t$t_res_used>0.95),];
+t=t[which(is.finite(t$rna_rmsd)),];
+t=t[which(is.finite(t$rna_inf_norv)),];
+t$rna_di=t$rna_rmsd/t$rna_inf_norv;
+t=t[which(is.finite(t$rna_di)),];
+
+targets=union(sort(t$target), sort(t$target));
+
+sample_size=200;
+max_vector_size=0;
+for(target in targets)
+{
+	target_size=length(which(t$target==target));
+	if(target_size>sample_size)
+	{
+		max_vector_size=max_vector_size+(sample_size*(sample_size-1)/2);
+	}
+}
+
+mins_AA=numeric(max_vector_size);
+mins_SS=numeric(max_vector_size);
+mins_rna_inf_norv=numeric(max_vector_size);
+maxs_rna_rmsd=numeric(max_vector_size);
+maxs_rna_di=numeric(max_vector_size);
+diffs_AA=numeric(max_vector_size);
+diffs_SS=numeric(max_vector_size);
+diffs_rna_inf_norv=numeric(max_vector_size);
+diffs_rna_rmsd=numeric(max_vector_size);
+diffs_rna_di=numeric(max_vector_size);
+diffs_MP_clashscore=numeric(max_vector_size);
+diffs_MP_pct_badangles=numeric(max_vector_size);
+
+k=1;
+for(target in targets)
+{
+	st=t[which(t$target==target),];
+	N=length(st[[1]]);
+	if(N>sample_size)
+	{
+		st=st[sample(1:N, sample_size),];
+		N=length(st[[1]]);
+		for(i in 1:(N-1))
+		{
+			for(j in (i+1):N)
+			{
+				mins_AA[k]=min(st$AA[i], st$AA[j]);
+				mins_SS[k]=min(st$SS[i], st$SS[j]);
+				mins_rna_inf_norv[k]=st$rna_inf_norv[j];
+				maxs_rna_rmsd[k]=max(st$rna_rmsd[i], st$rna_rmsd[j]);
+				maxs_rna_di[k]=max(st$rna_di[i], st$rna_di[j]);
+				diffs_AA[k]=st$AA[i]-st$AA[j];
+				diffs_SS[k]=st$SS[i]-st$SS[j];
+				diffs_rna_inf_norv[k]=st$rna_inf_norv[i]-st$rna_inf_norv[j];
+				diffs_rna_rmsd[k]=st$rna_rmsd[j]-st$rna_rmsd[i];
+				diffs_rna_di[k]=st$rna_di[j]-st$rna_di[i];
+				diffs_MP_clashscore[k]=st$MP_clashscore[j]-st$MP_clashscore[i];
+				diffs_MP_pct_badangles[k]=st$MP_pct_badangles[j]-st$MP_pct_badangles[i];
+				k=k+1;
+			}
+		}
+	}
+}
+
+pdt=data.frame(
+	mins_AA=mins_AA,
+	mins_SS=mins_SS,
+	mins_rna_inf_norv=mins_rna_inf_norv,
+	maxs_rna_rmsd=maxs_rna_rmsd,
+	maxs_rna_di=maxs_rna_di,
+	diffs_AA=diffs_AA, 
+	diffs_SS=diffs_SS, 
+	diffs_rna_inf_norv=diffs_rna_inf_norv, 
+	diffs_rna_rmsd=diffs_rna_rmsd, 
+	diffs_rna_di=diffs_rna_di, 
+	diffs_MP_clashscore=diffs_MP_clashscore,
+	diffs_MP_pct_badangles=diffs_MP_pct_badangles);
+
+write.table(pdt, "./output/decoys/pairs_differences_table.bak", quote=FALSE, row.names=FALSE);
