@@ -17,6 +17,7 @@ rt=rt[which(mp_signs_diffs==0),];
 
 used_thresholds=c();
 set_sizes=c();
+second_score_names=c();
 subset_names=c();
 subset_sizes=c();
 
@@ -39,25 +40,31 @@ for(threshold in thresholds)
 	{
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
+		second_score_names=c(second_score_names, ev_name);
 		subset_names=c(subset_names, paste("MP and CAD_SS and ", ev_name, sep=""));
 		subset_sizes=c(subset_sizes, length(intersect(MP_score, intersect(SS, ev[, ev_name]))));
 		
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
+		second_score_names=c(second_score_names, ev_name);
 		subset_names=c(subset_names, paste("MP and CAD_SS without ", ev_name, sep=""));
 		subset_sizes=c(subset_sizes, length(intersect(MP_score, setdiff(SS, ev[, ev_name]))));
 		
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
+		second_score_names=c(second_score_names, ev_name);
 		subset_names=c(subset_names, paste("MP and ", ev_name, " without CAD_SS", sep=""));
 		subset_sizes=c(subset_sizes, length(intersect(MP_score, setdiff(ev[, ev_name], SS))));
 		
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
+		second_score_names=c(second_score_names, ev_name);
 		subset_names=c(subset_names, paste("MP without CAD_SS without ", ev_name, sep=""));
 		subset_sizes=c(subset_sizes, length(setdiff(MP_score, union(SS, ev[, ev_name]))));
 	}
 }
 
-result=data.frame(min_RNA_INF=used_thresholds, set_size=set_sizes, subset_name=subset_names, subset_size=subset_sizes);
+fractions=subset_sizes/set_sizes;
+
+result=data.frame(min_RNA_INF=used_thresholds, set_size=set_sizes, second_score_name=second_score_names, subset_name=subset_names, subset_size=subset_sizes, fraction=fractions);
 write.table(result, "./output/decoys/molprobity_results.txt", quote=TRUE, row.names=FALSE);
