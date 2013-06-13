@@ -21,7 +21,7 @@ second_score_names=c();
 subset_names=c();
 subset_sizes=c();
 
-thresholds=seq(0.05, 0.95, 0.05);
+thresholds=seq(0.1, 0.90, 0.01);
 
 for(threshold in thresholds)
 {
@@ -41,25 +41,25 @@ for(threshold in thresholds)
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
 		second_score_names=c(second_score_names, ev_name);
-		subset_names=c(subset_names, paste("MP and CAD_SS and ", ev_name, sep=""));
+		subset_names=c(subset_names, paste("1. MP and CAD_SS and ", ev_name, sep=""));
 		subset_sizes=c(subset_sizes, length(intersect(MP_score, intersect(SS, ev[, ev_name]))));
 		
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
 		second_score_names=c(second_score_names, ev_name);
-		subset_names=c(subset_names, paste("MP and CAD_SS without ", ev_name, sep=""));
+		subset_names=c(subset_names, paste("2. MP and CAD_SS without ", ev_name, sep=""));
 		subset_sizes=c(subset_sizes, length(intersect(MP_score, setdiff(SS, ev[, ev_name]))));
 		
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
 		second_score_names=c(second_score_names, ev_name);
-		subset_names=c(subset_names, paste("MP and ", ev_name, " without CAD_SS", sep=""));
+		subset_names=c(subset_names, paste("3. MP and ", ev_name, " without CAD_SS", sep=""));
 		subset_sizes=c(subset_sizes, length(intersect(MP_score, setdiff(ev[, ev_name], SS))));
 		
 		used_thresholds=c(used_thresholds, threshold);
 		set_sizes=c(set_sizes, N);
 		second_score_names=c(second_score_names, ev_name);
-		subset_names=c(subset_names, paste("MP without CAD_SS without ", ev_name, sep=""));
+		subset_names=c(subset_names, paste("4. MP without CAD_SS without ", ev_name, sep=""));
 		subset_sizes=c(subset_sizes, length(setdiff(MP_score, union(SS, ev[, ev_name]))));
 	}
 }
