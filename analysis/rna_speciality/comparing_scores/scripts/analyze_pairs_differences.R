@@ -18,7 +18,8 @@ svs=data.frame(
 		SS=sign(t$diffs_SS)*ids, 
 		rna_inf_norv=sign(t$diffs_rna_inf_norv)*ids, 
 		rna_rmsd=sign(t$diffs_rna_rmsd)*ids, 
-		rna_di=sign(t$diffs_rna_di)*ids, 
+		rna_di=sign(t$diffs_rna_di)*ids,
+		GDT_C3=sign(t$diffs_GDT_C3)*ids,
 		MP_clashscore=sign(t$diffs_MP_clashscore)*ids,
 		MP_pct_badangles=sign(t$diffs_MP_pct_badangles)*ids);
 
@@ -26,6 +27,9 @@ svs=data.frame(
 
 length(intersect(setdiff(svs$SS, svs$rna_inf_norv), svs$MP_clashscore));
 length(intersect(setdiff(svs$rna_inf_norv, svs$SS), svs$MP_clashscore));
+
+length(intersect(setdiff(svs$SS, svs$GDT_C3), svs$MP_clashscore));
+length(intersect(setdiff(svs$GDT_C3, svs$SS), svs$MP_clashscore));
 
 length(intersect(setdiff(svs$SS, svs$rna_rmsd), svs$MP_clashscore));
 length(intersect(setdiff(svs$rna_rmsd, svs$SS), svs$MP_clashscore));

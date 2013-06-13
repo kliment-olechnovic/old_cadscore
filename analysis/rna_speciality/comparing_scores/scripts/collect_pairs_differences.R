@@ -8,7 +8,7 @@ t=t[which(is.finite(t$rna_di)),];
 
 targets=union(sort(t$target), sort(t$target));
 
-sample_size=200;
+sample_size=300;
 max_vector_size=0;
 for(target in targets)
 {
@@ -25,11 +25,13 @@ mins_rna_inf_norv=numeric(max_vector_size);
 mins_rna_rmsd=numeric(max_vector_size);
 maxs_rna_rmsd=numeric(max_vector_size);
 maxs_rna_di=numeric(max_vector_size);
+mins_GDT_C3=numeric(max_vector_size);
 diffs_AA=numeric(max_vector_size);
 diffs_SS=numeric(max_vector_size);
 diffs_rna_inf_norv=numeric(max_vector_size);
 diffs_rna_rmsd=numeric(max_vector_size);
 diffs_rna_di=numeric(max_vector_size);
+diffs_GDT_C3=numeric(max_vector_size);
 diffs_MP_clashscore=numeric(max_vector_size);
 diffs_MP_pct_badangles=numeric(max_vector_size);
 
@@ -52,11 +54,13 @@ for(target in targets)
 				mins_rna_rmsd[k]=min(st$rna_rmsd[i], st$rna_rmsd[j]);
 				maxs_rna_rmsd[k]=max(st$rna_rmsd[i], st$rna_rmsd[j]);
 				maxs_rna_di[k]=max(st$rna_di[i], st$rna_di[j]);
+				mins_GDT_C3[k]=min(st$GDT_C3[i], st$GDT_C3[j]);
 				diffs_AA[k]=st$AA[i]-st$AA[j];
 				diffs_SS[k]=st$SS[i]-st$SS[j];
 				diffs_rna_inf_norv[k]=st$rna_inf_norv[i]-st$rna_inf_norv[j];
 				diffs_rna_rmsd[k]=st$rna_rmsd[j]-st$rna_rmsd[i];
 				diffs_rna_di[k]=st$rna_di[j]-st$rna_di[i];
+				diffs_GDT_C3[k]=st$GDT_C3[i]-st$GDT_C3[j];
 				diffs_MP_clashscore[k]=st$MP_clashscore[j]-st$MP_clashscore[i];
 				diffs_MP_pct_badangles[k]=st$MP_pct_badangles[j]-st$MP_pct_badangles[i];
 				k=k+1;
@@ -72,11 +76,13 @@ pdt=data.frame(
 	mins_rna_rmsd=mins_rna_rmsd,
 	maxs_rna_rmsd=maxs_rna_rmsd,
 	maxs_rna_di=maxs_rna_di,
+	mins_GDT_C3=mins_GDT_C3,
 	diffs_AA=diffs_AA, 
 	diffs_SS=diffs_SS, 
 	diffs_rna_inf_norv=diffs_rna_inf_norv, 
 	diffs_rna_rmsd=diffs_rna_rmsd, 
-	diffs_rna_di=diffs_rna_di, 
+	diffs_rna_di=diffs_rna_di,
+	diffs_GDT_C3=diffs_GDT_C3,
 	diffs_MP_clashscore=diffs_MP_clashscore,
 	diffs_MP_pct_badangles=diffs_MP_pct_badangles);
 
