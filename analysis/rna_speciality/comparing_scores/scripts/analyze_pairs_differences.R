@@ -13,43 +13,51 @@ rt=rt[which(rt$maxs_rna_rmsd<5),];
 mp_signs_diffs=sign(rt$diffs_MP_clashscore)-sign(rt$diffs_MP_pct_badangles);
 rt=rt[which(mp_signs_diffs==0),];
 
-##############
+#########################################
 
-t=rt;
-t=t[which(t$mins_rna_inf_norv>0.5),];
+used_thresholds=c();
+set_sizes=c();
+subset_names=c();
+subset_sizes=c();
 
-N=length(t[[1]]);
-ids=1:N;
+thresholds=seq(0.05, 0.95, 0.05);
 
-AA=sign(t$diffs_AA)*ids;
-SS=sign(t$diffs_SS)*ids;
-rna_inf_norv=sign(t$diffs_rna_inf_norv)*ids;
-rna_rmsd=sign(t$diffs_rna_rmsd)*ids;
-rna_di=sign(t$diffs_rna_di)*ids;
-GDT_C3=sign(t$diffs_GDT_C3)*ids;
-MP_clashscore=sign(t$diffs_MP_clashscore)*ids;
-MP_pct_badangles=sign(t$diffs_MP_pct_badangles)*ids;
+for(threshold in thresholds)
+{
+	t=rt;
+	t=t[which(t$mins_rna_inf_norv>threshold),];
+	
+	N=length(t[[1]]);
+	ids=1:N;
+	
+	SS=sign(t$diffs_SS)*ids;
+	MP_score=sign(t$diffs_MP_clashscore)*ids;
+	
+	ev=data.frame(RNA_INF=sign(t$diffs_rna_inf_norv)*ids, RMSD=sign(t$diffs_rna_rmsd)*ids, RNA_DI=sign(t$diffs_rna_di)*ids, GDT_C3=sign(t$diffs_GDT_C3)*ids);
+	
+	for(ev_name in colnames(ev))
+	{
+		used_thresholds=c(used_thresholds, threshold);
+		set_sizes=c(set_sizes, N);
+		subset_names=c(subset_names, paste("MP and CAD_SS and ", ev_name, sep=""));
+		subset_sizes=c(subset_sizes, length(intersect(MP_score, intersect(SS, ev[, ev_name]))));
+		
+		used_thresholds=c(used_thresholds, threshold);
+		set_sizes=c(set_sizes, N);
+		subset_names=c(subset_names, paste("MP and CAD_SS without ", ev_name, sep=""));
+		subset_sizes=c(subset_sizes, length(intersect(MP_score, setdiff(SS, ev[, ev_name]))));
+		
+		used_thresholds=c(used_thresholds, threshold);
+		set_sizes=c(set_sizes, N);
+		subset_names=c(subset_names, paste("MP and ", ev_name, " without CAD_SS", sep=""));
+		subset_sizes=c(subset_sizes, length(intersect(MP_score, setdiff(ev[, ev_name], SS))));
+		
+		used_thresholds=c(used_thresholds, threshold);
+		set_sizes=c(set_sizes, N);
+		subset_names=c(subset_names, paste("MP without CAD_SS without ", ev_name, sep=""));
+		subset_sizes=c(subset_sizes, length(setdiff(MP_score, union(SS, ev[, ev_name]))));
+	}
+}
 
-##############
-
-length(SS);
-length(intersect(SS, AA));
-length(intersect(SS, rna_inf_norv));
-length(intersect(SS, GDT_C3));
-length(intersect(SS, rna_rmsd));
-length(intersect(SS, rna_di));
-length(intersect(rna_inf_norv, rna_rmsd));
-length(intersect(rna_inf_norv, rna_di));
-length(intersect(rna_rmsd, rna_di));
-
-length(intersect(setdiff(SS, rna_inf_norv), MP_clashscore));
-length(intersect(setdiff(rna_inf_norv, SS), MP_clashscore));
-
-length(intersect(setdiff(SS, GDT_C3), MP_clashscore));
-length(intersect(setdiff(GDT_C3, SS), MP_clashscore));
-
-length(intersect(setdiff(SS, rna_rmsd), MP_clashscore));
-length(intersect(setdiff(rna_rmsd, SS), MP_clashscore));
-
-length(intersect(setdiff(SS, rna_di), MP_clashscore));
-length(intersect(setdiff(rna_di, SS), MP_clashscore));
+result=data.frame(min_RNA_INF=used_thresholds, set_size=set_sizes, subset_name=subset_names, subset_size=subset_sizes);
+write.table(result, "./output/decoys/molprobity_results.txt", quote=TRUE, row.names=FALSE);
