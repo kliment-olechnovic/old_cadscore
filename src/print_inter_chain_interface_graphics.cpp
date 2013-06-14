@@ -671,7 +671,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 {
 	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
 
-	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix:");
+	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix: --outline");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
@@ -680,6 +680,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string selection_coloring_mode=clo.isopt("--selection-coloring") ? clo.arg<std::string>("--selection-coloring") : std::string("");
 	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 	const std::string output_names_prefix=clo.isopt("--output-names-prefix") ? clo.arg<std::string>("--output-names-prefix") : std::string("");
+	const bool outline=clo.isopt("--outline");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -823,9 +824,18 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& a=atoms[atoms_ids_pair.first];
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
-			const apollo2::SimplePoint normal=apollo2::sub_of_points<apollo2::SimplePoint>(b, a).unit();
 			opengl_printer.print_color(face_colorizer->color(a, b));
-			opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal);
+			if(outline)
+			{
+				std::vector<apollo2::SimplePoint> loop_vertices=cell_face.mesh_vertices();
+				loop_vertices.pop_back();
+				opengl_printer.print_line_strip(loop_vertices, true);
+			}
+			else
+			{
+				const apollo2::SimplePoint normal=apollo2::sub_of_points<apollo2::SimplePoint>(b, a).unit();
+				opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal);
+			}
 		}
 	}
 

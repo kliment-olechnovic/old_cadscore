@@ -82,11 +82,18 @@ public:
 	}
 
 	template<typename PointType>
-	void print_line_strip(const std::vector<PointType>& vertices)
+	void print_line_strip(const std::vector<PointType>& vertices, const bool loop=false)
 	{
 		if(!vertices.empty())
 		{
-			string_stream_ << "    BEGIN, LINE_STRIP,\n";
+			if(loop)
+			{
+				string_stream_ << "    BEGIN, LINE_LOOP,\n";
+			}
+			else
+			{
+				string_stream_ << "    BEGIN, LINE_STRIP,\n";
+			}
 			for(std::size_t i=0;i<vertices.size();i++)
 			{
 				string_stream_ << "    VERTEX, " << point_to_string(vertices[i]) << ",\n";
