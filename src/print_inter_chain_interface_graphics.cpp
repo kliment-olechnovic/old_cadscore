@@ -775,6 +775,10 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			{
 				opengl_printer.print_alpha(0.2);
 			}
+			else
+			{
+				opengl_printer.print_alpha(1.0);
+			}
 			opengl_printer.print_color(face_color);
 			if(outline)
 			{
