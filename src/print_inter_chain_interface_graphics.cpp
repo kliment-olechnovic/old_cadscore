@@ -372,7 +372,7 @@ public:
 			std::pair<double, double> area=it->second.area(contact_type);
 			if(binary_mode_)
 			{
-				return value_colorizer_.color((area.first>0.0) ? 0 : 1);
+				return value_colorizer_.color((area.first>0.0) ? 0 : 100);
 			}
 			else
 			{
