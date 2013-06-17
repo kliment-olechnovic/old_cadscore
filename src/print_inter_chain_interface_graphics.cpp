@@ -586,7 +586,13 @@ private:
 class ContactAccepterForInterInterval : public ContactAccepterInterface
 {
 public:
-	ContactAccepterForInterInterval(const std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > >& intervals, bool only_side_chain_contacts) : intervals_(intervals), only_side_chain_contacts_(only_side_chain_contacts)
+	ContactAccepterForInterInterval(
+			const std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > >& intervals,
+			bool only_side_chain_contacts,
+			bool accept_contacts_inside_residues) :
+				intervals_(intervals),
+				only_side_chain_contacts_(only_side_chain_contacts),
+				accept_contacts_inside_residues_(accept_contacts_inside_residues)
 	{
 	}
 
@@ -606,6 +612,10 @@ public:
 				{
 					return true;
 				}
+			}
+			else if(a_iid>=0 && accept_contacts_inside_residues_)
+			{
+				return true;
 			}
 		}
 		return false;
@@ -646,6 +656,7 @@ private:
 
 	std::vector< std::vector< std::pair<protein::ResidueID, protein::ResidueID> > > intervals_;
 	bool only_side_chain_contacts_;
+	bool accept_contacts_inside_residues_;
 };
 
 std::string atom_name_without_single_quote(const std::string& full_atom_name)
@@ -671,7 +682,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 {
 	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
 
-	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix: --outline");
+	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix: --outline --insides");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
@@ -681,6 +692,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const std::string groups_option=clo.isopt("--groups") ? clo.arg<std::string>("--groups") : std::string("");
 	const std::string output_names_prefix=clo.isopt("--output-names-prefix") ? clo.arg<std::string>("--output-names-prefix") : std::string("");
 	const bool outline=clo.isopt("--outline");
+	const bool insides=clo.isopt("--insides");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -702,7 +714,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		{
 			throw std::runtime_error(std::string("Invalid intervals string: ")+intervals_string);
 		}
-		contact_accepter.reset(new ContactAccepterForInterInterval(intervals, only_sidechains));
+		contact_accepter.reset(new ContactAccepterForInterInterval(intervals, only_sidechains, insides));
 	}
 	else if(groups_option=="inter_residue" || groups_option=="inter_residue_SS")
 	{
