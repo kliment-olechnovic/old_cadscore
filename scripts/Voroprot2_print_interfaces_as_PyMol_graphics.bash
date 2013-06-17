@@ -90,7 +90,7 @@ DRAW_INSIDES=""
 OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hei:f:s:c:d:vg:oun:p" OPTION
+while getopts "hei:f:s:c:d:g:oun:p" OPTION
 do
   case $OPTION in
     h)
@@ -116,9 +116,6 @@ do
       ;;
     d)
       SPECIFIC_CONTACT_TYPE="--specific-contact-type "$OPTARG
-      ;;
-    v)
-      BINARY_COLORING="--binary-coloring"
       ;;
     g)
       RESIDUE_GROUPS="--groups "$OPTARG
@@ -162,9 +159,9 @@ SCRIPT_FILE="$TMP_DIR/script.py"
 
 if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
 then
-  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES $SPECIFIC_CONTACT_TYPE> "$SCRIPT_FILE"
+  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES $SPECIFIC_CONTACT_TYPE > "$SCRIPT_FILE"
 else
-  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES $SPECIFIC_CONTACT_TYPE --transparent-magenta $BINARY_COLORING > "$SCRIPT_FILE"
+  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES $SPECIFIC_CONTACT_TYPE > "$SCRIPT_FILE"
 fi
 
 if [ -s "$SCRIPT_FILE" ]
