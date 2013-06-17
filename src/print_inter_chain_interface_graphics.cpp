@@ -771,25 +771,20 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
 			const auxiliaries::Color face_color=face_colorizer->color(a, b);
-			if(tansparent_magenta && face_color.r==255 && face_color.g==0 && face_color.b==255)
+			if(!(tansparent_magenta && face_color.r==255 && face_color.g==0 && face_color.b==255))
 			{
-				opengl_printer.print_alpha(0.2);
-			}
-			else
-			{
-				opengl_printer.print_alpha(1.0);
-			}
-			opengl_printer.print_color(face_color);
-			if(outline)
-			{
-				std::vector<apollo2::SimplePoint> loop_vertices=cell_face.mesh_vertices();
-				loop_vertices.pop_back();
-				opengl_printer.print_line_strip(loop_vertices, true);
-			}
-			else
-			{
-				const apollo2::SimplePoint normal=apollo2::sub_of_points<apollo2::SimplePoint>(b, a).unit();
-				opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal);
+				opengl_printer.print_color(face_color);
+				if(outline)
+				{
+					std::vector<apollo2::SimplePoint> loop_vertices=cell_face.mesh_vertices();
+					loop_vertices.pop_back();
+					opengl_printer.print_line_strip(loop_vertices, true);
+				}
+				else
+				{
+					const apollo2::SimplePoint normal=apollo2::sub_of_points<apollo2::SimplePoint>(b, a).unit();
+					opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal);
+				}
 			}
 		}
 	}
