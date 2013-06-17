@@ -346,11 +346,9 @@ class ContactColorizerByInterResidueContactScore : public ContactColorizerInterf
 public:
 	ContactColorizerByInterResidueContactScore(
 			const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >& combined_inter_residue_contacts,
-			const std::string& specific_contact_type,
-			const bool binary_mode) :
+			const std::string& specific_contact_type) :
 				combined_inter_residue_contacts_(combined_inter_residue_contacts),
-				specific_contact_type_(specific_contact_type),
-				binary_mode_(binary_mode)
+				specific_contact_type_(specific_contact_type)
 	{
 	}
 
@@ -370,16 +368,9 @@ public:
 				}
 			}
 			std::pair<double, double> area=it->second.area(contact_type);
-			if(binary_mode_)
+			if(area.first>0.0)
 			{
-				return value_colorizer_.color((area.first>0.0) ? 0 : 1);
-			}
-			else
-			{
-				if(area.first>0.0)
-				{
-					return value_colorizer_.color(static_cast<int>(floor((std::min(fabs(area.first-area.second), area.first)/area.first)*100.0)));
-				}
+				return value_colorizer_.color(static_cast<int>(floor((std::min(fabs(area.first-area.second), area.first)/area.first)*100.0)));
 			}
 		}
 		return value_colorizer_.color(-1);
@@ -393,7 +384,6 @@ public:
 private:
 	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts_;
 	std::string specific_contact_type_;
-	bool binary_mode_;
 	ValueColorizer value_colorizer_;
 };
 
@@ -619,7 +609,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 {
 	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
 
-	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix: --outline --insides --specific-contact-type: --transparent-magenta --binary-coloring");
+	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix: --outline --insides --specific-contact-type:");
 
 	const double probe_radius=clo.isopt("--probe") ? clo.arg_with_min_value<double>("--probe", 0) : 1.4;
 	const double step_length=clo.isopt("--step") ? clo.arg_with_min_value<double>("--step", 0.1) : 0.5;
@@ -631,8 +621,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	const bool outline=clo.isopt("--outline");
 	const bool insides=clo.isopt("--insides");
 	const std::string specific_contact_type=clo.isopt("--specific-contact-type") ? clo.arg<std::string>("--specific-contact-type") : std::string("");
-	const bool tansparent_magenta=clo.isopt("--transparent-magenta");
-	const bool binary_coloring=clo.isopt("--binary-coloring");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -738,7 +726,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	{
 		const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > combined_inter_residue_contacts=
 				auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas >(std::cin, "combined inter-residue contacts", "combined_residue_contacts", true);
-		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts, specific_contact_type, binary_coloring));
+		face_colorizer.reset(new ContactColorizerByInterResidueContactScore(combined_inter_residue_contacts, specific_contact_type));
 	}
 	else if(face_coloring_mode=="residue_id")
 	{
@@ -771,10 +759,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			const CellFace& cell_face=faces_vector[faces_vector_map.find(atoms_ids_pair)->second];
 			const auxiliaries::Color face_color=face_colorizer->color(a, b);
-			if(tansparent_magenta && face_color.r==255 && face_color.g==0 && face_color.b==255)
-			{
-				opengl_printer.print_alpha(0.2);
-			}
 			opengl_printer.print_color(face_color);
 			if(outline)
 			{
