@@ -83,14 +83,14 @@ INPUT_FILE=""
 FACE_COLORING_MODE=""
 SELECTION_COLORING_MODE=""
 COMBINED_RESIDUE_CONTACTS_FILE=""
-COMBINED_RESIDUE_CONTACTS_FILE_USAGE=""
+SPECIFIC_CONTACT_TYPE=""
 RESIDUE_GROUPS=""
 DRAW_OUTLINE=""
 DRAW_INSIDES=""
 OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hei:f:s:c:d:v:w:g:oun:p" OPTION
+while getopts "hei:f:s:c:d:vg:oun:p" OPTION
 do
   case $OPTION in
     h)
@@ -113,19 +113,12 @@ do
       ;;
     c)
       COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
-      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_scores"
       ;;
     d)
-      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
-      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_AA_scores"
+      SPECIFIC_CONTACT_TYPE="--specific-contact-type "$OPTARG
       ;;
     v)
-      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
-      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_area_pairs"
-      ;;
-    w)
-      COMBINED_RESIDUE_CONTACTS_FILE=$OPTARG
-      COMBINED_RESIDUE_CONTACTS_FILE_USAGE="inter_residue_contact_AA_area_pairs"
+      BINARY_COLORING="--binary-coloring"
       ;;
     g)
       RESIDUE_GROUPS="--groups "$OPTARG
@@ -169,9 +162,9 @@ SCRIPT_FILE="$TMP_DIR/script.py"
 
 if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
 then
-  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES > "$SCRIPT_FILE"
+  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES $SPECIFIC_CONTACT_TYPE> "$SCRIPT_FILE"
 else
-  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring $COMBINED_RESIDUE_CONTACTS_FILE_USAGE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
+  ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring inter_residue_contact_scores $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES $SPECIFIC_CONTACT_TYPE --transparent-magenta $BINARY_COLORING > "$SCRIPT_FILE"
 fi
 
 if [ -s "$SCRIPT_FILE" ]
