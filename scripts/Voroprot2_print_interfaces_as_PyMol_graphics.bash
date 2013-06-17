@@ -58,7 +58,7 @@ Available coloring modes for faces and selections:
   atom_type
   residue_id
   atom_id
-
+ContactAccepterForInterInterval
 EOF
 }
 
@@ -86,10 +86,11 @@ COMBINED_RESIDUE_CONTACTS_FILE=""
 COMBINED_RESIDUE_CONTACTS_FILE_USAGE=""
 RESIDUE_GROUPS=""
 DRAW_OUTLINE=""
+DRAW_INSIDES=""
 OUTPUT_NAMES_PREFIX=""
 OPEN_IN_PYMOL=false
 
-while getopts "hei:f:s:c:d:v:w:g:on:p" OPTION
+while getopts "hei:f:s:c:d:v:w:g:oun:p" OPTION
 do
   case $OPTION in
     h)
@@ -132,6 +133,9 @@ do
     o)
       DRAW_OUTLINE="--outline"
       ;;
+    u)
+      DRAW_INSIDES="--insides"
+      ;;
     n)
       OUTPUT_NAMES_PREFIX="--output-names-prefix "$OPTARG
       ;;
@@ -165,7 +169,7 @@ SCRIPT_FILE="$TMP_DIR/script.py"
 
 if [ -z "$COMBINED_RESIDUE_CONTACTS_FILE" ]
 then
-  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE > "$SCRIPT_FILE"
+  $VOROPROT --mode collect-atoms < "$INPUT_FILE" | $VOROPROT --mode print-inter-chain-interface-graphics $FACE_COLORING_MODE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX $DRAW_OUTLINE $DRAW_INSIDES > "$SCRIPT_FILE"
 else
   ( $VOROPROT --mode collect-atoms < "$INPUT_FILE" ; cat "$COMBINED_RESIDUE_CONTACTS_FILE" ) | $VOROPROT --mode print-inter-chain-interface-graphics --face-coloring $COMBINED_RESIDUE_CONTACTS_FILE_USAGE $SELECTION_COLORING_MODE $RESIDUE_GROUPS $OUTPUT_NAMES_PREFIX > "$SCRIPT_FILE"
 fi
