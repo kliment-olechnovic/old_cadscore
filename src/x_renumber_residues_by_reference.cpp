@@ -145,12 +145,13 @@ void recursive_calculate_best_combined_overlay(
 
 void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension: --output-in-pdb-format --print-summary-log --print-detailed-log");
+	clo.check_allowed_options("--match: --mismatch: --gap-start: --gap-extension: --replace-residue-names --output-in-pdb-format --print-summary-log --print-detailed-log");
 
 	const int match_score=clo.arg_or_default_value<int>("--match", 10);
 	const int mismatch_score=clo.arg_or_default_value<int>("--mismatch", -10);
 	const int gap_start_score=clo.arg_or_default_value<int>("--gap-start", -11);
 	const int gap_extension_score=clo.arg_or_default_value<int>("--gap-extension", -1);
+	const bool replace_residue_names=clo.isopt("--replace-residue-names");
 	const bool output_in_pdb_format=clo.isopt("--output-in-pdb-format");
 	const bool print_summary_log=clo.isopt("--print-summary-log");
 	const bool print_detailed_log=clo.isopt("--print-detailed-log");
@@ -180,6 +181,20 @@ void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo
 			atom.chain_id=new_residue_id.chain_id;
 			atom.residue_number=new_residue_id.residue_number;
 			renumbered_model_atoms.push_back(atom);
+		}
+	}
+
+	if(replace_residue_names)
+	{
+		const std::map<protein::ResidueID, protein::ResidueSummary> target_residue_summaries=protein::collect_residue_ids_from_atoms(target_atoms);
+		for(std::vector<protein::Atom>::iterator it=renumbered_model_atoms.begin();it!=renumbered_model_atoms.end();++it)
+		{
+			protein::Atom& atom=(*it);
+			const protein::ResidueID residue_id=protein::ResidueID::from_atom(atom);
+			if(target_residue_summaries.count(residue_id)>0)
+			{
+				atom.residue_name=target_residue_summaries.find(residue_id)->second.name;
+			}
 		}
 	}
 
