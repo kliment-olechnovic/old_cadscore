@@ -24,6 +24,7 @@ $0 parameters:
     -w    flag to check for any inter-chain contact
     -z    cutoff to check for inter-atom clashes
     -v    path to atomic radii files directory
+    -u    run zcat on input file
   
   Other:
     -h    show this message and exit
@@ -49,6 +50,7 @@ then
 fi
 
 MODEL_FILE=""
+SPEC_CAT="cat"
 HETATM_FLAG=""
 RADII_OPTION=""
 PRINT_ATOMS=false
@@ -61,7 +63,7 @@ INTER_ATOM_FACES_SUMMARY=false
 CHECK_FOR_ANY_INTER_CHAIN_CONTACT=false
 CUTOFF_FOR_CHECKING_CASHES=""
 
-while getopts "hf:laqcrjstwz:v:" OPTION
+while getopts "hf:laqcrjstwz:v:u" OPTION
 do
   case $OPTION in
     h)
@@ -104,6 +106,9 @@ do
     v)
       RADII_OPTION="--radius-classes $OPTARG/vdwr_classes --radius-members $OPTARG/vdwr_members"
       ;;
+    u)
+      SPEC_CAT="zcat"
+      ;;
     ?)
       exit 1
       ;;
@@ -127,45 +132,45 @@ fi
 
 if $PRINT_ATOMS
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION
 fi
 
 if $QUADRUPLES
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-quadruples
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-quadruples
 fi
 
 if $INTER_ATOM_CONTACTS
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts
 fi
 
 if $INTER_RESIDUE_CONTACTS
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode calc-inter-residue-contacts
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode calc-inter-residue-contacts
 fi
 
 if $INTER_ATOM_FACES
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces
 fi
 
 if $INTER_ATOM_CONTACTS_SUMMARY
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode summarize-inter-atom-contacts
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-contacts | $VOROPROT --mode summarize-inter-atom-contacts
 fi
 
 if $INTER_ATOM_FACES_SUMMARY
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces | $VOROPROT --mode summarize-inter-atom-contacts
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode calc-inter-atom-faces | $VOROPROT --mode summarize-inter-atom-contacts
 fi
 
 if $CHECK_FOR_ANY_INTER_CHAIN_CONTACT
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode check-for-any-inter-chain-contact
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode check-for-any-inter-chain-contact
 fi
 
 if [ -n "$CUTOFF_FOR_CHECKING_CASHES" ]
 then
-  cat $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode check-for-inter-atom-clashes $CUTOFF_FOR_CHECKING_CASHES
+  $SPEC_CAT $MODEL_FILE | $VOROPROT --mode collect-atoms $HETATM_FLAG $RADII_OPTION | $VOROPROT --mode check-for-inter-atom-clashes $CUTOFF_FOR_CHECKING_CASHES
 fi
