@@ -134,3 +134,8 @@ write.table(t_stack_sel_sorted, "sorted_stack_contacts", quote=FALSE, row.names=
 
 t_side_sel_sorted=t_side_sel[order(t_side_sel$contact_area), c("contact_id", "contact_area")];
 write.table(t_side_sel_sorted, "sorted_side_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
+
+#################
+
+histograms_summary=data.frame(area=hist_x, f_all=hist_any$counts, f_all_confirmed=hist_any_sel$counts, f_stack=hist_stack$counts, f_stack_confirmed=hist_stack_sel$counts, f_side=hist_side$counts, f_side_confirmed=hist_side_sel$counts, f_stack_confirmed_pp=h_bb$counts, f_stack_confirmed_pP=h_bB$counts, f_stack_confirmed_PP=h_BB$counts, f_side_confirmed_strong=roman_h$counts, f_side_confirmed_weak=nonroman_h$counts);
+write.table(histograms_summary, "histograms_summary.txt", quote=FALSE, row.names=FALSE, col.names=TRUE);
