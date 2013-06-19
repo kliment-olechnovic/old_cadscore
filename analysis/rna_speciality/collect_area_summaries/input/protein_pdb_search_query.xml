@@ -1,0 +1,15 @@
+  <orgPdbQuery>
+    <version>head</version>
+    <queryType>org.pdb.query.simple.HomologueReductionQuery</queryType>
+    <description>Homologue Removal - 100% Identity Cutoff of Resolution is between 0.0 and 3.0 
+and
+Chain Type: there is a Protein chain but not any DNA or RNA or Hybrid
+and
+Homologue Removal - 30% Identity Cutoff
+</description>
+    <queryId>6B8F9D06</queryId>
+    <resultCount>13336</resultCount>
+    <runtimeStart>2013-06-19T07:45:49Z</runtimeStart>
+    <runtimeMilliseconds>483</runtimeMilliseconds>
+    <identityCutoff>100</identityCutoff>
+  </orgPdbQuery>
