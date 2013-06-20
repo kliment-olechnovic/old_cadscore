@@ -20,6 +20,8 @@ allowed_basenames=c("A", "U", "G", "C");
 t_any=t_any[which(is.element(t_any$first_base_name, allowed_basenames)),];
 t_any=t_any[which(is.element(t_any$second_base_name, allowed_basenames)),];
 
+t_any_orig=t_any;
+
 t_any$first_base_name[which(is.element(t_any$first_base_name, c("A", "G")))]="B";
 t_any$first_base_name[which(is.element(t_any$first_base_name, c("U", "C")))]="b";
 t_any$second_base_name[which(is.element(t_any$second_base_name, c("A", "G")))]="B";
@@ -46,6 +48,12 @@ t_side=t_any[which(t_any$contact_type=="side"),];
 t_any_sel=t_any[which(is.element(t_any$contact_id, ids_mcannotate)),];
 t_stack_sel=t_stack[which(is.element(t_stack$contact_id, ids_stack_mcannotate)),];
 t_side_sel=t_side[which(is.element(t_side$contact_id, ids_side_mcannotate)),];
+
+#################
+
+t_any_orig_not_sel=t_any_orig[which(!is.element(t_any_orig$contact_id, ids_mcannotate)),];
+t_any_orig_not_sel=t_any_orig_not_sel[rev(order(t_any_orig_not_sel$contact_area)),];
+write.table(t_any_orig_not_sel, "differences_from_mc_annotate", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 #################
 
