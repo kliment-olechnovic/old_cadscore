@@ -8,16 +8,15 @@
 #include "contacto/contact_classification.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	clo.check_allowed_options("");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "inter atom contacts", "contacts", false);
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "inter atom contacts", "contacts", false);
 
 	std::map<std::string, double> values;
 	for(std::size_t i=0;i<inter_atom_contacts.size();i++)
@@ -45,5 +44,5 @@ void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	auxiliaries::print_map(std::cout, "summary_values", values, false);
+	auxiliaries::STDContainersIO::print_map(std::cout, "summary_values", values, false);
 }

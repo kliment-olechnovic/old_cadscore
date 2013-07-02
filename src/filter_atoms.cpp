@@ -4,8 +4,7 @@
 #include "protein/residue_ids_collection.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 {
@@ -14,9 +13,9 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 	const bool detailed=clo.isopt("--detailed");
 	const bool print_rejected=clo.isopt("--print-rejected");
 
-	const std::vector<protein::Atom> atoms_of_model=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms_of_model=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 
-	const std::vector<protein::Atom> atoms_of_target=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms_of_target=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms_of_model.size());
@@ -102,7 +101,7 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		auxiliaries::print_vector(std::cout, "atoms", result);
+		auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", result);
 	}
 }
 
@@ -112,7 +111,7 @@ void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo)
 
 	const std::string name=clo.arg<std::string>("--name");
 
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	std::vector<protein::Atom> result;
 	result.reserve(atoms.size());
@@ -132,6 +131,6 @@ void filter_atoms_by_name(const auxiliaries::CommandLineOptions& clo)
 	}
 	else
 	{
-		auxiliaries::print_vector(std::cout, "atoms", result);
+		auxiliaries::STDContainersIO::print_vector(std::cout, "atoms", result);
 	}
 }

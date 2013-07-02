@@ -19,12 +19,14 @@ public:
 			std::istream& pdb_file_stream,
 			const VanDerWaalsRadiusAssigner& vdwr_assigner,
 			const bool include_heteroatoms,
-			const bool include_water)
+			const bool include_water,
+			const bool include_insertions)
 	{
 		return collect_atoms_from_PDB_atom_records(
 				read_PDB_atom_records_from_PDB_file_stream(pdb_file_stream),
 				include_heteroatoms,
 				include_water,
+				include_insertions,
 				vdwr_assigner);
 	}
 
@@ -52,6 +54,7 @@ private:
 			const std::vector<PDBAtomRecord>& PDB_atom_records,
 			const bool include_heteroatoms,
 			const bool include_water,
+			const bool include_insertions,
 			const VanDerWaalsRadiusAssigner& vdwr_assigner)
 	{
 		std::vector<Atom> atoms;
@@ -71,7 +74,7 @@ private:
 					{
 						if(include_water || record.residue_name!="HOH")
 						{
-							if(record.insertion_code.empty())
+							if(record.insertion_code.empty() || include_insertions)
 							{
 								atoms.push_back(atom_from_PDB_atom_record(record, vdwr_assigner));
 							}

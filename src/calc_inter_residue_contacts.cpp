@@ -10,59 +10,38 @@
 #include "contacto/residue_contact_area_difference_basic_scoring_functors.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
-#include "auxiliaries/map_io.h"
+#include "auxiliaries/std_containers_io.h"
 
-void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
+namespace
 {
-	clo.check_allowed_options("--inter-interval: --inter-chain --binarize");
-
-	const std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
-
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "inter-atom contacts", "contacts", false);
-
-	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts, clo.isopt("--binarize"));
-
-	contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactAreas, protein::ResidueIDsIntervalsReader>(inter_residue_contacts, clo.isopt("--inter-chain"), (clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string("")));
-
-	if(inter_residue_contacts.empty())
-	{
-		throw std::runtime_error("No inter-residue contacts constructed");
-	}
-	else
-	{
-		auxiliaries::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
-	}
-}
 
 void print_combined_inter_residue_contact_file_comments()
 {
-	auxiliaries::print_file_comment(std::cout, "This file contains combined inter-residue contact areas");
-	auxiliaries::print_file_comment(std::cout, "calculated by accumulating inter-atom contact areas.");
-	auxiliaries::print_file_comment(std::cout, "");
-	auxiliaries::print_file_comment(std::cout, "The file is structured as follows:");
-	auxiliaries::print_file_comment(std::cout, "  file_header (always equals 'combined_residue_contacts')");
-	auxiliaries::print_file_comment(std::cout, "  N (the number of inter-residue contacts)");
-	auxiliaries::print_file_comment(std::cout, "  contact_record[1]");
-	auxiliaries::print_file_comment(std::cout, "  contact_record[2]");
-	auxiliaries::print_file_comment(std::cout, "  ...");
-	auxiliaries::print_file_comment(std::cout, "  contact_record[N]");
-	auxiliaries::print_file_comment(std::cout, "");
-	auxiliaries::print_file_comment(std::cout, "Each contact record has the following format:");
-	auxiliaries::print_file_comment(std::cout, "  first_residue_chain_name first_residue_number second_residue_chain_name second_residue_number");
-	auxiliaries::print_file_comment(std::cout, "  M (the number of contact types)");
-	auxiliaries::print_file_comment(std::cout, "  contact_type[1] corresponding_area_in_target corresponding_area_in_model");
-	auxiliaries::print_file_comment(std::cout, "  contact_type[2] corresponding_area_in_target corresponding_area_in_model");
-	auxiliaries::print_file_comment(std::cout, "  ...");
-	auxiliaries::print_file_comment(std::cout, "  contact_type[M] corresponding_area_in_target corresponding_area_in_model");
-	auxiliaries::print_file_comment(std::cout, "");
-	auxiliaries::print_file_comment(std::cout, "Contact types are two-letter strings indicating what residue parts are in contact.");
-	auxiliaries::print_file_comment(std::cout, "Each residue part is coded as a single letter:");
-	auxiliaries::print_file_comment(std::cout, "  A - all residue atoms");
-	auxiliaries::print_file_comment(std::cout, "  M - main chain");
-	auxiliaries::print_file_comment(std::cout, "  S - side chain");
-	auxiliaries::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "This file contains combined inter-residue contact areas");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "calculated by accumulating inter-atom contact areas.");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "The file is structured as follows:");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  file_header (always equals 'combined_residue_contacts')");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  N (the number of inter-residue contacts)");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[1]");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[2]");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[N]");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each contact record has the following format:");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  first_residue_chain_name first_residue_number second_residue_chain_name second_residue_number");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M (the number of contact types)");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[1] corresponding_area_in_target corresponding_area_in_model");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[2] corresponding_area_in_target corresponding_area_in_model");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[M] corresponding_area_in_target corresponding_area_in_model");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types are two-letter strings indicating what residue parts are in contact.");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each residue part is coded as a single letter:");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  A - all residue atoms");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M - main chain");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  S - side chain");
+	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
 	std::cout << "\n";
 }
 
@@ -80,6 +59,30 @@ std::vector<std::string> collect_chain_names_from_contacts_map(const ContactsMap
 	return vector_of_names;
 }
 
+}
+
+void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--inter-interval: --inter-chain --binarize");
+
+	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "inter-atom contacts", "contacts", false);
+
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts, clo.isopt("--binarize"));
+
+	contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactAreas, protein::ResidueIDsIntervalsReader>(inter_residue_contacts, clo.isopt("--inter-chain"), (clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string("")));
+
+	if(inter_residue_contacts.empty())
+	{
+		throw std::runtime_error("No inter-residue contacts constructed");
+	}
+	else
+	{
+		auxiliaries::STDContainersIO::print_map(std::cout, "residue_contacts", inter_residue_contacts, true);
+	}
+}
+
 void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > InterResidueContacts;
@@ -94,18 +97,18 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	InterResidueContacts inter_residue_contacts_2;
 	if(clo.isopt("--input-inter-atom-contacts"))
 	{
-		const std::vector<protein::Atom> atoms_1=auxiliaries::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
-		const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
-		const std::vector<protein::Atom> atoms_2=auxiliaries::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
-		const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
+		const std::vector<protein::Atom> atoms_1=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "target atoms", "atoms", false);
+		const std::vector<contacto::InterAtomContact> inter_atom_contacts_1=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "target inter-atom contacts", "contacts", false);
+		const std::vector<protein::Atom> atoms_2=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
+		const std::vector<contacto::InterAtomContact> inter_atom_contacts_2=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "model inter-atom contacts", "contacts", false);
 		const bool binarize=clo.isopt("--binarize");
 		inter_residue_contacts_1=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_1, inter_atom_contacts_1, binarize);
 		inter_residue_contacts_2=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms_2, inter_atom_contacts_2, binarize);
 	}
 	else
 	{
-		inter_residue_contacts_1=auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "target inter-residue contacts", "residue_contacts", false);
-		inter_residue_contacts_2=auxiliaries::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "model inter-residue contacts", "residue_contacts", false);
+		inter_residue_contacts_1=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "target inter-residue contacts", "residue_contacts", false);
+		inter_residue_contacts_2=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "model inter-residue contacts", "residue_contacts", false);
 	}
 
 	CombinedInterResidueContacts resulting_combined_inter_residue_contacts;
@@ -113,7 +116,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	bool renaming_performed=false;
 	if(clo.isopt("--optimally-rename-chains"))
 	{
-		const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "target residue identifiers", "residue_ids", false);;
+		const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::STDContainersIO::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "target residue identifiers", "residue_ids", false);;
 		const std::vector<std::string> chain_names_1=collect_chain_names_from_contacts_map(inter_residue_contacts_1);
 		const std::vector<std::string> chain_names_2=collect_chain_names_from_contacts_map(inter_residue_contacts_2);
 
@@ -125,7 +128,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 
 		if(renaming_allowed)
 		{
-			std::map<double, CombinedInterResidueContacts> variations;
+			std::pair<double, CombinedInterResidueContacts> best_variation(-1.0, CombinedInterResidueContacts());
 			std::vector<std::string> chain_names_permutation=chain_names_1;
 			do
 			{
@@ -160,7 +163,12 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 				const contacto::Ratio ratio=global_score.ratio("AA");
 				if(ratio.reference>0.0)
 				{
-					variations[(1-(ratio.difference/ratio.reference))]=combined_inter_residue_contacts;
+					const double score_from_ratio=(1-(ratio.difference/ratio.reference));
+					if(score_from_ratio>best_variation.first)
+					{
+						best_variation.first=score_from_ratio;
+						best_variation.second=combined_inter_residue_contacts;
+					}
 				}
 
 				std::clog << "Tried renaming chains: ( ";
@@ -177,9 +185,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 			}
 			while(std::next_permutation(chain_names_permutation.begin(), chain_names_permutation.end()));
 
-			if(!variations.empty())
+			if(best_variation.first>=0.0)
 			{
-				resulting_combined_inter_residue_contacts=variations.rbegin()->second;
+				resulting_combined_inter_residue_contacts=best_variation.second;
 			}
 
 			renaming_performed=true;
@@ -203,6 +211,6 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	else
 	{
 		print_combined_inter_residue_contact_file_comments();
-		auxiliaries::print_map(std::cout, "combined_residue_contacts", resulting_combined_inter_residue_contacts, true);
+		auxiliaries::STDContainersIO::print_map(std::cout, "combined_residue_contacts", resulting_combined_inter_residue_contacts, true);
 	}
 }
