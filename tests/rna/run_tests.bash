@@ -17,6 +17,9 @@ for MODEL in $INPUT_DIR/*
 do
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -q > $OUTPUT_DIR/quadruples_$(basename $MODEL) &
   $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -j > $OUTPUT_DIR/hyperfaces_$(basename $MODEL) &
+  $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -s > $OUTPUT_DIR/contacts_summary_$(basename $MODEL) &
+  $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -t > $OUTPUT_DIR/hyperfaces_summary_$(basename $MODEL) &
+  ( ($CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -a ; $CADSCORE_BIN_DIR/Voroprot2_calc.bash -f $MODEL -r) | $CADSCORE_BIN_DIR/voroprot2 --mode categorize-inter-nucleotide-side-chain-contacts --diagnostic-output > $OUTPUT_DIR/na_specific_contacts_$(basename $MODEL) ) &
 done
 
 

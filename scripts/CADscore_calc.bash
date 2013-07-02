@@ -22,12 +22,12 @@ $0 parameters:
     -q    flag to try to rearrange chain names for best possible scores
     -g    flag to use TM-score
     -i    inter-interval contacts specification
+    -n    flag to turn on special treatment for nucleic acids
 
   Optional (advanced):  
     -a    flag to compute atomic global scores
     -r    flag to reset chain names to 'A', 'B', 'C', etc.
     -u    flag to disable model atoms filtering by target atoms
-    -n    flag to turn on special treatment for nucleic acids
     -s    flag to print summary to standard output
     -y    flag to generate more detailed summary
     -x    flag to delete non-summary data calculated for model
@@ -396,11 +396,8 @@ fi
 
 if $DELETE_DETAILED_MODEL_DATA
 then
-  if cd $MODEL_DIR
-  then
-    rm -f $MODEL_ATOMS_FILE
-    rm -f $MODEL_FILTERED_ATOMS_FILE
-    rm -f $MODEL_INTER_ATOM_CONTACTS_FILE
-    rm -f $MODEL_INTER_RESIDUE_CONTACTS_FILE
-  fi
+  rm -f $MODEL_ATOMS_FILE
+  rm -f $MODEL_FILTERED_ATOMS_FILE
+  rm -f $MODEL_INTER_ATOM_CONTACTS_FILE
+  rm -f $MODEL_INTER_RESIDUE_CONTACTS_FILE
 fi

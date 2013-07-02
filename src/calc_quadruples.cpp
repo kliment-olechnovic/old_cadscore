@@ -1,95 +1,111 @@
 #include <iostream>
-#include <map>
 
 #include "protein/atom.h"
 
-#include "apollo/spheres_hierarchy.h"
-#include "apollo/apollonius_triangulation.h"
+#include "apollo2/apollonius_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/file_header.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
-void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
+namespace
 {
-	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
-	typedef apollo::ApolloniusTriangulation<Hierarchy> Apollo;
 
-	clo.check_allowed_options("--epsilon: --monitoring-level: --bsi-radius: --bsi-min-count: --as-points --skip-inner --check");
-
-	if(clo.isopt("--epsilon"))
+std::vector<apollo2::SimpleSphere> read_raw_spheres_from_stream(std::istream& input)
+{
+	std::vector<apollo2::SimpleSphere> result;
+	while(input.good())
 	{
-		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
-		apollo::epsilon_reference()=epsilon;
+		std::string line;
+		std::getline(input, line);
+		if(!line.empty())
+		{
+			std::istringstream line_input(line);
+			apollo2::SimpleSphere sphere;
+			line_input >> sphere.x >> sphere.y >> sphere.z >> sphere.r;
+			if(!line_input.fail())
+			{
+				result.push_back(sphere);
+			}
+		}
 	}
+	return result;
+}
 
-	if(clo.isopt("--monitoring-level"))
-	{
-		const int monitoring_level=clo.arg_with_min_value<int>("--monitoring-level", 0);
-		Apollo::monitoring_level_reference()=monitoring_level;
-	}
-
-	const double radius=clo.isopt("--bsi-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 4.2;
-	const std::size_t low_count=clo.isopt("--bsi-min-count") ? clo.arg_with_min_value<std::size_t>("--bsi-min-count", 1) : 1;
-	const bool as_points=clo.isopt("--as-points");
-	const bool search_for_d3=!clo.isopt("--skip-inner");
-
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
-
-	if(atoms.size()<4)
+template<typename SphereType>
+void calc_quadruples(
+		const std::vector<SphereType>& input_atoms,
+		const double bsi_init_radius,
+		const bool use_one_radius,
+		const bool augment,
+		const bool skip_output,
+		const bool print_log,
+		const bool check)
+{
+	if(input_atoms.size()<4)
 	{
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	if(as_points>0)
+	const std::vector<SphereType>* atoms_ptr=(&input_atoms);
+
+	std::vector<SphereType> modified_atoms;
+	if(use_one_radius)
 	{
-		for(std::size_t i=0;i<atoms.size();i++)
+		modified_atoms=input_atoms;
+		for(std::size_t i=0;i<modified_atoms.size();i++)
 		{
-			atoms[i].r=0;
+			modified_atoms[i].r=1;
 		}
+		atoms_ptr=(&modified_atoms);
 	}
 
-	const Hierarchy hierarchy(atoms, radius, low_count);
-	const Apollo::QuadruplesMap quadruples_map=Apollo::find_quadruples(hierarchy, search_for_d3 && !as_points);
+	const std::vector<SphereType>& atoms=(*atoms_ptr);
 
-	std::cout << "Atoms count: " << atoms.size() << "\n";
-	std::cout << "Quadruples count: " << quadruples_map.size() << "\n";
+	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct_result(atoms, bsi_init_radius, augment);
 
+	if(!skip_output)
 	{
-		int tangent_spheres_count=0;
-		for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
-		{
-			tangent_spheres_count+=it->second.size();
-		}
-		std::cout << "Tangent spheres count: " << tangent_spheres_count << "\n";
+		apollo2::ApolloniusTriangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
 	}
 
-	typedef std::map< Apollo::QuadruplesMap::key_type, Apollo::QuadruplesMap::mapped_type > QuadruplesSortedMap;
-	QuadruplesSortedMap quadruples_sorted_map;
-	for(Apollo::QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+	if(print_log)
 	{
-		quadruples_sorted_map.insert(*it);
+		std::clog << "atoms " <<  atoms.size() << "\n";
+		apollonius_triangulation_result.print_status(std::clog);
 	}
 
-	for(QuadruplesSortedMap::const_iterator it=quadruples_sorted_map.begin();it!=quadruples_sorted_map.end();++it)
+	if(check)
 	{
-		std::cout << "\n";
-		const apollo::Quadruple& q=it->first;
-		std::cout << "Quadruple (a, b, c, d): " << q.get(0) << " " << q.get(1) << " " << q.get(2) << " " << q.get(3) << "\n";
-		const std::vector<apollo::SimpleSphere>& tangents=it->second;
-		for(std::size_t i=0;i<tangents.size();i++)
-		{
-			const apollo::SimpleSphere& s=tangents[i];
-			std::cout << "Tangent sphere (x, y, z, r): " << s.x << " " << s.y << " " << s.z << " " << s.r << "\n";
-		}
-	}
-
-	if(clo.isopt("--check"))
-	{
-		if(!Apollo::check_quadruples(quadruples_map, atoms))
-		{
-			std::cerr << "Check failed!\n";
-		}
+		std::clog << "check " << (apollo2::ApolloniusTriangulation::check_quadruples_map(atoms, apollonius_triangulation_result.quadruples_map)) << "\n";
 	}
 }
 
+}
+
+void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
+{
+	clo.check_allowed_options("--epsilon: --bsi-init-radius: --raw-input --use-one-radius --augment --skip-output --print-log --check");
+
+	if(clo.isopt("--epsilon"))
+	{
+		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
+		apollo2::comparison_epsilon_reference()=epsilon;
+	}
+
+	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
+	const bool raw_input=clo.isopt("--raw-input");
+	const bool use_one_radius=clo.isopt("--use-one-radius");
+	const bool augment=clo.isopt("--augment");
+	const bool skip_output=clo.isopt("--skip-output");
+	const bool print_log=clo.isopt("--print-log");
+	const bool check=clo.isopt("--check");
+
+	if(raw_input)
+	{
+		calc_quadruples(read_raw_spheres_from_stream(std::cin), bsi_init_radius, use_one_radius, augment, skip_output, print_log, check);
+	}
+	else
+	{
+		calc_quadruples(auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false), bsi_init_radius, use_one_radius, augment, skip_output, print_log, check);
+	}
+}

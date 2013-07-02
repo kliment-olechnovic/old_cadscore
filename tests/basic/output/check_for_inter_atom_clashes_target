@@ -1,0 +1,27 @@
+collisions 6
+colliding_atoms 12
+
+overlap 1.27321
+atom number = 164, chain = A, residue number = 46, residue name = PHE, atom name = C, x = 14.449, y = 43.555, z = 30.789, radius = 1.75
+atom number = 174, chain = A, residue number = 47, residue name = SER, atom name = CA, x = 12.332, y = 43.067, z = 31.753, radius = 1.9
+
+overlap 1.26735
+atom number = 394, chain = A, residue number = 77, residue name = GLU, atom name = C, x = 23.188, y = 31.471, z = 26.979, radius = 1.75
+atom number = 402, chain = A, residue number = 78, residue name = ASP, atom name = CA, x = 21.776, y = 31.637, z = 28.891, radius = 1.9
+
+overlap 1.26625
+atom number = 443, chain = B, residue number = 82, residue name = HIS, atom name = C, x = 9.956, y = 36.49, z = 40.172, radius = 1.75
+atom number = 452, chain = B, residue number = 83, residue name = CYS, atom name = CA, x = 8.213, y = 35.161, z = 41.109, radius = 1.9
+
+overlap 1.25397
+atom number = 164, chain = B, residue number = 46, residue name = PHE, atom name = C, x = 11.794, y = 29.921, z = 31.58, radius = 1.75
+atom number = 174, chain = B, residue number = 47, residue name = SER, atom name = CA, x = 9.969, y = 31.13, z = 30.606, radius = 1.9
+
+overlap 1.25366
+atom number = 101, chain = A, residue number = 38, residue name = MET, atom name = C, x = 20.184, y = 48.462, z = 23.92, radius = 1.75
+atom number = 108, chain = A, residue number = 39, residue name = PHE, atom name = CA, x = 20.536, y = 46.095, z = 23.794, radius = 1.9
+
+overlap 1.25158
+atom number = 535, chain = A, residue number = 93, residue name = PHE, atom name = C, x = 9.842, y = 58.044, z = 28.63, radius = 1.75
+atom number = 545, chain = A, residue number = 94, residue name = ASP, atom name = CA, x = 10.26, y = 57.986, z = 30.991, radius = 1.9
+

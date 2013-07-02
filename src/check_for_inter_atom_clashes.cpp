@@ -3,10 +3,10 @@
 #include "protein/atom.h"
 #include "protein/residue_id.h"
 
-#include "apollo/spheres_hierarchy.h"
+#include "apollo2/search_for_spherical_collisions.h"
 
 #include "auxiliaries/command_line_options.h"
-#include "auxiliaries/vector_io.h"
+#include "auxiliaries/std_containers_io.h"
 
 namespace
 {
@@ -43,7 +43,7 @@ inline bool check_if_atomic_collision_is_tolerable(const protein::Atom& a, const
 
 void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo::SpheresHierarchy<protein::Atom> Hierarchy;
+	typedef apollo2::BoundingSpheresHierarchy<protein::Atom> Hierarchy;
 
 	clo.check_allowed_options("--cutoff: --inter-chain --only-main-chain");
 
@@ -51,7 +51,7 @@ void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
 	const bool inter_chain=clo.isopt("--inter-chain");
 	const bool only_main_chain=clo.isopt("--only-main-chain");
 
-	std::vector<protein::Atom> atoms=auxiliaries::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
+	std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	if(only_main_chain)
 	{
@@ -71,14 +71,14 @@ void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
 		atoms=main_chain_atoms;
 	}
 
-	const Hierarchy hierarchy(atoms, 1.4*3, 1);
+	const Hierarchy hierarchy(atoms, 3.5, 1);
 
 	std::vector< std::pair< double, std::pair<std::size_t, std::size_t> > > collisions;
 	std::set<std::size_t> colliding_atoms;
 	for(std::size_t i=0;i+1<atoms.size();i++)
 	{
 		const protein::Atom& atom=atoms[i];
-		const std::vector<std::size_t> neighbour_ids=hierarchy.find_all_collisions(apollo::custom_sphere_from_object<apollo::SimpleSphere>(atom));
+		const std::vector<std::size_t> neighbour_ids=apollo2::SearchForSphericalCollisions::find_all_collisions(hierarchy, apollo2::SimpleSphere(atom));
 		for(std::size_t j=0;j<neighbour_ids.size();j++)
 		{
 			const std::size_t& neighbour_id=neighbour_ids[j];
@@ -88,7 +88,7 @@ void check_for_inter_atom_clashes(const auxiliaries::CommandLineOptions& clo)
 				if(!check_if_atomic_collision_is_tolerable(atom, neighbour)
 						&& (!inter_chain || atom.chain_id!=neighbour.chain_id))
 				{
-					const double overlap=0.0-apollo::minimal_distance_from_sphere_to_sphere(atom, neighbour);
+					const double overlap=0.0-apollo2::minimal_distance_from_sphere_to_sphere(atom, neighbour);
 					if(overlap>cutoff)
 					{
 						collisions.push_back(std::make_pair(overlap, std::make_pair(i, neighbour_id)));

@@ -1,0 +1,551 @@
+collisions 137
+colliding_atoms 256
+
+overlap 1.37429
+atom number = 2380, chain = B, residue number = 145, residue name = ILE, atom name = C, x = 15.696, y = 9.148, z = -19.19, radius = 1.75
+atom number = 2383, chain = B, residue number = 146, residue name = ASP, atom name = CA, x = 15.971, y = 10.408, z = -17.315, radius = 1.9
+
+overlap 1.33139
+atom number = 1619, chain = B, residue number = 50, residue name = SER, atom name = C, x = 15.776, y = 22.899, z = 3.499, radius = 1.75
+atom number = 1622, chain = B, residue number = 51, residue name = PRO, atom name = CA, x = 14.848, y = 25.005, z = 3.781, radius = 1.9
+
+overlap 1.32767
+atom number = 443, chain = A, residue number = 57, residue name = LEU, atom name = C, x = 26.133, y = 11.627, z = 9.519, radius = 1.75
+atom number = 446, chain = A, residue number = 58, residue name = TYR, atom name = CA, x = 27.756, y = 10.704, z = 10.9, radius = 1.9
+
+overlap 1.32045
+atom number = 399, chain = A, residue number = 50, residue name = SER, atom name = C, x = 12.446, y = 17.007, z = 2.004, radius = 1.75
+atom number = 402, chain = A, residue number = 51, residue name = PRO, atom name = CA, x = 10.33, y = 16.758, z = 1.062, radius = 1.9
+
+overlap 1.31891
+atom number = 2216, chain = B, residue number = 126, residue name = LEU, atom name = C, x = 40.93, y = 13.992, z = -5.499, radius = 1.75
+atom number = 2219, chain = B, residue number = 127, residue name = MET, atom name = CA, x = 42.102, y = 15.226, z = -7.092, radius = 1.9
+
+overlap 1.31711
+atom number = 2190, chain = B, residue number = 123, residue name = LEU, atom name = C, x = 33.364, y = 12.952, z = -8.158, radius = 1.75
+atom number = 2193, chain = B, residue number = 124, residue name = PRO, atom name = CA, x = 35.4, y = 13.883, z = -8.814, radius = 1.9
+
+overlap 1.30774
+atom number = 1160, chain = A, residue number = 145, residue name = ILE, atom name = C, x = 16.913, y = 26.178, z = 25.607, radius = 1.75
+atom number = 1163, chain = A, residue number = 146, residue name = ASP, atom name = CA, x = 16.077, y = 25.057, z = 23.728, radius = 1.9
+
+overlap 1.30648
+atom number = 459, chain = A, residue number = 59, residue name = GLY, atom name = C, x = 30.496, y = 13.753, z = 11.041, radius = 1.75
+atom number = 462, chain = A, residue number = 60, residue name = GLY, atom name = CA, x = 30.834, y = 13.375, z = 13.329, radius = 1.9
+
+overlap 1.30605
+atom number = 2396, chain = B, residue number = 147, residue name = LEU, atom name = C, x = 11.796, y = 8.917, z = -15.365, radius = 1.75
+atom number = 2400, chain = B, residue number = 148, residue name = PRO, atom name = CD, x = 11.142, y = 10.471, z = -13.708, radius = 1.92
+
+overlap 1.30566
+atom number = 1808, chain = B, residue number = 76, residue name = ARG, atom name = C, x = 27.251, y = 3.36, z = 6.33, radius = 1.75
+atom number = 1811, chain = B, residue number = 77, residue name = GLU, atom name = CA, x = 28.94, y = 3.519, z = 7.948, radius = 1.9
+
+overlap 1.30236
+atom number = 2125, chain = B, residue number = 115, residue name = ALA, atom name = C, x = 12.985, y = 20.058, z = -6.095, radius = 1.75
+atom number = 2128, chain = B, residue number = 116, residue name = PRO, atom name = CA, x = 15.071, y = 18.984, z = -6.014, radius = 1.9
+
+overlap 1.30137
+atom number = 716, chain = A, residue number = 91, residue name = VAL, atom name = C, x = 14.853, y = 24.382, z = 19.628, radius = 1.75
+atom number = 719, chain = A, residue number = 92, residue name = VAL, atom name = CA, x = 14.194, y = 22.406, z = 20.713, radius = 1.9
+
+overlap 1.30004
+atom number = 905, chain = A, residue number = 115, residue name = ALA, atom name = C, x = 10.836, y = 21.891, z = 10.57, radius = 1.75
+atom number = 908, chain = A, residue number = 116, residue name = PRO, atom name = CA, x = 12.775, y = 20.724, z = 11.203, radius = 1.9
+
+overlap 1.29972
+atom number = 1976, chain = B, residue number = 96, residue name = SER, atom name = C, x = 28.526, y = 22.378, z = -14.804, radius = 1.75
+atom number = 1979, chain = B, residue number = 97, residue name = PRO, atom name = CA, x = 30.477, y = 23.686, z = -14.885, radius = 1.9
+
+overlap 1.29956
+atom number = 823, chain = A, residue number = 105, residue name = MET, atom name = C, x = 18.719, y = 13.51, z = 20.9, radius = 1.75
+atom number = 826, chain = A, residue number = 106, residue name = ALA, atom name = CA, x = 18.18, y = 15.291, z = 19.464, radius = 1.9
+
+overlap 1.29923
+atom number = 970, chain = A, residue number = 123, residue name = LEU, atom name = C, x = 25.342, y = 8.274, z = 19.191, radius = 1.75
+atom number = 973, chain = A, residue number = 124, residue name = PRO, atom name = CA, x = 24.728, y = 6.247, z = 20.211, radius = 1.9
+
+overlap 1.29726
+atom number = 532, chain = A, residue number = 69, residue name = GLY, atom name = C, x = 26.507, y = 35.291, z = 7.376, radius = 1.75
+atom number = 535, chain = A, residue number = 70, residue name = THR, atom name = CA, x = 24.672, y = 34.23, z = 8.397, radius = 1.9
+
+overlap 1.2959
+atom number = 1283, chain = B, residue number = 8, residue name = HIS, atom name = C, x = -8.221, y = -11.505, z = -32.7, radius = 1.75
+atom number = 1286, chain = B, residue number = 9, residue name = HIS, atom name = CA, x = -10.046, y = -10.039, z = -32.949, radius = 1.9
+
+overlap 1.29435
+atom number = 2224, chain = B, residue number = 127, residue name = MET, atom name = C, x = 40.951, y = 15.968, z = -7.685, radius = 1.75
+atom number = 2227, chain = B, residue number = 128, residue name = PRO, atom name = CA, x = 40.066, y = 18.069, z = -8.278, radius = 1.9
+
+overlap 1.29331
+atom number = 167, chain = A, residue number = 20, residue name = GLN, atom name = C, x = 1.233, y = 19.192, z = 32.848, radius = 1.75
+atom number = 170, chain = A, residue number = 21, residue name = GLY, atom name = CA, x = 1.886, y = 20.951, z = 31.422, radius = 1.9
+
+overlap 1.29306
+atom number = 1936, chain = B, residue number = 91, residue name = VAL, atom name = C, x = 15.1, y = 13.426, z = -13.899, radius = 1.75
+atom number = 1939, chain = B, residue number = 92, residue name = VAL, atom name = CA, x = 16.77, y = 14.706, z = -14.961, radius = 1.9
+
+overlap 1.29026
+atom number = 2055, chain = B, residue number = 107, residue name = VAL, atom name = C, x = 20.269, y = 14.306, z = -10.406, radius = 1.75
+atom number = 2058, chain = B, residue number = 108, residue name = VAL, atom name = CA, x = 18.33, y = 15.485, z = -9.759, radius = 1.9
+
+overlap 1.29019
+atom number = 1692, chain = B, residue number = 61, residue name = GLU, atom name = C, x = 27.167, y = 4.342, z = -3.413, radius = 1.75
+atom number = 1695, chain = B, residue number = 62, residue name = ALA, atom name = CA, x = 24.971, y = 3.847, z = -4.121, radius = 1.9
+
+overlap 1.28949
+atom number = 1020, chain = A, residue number = 129, residue name = GLU, atom name = C, x = 22.37, y = 2.994, z = 24.647, radius = 1.75
+atom number = 1023, chain = A, residue number = 130, residue name = THR, atom name = CA, x = 24.643, y = 3.538, z = 24.978, radius = 1.9
+
+overlap 1.28877
+atom number = 835, chain = A, residue number = 107, residue name = VAL, atom name = C, x = 17.681, y = 19.251, z = 17.517, radius = 1.75
+atom number = 838, chain = A, residue number = 108, residue name = VAL, atom name = CA, x = 16.024, y = 20.076, z = 16.051, radius = 1.9
+
+overlap 1.28806
+atom number = 2182, chain = B, residue number = 122, residue name = TRP, atom name = C, x = 30.498, y = 13.113, z = -9.067, radius = 1.75
+atom number = 2185, chain = B, residue number = 123, residue name = LEU, atom name = CA, x = 32.127, y = 13.081, z = -7.357, radius = 1.9
+
+overlap 1.28717
+atom number = 792, chain = A, residue number = 101, residue name = GLY, atom name = C, x = 15.79, y = 0.678, z = 21.456, radius = 1.75
+atom number = 795, chain = A, residue number = 102, residue name = GLY, atom name = CA, x = 16.509, y = 2.917, z = 21.686, radius = 1.9
+
+overlap 1.28664
+atom number = 1309, chain = B, residue number = 11, residue name = SER, atom name = C, x = -9.837, y = -3.981, z = -37.599, radius = 1.75
+atom number = 1312, chain = B, residue number = 12, residue name = SER, atom name = CA, x = -9.635, y = -2.743, z = -39.602, radius = 1.9
+
+overlap 1.28657
+atom number = 1004, chain = A, residue number = 127, residue name = MET, atom name = C, x = 24.914, y = 0.2, z = 21.144, radius = 1.75
+atom number = 1008, chain = A, residue number = 128, residue name = PRO, atom name = CD, x = 23.598, y = -1.509, z = 20.13, radius = 1.92
+
+overlap 1.28657
+atom number = 1679, chain = B, residue number = 59, residue name = GLY, atom name = C, x = 31.084, y = 8.008, z = -1.089, radius = 1.75
+atom number = 1682, chain = B, residue number = 60, residue name = GLY, atom name = CA, x = 28.732, y = 7.803, z = -1.198, radius = 1.9
+
+overlap 1.28604
+atom number = 1004, chain = A, residue number = 127, residue name = MET, atom name = C, x = 24.914, y = 0.2, z = 21.144, radius = 1.75
+atom number = 1007, chain = A, residue number = 128, residue name = PRO, atom name = CA, x = 22.561, y = 0.422, z = 21.095, radius = 1.9
+
+overlap 1.28592
+atom number = 1027, chain = A, residue number = 130, residue name = THR, atom name = C, x = 25.308, y = 4.769, z = 24.457, radius = 1.75
+atom number = 1030, chain = A, residue number = 131, residue name = PRO, atom name = CA, x = 25.503, y = 7.125, z = 24.446, radius = 1.9
+
+overlap 1.28565
+atom number = 2224, chain = B, residue number = 127, residue name = MET, atom name = C, x = 40.951, y = 15.968, z = -7.685, radius = 1.75
+atom number = 2228, chain = B, residue number = 128, residue name = PRO, atom name = CD, x = 41.832, y = 17.939, z = -6.673, radius = 1.92
+
+overlap 1.28494
+atom number = 780, chain = A, residue number = 99, residue name = ASP, atom name = C, x = 11.881, y = 1.603, z = 17.732, radius = 1.75
+atom number = 783, chain = A, residue number = 100, residue name = ASN, atom name = CA, x = 13.474, y = -0.142, z = 17.836, radius = 1.9
+
+overlap 1.28494
+atom number = 1976, chain = B, residue number = 96, residue name = SER, atom name = C, x = 28.526, y = 22.378, z = -14.804, radius = 1.75
+atom number = 1980, chain = B, residue number = 97, residue name = PRO, atom name = CD, x = 28.68, y = 24.158, z = -16.384, radius = 1.92
+
+overlap 1.28484
+atom number = 472, chain = A, residue number = 61, residue name = GLU, atom name = C, x = 30.99, y = 17.299, z = 15.153, radius = 1.75
+atom number = 475, chain = A, residue number = 62, residue name = ALA, atom name = CA, x = 30.228, y = 19.538, z = 15.167, radius = 1.9
+
+overlap 1.28394
+atom number = 1630, chain = B, residue number = 52, residue name = GLY, atom name = C, x = 18.865, y = 25.302, z = 6.055, radius = 1.75
+atom number = 1633, chain = B, residue number = 53, residue name = GLY, atom name = CA, x = 20.34, y = 23.485, z = 5.707, radius = 1.9
+
+overlap 1.28341
+atom number = 1176, chain = A, residue number = 147, residue name = LEU, atom name = C, x = 16.84, y = 29.295, z = 21.214, radius = 1.75
+atom number = 1180, chain = A, residue number = 148, residue name = PRO, atom name = CD, x = 15.677, y = 29.229, z = 19.131, radius = 1.92
+
+overlap 1.28256
+atom number = 1293, chain = B, residue number = 9, residue name = HIS, atom name = C, x = -9.339, y = -8.941, z = -33.661, radius = 1.75
+atom number = 1296, chain = B, residue number = 10, residue name = HIS, atom name = CA, x = -8.954, y = -7.708, z = -35.645, radius = 1.9
+
+overlap 1.28156
+atom number = 962, chain = A, residue number = 122, residue name = TRP, atom name = C, x = 23.848, y = 10.862, z = 19.102, radius = 1.75
+atom number = 965, chain = A, residue number = 123, residue name = LEU, atom name = CA, x = 25.155, y = 9.196, z = 18.041, radius = 1.9
+
+overlap 1.2811
+atom number = 17, chain = A, residue number = 3, residue name = SER, atom name = C, x = 36.269, y = 18.419, z = 42.349, radius = 1.75
+atom number = 20, chain = A, residue number = 4, residue name = SER, atom name = CA, x = 34.593, y = 19.819, z = 43.267, radius = 1.9
+
+overlap 1.28063
+atom number = 2247, chain = B, residue number = 130, residue name = THR, atom name = C, x = 38.299, y = 13.532, z = -11.949, radius = 1.75
+atom number = 2251, chain = B, residue number = 131, residue name = PRO, atom name = CD, x = 38.18, y = 13.765, z = -14.324, radius = 1.92
+
+overlap 1.27962
+atom number = 1243, chain = B, residue number = 4, residue name = SER, atom name = C, x = -10.026, y = -22.472, z = -29.251, radius = 1.75
+atom number = 1246, chain = B, residue number = 5, residue name = HIS, atom name = CA, x = -8.252, y = -21.658, z = -30.596, radius = 1.9
+
+overlap 1.27916
+atom number = 1873, chain = B, residue number = 83, residue name = CYS, atom name = C, x = 12.843, y = 7.834, z = -0.738, radius = 1.75
+atom number = 1876, chain = B, residue number = 84, residue name = LYS, atom name = CA, x = 10.563, y = 8.434, z = -0.988, radius = 1.9
+
+overlap 1.27911
+atom number = 905, chain = A, residue number = 115, residue name = ALA, atom name = C, x = 10.836, y = 21.891, z = 10.57, radius = 1.75
+atom number = 909, chain = A, residue number = 116, residue name = PRO, atom name = CD, x = 10.642, y = 19.903, z = 11.884, radius = 1.92
+
+overlap 1.27848
+atom number = 435, chain = A, residue number = 56, residue name = GLU, atom name = C, x = 23.441, y = 11.084, z = 7.586, radius = 1.75
+atom number = 438, chain = A, residue number = 57, residue name = LEU, atom name = CA, x = 25.614, y = 11.849, z = 8.149, radius = 1.9
+
+overlap 1.27819
+atom number = 1564, chain = B, residue number = 43, residue name = MET, atom name = C, x = 30.817, y = 8.93, z = -6.217, radius = 1.75
+atom number = 1567, chain = B, residue number = 44, residue name = CYS, atom name = CA, x = 29.042, y = 10.431, z = -5.746, radius = 1.9
+
+overlap 1.27818
+atom number = 119, chain = A, residue number = 15, residue name = GLU, atom name = C, x = 8.008, y = 17.112, z = 46.478, radius = 1.75
+atom number = 122, chain = A, residue number = 16, residue name = ASN, atom name = CA, x = 6.14, y = 17.504, z = 45.07, radius = 1.9
+
+overlap 1.27791
+atom number = 1231, chain = B, residue number = 2, residue name = GLY, atom name = C, x = -11.039, y = -26.804, z = -25.774, radius = 1.75
+atom number = 1234, chain = B, residue number = 3, residue name = SER, atom name = CA, x = -10.74, y = -24.463, z = -25.535, radius = 1.9
+
+overlap 1.2779
+atom number = 410, chain = A, residue number = 52, residue name = GLY, atom name = C, x = 12.261, y = 12.655, z = 0.109, radius = 1.75
+atom number = 413, chain = A, residue number = 53, residue name = GLY, atom name = CA, x = 14.411, y = 12.348, z = 1.063, radius = 1.9
+
+overlap 1.27723
+atom number = 1417, chain = B, residue number = 24, residue name = GLU, atom name = C, x = 4.288, y = 8.864, z = -22.948, radius = 1.75
+atom number = 1420, chain = B, residue number = 25, residue name = PRO, atom name = CA, x = 5.048, y = 9.975, z = -24.902, radius = 1.9
+
+overlap 1.27723
+atom number = 1040, chain = A, residue number = 132, residue name = SER, atom name = C, x = 28.509, y = 9.759, z = 26.378, radius = 1.75
+atom number = 1044, chain = A, residue number = 133, residue name = PRO, atom name = CD, x = 28.506, y = 10.681, z = 24.17, radius = 1.92
+
+overlap 1.27637
+atom number = 358, chain = A, residue number = 45, residue name = LEU, atom name = C, x = 23.524, y = 13.409, z = 13.034, radius = 1.75
+atom number = 361, chain = A, residue number = 46, residue name = PHE, atom name = CA, x = 23.242, y = 15.067, z = 11.359, radius = 1.9
+
+overlap 1.27625
+atom number = 2247, chain = B, residue number = 130, residue name = THR, atom name = C, x = 38.299, y = 13.532, z = -11.949, radius = 1.75
+atom number = 2250, chain = B, residue number = 131, residue name = PRO, atom name = CA, x = 36.633, y = 12.355, z = -13.163, radius = 1.9
+
+overlap 1.27603
+atom number = 970, chain = A, residue number = 123, residue name = LEU, atom name = C, x = 25.342, y = 8.274, z = 19.191, radius = 1.75
+atom number = 974, chain = A, residue number = 124, residue name = PRO, atom name = CD, x = 23.275, y = 7.223, z = 18.596, radius = 1.92
+
+overlap 1.27557
+atom number = 1027, chain = A, residue number = 130, residue name = THR, atom name = C, x = 25.308, y = 4.769, z = 24.457, radius = 1.75
+atom number = 1031, chain = A, residue number = 131, residue name = PRO, atom name = CD, x = 23.412, y = 6.114, z = 25.031, radius = 1.92
+
+overlap 1.27514
+atom number = 1273, chain = B, residue number = 7, residue name = HIS, atom name = C, x = -8.241, y = -14.24, z = -31.779, radius = 1.75
+atom number = 1276, chain = B, residue number = 8, residue name = HIS, atom name = CA, x = -7.155, y = -12.13, z = -31.871, radius = 1.9
+
+overlap 1.27456
+atom number = 197, chain = A, residue number = 24, residue name = GLU, atom name = C, x = 8.74, y = 28.069, z = 29.526, radius = 1.75
+atom number = 200, chain = A, residue number = 25, residue name = PRO, atom name = CA, x = 9.679, y = 29.844, z = 28.257, radius = 1.9
+
+overlap 1.27397
+atom number = 605, chain = A, residue number = 78, residue name = ASP, atom name = C, x = 31.77, y = 13.378, z = 4.104, radius = 1.75
+atom number = 608, chain = A, residue number = 79, residue name = TRP, atom name = CA, x = 30.414, y = 15.329, z = 4.084, radius = 1.9
+
+overlap 1.27371
+atom number = 1759, chain = B, residue number = 70, residue name = THR, atom name = C, x = 9.171, y = 3.934, z = -1.015, radius = 1.75
+atom number = 1762, chain = B, residue number = 71, residue name = SER, atom name = CA, x = 11.263, y = 4.184, z = 0.084, radius = 1.9
+
+overlap 1.27327
+atom number = 1733, chain = B, residue number = 66, residue name = GLU, atom name = C, x = 15.762, y = -1.227, z = 0.307, radius = 1.75
+atom number = 1736, chain = B, residue number = 67, residue name = ILE, atom name = CA, x = 13.442, y = -1.095, z = -0.192, radius = 1.9
+
+overlap 1.27278
+atom number = 1424, chain = B, residue number = 25, residue name = PRO, atom name = C, x = 6.464, y = 9.975, z = -24.454, radius = 1.75
+atom number = 1427, chain = B, residue number = 26, residue name = GLY, atom name = CA, x = 8.091, y = 10.453, z = -22.788, radius = 1.9
+
+overlap 1.27261
+atom number = 332, chain = A, residue number = 41, residue name = THR, atom name = C, x = 28.815, y = 15.6, z = 21.946, radius = 1.75
+atom number = 335, chain = A, residue number = 42, residue name = GLY, atom name = CA, x = 30.616, y = 14.531, z = 20.821, radius = 1.9
+
+overlap 1.27188
+atom number = 723, chain = A, residue number = 92, residue name = VAL, atom name = C, x = 15.051, y = 21.248, z = 21.064, radius = 1.75
+atom number = 726, chain = A, residue number = 93, residue name = PHE, atom name = CA, x = 15.892, y = 19.79, z = 22.744, radius = 1.9
+
+overlap 1.27186
+atom number = 2190, chain = B, residue number = 123, residue name = LEU, atom name = C, x = 33.364, y = 12.952, z = -8.158, radius = 1.75
+atom number = 2194, chain = B, residue number = 124, residue name = PRO, atom name = CD, x = 33.637, y = 15.334, z = -8.107, radius = 1.92
+
+overlap 1.27171
+atom number = 756, chain = A, residue number = 96, residue name = SER, atom name = C, x = 13.146, y = 9.177, z = 22.147, radius = 1.75
+atom number = 760, chain = A, residue number = 97, residue name = PRO, atom name = CD, x = 11.134, y = 8.414, z = 23.206, radius = 1.92
+
+overlap 1.27085
+atom number = 948, chain = A, residue number = 121, residue name = ALA, atom name = C, x = 22.519, y = 13.007, z = 17.806, radius = 1.75
+atom number = 951, chain = A, residue number = 122, residue name = TRP, atom name = CA, x = 23.732, y = 12.224, z = 19.697, radius = 1.9
+
+overlap 1.27081
+atom number = 1552, chain = B, residue number = 41, residue name = THR, atom name = C, x = 29.483, y = 6.051, z = -10.248, radius = 1.75
+atom number = 1555, chain = B, residue number = 42, residue name = GLY, atom name = CA, x = 30.816, y = 5.231, z = -8.456, radius = 1.9
+
+overlap 1.27053
+atom number = 463, chain = A, residue number = 60, residue name = GLY, atom name = C, x = 30.45, y = 14.44, z = 14.267, radius = 1.75
+atom number = 466, chain = A, residue number = 61, residue name = GLU, atom name = CA, x = 31.161, y = 16.022, z = 15.896, radius = 1.9
+
+overlap 1.27022
+atom number = 588, chain = A, residue number = 76, residue name = ARG, atom name = C, x = 34.911, y = 16.34, z = 5.016, radius = 1.75
+atom number = 591, chain = A, residue number = 77, residue name = GLU, atom name = CA, x = 35.98, y = 14.568, z = 3.841, radius = 1.9
+
+overlap 1.26912
+atom number = 1825, chain = B, residue number = 78, residue name = ASP, atom name = C, x = 28.008, y = 7.788, z = 7.141, radius = 1.75
+atom number = 1828, chain = B, residue number = 79, residue name = TRP, atom name = CA, x = 25.834, y = 7.962, z = 6.186, radius = 1.9
+
+overlap 1.26873
+atom number = 1748, chain = B, residue number = 68, residue name = THR, atom name = C, x = 9.659, y = 0.082, z = 2.105, radius = 1.75
+atom number = 1751, chain = B, residue number = 69, residue name = GLY, atom name = CA, x = 7.426, y = 0.791, z = 1.679, radius = 1.9
+
+overlap 1.26845
+atom number = 1992, chain = B, residue number = 98, residue name = LYS, atom name = C, x = 32.513, y = 25.432, z = -11.546, radius = 1.75
+atom number = 1995, chain = B, residue number = 99, residue name = ASP, atom name = CA, x = 32.57, y = 27.526, z = -10.413, radius = 1.9
+
+overlap 1.26749
+atom number = 804, chain = A, residue number = 103, residue name = ILE, atom name = C, x = 17.567, y = 7.13, z = 22.642, radius = 1.75
+atom number = 807, chain = A, residue number = 104, residue name = ARG, atom name = CA, x = 17.347, y = 9.15, z = 21.398, radius = 1.9
+
+overlap 1.26739
+atom number = 1102, chain = A, residue number = 139, residue name = ALA, atom name = C, x = 23.664, y = 21.301, z = 29.585, radius = 1.75
+atom number = 1105, chain = A, residue number = 140, residue name = PHE, atom name = CA, x = 23.531, y = 22.022, z = 27.318, radius = 1.9
+
+overlap 1.2669
+atom number = 11, chain = A, residue number = 2, residue name = GLY, atom name = C, x = 38.131, y = 16.378, z = 43.459, radius = 1.75
+atom number = 14, chain = A, residue number = 3, residue name = SER, atom name = CA, x = 37.698, y = 18.199, z = 41.984, radius = 1.9
+
+overlap 1.26684
+atom number = 734, chain = A, residue number = 93, residue name = PHE, atom name = C, x = 14.825, y = 18.783, z = 23.008, radius = 1.75
+atom number = 737, chain = A, residue number = 94, residue name = ASP, atom name = CA, x = 13.903, y = 16.618, z = 22.631, radius = 1.9
+
+overlap 1.26599
+atom number = 2360, chain = B, residue number = 143, residue name = ARG, atom name = C, x = 18.537, y = 4.295, z = -21.134, radius = 1.75
+atom number = 2363, chain = B, residue number = 144, residue name = TYR, atom name = CA, x = 17.357, y = 5.522, z = -19.465, radius = 1.9
+
+overlap 1.26562
+atom number = 2024, chain = B, residue number = 103, residue name = ILE, atom name = C, x = 32.089, y = 18.809, z = -14.597, radius = 1.75
+atom number = 2027, chain = B, residue number = 104, residue name = ARG, atom name = CA, x = 30.194, y = 18.207, z = -13.281, radius = 1.9
+
+overlap 1.26469
+atom number = 1428, chain = B, residue number = 26, residue name = GLY, atom name = C, x = 8.276, y = 9.055, z = -22.298, radius = 1.75
+atom number = 1431, chain = B, residue number = 27, residue name = VAL, atom name = CA, x = 9.725, y = 7.233, z = -21.778, radius = 1.9
+
+overlap 1.26428
+atom number = 756, chain = A, residue number = 96, residue name = SER, atom name = C, x = 13.146, y = 9.177, z = 22.147, radius = 1.75
+atom number = 759, chain = A, residue number = 97, residue name = PRO, atom name = CA, x = 12.625, y = 6.849, z = 22.172, radius = 1.9
+
+overlap 1.26399
+atom number = 1773, chain = B, residue number = 72, residue name = LEU, atom name = C, x = 15.66, y = 3.549, z = -0.037, radius = 1.75
+atom number = 1776, chain = B, residue number = 73, residue name = THR, atom name = CA, x = 17.259, y = 3.194, z = 1.698, radius = 1.9
+
+overlap 1.26386
+atom number = 2147, chain = B, residue number = 118, residue name = LEU, atom name = C, x = 18.549, y = 15.192, z = -5.064, radius = 1.75
+atom number = 2150, chain = B, residue number = 119, residue name = ARG, atom name = CA, x = 20.664, y = 15.594, z = -6.093, radius = 1.9
+
+overlap 1.26366
+atom number = 2333, chain = B, residue number = 140, residue name = PHE, atom name = C, x = 21.704, y = 7.039, z = -18.723, radius = 1.75
+atom number = 2336, chain = B, residue number = 141, residue name = THR, atom name = CA, x = 21.194, y = 9.043, z = -19.914, radius = 1.9
+
+overlap 1.26289
+atom number = 2043, chain = B, residue number = 105, residue name = MET, atom name = C, x = 26.546, y = 15.47, z = -12.78, radius = 1.75
+atom number = 2046, chain = B, residue number = 106, residue name = ALA, atom name = CA, x = 24.347, y = 15.528, z = -11.853, radius = 1.9
+
+overlap 1.26283
+atom number = 2260, chain = B, residue number = 132, residue name = SER, atom name = C, x = 34.529, y = 8.626, z = -13.315, radius = 1.75
+atom number = 2263, chain = B, residue number = 133, residue name = PRO, atom name = CA, x = 33.308, y = 7.036, z = -14.611, radius = 1.9
+
+overlap 1.2626
+atom number = 772, chain = A, residue number = 98, residue name = LYS, atom name = C, x = 12.865, y = 4.062, z = 18.84, radius = 1.75
+atom number = 775, chain = A, residue number = 99, residue name = ASP, atom name = CA, x = 11.467, y = 2.953, z = 17.254, radius = 1.9
+
+overlap 1.26231
+atom number = 943, chain = A, residue number = 120, residue name = ALA, atom name = C, x = 20.997, y = 15.723, z = 16.474, radius = 1.75
+atom number = 946, chain = A, residue number = 121, residue name = ALA, atom name = CA, x = 21.223, y = 13.478, z = 17.255, radius = 1.9
+
+overlap 1.26197
+atom number = 33, chain = A, residue number = 5, residue name = HIS, atom name = C, x = 31.726, y = 22.522, z = 41.524, radius = 1.75
+atom number = 36, chain = A, residue number = 6, residue name = HIS, atom name = CA, x = 31.303, y = 24.792, z = 40.915, radius = 1.9
+
+overlap 1.26135
+atom number = 1619, chain = B, residue number = 50, residue name = SER, atom name = C, x = 15.776, y = 22.899, z = 3.499, radius = 1.75
+atom number = 1623, chain = B, residue number = 51, residue name = PRO, atom name = CD, x = 13.459, y = 23.099, z = 4.126, radius = 1.92
+
+overlap 1.26107
+atom number = 2125, chain = B, residue number = 115, residue name = ALA, atom name = C, x = 12.985, y = 20.058, z = -6.095, radius = 1.75
+atom number = 2129, chain = B, residue number = 116, residue name = PRO, atom name = CD, x = 14.916, y = 21.128, z = -7.059, radius = 1.92
+
+overlap 1.26076
+atom number = 1589, chain = B, residue number = 46, residue name = PHE, atom name = C, x = 24.2, y = 14.304, z = -1.66, radius = 1.75
+atom number = 1592, chain = B, residue number = 47, residue name = SER, atom name = CA, x = 22.886, y = 16.297, z = -1.561, radius = 1.9
+
+overlap 1.26038
+atom number = 539, chain = A, residue number = 70, residue name = THR, atom name = C, x = 24.538, y = 32.774, z = 8.126, radius = 1.75
+atom number = 542, chain = A, residue number = 71, residue name = SER, atom name = CA, x = 25.605, y = 30.665, z = 7.774, radius = 1.9
+
+overlap 1.26
+atom number = 1253, chain = B, residue number = 5, residue name = HIS, atom name = C, x = -8.799, y = -20.273, z = -30.56, radius = 1.75
+atom number = 1256, chain = B, residue number = 6, residue name = HIS, atom name = CA, x = -8.819, y = -18.137, z = -29.488, radius = 1.9
+
+overlap 1.25982
+atom number = 568, chain = A, residue number = 74, residue name = ILE, atom name = C, x = 31.709, y = 21.644, z = 6.943, radius = 1.75
+atom number = 571, chain = A, residue number = 75, residue name = GLU, atom name = CA, x = 33.581, y = 20.693, z = 5.801, radius = 1.9
+
+overlap 1.25968
+atom number = 742, chain = A, residue number = 94, residue name = ASP, atom name = C, x = 14.528, y = 15.262, z = 22.655, radius = 1.75
+atom number = 745, chain = A, residue number = 95, residue name = LEU, atom name = CA, x = 14.803, y = 13.193, z = 23.82, radius = 1.9
+
+overlap 1.25967
+atom number = 2240, chain = B, residue number = 129, residue name = GLU, atom name = C, x = 39.018, y = 16.722, z = -12.28, radius = 1.75
+atom number = 2243, chain = B, residue number = 130, residue name = THR, atom name = CA, x = 39.511, y = 14.395, z = -12.044, radius = 1.9
+
+overlap 1.25952
+atom number = 197, chain = A, residue number = 24, residue name = GLU, atom name = C, x = 8.74, y = 28.069, z = 29.526, radius = 1.75
+atom number = 201, chain = A, residue number = 25, residue name = PRO, atom name = CD, x = 7.495, y = 30.107, z = 29.199, radius = 1.92
+
+overlap 1.25882
+atom number = 399, chain = A, residue number = 50, residue name = SER, atom name = C, x = 12.446, y = 17.007, z = 2.004, radius = 1.75
+atom number = 403, chain = A, residue number = 51, residue name = PRO, atom name = CD, x = 11.575, y = 18.742, z = 0.574, radius = 1.92
+
+overlap 1.25776
+atom number = 2372, chain = B, residue number = 144, residue name = TYR, atom name = C, x = 17.221, y = 6.975, z = -19.688, radius = 1.75
+atom number = 2375, chain = B, residue number = 145, residue name = ILE, atom name = CA, x = 15.946, y = 8.778, z = -20.608, radius = 1.9
+
+overlap 1.25744
+atom number = 63, chain = A, residue number = 8, residue name = HIS, atom name = C, x = 25.295, y = 26.706, z = 45.22, radius = 1.75
+atom number = 66, chain = A, residue number = 9, residue name = HIS, atom name = CA, x = 23.753, y = 27.987, z = 46.526, radius = 1.9
+
+overlap 1.25741
+atom number = 1752, chain = B, residue number = 69, residue name = GLY, atom name = C, x = 7.771, y = 1.314, z = 0.318, radius = 1.75
+atom number = 1755, chain = B, residue number = 70, residue name = THR, atom name = CA, x = 7.925, y = 3.147, z = -1.212, radius = 1.9
+
+overlap 1.25723
+atom number = 2322, chain = B, residue number = 139, residue name = ALA, atom name = C, x = 23.972, y = 5.536, z = -19.726, radius = 1.75
+atom number = 2325, chain = B, residue number = 140, residue name = PHE, atom name = CA, x = 22.655, y = 6.275, z = -17.87, radius = 1.9
+
+overlap 1.25708
+atom number = 135, chain = A, residue number = 17, residue name = LEU, atom name = C, x = 3.854, y = 16.356, z = 41.702, radius = 1.75
+atom number = 138, chain = A, residue number = 18, residue name = TYR, atom name = CA, x = 3.877, y = 16.491, z = 39.313, radius = 1.9
+
+overlap 1.25699
+atom number = 1237, chain = B, residue number = 3, residue name = SER, atom name = C, x = -10.465, y = -24.278, z = -26.984, radius = 1.75
+atom number = 1240, chain = B, residue number = 4, residue name = SER, atom name = CA, x = -11.185, y = -23.387, z = -29.085, radius = 1.9
+
+overlap 1.25691
+atom number = 2168, chain = B, residue number = 121, residue name = ALA, atom name = C, x = 27.729, y = 13.497, z = -8.508, radius = 1.75
+atom number = 2171, chain = B, residue number = 122, residue name = TRP, atom name = CA, x = 29.419, y = 12.42, z = -9.816, radius = 1.9
+
+overlap 1.25658
+atom number = 1417, chain = B, residue number = 24, residue name = GLU, atom name = C, x = 4.288, y = 8.864, z = -22.948, radius = 1.75
+atom number = 1421, chain = B, residue number = 25, residue name = PRO, atom name = CD, x = 3.013, y = 10.698, z = -23.862, radius = 1.92
+
+overlap 1.25621
+atom number = 2208, chain = B, residue number = 125, residue name = ARG, atom name = C, x = 38.784, y = 12.451, z = -6.675, radius = 1.75
+atom number = 2211, chain = B, residue number = 126, residue name = LEU, atom name = CA, x = 40.392, y = 12.725, z = -4.923, radius = 1.9
+
+overlap 1.25621
+atom number = 1765, chain = B, residue number = 71, residue name = SER, atom name = C, x = 12.394, y = 3.252, z = -0.14, radius = 1.75
+atom number = 1768, chain = B, residue number = 72, residue name = LEU, atom name = CA, x = 14.632, y = 2.972, z = -0.942, radius = 1.9
+
+overlap 1.25616
+atom number = 1263, chain = B, residue number = 6, residue name = HIS, atom name = C, x = -8.103, y = -17.341, z = -30.512, radius = 1.75
+atom number = 1266, chain = B, residue number = 7, residue name = HIS, atom name = CA, x = -8.271, y = -15.662, z = -32.21, radius = 1.9
+
+overlap 1.25578
+atom number = 653, chain = A, residue number = 83, residue name = CYS, atom name = C, x = 22.872, y = 27.402, z = 7.757, radius = 1.75
+atom number = 656, chain = A, residue number = 84, residue name = LYS, atom name = CA, x = 21.346, y = 29.221, z = 7.449, radius = 1.9
+
+overlap 1.25566
+atom number = 1602, chain = B, residue number = 48, residue name = VAL, atom name = C, x = 19.587, y = 18.271, z = 0.986, radius = 1.75
+atom number = 1605, chain = B, residue number = 49, residue name = ARG, atom name = CA, x = 18.435, y = 20.358, z = 1.21, radius = 1.9
+
+overlap 1.25499
+atom number = 2163, chain = B, residue number = 120, residue name = ALA, atom name = C, x = 24.374, y = 13.753, z = -7.989, radius = 1.75
+atom number = 2166, chain = B, residue number = 121, residue name = ALA, atom name = CA, x = 26.607, y = 14.471, z = -8.473, radius = 1.9
+
+overlap 1.25432
+atom number = 2197, chain = B, residue number = 124, residue name = PRO, atom name = C, x = 36.214, y = 13.004, z = -7.942, radius = 1.75
+atom number = 2200, chain = B, residue number = 125, residue name = ARG, atom name = CA, x = 38.097, y = 11.551, z = -7.655, radius = 1.9
+
+overlap 1.2543
+atom number = 158, chain = A, residue number = 19, residue name = PHE, atom name = C, x = 1.794, y = 17.924, z = 35.53, radius = 1.75
+atom number = 161, chain = A, residue number = 20, residue name = GLN, atom name = CA, x = 1.248, y = 17.748, z = 33.204, radius = 1.9
+
+overlap 1.25418
+atom number = 1054, chain = A, residue number = 134, residue name = PRO, atom name = C, x = 24.231, y = 13.256, z = 28.392, radius = 1.75
+atom number = 1057, chain = A, residue number = 135, residue name = GLU, atom name = CA, x = 25.11, y = 14.221, z = 30.401, radius = 1.9
+
+overlap 1.25403
+atom number = 2073, chain = B, residue number = 109, residue name = PHE, atom name = C, x = 14.296, y = 15.269, z = -7.926, radius = 1.75
+atom number = 2076, chain = B, residue number = 110, residue name = ARG, atom name = CA, x = 12.376, y = 16.617, z = -8.413, radius = 1.9
+
+overlap 1.25398
+atom number = 222, chain = A, residue number = 28, residue name = THR, atom name = C, x = 18.53, y = 33.614, z = 23.982, radius = 1.75
+atom number = 225, chain = A, residue number = 29, residue name = ASP, atom name = CA, x = 20.567, y = 32.593, z = 23.241, radius = 1.9
+
+overlap 1.25362
+atom number = 2185, chain = B, residue number = 123, residue name = LEU, atom name = CA, x = 32.127, y = 13.081, z = -7.357, radius = 1.9
+atom number = 2192, chain = B, residue number = 124, residue name = PRO, atom name = N, x = 34.154, y = 13.975, z = -8.13, radius = 1.7
+
+overlap 1.25317
+atom number = 1450, chain = B, residue number = 29, residue name = ASP, atom name = C, x = 11.406, y = 3.904, z = -15.012, radius = 1.75
+atom number = 1453, chain = B, residue number = 30, residue name = ARG, atom name = CA, x = 11.672, y = 2.449, z = -13.126, radius = 1.9
+
+overlap 1.25259
+atom number = 853, chain = A, residue number = 109, residue name = PHE, atom name = C, x = 15.02, y = 23.519, z = 13.487, radius = 1.75
+atom number = 856, chain = A, residue number = 110, residue name = ARG, atom name = CA, x = 12.835, y = 24.462, z = 13.197, radius = 1.9
+
+overlap 1.25239
+atom number = 977, chain = A, residue number = 124, residue name = PRO, atom name = C, x = 25.992, y = 5.496, z = 20.01, radius = 1.75
+atom number = 980, chain = A, residue number = 125, residue name = ARG, atom name = CA, x = 27.681, y = 4.067, z = 20.934, radius = 1.9
+
+overlap 1.25223
+atom number = 702, chain = A, residue number = 89, residue name = GLU, atom name = C, x = 13.157, y = 29.801, z = 15.713, radius = 1.75
+atom number = 705, chain = A, residue number = 90, residue name = THR, atom name = CA, x = 13.243, y = 27.891, z = 17.16, radius = 1.9
+
+overlap 1.25218
+atom number = 1983, chain = B, residue number = 97, residue name = PRO, atom name = C, x = 30.681, y = 23.995, z = -13.439, radius = 1.75
+atom number = 1986, chain = B, residue number = 98, residue name = LYS, atom name = CA, x = 32.145, y = 23.989, z = -11.54, radius = 1.9
+
+overlap 1.25214
+atom number = 513, chain = A, residue number = 66, residue name = GLU, atom name = C, x = 32.094, y = 29.018, z = 9.42, radius = 1.75
+atom number = 516, chain = A, residue number = 67, residue name = ILE, atom name = CA, x = 31.157, y = 31.225, z = 9.39, radius = 1.9
+
+overlap 1.25202
+atom number = 965, chain = A, residue number = 123, residue name = LEU, atom name = CA, x = 25.155, y = 9.196, z = 18.041, radius = 1.9
+atom number = 972, chain = A, residue number = 124, residue name = PRO, atom name = N, x = 24.613, y = 7.202, z = 19.156, radius = 1.7
+
+overlap 1.25187
+atom number = 1646, chain = B, residue number = 55, residue name = ALA, atom name = C, x = 24.464, y = 17.466, z = 2.516, radius = 1.75
+atom number = 1649, chain = B, residue number = 56, residue name = GLU, atom name = CA, x = 26.313, y = 16.728, z = 1.179, radius = 1.9
+
+overlap 1.25148
+atom number = 191, chain = A, residue number = 24, residue name = GLU, atom name = CA, x = 7.705, y = 27.681, z = 30.52, radius = 1.9
+atom number = 199, chain = A, residue number = 25, residue name = PRO, atom name = N, x = 8.714, y = 29.319, z = 29.173, radius = 1.7
+
+overlap 1.25115
+atom number = 1490, chain = B, residue number = 34, residue name = MET, atom name = C, x = 18.367, y = 3.609, z = -10.77, radius = 1.75
+atom number = 1493, chain = B, residue number = 35, residue name = ILE, atom name = CA, x = 18.596, y = 3.803, z = -8.39, radius = 1.9
+
+overlap 1.25104
+atom number = 686, chain = A, residue number = 87, residue name = THR, atom name = C, x = 15.617, y = 30.07, z = 10.301, radius = 1.75
+atom number = 689, chain = A, residue number = 88, residue name = VAL, atom name = CA, x = 15.925, y = 28.937, z = 12.393, radius = 1.9
+
+overlap 1.25081
+atom number = 2243, chain = B, residue number = 130, residue name = THR, atom name = CA, x = 39.511, y = 14.395, z = -12.044, radius = 1.9
+atom number = 2249, chain = B, residue number = 131, residue name = PRO, atom name = N, x = 37.878, y = 13.066, z = -13.086, radius = 1.7
+
+overlap 1.2508
+atom number = 2349, chain = B, residue number = 142, residue name = GLN, atom name = C, x = 20.308, y = 5.943, z = -22.843, radius = 1.75
+atom number = 2352, chain = B, residue number = 143, residue name = ARG, atom name = CA, x = 19.845, y = 3.885, z = -21.7, radius = 1.9
+
+overlap 1.25069
+atom number = 2219, chain = B, residue number = 127, residue name = MET, atom name = CA, x = 42.102, y = 15.226, z = -7.092, radius = 1.9
+atom number = 2226, chain = B, residue number = 128, residue name = PRO, atom name = N, x = 41.107, y = 17.256, z = -7.731, radius = 1.7
+
+overlap 1.25042
+atom number = 23, chain = A, residue number = 4, residue name = SER, atom name = C, x = 33.922, y = 20.472, z = 42.109, radius = 1.75
+atom number = 26, chain = A, residue number = 5, residue name = HIS, atom name = CA, x = 31.835, y = 21.1, z = 41.105, radius = 1.9
+
+overlap 1.25027
+atom number = 89, chain = A, residue number = 11, residue name = SER, atom name = C, x = 17.449, y = 24.226, z = 48.698, radius = 1.75
+atom number = 92, chain = A, residue number = 12, residue name = SER, atom name = CA, x = 15.756, y = 23.232, z = 50.078, radius = 1.9
+
+overlap 1.25026
+atom number = 753, chain = A, residue number = 96, residue name = SER, atom name = CA, x = 12.607, y = 10.556, z = 22.309, radius = 1.9
+atom number = 758, chain = A, residue number = 97, residue name = PRO, atom name = N, x = 12.267, y = 8.231, z = 22.317, radius = 1.7
+
+overlap 1.25019
+atom number = 1473, chain = B, residue number = 32, residue name = GLY, atom name = C, x = 15.093, y = 1.002, z = -9.236, radius = 1.75
+atom number = 1476, chain = B, residue number = 33, residue name = GLN, atom name = CA, x = 15.85, y = 0.093, z = -11.324, radius = 1.9
+
