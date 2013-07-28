@@ -2,6 +2,7 @@
 #define CONTACTO_INTER_RESIDUE_CONTACTS_FILTERING_H_
 
 #include <vector>
+#include <set>
 #include <map>
 #include <string>
 #include <stdexcept>
@@ -10,6 +11,49 @@
 
 namespace contacto
 {
+
+template<typename ResidueIDType, typename ValueType>
+std::map< contacto::ContactID<ResidueIDType>, ValueType > filter_core_contacts(const std::map< contacto::ContactID<ResidueIDType>, ValueType >& all_contacts)
+{
+	typedef std::map< contacto::ContactID<ResidueIDType>, ValueType > ContactsMap;
+	ContactsMap core_contacts;
+	typename ContactsMap::iterator prev=core_contacts.begin();
+	for(typename ContactsMap::const_iterator it=all_contacts.begin();it!=all_contacts.end();++it)
+	{
+		typename ContactsMap::const_iterator aa_it=all_contacts.find(contacto::ContactID<ResidueIDType>(it->first.a, it->first.a));
+		typename ContactsMap::const_iterator bb_it=all_contacts.find(contacto::ContactID<ResidueIDType>(it->first.b, it->first.b));
+		if((aa_it==all_contacts.end() || aa_it->second.areas.count("AW")==0) && (bb_it==all_contacts.end() || bb_it->second.areas.count("AW")==0))
+		{
+			prev=core_contacts.insert(prev, *it);
+		}
+	}
+	return core_contacts;
+}
+
+template<typename ResidueIDType, typename ValueType>
+std::map< contacto::ContactID<ResidueIDType>, ValueType > filter_interface_zone_contacts(const std::map< contacto::ContactID<ResidueIDType>, ValueType >& all_contacts)
+{
+	typedef std::map< contacto::ContactID<ResidueIDType>, ValueType > ContactsMap;
+	std::set<ResidueIDType> allowed_residue_ids;
+	for(typename ContactsMap::const_iterator it=all_contacts.begin();it!=all_contacts.end();++it)
+	{
+		if(it->first.a.chain_id!=it->first.b.chain_id)
+		{
+			allowed_residue_ids.insert(it->first.a);
+			allowed_residue_ids.insert(it->first.b);
+		}
+	}
+	ContactsMap interface_zone_contacts;
+	typename ContactsMap::iterator prev=interface_zone_contacts.begin();
+	for(typename ContactsMap::const_iterator it=all_contacts.begin();it!=all_contacts.end();++it)
+	{
+		if(allowed_residue_ids.count(it->first.a)>0 && allowed_residue_ids.count(it->first.b))
+		{
+			prev=interface_zone_contacts.insert(prev, *it);
+		}
+	}
+	return interface_zone_contacts;
+}
 
 template<typename ResidueIDType, typename ValueType>
 std::map< contacto::ContactID<ResidueIDType>, ValueType > filter_inter_chain_contacts(const std::map< contacto::ContactID<ResidueIDType>, ValueType >& all_contacts)
@@ -69,8 +113,18 @@ std::map< contacto::ContactID<ResidueIDType>, ValueType > filter_inter_interval_
 }
 
 template<typename ResidueIDType, typename ValueType, typename InterfaceReaderType>
-void filter_custom_contacts(std::map< contacto::ContactID<ResidueIDType>, ValueType >& all_contacts, const bool inter_chain, const std::string& intervals_string)
+void filter_custom_contacts(std::map< contacto::ContactID<ResidueIDType>, ValueType >& all_contacts, const bool core, const bool interface_zone, const bool inter_chain, const std::string& intervals_string)
 {
+	if(core)
+	{
+		all_contacts=filter_core_contacts<ResidueIDType, ValueType>(all_contacts);
+	}
+
+	if(interface_zone)
+	{
+		all_contacts=filter_interface_zone_contacts<ResidueIDType, ValueType>(all_contacts);
+	}
+
 	if(inter_chain)
 	{
 		all_contacts=filter_inter_chain_contacts<ResidueIDType, ValueType>(all_contacts);
@@ -83,6 +137,5 @@ void filter_custom_contacts(std::map< contacto::ContactID<ResidueIDType>, ValueT
 }
 
 }
-
 
 #endif /* CONTACTO_INTER_RESIDUE_CONTACTS_FILTERING_H_ */
