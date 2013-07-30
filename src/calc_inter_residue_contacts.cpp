@@ -88,7 +88,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > InterResidueContacts;
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > CombinedInterResidueContacts;
 
-	clo.check_allowed_options("--inter-interval: --optimally-rename-chains");
+	clo.check_allowed_options("--optimally-rename-chains");
 
 	InterResidueContacts inter_residue_contacts_1=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "target inter-residue contacts", "residue_contacts", false);
 	InterResidueContacts inter_residue_contacts_2=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "model inter-residue contacts", "residue_contacts", false);
