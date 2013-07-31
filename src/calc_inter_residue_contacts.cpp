@@ -63,13 +63,13 @@ std::vector<std::string> collect_chain_names_from_contacts_map(const ContactsMap
 
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--inter-interval: --inter-chain --binarize --core --interface-zone");
+	clo.check_allowed_options("--inter-interval: --inter-chain --core --interface-zone");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "inter-atom contacts", "contacts", false);
 
-	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts, clo.isopt("--binarize"));
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
 
 	contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactAreas, protein::ResidueIDsIntervalsReader>(inter_residue_contacts, clo.isopt("--core"), clo.isopt("--interface-zone"), clo.isopt("--inter-chain"), (clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string("")));
 
@@ -88,7 +88,9 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > InterResidueContacts;
 	typedef std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactDualAreas > CombinedInterResidueContacts;
 
-	clo.check_allowed_options("--optimally-rename-chains");
+	clo.check_allowed_options("--optimally-rename-chains --binarize");
+
+	const bool binarize=clo.isopt("--binarize");
 
 	InterResidueContacts inter_residue_contacts_1=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "target inter-residue contacts", "residue_contacts", false);
 	InterResidueContacts inter_residue_contacts_2=auxiliaries::STDContainersIO::read_map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >(std::cin, "model inter-residue contacts", "residue_contacts", false);
@@ -136,7 +138,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 					inter_residue_contacts_2_with_renamed_chains[cid]=it->second;
 				}
 
-				CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2_with_renamed_chains);
+				CombinedInterResidueContacts combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2_with_renamed_chains, binarize);
 
 				const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> residue_contact_area_difference_profile=contacto::construct_residue_contact_area_difference_profile<protein::ResidueID, protein::ResidueSummary, contacto::BoundedDifferenceProducer, contacto::SimpleReferenceProducer>(combined_inter_residue_contacts, residue_ids_1);
 				const contacto::ResidueContactAreaDifferenceScore global_score=contacto::calculate_global_contact_area_difference_score_from_profile(residue_contact_area_difference_profile, false);
@@ -180,7 +182,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 
 	if(!renaming_performed)
 	{
-		resulting_combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2);
+		resulting_combined_inter_residue_contacts=contacto::combine_two_inter_residue_contact_maps<protein::ResidueID>(inter_residue_contacts_1, inter_residue_contacts_2, binarize);
 	}
 
 	if(resulting_combined_inter_residue_contacts.empty())
