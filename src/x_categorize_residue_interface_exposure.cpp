@@ -25,8 +25,9 @@ void x_categorize_residue_interface_exposure(const auxiliaries::CommandLineOptio
 			{
 				const std::string& name=jt->first;
 				const double area=jt->second;
-				extended_inter_residue_contacts[contacto::ContactID<protein::ResidueID>(a_id, a_id)].areas[name+"_exposed"]+=area;
-				extended_inter_residue_contacts[contacto::ContactID<protein::ResidueID>(a_id, a_id)].areas[name+"_exposed_to_"+b_id.chain_id]+=area;
+				const contacto::ContactID<protein::ResidueID> self_contact_id(a_id, a_id);
+				extended_inter_residue_contacts[self_contact_id].areas[name+"_exposed"]+=area;
+				extended_inter_residue_contacts[self_contact_id].areas[name+"_exposed_to_"+b_id.chain_id]+=area;
 			}
 		}
 	}
