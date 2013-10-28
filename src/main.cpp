@@ -29,15 +29,6 @@ void merge_atoms(const auxiliaries::CommandLineOptions& clo);
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo);
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 
-void x_categorize_residue_interface_exposure(const auxiliaries::CommandLineOptions& clo);
-void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo);
-void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo);
-void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo);
-void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo);
-void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo);
-void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
-void x_summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
-
 int main(const int argc, const char** argv)
 {
 	std::cin.exceptions(std::istream::badbit);
@@ -88,15 +79,6 @@ int main(const int argc, const char** argv)
 		modes_map["merge-atoms"]=ModeFunctionPointer(merge_atoms);
 		modes_map["print-inter-chain-interface-graphics"]=ModeFunctionPointer(print_inter_chain_interface_graphics);
 		modes_map["summarize-inter-atom-contacts"]=ModeFunctionPointer(summarize_inter_atom_contacts);
-
-		modes_map["x-categorize-residue-interface-exposure"]=ModeFunctionPointer(x_categorize_residue_interface_exposure);
-		modes_map["x-print-inter-residue-contacts-graph"]=ModeFunctionPointer(x_print_inter_residue_contacts_graph);
-		modes_map["x-print-inter-residue-contacts-map-image"]=ModeFunctionPointer(x_print_inter_residue_contacts_map_image);
-		modes_map["x-print-inter-residue-distance-map-image"]=ModeFunctionPointer(x_print_inter_residue_distance_map_image);
-		modes_map["x-print-topological-ordering-of-residues"]=ModeFunctionPointer(x_print_topological_ordering_of_residues);
-		modes_map["x-renumber-residues-by-reference"]=ModeFunctionPointer(x_renumber_residues_by_reference);
-		modes_map["x-renumber-residues-in-inter-atom-contacts"]=ModeFunctionPointer(x_renumber_residues_in_inter_atom_contacts);
-		modes_map["x-summarize-dssp-file"]=ModeFunctionPointer(x_summarize_dssp_file);
 
 		if(modes_map.count(mode)==1)
 		{
