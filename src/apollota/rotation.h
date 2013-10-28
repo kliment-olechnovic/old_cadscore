@@ -1,10 +1,9 @@
-#ifndef APOLLO2_ROTATION_H_
-#define APOLLO2_ROTATION_H_
+#ifndef APOLLOTA_ROTATION_H_
+#define APOLLOTA_ROTATION_H_
 
 #include "basic_operations_on_points.h"
-#include "quaternion.h"
 
-namespace apollo2
+namespace apollota
 {
 
 class Rotation
@@ -13,10 +12,6 @@ public:
 	SimplePoint axis;
 	double angle;
 
-	Rotation() : angle(0)
-	{
-	}
-
 	template<typename InputPointType>
 	Rotation(const InputPointType& axis, double angle) : axis(axis), angle(angle)
 	{
@@ -24,7 +19,7 @@ public:
 
 	static double pi()
 	{
-		return 3.14159265;
+		return 3.14159265358979323846;
 	}
 
 	template<typename OutputPointType, typename InputPointType>
@@ -45,6 +40,32 @@ public:
 	}
 
 private:
+	struct Quaternion
+	{
+		double a;
+		double b;
+		double c;
+		double d;
+
+		Quaternion(const double a, const double b, const double c, const double d) : a(a), b(b), c(c), d(d)
+		{
+		}
+
+		Quaternion operator*(const Quaternion& q) const
+		{
+			return Quaternion(
+					a*q.a - b*q.b - c*q.c - d*q.d,
+					a*q.b + b*q.a + c*q.d - d*q.c,
+					a*q.c - b*q.d + c*q.a + d*q.b,
+					a*q.d + b*q.c - c*q.b + d*q.a);
+		}
+
+		Quaternion operator!() const
+		{
+			return Quaternion(a, 0-b, 0-c, 0-d);
+		}
+	};
+
 	template<typename InputPointType>
 	static Quaternion quaternion_from_value_and_point(const double a, const InputPointType& p)
 	{
@@ -54,4 +75,4 @@ private:
 
 }
 
-#endif /* APOLLO2_ROTATION_H_ */
+#endif /* APOLLOTA_ROTATION_H_ */

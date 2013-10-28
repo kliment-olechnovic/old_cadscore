@@ -11,9 +11,9 @@
 #include "contacto/inter_residue_contact_dual_areas.h"
 #include "contacto/contact_classification.h"
 
-#include "apollo2/apollonius_triangulation.h"
-#include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
-#include "apollo2/opengl_printer.h"
+#include "apollota/triangulation.h"
+#include "apollota/inter_sphere_contact_face_on_hyperboloid.h"
+#include "apollota/opengl_printer.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/std_containers_io.h"
@@ -617,7 +617,7 @@ std::string atom_name_without_single_quote(const std::string& full_atom_name)
 
 void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
+	typedef apollota::InterSphereContactFaceOnHyperboloid CellFace;
 
 	clo.check_allowed_options("--probe: --step: --projections: --face-coloring: --selection-coloring: --groups: --output-names-prefix: --outline --insides --specific-contact-type: --transparent-magenta --binary-coloring");
 
@@ -636,7 +636,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map);
+	const apollota::Triangulation::PairsNeighborsMap pairs_neighbours_map=apollota::Triangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(atoms, 3.5, false, false).quadruples_map);
 
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
@@ -663,13 +663,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else if(groups_option=="inter_chain_region")
 	{
 		std::set<protein::ResidueID> region_residue_ids;
-		for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+		for(apollota::Triangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
 			const protein::Atom& a=atoms[atoms_ids_pair.first];
 			const protein::Atom& b=atoms[atoms_ids_pair.second];
 			if(a.chain_id!=b.chain_id && a.chain_id!="?" && b.chain_id!="?" &&
-					apollo2::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2)
+					apollota::minimal_distance_from_sphere_to_sphere(a, b)<probe_radius*2)
 			{
 				region_residue_ids.insert(protein::ResidueID::from_atom(a));
 				region_residue_ids.insert(protein::ResidueID::from_atom(b));
@@ -687,7 +687,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef std::map< std::pair<std::string, std::string>, std::vector< std::pair<std::size_t, std::size_t> > > InterfacesMap;
 	InterfacesMap inter_chain_interfaces;
 
-	for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	for(apollota::Triangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
 
@@ -698,7 +698,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		{
 			std::vector<const protein::Atom*> cs;
 			cs.reserve(it->second.size());
-			for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+			for(apollota::Triangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
 			{
 				cs.push_back(&(atoms[*jt]));
 			}
@@ -757,13 +757,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		face_colorizer.reset(new ContactColorizerByFirstResidueName< NameColorizerForPymol<std::string> >());
 	}
 
-	apollo2::OpenGLPrinter::print_setup(std::cout);
+	apollota::OpenGLPrinter::print_setup(std::cout);
 
 	for(InterfacesMap::const_iterator it=inter_chain_interfaces.begin();it!=inter_chain_interfaces.end();++it)
 	{
 		const std::string obj_name=output_names_prefix+std::string("obj_")+it->first.first+"_"+it->first.second;
 		const std::string cgo_name=output_names_prefix+std::string("iface_")+it->first.first+"_"+it->first.second;
-		apollo2::OpenGLPrinter opengl_printer(std::cout, obj_name, cgo_name);
+		apollota::OpenGLPrinter opengl_printer(std::cout, obj_name, cgo_name);
 		for(std::size_t i=0;i<it->second.size();++i)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=it->second[i];
@@ -773,17 +773,26 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 			const auxiliaries::Color face_color=face_colorizer->color(a, b);
 			if(!(tansparent_magenta && face_color.r==255 && face_color.g==0 && face_color.b==255))
 			{
-				opengl_printer.print_color(face_color);
+				opengl_printer.print_color(face_color.r_double(), face_color.g_double(), face_color.b_double());
 				if(outline)
 				{
-					std::vector<apollo2::SimplePoint> loop_vertices=cell_face.mesh_vertices();
+					std::vector<apollota::SimplePoint> loop_vertices=cell_face.mesh_vertices();
 					loop_vertices.pop_back();
 					opengl_printer.print_line_strip(loop_vertices, true);
 				}
 				else
 				{
-					const apollo2::SimplePoint normal=apollo2::sub_of_points<apollo2::SimplePoint>(b, a).unit();
-					opengl_printer.print_tringle_fan(cell_face.mesh_vertices(), normal);
+					const apollota::SimplePoint normal=apollota::sub_of_points<apollota::SimplePoint>(b, a).unit();
+					const apollota::SimplePoint shift=normal*0.001;
+					std::vector<apollota::SimplePoint> fan_vertices;
+					fan_vertices.reserve(cell_face.mesh_vertices().size()+1);
+					fan_vertices.push_back(cell_face.mesh_vertices().back()+shift);
+					for(std::size_t j=0;j+1<cell_face.mesh_vertices().size();j++)
+					{
+						fan_vertices.push_back(cell_face.mesh_vertices()[j]+shift);
+					}
+					fan_vertices.push_back(cell_face.mesh_vertices().front()+shift);
+					opengl_printer.print_triangle_strip(fan_vertices, std::vector<apollota::SimplePoint>(fan_vertices.size(), normal), true);
 				}
 			}
 		}

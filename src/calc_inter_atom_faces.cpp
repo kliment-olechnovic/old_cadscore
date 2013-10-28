@@ -2,8 +2,8 @@
 
 #include "protein/atom.h"
 
-#include "apollo2/apollonius_triangulation.h"
-#include "apollo2/inter_sphere_contact_face_on_hyperboloid.h"
+#include "apollota/triangulation.h"
+#include "apollota/inter_sphere_contact_face_on_hyperboloid.h"
 
 #include "contacto/inter_atom_contact.h"
 
@@ -12,7 +12,7 @@
 
 void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 {
-	typedef apollo2::InterSphereContactFaceOnHyperboloid CellFace;
+	typedef apollota::InterSphereContactFaceOnHyperboloid CellFace;
 
 	clo.check_allowed_options("--probe: --step: --projections:");
 
@@ -27,11 +27,11 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const apollo2::ApolloniusTriangulation::PairsNeighborsMap pairs_neighbours_map=apollo2::ApolloniusTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map);
+	const apollota::Triangulation::PairsNeighborsMap pairs_neighbours_map=apollota::Triangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(atoms, 3.5, false, false).quadruples_map);
 
 	std::set<contacto::InterAtomContact> inter_atom_contacts;
 
-	for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	for(apollota::Triangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::size_t a_id=it->first.get(0);
 		const std::size_t b_id=it->first.get(1);
@@ -41,13 +41,13 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 
 		std::vector<const protein::Atom*> cs;
 		cs.reserve(it->second.size());
-		for(apollo2::ApolloniusTriangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+		for(apollota::Triangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
 		{
 			cs.push_back(&(atoms[*jt]));
 		}
 
 		const double face_area=CellFace::construct(a, b, cs, probe_radius, step_length, projections_count).area();
-		if(apollo2::greater(face_area, 0.0))
+		if(apollota::greater(face_area, 0.0))
 		{
 			inter_atom_contacts.insert(contacto::InterAtomContact(a_id, b_id, face_area));
 			inter_atom_contacts.insert(contacto::InterAtomContact(b_id, a_id, face_area));

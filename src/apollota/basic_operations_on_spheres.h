@@ -1,9 +1,9 @@
-#ifndef APOLLO2_BASIC_OPERATIONS_ON_SPHERES_H_
-#define APOLLO2_BASIC_OPERATIONS_ON_SPHERES_H_
+#ifndef APOLLOTA_BASIC_OPERATIONS_ON_SPHERES_H_
+#define APOLLOTA_BASIC_OPERATIONS_ON_SPHERES_H_
 
 #include "basic_operations_on_points.h"
 
-namespace apollo2
+namespace apollota
 {
 
 template<typename OutputSphereType>
@@ -125,4 +125,4 @@ struct SimpleSphere
 
 }
 
-#endif /* APOLLO2_BASIC_OPERATIONS_ON_SPHERES_H_ */
+#endif /* APOLLOTA_BASIC_OPERATIONS_ON_SPHERES_H_ */

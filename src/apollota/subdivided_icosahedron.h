@@ -1,12 +1,12 @@
-#ifndef APOLLO2_SUBDIVIDED_ICOSAHEDRON_H_
-#define APOLLO2_SUBDIVIDED_ICOSAHEDRON_H_
+#ifndef APOLLOTA_SUBDIVIDED_ICOSAHEDRON_H_
+#define APOLLOTA_SUBDIVIDED_ICOSAHEDRON_H_
 
 #include <cmath>
 
 #include "basic_operations_on_points.h"
 #include "tuple.h"
 
-namespace apollo2
+namespace apollota
 {
 
 class SubdividedIcosahedron
@@ -128,4 +128,4 @@ private:
 
 }
 
-#endif /* APOLLO2_SUBDIVIDED_ICOSAHEDRON_H_ */
+#endif /* APOLLOTA_SUBDIVIDED_ICOSAHEDRON_H_ */

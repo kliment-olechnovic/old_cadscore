@@ -1,11 +1,11 @@
-#ifndef APOLLO2_BASIC_OPERATIONS_ON_POINTS_H_
-#define APOLLO2_BASIC_OPERATIONS_ON_POINTS_H_
+#ifndef APOLLOTA_BASIC_OPERATIONS_ON_POINTS_H_
+#define APOLLOTA_BASIC_OPERATIONS_ON_POINTS_H_
 
 #include <cmath>
 
 #include "safe_comparison_of_numbers.h"
 
-namespace apollo2
+namespace apollota
 {
 
 struct PODPoint
@@ -164,6 +164,15 @@ OutputPointType any_normal_of_vector(const InputPointType& a)
 	return unit_point<OutputPointType>(cross_product<OutputPointType>(a, b));
 }
 
+template<typename InputPointTypeA, typename InputPointTypeB, typename InputPointTypeC>
+double distance_from_point_to_line(const InputPointTypeA& p, const InputPointTypeB& start, const InputPointTypeC& end)
+{
+	const PODPoint line_vector=unit_point<PODPoint>(sub_of_points<PODPoint>(end, start));
+	const PODPoint translated_p=sub_of_points<PODPoint>(p, start);
+	const double distance_on_line=dot_product(translated_p, line_vector);
+	return sqrt(squared_point_module(translated_p)-(distance_on_line*distance_on_line));
+}
+
 struct SimplePoint
 {
 	double x;
@@ -231,4 +240,4 @@ struct SimplePoint
 
 }
 
-#endif /* APOLLO2_BASIC_OPERATIONS_ON_POINTS_H_ */
+#endif /* APOLLOTA_BASIC_OPERATIONS_ON_POINTS_H_ */

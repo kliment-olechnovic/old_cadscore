@@ -2,8 +2,8 @@
 
 #include "protein/atom.h"
 
-#include "apollo2/apollonius_triangulation.h"
-#include "apollo2/inter_sphere_contact_surface_on_sphere.h"
+#include "apollota/triangulation.h"
+#include "apollota/inter_sphere_contact_surface_on_sphere.h"
 
 #include "contacto/inter_atom_contact.h"
 
@@ -24,7 +24,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const std::vector< std::vector<std::size_t> > graph=apollo2::ApolloniusTriangulation::collect_neighbors_graph_from_neighbors_map(apollo2::ApolloniusTriangulation::collect_neighbors_map_from_quadruples_map(apollo2::ApolloniusTriangulation::construct_result(atoms, 3.5, false).quadruples_map), atoms.size());
+	const std::vector< std::vector<std::size_t> > graph=apollota::Triangulation::collect_neighbors_graph_from_neighbors_map(apollota::Triangulation::collect_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(atoms, 3.5, false, false).quadruples_map), atoms.size());
 
 	for(std::size_t i=0;i<graph.size();i++)
 	{
@@ -34,8 +34,8 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		}
 	}
 
-	const std::vector<contacto::InterAtomContact> inter_atom_contacts=apollo2::InterSphereContactSurfaceOnSphere::construct_inter_sphere_contacts_from_surface_areas<contacto::InterAtomContact>(
-			apollo2::InterSphereContactSurfaceOnSphere::calculate_surface_areas(atoms, graph, subdivision_depth, probe_radius));
+	const std::vector<contacto::InterAtomContact> inter_atom_contacts=apollota::InterSphereContactSurfaceOnSphere::construct_inter_sphere_contacts_from_surface_areas<contacto::InterAtomContact>(
+			apollota::InterSphereContactSurfaceOnSphere::calculate_surface_areas(atoms, graph, subdivision_depth, probe_radius));
 
 	if(atoms.empty() || inter_atom_contacts.empty())
 	{
