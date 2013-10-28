@@ -1,12 +1,12 @@
-#ifndef APOLLO2_HYPERBOLOID_BETWEEN_TWO_SPHERES_H_
-#define APOLLO2_HYPERBOLOID_BETWEEN_TWO_SPHERES_H_
+#ifndef APOLLOTA_HYPERBOLOID_BETWEEN_TWO_SPHERES_H_
+#define APOLLOTA_HYPERBOLOID_BETWEEN_TWO_SPHERES_H_
 
 #include <cmath>
 #include <vector>
 
 #include "basic_operations_on_points.h"
 
-namespace apollo2
+namespace apollota
 {
 
 class HyperboloidBetweenTwoSpheres
@@ -117,4 +117,4 @@ private:
 
 }
 
-#endif /* APOLLO2_HYPERBOLOID_BETWEEN_TWO_SPHERES_H_ */
+#endif /* APOLLOTA_HYPERBOLOID_BETWEEN_TWO_SPHERES_H_ */

@@ -1,7 +1,7 @@
-#ifndef APOLLO2_SAFE_COMPARISON_OF_NUMBERS_H_
-#define APOLLO2_SAFE_COMPARISON_OF_NUMBERS_H_
+#ifndef APOLLOTA_SAFE_COMPARISON_OF_NUMBERS_H_
+#define APOLLOTA_SAFE_COMPARISON_OF_NUMBERS_H_
 
-namespace apollo2
+namespace apollota
 {
 
 inline double& comparison_epsilon_reference()
@@ -42,4 +42,4 @@ inline bool greater_or_equal(const double a, const double b)
 
 }
 
-#endif /* APOLLO2_SAFE_COMPARISON_OF_NUMBERS_H_ */
+#endif /* APOLLOTA_SAFE_COMPARISON_OF_NUMBERS_H_ */

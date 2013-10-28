@@ -1,5 +1,5 @@
-#ifndef APOLLO2_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_
-#define APOLLO2_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_
+#ifndef APOLLOTA_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_
+#define APOLLOTA_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_
 
 #include <vector>
 #include <map>
@@ -8,7 +8,7 @@
 #include "subdivided_icosahedron.h"
 #include "hyperboloid_between_two_spheres.h"
 
-namespace apollo2
+namespace apollota
 {
 
 class InterSphereContactSurfaceOnSphere
@@ -194,4 +194,4 @@ private:
 
 }
 
-#endif /* APOLLO2_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_ */
+#endif /* APOLLOTA_INTER_SPHERE_CONTACT_SURFACE_ON_SPHERE_H_ */

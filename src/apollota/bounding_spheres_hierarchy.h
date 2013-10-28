@@ -1,29 +1,28 @@
-#ifndef APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_
-#define APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_
+#ifndef APOLLOTA_BOUNDING_SPHERES_HIERARCH_2_H_
+#define APOLLOTA_BOUNDING_SPHERES_HIERARCH_2_H_
 
 #include <vector>
 #include <algorithm>
 #include <limits>
 
 #include "basic_operations_on_spheres.h"
+#include "splitting_of_spheres.h"
 
-namespace apollo2
+namespace apollota
 {
 
-template<typename LeafSphereType>
 class BoundingSpheresHierarchy
 {
 public:
-	typedef LeafSphereType LeafSphere;
-
-	BoundingSpheresHierarchy(const std::vector<LeafSphere>& input_spheres, const double initial_radius_for_spheres_bucketing, const std::size_t min_number_of_clusters) :
-		leaves_spheres_(input_spheres),
+	template<typename InputSphereType>
+	BoundingSpheresHierarchy(const std::vector<InputSphereType>& input_spheres, const double initial_radius_for_spheres_bucketing, const std::size_t min_number_of_clusters) :
+		leaves_spheres_(convert_input_spheres_to_simple_spheres(input_spheres)),
 		input_radii_range_(calc_input_radii_range(leaves_spheres_)),
 		clusters_layers_(cluster_spheres_in_layers(leaves_spheres_, initial_radius_for_spheres_bucketing, min_number_of_clusters))
 	{
 	}
 
-	const std::vector<LeafSphere>& leaves_spheres() const
+	const std::vector<SimpleSphere>& leaves_spheres() const
 	{
 		return leaves_spheres_;
 	}
@@ -55,23 +54,6 @@ public:
 			}
 		}
 		return result;
-	}
-
-	void ignore_leaf_sphere(const std::size_t leaf_sphere_id)
-	{
-		if(!clusters_layers_.empty())
-		{
-			for(std::size_t i=0;i<clusters_layers_[0].size();i++)
-			{
-				std::vector<std::size_t>& children=clusters_layers_[0][i].children;
-				std::vector<std::size_t>::iterator it=std::remove(children.begin(), children.end(), leaf_sphere_id);
-				if(it!=children.end())
-				{
-					children.erase(it, children.end());
-					return;
-				}
-			}
-		}
 	}
 
 	template<typename NodeChecker, typename LeafChecker>
@@ -163,8 +145,6 @@ public:
 	}
 
 private:
-	BoundingSpheresHierarchy(const BoundingSpheresHierarchy&);
-	const BoundingSpheresHierarchy& operator=(const BoundingSpheresHierarchy&);
 
 	class Cluster : public SimpleSphere
 	{
@@ -185,8 +165,20 @@ private:
 		}
 	};
 
+	template<typename InputSphereType>
+	static std::vector<SimpleSphere> convert_input_spheres_to_simple_spheres(const std::vector<InputSphereType>& input_spheres)
+	{
+		std::vector<SimpleSphere> result;
+		result.reserve(input_spheres.size());
+		for(std::size_t i=0;i<input_spheres.size();i++)
+		{
+			result.push_back(SimpleSphere(input_spheres[i]));
+		}
+		return result;
+	}
+
 	template<typename SphereType>
-	static const std::pair<double, double> calc_input_radii_range(const std::vector<SphereType>& spheres)
+	static std::pair<double, double> calc_input_radii_range(const std::vector<SphereType>& spheres)
 	{
 		std::pair<double, double> range(0, 0);
 		if(!spheres.empty())
@@ -219,7 +211,7 @@ private:
 					allowed[i]=false;
 					for(std::size_t j=0;j<spheres.size();j++)
 					{
-						if(sphere_intersects_sphere_with_expansion(spheres[i], spheres[j], expansion))
+						if(allowed[j] && sphere_intersects_sphere_with_expansion(spheres[i], spheres[j], expansion))
 						{
 							allowed[j]=false;
 						}
@@ -231,7 +223,7 @@ private:
 	}
 
 	template<typename SphereType>
-	static std::vector<Cluster> cluster_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<SimpleSphere>& centers)
+	static std::vector<Cluster> cluster_spheres_using_centers(const std::vector<SphereType>& spheres, const std::vector<std::size_t>& selection, const std::vector<SimpleSphere>& centers)
 	{
 		std::vector<Cluster> clusters;
 		clusters.reserve(centers.size());
@@ -239,9 +231,9 @@ private:
 		{
 			clusters.push_back(custom_sphere_from_object<Cluster>(centers[i]));
 		}
-		for(std::size_t i=0;i<spheres.size();i++)
+		for(std::size_t i=0;i<selection.size();i++)
 		{
-			const SphereType& sphere=spheres[i];
+			const SphereType& sphere=spheres[selection[i]];
 			std::size_t min_dist_id=0;
 			double min_dist_value=maximal_distance_from_point_to_sphere(clusters[min_dist_id], sphere);
 			for(std::size_t j=1;j<clusters.size();j++)
@@ -255,7 +247,7 @@ private:
 			}
 			Cluster& cluster=clusters[min_dist_id];
 			cluster.r=std::max(cluster.r, min_dist_value);
-			cluster.children.push_back(i);
+			cluster.children.push_back(selection[i]);
 		}
 		std::vector<Cluster> nonempty_clusters;
 		nonempty_clusters.reserve(clusters.size());
@@ -272,7 +264,33 @@ private:
 	template<typename SphereType>
 	static std::vector<Cluster> cluster_spheres_using_radius_expansion(const std::vector<SphereType>& spheres, const double radius_expansion)
 	{
-		return cluster_spheres_using_centers(spheres, select_centers_for_clusters(spheres, radius_expansion));
+		const std::size_t max_part_size=10000;
+		if(spheres.size()<=max_part_size)
+		{
+			std::vector<std::size_t> selection(spheres.size(), 0);
+			for(std::size_t i=0;i<spheres.size();i++)
+			{
+				selection[i]=i;
+			}
+			return cluster_spheres_using_centers(spheres, selection, select_centers_for_clusters(spheres, radius_expansion));
+		}
+		else
+		{
+			std::vector<Cluster> result;
+			const std::vector< std::vector<std::size_t> > selections=SplittingOfSpheres::split_for_size_of_part(spheres, max_part_size);
+			for(std::size_t i=0;i<selections.size();i++)
+			{
+				const std::vector<std::size_t>& selection=selections[i];
+				std::vector<SimpleSphere> selection_contents(selection.size());
+				for(std::size_t j=0;j<selection.size();j++)
+				{
+					selection_contents[j]=SimpleSphere(spheres[selection[j]]);
+				}
+				const std::vector<Cluster> partial_result=cluster_spheres_using_centers(spheres, selection, select_centers_for_clusters(selection_contents, radius_expansion));
+				result.insert(result.end(), partial_result.begin(), partial_result.end());
+			}
+			return result;
+		}
 	}
 
 	template<typename SphereType>
@@ -315,11 +333,11 @@ private:
 		return clusters_layers;
 	}
 
-	const std::vector<LeafSphere>& leaves_spheres_;
-	const std::pair<double, double> input_radii_range_;
+	std::vector<SimpleSphere> leaves_spheres_;
+	std::pair<double, double> input_radii_range_;
 	std::vector< std::vector<Cluster> > clusters_layers_;
 };
 
 }
 
-#endif /* APOLLO2_BOUNDING_SPHERES_HIERARCH_2_H_ */
+#endif /* APOLLOTA_BOUNDING_SPHERES_HIERARCH_2_H_ */

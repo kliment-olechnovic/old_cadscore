@@ -1,10 +1,10 @@
-#ifndef APOLLO2_TUPLE_H_
-#define APOLLO2_TUPLE_H_
+#ifndef APOLLOTA_TUPLE_H_
+#define APOLLOTA_TUPLE_H_
 
 #include <vector>
 #include <algorithm>
 
-namespace apollo2
+namespace apollota
 {
 
 template<unsigned int N>
@@ -176,4 +176,4 @@ typedef Tuple<4> Quadruple;
 
 }
 
-#endif /* APOLLO2_TUPLE_H_ */
+#endif /* APOLLOTA_TUPLE_H_ */

@@ -2,7 +2,7 @@
 
 #include "protein/atom.h"
 
-#include "apollo2/apollonius_triangulation.h"
+#include "apollota/triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/std_containers_io.h"
@@ -10,9 +10,9 @@
 namespace
 {
 
-std::vector<apollo2::SimpleSphere> read_raw_spheres_from_stream(std::istream& input)
+std::vector<apollota::SimpleSphere> read_raw_spheres_from_stream(std::istream& input)
 {
-	std::vector<apollo2::SimpleSphere> result;
+	std::vector<apollota::SimpleSphere> result;
 	while(input.good())
 	{
 		std::string line;
@@ -20,7 +20,7 @@ std::vector<apollo2::SimpleSphere> read_raw_spheres_from_stream(std::istream& in
 		if(!line.empty())
 		{
 			std::istringstream line_input(line);
-			apollo2::SimpleSphere sphere;
+			apollota::SimpleSphere sphere;
 			line_input >> sphere.x >> sphere.y >> sphere.z >> sphere.r;
 			if(!line_input.fail())
 			{
@@ -61,11 +61,11 @@ void calc_quadruples(
 
 	const std::vector<SphereType>& atoms=(*atoms_ptr);
 
-	const apollo2::ApolloniusTriangulation::Result apollonius_triangulation_result=apollo2::ApolloniusTriangulation::construct_result(atoms, bsi_init_radius, augment);
+	const apollota::Triangulation::Result apollonius_triangulation_result=apollota::Triangulation::construct_result(atoms, bsi_init_radius, false, augment);
 
 	if(!skip_output)
 	{
-		apollo2::ApolloniusTriangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
+		apollota::Triangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
 	}
 
 	if(print_log)
@@ -76,7 +76,7 @@ void calc_quadruples(
 
 	if(check)
 	{
-		std::clog << "check " << (apollo2::ApolloniusTriangulation::check_quadruples_map(atoms, apollonius_triangulation_result.quadruples_map)) << "\n";
+		std::clog << "check " << (apollota::Triangulation::check_quadruples_map(atoms, apollonius_triangulation_result.quadruples_map)) << "\n";
 	}
 }
 
@@ -89,7 +89,7 @@ void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 	if(clo.isopt("--epsilon"))
 	{
 		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
-		apollo2::comparison_epsilon_reference()=epsilon;
+		apollota::comparison_epsilon_reference()=epsilon;
 	}
 
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;

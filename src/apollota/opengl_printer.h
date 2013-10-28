@@ -1,5 +1,5 @@
-#ifndef APOLLO2_OPENGL_PRINTER_H_
-#define APOLLO2_OPENGL_PRINTER_H_
+#ifndef APOLLOTA_OPENGL_PRINTER_H_
+#define APOLLOTA_OPENGL_PRINTER_H_
 
 #include <iostream>
 #include <sstream>
@@ -7,7 +7,7 @@
 #include <vector>
 #include <limits>
 
-namespace apollo2
+namespace apollota
 {
 
 class OpenGLPrinter
@@ -37,48 +37,18 @@ public:
 
 	void print_color(const double r, const double g, const double b)
 	{
-		string_stream_ << "    COLOR, " << r << ", " << g << ", " << b << ",\n";
+		string_stream_ << "    COLOR, " << rgb_to_string(r, g, b) << ",\n";
 	}
 
-	template<typename ColorType>
-	void print_color(const ColorType& color)
+	void print_color(const unsigned int rgb)
 	{
-		print_color(color.r_double(), color.g_double(), color.b_double());
+		string_stream_ << "    COLOR, " << rgb_to_string(rgb) << ",\n";
 	}
 
 	template<typename SphereType>
 	void print_sphere(const SphereType& sphere)
 	{
 		string_stream_ << "    SPHERE, " << point_to_string(sphere) << ", " << sphere.r << ",\n";
-	}
-
-	template<typename PointType, typename ColorType>
-	void print_cylinder(const PointType& start, const PointType& end, const double radius, const ColorType& start_color, const ColorType& end_color)
-	{
-		string_stream_ << "    CYLINDER, " << point_to_string(start) << ", " << point_to_string(end) << ", " << radius << ", ";
-		string_stream_ << start_color.r_double() << ", " << start_color.g_double() << ", " << start_color.b_double() << ", ";
-		string_stream_ << end_color.r_double() << ", " << end_color.g_double() << ", " << end_color.b_double() << ",\n";
-	}
-
-	template<typename PointType>
-	void print_tringle_fan(const std::vector<PointType>& vertices, const PointType& normal)
-	{
-		if(!vertices.empty())
-		{
-			const PointType shift=normal*0.001;
-
-			string_stream_ << "    BEGIN, TRIANGLE_FAN,\n";
-			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
-			string_stream_ << "    VERTEX, " << point_to_string(vertices.back()+shift) << ",\n";
-			for(std::size_t i=0;i+1<vertices.size();i++)
-			{
-				string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
-				string_stream_ << "    VERTEX, " << point_to_string(vertices[i]+shift) << ",\n";
-			}
-			string_stream_ << "    NORMAL, " << point_to_string(normal) << ",\n";
-			string_stream_ << "    VERTEX, " << point_to_string(vertices.front()+shift) << ",\n";
-			string_stream_ << "    END,\n";
-		}
 	}
 
 	template<typename PointType>
@@ -103,11 +73,18 @@ public:
 	}
 
 	template<typename PointType>
-	void print_triangle_strip(const std::vector<PointType>& vertices, const std::vector<PointType>& normals)
+	void print_triangle_strip(const std::vector<PointType>& vertices, const std::vector<PointType>& normals, const bool fan=false)
 	{
 		if(!vertices.empty() && vertices.size()==normals.size())
 		{
-			string_stream_ << "    BEGIN, TRIANGLE_STRIP,\n";
+			if(fan)
+			{
+				string_stream_ << "    BEGIN, TRIANGLE_FAN,\n";
+			}
+			else
+			{
+				string_stream_ << "    BEGIN, TRIANGLE_STRIP,\n";
+			}
 			for(std::size_t i=0;i<vertices.size();i++)
 			{
 				string_stream_ << "    NORMAL, " << point_to_string(normals[i]) << ",\n";
@@ -115,6 +92,12 @@ public:
 			}
 			string_stream_ << "    END,\n";
 		}
+	}
+
+	template<typename PointType>
+	void print_cylinder(const PointType& p1, const PointType& p2, const double radius, const unsigned int rgb1, const unsigned int rgb2)
+	{
+		string_stream_ << "    CYLINDER, " << point_to_string(p1) << ", " << point_to_string(p2) << ", " << radius << ", " << rgb_to_string(rgb1) << ", " << rgb_to_string(rgb2) << ",\n";
 	}
 
 private:
@@ -130,6 +113,18 @@ private:
 		return output.str();
 	}
 
+	static std::string rgb_to_string(const double r, const double g, const double b)
+	{
+		std::ostringstream output;
+		output << r << ", " << g << ", " << b;
+		return output.str();
+	}
+
+	static std::string rgb_to_string(const unsigned int rgb)
+	{
+		return rgb_to_string(static_cast<double>((rgb&0xFF0000) >> 16)/255.0, static_cast<double>((rgb&0x00FF00) >> 8)/255.0, static_cast<double>(rgb&0x0000FF)/255.0);
+	}
+
 	std::ostream& output_stream_;
 	const std::string obj_name_;
 	const std::string cgo_name_;
@@ -138,4 +133,4 @@ private:
 
 }
 
-#endif /* APOLLO2_OPENGL_PRINTER_H_ */
+#endif /* APOLLOTA_OPENGL_PRINTER_H_ */

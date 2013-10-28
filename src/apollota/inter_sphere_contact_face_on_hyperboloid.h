@@ -1,5 +1,5 @@
-#ifndef APOLLO2_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_
-#define APOLLO2_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_
+#ifndef APOLLOTA_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_
+#define APOLLOTA_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_
 
 #include <list>
 #include <vector>
@@ -10,7 +10,7 @@
 #include "rotation.h"
 #include "tuple.h"
 
-namespace apollo2
+namespace apollota
 {
 
 class InterSphereContactFaceOnHyperboloid
@@ -329,4 +329,4 @@ private:
 
 }
 
-#endif /* APOLLO2_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_ */
+#endif /* APOLLOTA_INTER_SPHERE_CONTACT_FACE_ON_HYPERBOLOID_H_ */

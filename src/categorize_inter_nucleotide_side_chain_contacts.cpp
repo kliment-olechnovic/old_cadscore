@@ -1,7 +1,7 @@
 #include "protein/atom.h"
 #include "protein/residue_ids_collection.h"
 
-#include "apollo2/basic_operations_on_spheres.h"
+#include "apollota/basic_operations_on_spheres.h"
 
 #include "contacto/contact_id.h"
 #include "contacto/inter_residue_contact_areas.h"
@@ -14,8 +14,8 @@ namespace
 
 struct NucleotidePlane
 {
-	apollo2::SimplePoint point;
-	apollo2::SimplePoint normal;
+	apollota::SimplePoint point;
+	apollota::SimplePoint normal;
 
 	static std::map<protein::ResidueID, NucleotidePlane> calc_nucleotides_planes(const std::vector<protein::Atom>& atoms)
 	{
@@ -44,9 +44,9 @@ struct NucleotidePlane
 						const protein::Atom& a=atoms[abc[0]];
 						const protein::Atom& b=atoms[abc[1]];
 						const protein::Atom& c=atoms[abc[2]];
-						const apollo2::SimplePoint pa(a.x, a.y, a.z);
-						const apollo2::SimplePoint pb(b.x, b.y, b.z);
-						const apollo2::SimplePoint pc(c.x, c.y, c.z);
+						const apollota::SimplePoint pa(a.x, a.y, a.z);
+						const apollota::SimplePoint pb(b.x, b.y, b.z);
+						const apollota::SimplePoint pc(c.x, c.y, c.z);
 						NucleotidePlane& plane=planes[residue_id];
 						plane.point=((pa+pb)+pc)*(1.0/3.0);
 						plane.normal=((pb-pa)&(pc-pa)).unit();
@@ -109,11 +109,11 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 				}
 				if(!sc_atoms_ids_b.empty())
 				{
-					const int first_halfspace=apollo2::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[0]]);
+					const int first_halfspace=apollota::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[0]]);
 					bool one_halfspace=(first_halfspace!=0);
 					for(std::size_t i=1;i<sc_atoms_ids_b.size() && one_halfspace;i++)
 					{
-						const int atom_halfspace=apollo2::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
+						const int atom_halfspace=apollota::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
 						if(atom_halfspace!=first_halfspace)
 						{
 							one_halfspace=false;
