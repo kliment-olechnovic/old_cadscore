@@ -3,6 +3,8 @@
 #include <exception>
 #include <limits>
 
+#include "apollota/safe_comparison_of_numbers.h"
+
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/stream_redirector.h"
 
@@ -34,6 +36,7 @@ int main(const int argc, const char** argv)
 	std::cin.exceptions(std::istream::badbit);
 	std::cout.exceptions(std::ostream::badbit);
 	std::ios_base::sync_with_stdio(false);
+	apollota::comparison_epsilon_reference()=0.000001;
 
 	std::string mode;
 
