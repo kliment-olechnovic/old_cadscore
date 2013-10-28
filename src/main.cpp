@@ -30,9 +30,6 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 void summarize_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 
 void x_categorize_residue_interface_exposure(const auxiliaries::CommandLineOptions& clo);
-void x_compare_two_sets_of_quadruples(const auxiliaries::CommandLineOptions& clo);
-void x_print_bsh_demo(const auxiliaries::CommandLineOptions& clo);
-void x_print_face_demo(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_graph(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_contacts_map_image(const auxiliaries::CommandLineOptions& clo);
 void x_print_inter_residue_distance_map_image(const auxiliaries::CommandLineOptions& clo);
@@ -93,9 +90,6 @@ int main(const int argc, const char** argv)
 		modes_map["summarize-inter-atom-contacts"]=ModeFunctionPointer(summarize_inter_atom_contacts);
 
 		modes_map["x-categorize-residue-interface-exposure"]=ModeFunctionPointer(x_categorize_residue_interface_exposure);
-		modes_map["x-compare-two-sets-of-quadruples"]=ModeFunctionPointer(x_compare_two_sets_of_quadruples);
-		modes_map["x-print-bsh-demo"]=ModeFunctionPointer(x_print_bsh_demo);
-		modes_map["x-print-face-demo"]=ModeFunctionPointer(x_print_face_demo);
 		modes_map["x-print-inter-residue-contacts-graph"]=ModeFunctionPointer(x_print_inter_residue_contacts_graph);
 		modes_map["x-print-inter-residue-contacts-map-image"]=ModeFunctionPointer(x_print_inter_residue_contacts_map_image);
 		modes_map["x-print-inter-residue-distance-map-image"]=ModeFunctionPointer(x_print_inter_residue_distance_map_image);
