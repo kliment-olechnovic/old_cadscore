@@ -8,11 +8,10 @@ rt=rt[which(abs(rt$diffs_rna_inf_norv)>0),];
 rt=rt[which(abs(rt$diffs_rna_rmsd)>0),];
 rt=rt[which(abs(rt$diffs_rna_di)>0),];
 rt=rt[which(abs(rt$diffs_GDT_C3)>0),];
-rt=rt[which(abs(rt$diffs_MP_clashscore)>0),];
-rt=rt[which(abs(rt$diffs_MP_pct_badangles)>0),];
 
-mp_signs_diffs=sign(rt$diffs_MP_clashscore)-sign(rt$diffs_MP_pct_badangles);
-rt=rt[which(mp_signs_diffs==0),];
+rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore)*100+sign(rt$diffs_MP_pct_badangles)*10+sign(rt$diffs_MP_pct_badbonds);
+allowed_descriptors_abs=c(1, 10, 11, 100, 101, 110, 111);
+rt=rt[which(is.element(abs(rt$mp_sign_descriptor), allowed_descriptors_abs)),];
 
 #########################################
 
@@ -46,7 +45,7 @@ for(rna_inf_threshold in rna_inf_thresholds)
 	ids=1:N;
 	
 	CAD_score=sign(t[,paste("diffs_", cadscore_variant, sep="")])*ids;
-	MP_score=sign(t$diffs_MP_clashscore)*ids;
+	MP_score=sign(t$mp_sign_descriptor)*ids;
 	
 	ev=data.frame(RNA_INF=sign(t$diffs_rna_inf_norv)*ids, RMSD=sign(t$diffs_rna_rmsd)*ids, RNA_DI=sign(t$diffs_rna_di)*ids, GDT_C3=sign(t$diffs_GDT_C3)*ids);
 	
