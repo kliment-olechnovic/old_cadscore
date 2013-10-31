@@ -8,7 +8,7 @@ t=t[which(is.finite(t$rna_di)),];
 
 targets=union(sort(t$target), sort(t$target));
 
-sample_size=200;
+sample_size=300;
 max_vector_size=0;
 for(target in targets)
 {
@@ -38,6 +38,7 @@ diffs_rna_di=numeric(max_vector_size);
 diffs_GDT_C3=numeric(max_vector_size);
 diffs_MP_clashscore=numeric(max_vector_size);
 diffs_MP_pct_badangles=numeric(max_vector_size);
+diffs_MP_pct_badbonds=numeric(max_vector_size);
 
 k=1;
 for(target in targets)
@@ -71,6 +72,7 @@ for(target in targets)
 				diffs_GDT_C3[k]=st$GDT_C3[i]-st$GDT_C3[j];
 				diffs_MP_clashscore[k]=st$MP_clashscore[j]-st$MP_clashscore[i];
 				diffs_MP_pct_badangles[k]=st$MP_pct_badangles[j]-st$MP_pct_badangles[i];
+				diffs_MP_pct_badbonds[k]=st$MP_pct_badbonds[j]-st$MP_pct_badbonds[i];
 				k=k+1;
 			}
 		}
@@ -96,6 +98,7 @@ pdt=data.frame(
 	diffs_rna_di=diffs_rna_di,
 	diffs_GDT_C3=diffs_GDT_C3,
 	diffs_MP_clashscore=diffs_MP_clashscore,
-	diffs_MP_pct_badangles=diffs_MP_pct_badangles);
+	diffs_MP_pct_badangles=diffs_MP_pct_badangles,
+	diffs_MP_pct_badbonds=diffs_MP_pct_badbonds);
 
 write.table(pdt, "./output/decoys/pairs_differences_table.bak", quote=FALSE, row.names=FALSE);
