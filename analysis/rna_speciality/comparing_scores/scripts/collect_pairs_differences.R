@@ -8,7 +8,7 @@ t=t[which(is.finite(t$rna_di)),];
 
 targets=union(sort(t$target), sort(t$target));
 
-sample_size=300;
+sample_size=400;
 max_vector_size=0;
 for(target in targets)
 {
