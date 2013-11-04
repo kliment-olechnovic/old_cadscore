@@ -61,6 +61,6 @@ for(i in 1:size_rmsd)
 
 #filled.contour(M);
 
-image(x=1:size_rmsd, y=1:size_inf, z=M, col=bluered(3), main="", xlab="RMSD", ylab="INF", axes=FALSE);
+image(x=1:size_rmsd, y=1:size_inf, z=M, col=colorpanel(3, "#777777", "#FFFFFF", "#000000"), main="mp_consensus_cs_and_ba", xlab="RMSD", ylab="INF", axes=FALSE);
 axis(1, 1:size_rmsd, labels=round((1:size_rmsd-1)*step_rmsd, 2), las=2)
 axis(2, 1:size_inf, labels=round((1:size_inf-1)*step_inf, 2), las=2)
