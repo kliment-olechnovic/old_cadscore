@@ -30,7 +30,7 @@ subset_sizes=c();
 rmsd_thresholds=seq(2, 6, 0.5);
 rmsd_thresholds=c(rmsd_thresholds, 1000);
 
-rna_inf_thresholds=seq(0.3, 0.9, 0.03);
+rna_inf_thresholds=seq(0.3, 0.9, 0.01);
 
 for(rmsd_threshold in rmsd_thresholds)
 {
