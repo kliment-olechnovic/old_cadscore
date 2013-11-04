@@ -18,8 +18,8 @@ rt$mp_sign_descriptor=sign(rt$mp_sign_descriptor);
 
 #########################################
 
-size_rmsd=30;
-size_inf=30;
+size_rmsd=100;
+size_inf=100;
 
 aM=matrix(rep(0, size_rmsd*size_inf), nrow=size_rmsd, ncol=size_inf);
 bM=matrix(rep(0, size_rmsd*size_inf), nrow=size_rmsd, ncol=size_inf);
@@ -55,14 +55,7 @@ for(i in 1:size_rmsd)
 {
 	for(j in 1:size_inf)
 	{
-		if(aM[i, j]>bM[i, j])
-		{
-			M[i, j]=1;
-		}
-		if(aM[i, j]<bM[i, j])
-		{
-			M[i, j]=-1;
-		}
+		M[i, j]=sign(aM[i, j]-bM[i, j]);
 	}
 }
 
