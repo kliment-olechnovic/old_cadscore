@@ -5,6 +5,7 @@ t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
 models=union(t$model, t$model);
 
 score_names=c("AA", "SS", "rna_inf_norv");
+mishandles=rep(0, length(score_names));
 
 for(score_name in score_names)
 {
@@ -38,6 +39,11 @@ for(score_name in score_names)
 				}
 				points(x=st$chopped[c(i,j)], y=st[c(i,j),score_name], type="l", col=col, lwd=lwd);
 			}
+			mishandles[which(score_names==score_name)]=mishandles[which(score_names==score_name)]+1;
 		}
 	}
 }
+
+length(models);
+score_names
+mishandles
