@@ -4,7 +4,7 @@ t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
 
 models=union(t$model, t$model);
 
-score_names=c("rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp");
+score_names=c("AA", "SS", "rna_inf_norv");
 
 for(score_name in score_names)
 {
