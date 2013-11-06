@@ -62,9 +62,10 @@ struct DoubleID
 
 void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--bond-distance:");
+	clo.check_allowed_options("--bond-distance: --print-ordered-pdb-file");
 
 	const double bond_distance=clo.arg_or_default_value<double>("--bond-distance", 1.8);
+	const bool print_ordered_pdb_file=clo.isopt("--print-ordered-pdb-file");
 
 	const std::vector<protein::PDBAtomRecord> records=protein::read_PDB_atom_records_from_PDB_file_stream(std::cin);
 
@@ -150,15 +151,62 @@ void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOpti
 			}
 		}
 
-		std::cout << (t==0 ? "protein chains" : "nucleic acid chains") << " count " << chains.size() << "\n\n";
-		for(std::size_t i=0;i<chains.size();i++)
+		if(print_ordered_pdb_file)
 		{
-			std::cout << "chain size " << chains[i].size() << "\n";
-			for(std::size_t j=0;j<chains[i].size();j++)
+			if(!chains.empty())
 			{
-				std::cout << chains[i][j] << "\n";
+				const std::string possible_chain_names="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				if(chains.size()>possible_chain_names.size())
+				{
+					std::cerr << "Too many chains to name.\n";
+				}
+				else
+				{
+					std::vector<protein::PDBAtomRecord> named_records=records;
+					std::map< FullResidueID, std::vector<protein::PDBAtomRecord> > named_records_map;
+					for(std::size_t i=0;i<records.size();i++)
+					{
+						named_records_map[FullResidueID(records[i])].push_back(records[i]);
+					}
+					for(std::size_t i=0;i<chains.size();i++)
+					{
+						const std::string chain_name=possible_chain_names.substr(i, 1);
+						for(std::size_t j=0;j<chains[i].size();j++)
+						{
+							std::map< FullResidueID, std::vector<protein::PDBAtomRecord> >::iterator it=named_records_map.find(chains[i][j]);
+							if(it!=named_records_map.end())
+							{
+								std::vector<protein::PDBAtomRecord>& residue_records=it->second;
+								for(std::size_t u=0;u<residue_records.size();u++)
+								{
+									residue_records[u].chain_name=chain_name;
+								}
+							}
+						}
+					}
+					for(std::map< FullResidueID, std::vector<protein::PDBAtomRecord> >::const_iterator it=named_records_map.begin();it!=named_records_map.end();++it)
+					{
+						const std::vector<protein::PDBAtomRecord>& residue_records=it->second;
+						for(std::size_t u=0;u<residue_records.size();u++)
+						{
+							std::cout << residue_records[u].generate_PDB_file_line() << "\n";
+						}
+					}
+				}
 			}
-			std::cout << "\n";
+		}
+		else
+		{
+			std::cout << (t==0 ? "protein chains" : "nucleic acid chains") << " count " << chains.size() << "\n\n";
+			for(std::size_t i=0;i<chains.size();i++)
+			{
+				std::cout << "chain size " << chains[i].size() << "\n";
+				for(std::size_t j=0;j<chains[i].size();j++)
+				{
+					std::cout << chains[i][j] << "\n";
+				}
+				std::cout << "\n";
+			}
 		}
 	}
 }
