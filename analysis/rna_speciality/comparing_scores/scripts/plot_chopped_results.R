@@ -1,6 +1,11 @@
-input_table_file="../collecting_scores/output/decoys/calculated_scores_for_chopped";
+normal_scores_t=read.table("../collecting_scores/output/decoys/merged_scores", header=TRUE, stringsAsFactors=FALSE);
 
-t=read.table(input_table_file, header=TRUE, stringsAsFactors=FALSE);
+normal_scores_t=normal_scores_t[which(normal_scores_t$m_res_used/normal_scores_t$t_res_used>0.99),];
+allowed_targets=union(normal_scores_t$target, normal_scores_t$target);
+
+t=read.table("../collecting_scores/output/decoys/calculated_scores_for_chopped", header=TRUE, stringsAsFactors=FALSE);
+
+t=t[which(is.element(t$target, allowed_targets)),];
 
 models=union(t$model, t$model);
 
