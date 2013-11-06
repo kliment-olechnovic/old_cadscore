@@ -1,6 +1,5 @@
-t=read.table("../collecting_scores/output/decoys/merged_scores", header=TRUE, stringsAsFactors=FALSE);
+t=read.table("../collecting_scores/output/decoys/refined_merged_scores", header=TRUE, stringsAsFactors=FALSE);
 
-t=t[which(t$m_res_used/t$t_res_used>0.95),];
 t=t[which(is.finite(t$rna_rmsd)),];
 t=t[which(is.finite(t$rna_inf_norv)),];
 t$rna_di=t$rna_rmsd/t$rna_inf_norv;
@@ -8,7 +7,7 @@ t=t[which(is.finite(t$rna_di)),];
 
 targets=union(sort(t$target), sort(t$target));
 
-sample_size=400;
+sample_size=300;
 max_vector_size=0;
 for(target in targets)
 {

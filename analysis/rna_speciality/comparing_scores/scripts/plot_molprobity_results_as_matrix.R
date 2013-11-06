@@ -11,10 +11,8 @@ rt=rt[which(abs(rt$diffs_rna_rmsd)>0),];
 rt=rt[which(abs(rt$diffs_rna_di)>0),];
 rt=rt[which(abs(rt$diffs_GDT_C3)>0),];
 
-rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore)*100+sign(rt$diffs_MP_pct_badangles)*10+sign(rt$diffs_MP_pct_badbonds);
-allowed_descriptors_abs=c(1, 10, 11, 100, 101, 110, 111);
-rt=rt[which(is.element(abs(rt$mp_sign_descriptor), allowed_descriptors_abs)),];
-rt$mp_sign_descriptor=sign(rt$mp_sign_descriptor);
+rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore);
+rt=rt[which(abs(rt$mp_sign_descriptor)==1),];
 
 #########################################
 
@@ -61,6 +59,6 @@ for(i in 1:size_rmsd)
 
 #filled.contour(M);
 
-image(x=1:size_rmsd, y=1:size_inf, z=M, col=colorpanel(3, "#777777", "#FFFFFF", "#000000"), main="mp_consensus_cs_and_ba", xlab="RMSD", ylab="INF", axes=FALSE);
+image(x=1:size_rmsd, y=1:size_inf, z=M, col=colorpanel(3, "#777777", "#FFFFFF", "#000000"), main="mp_clashscore", xlab="RMSD", ylab="INF", axes=FALSE);
 axis(1, 1:size_rmsd, labels=round((1:size_rmsd-1)*step_rmsd, 2), las=2)
 axis(2, 1:size_inf, labels=round((1:size_inf-1)*step_inf, 2), las=2)

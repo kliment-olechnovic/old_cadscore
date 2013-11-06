@@ -9,9 +9,8 @@ rt=rt[which(abs(rt$diffs_rna_rmsd)>0),];
 rt=rt[which(abs(rt$diffs_rna_di)>0),];
 rt=rt[which(abs(rt$diffs_GDT_C3)>0),];
 
-rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore)*100+sign(rt$diffs_MP_pct_badangles)*10+sign(rt$diffs_MP_pct_badbonds);
-allowed_descriptors_abs=c(1, 10, 11, 100, 101, 110, 111);
-rt=rt[which(is.element(abs(rt$mp_sign_descriptor), allowed_descriptors_abs)),];
+rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore);
+rt=rt[which(abs(rt$mp_sign_descriptor)==1),];
 
 #########################################
 
@@ -27,10 +26,10 @@ second_score_names=c();
 subset_names=c();
 subset_sizes=c();
 
-rmsd_thresholds=seq(2, 6, 0.5);
+rmsd_thresholds=seq(2, 5, 0.5);
 rmsd_thresholds=c(rmsd_thresholds, 1000);
 
-rna_inf_thresholds=seq(0.3, 0.9, 0.01);
+rna_inf_thresholds=seq(0.4, 0.9, 0.05);
 
 for(rmsd_threshold in rmsd_thresholds)
 {
