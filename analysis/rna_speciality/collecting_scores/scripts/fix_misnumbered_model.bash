@@ -19,7 +19,7 @@ else
 fi
 
 RENUMBERED_MODEL_FILE="$TMP_DIR/renumbered_model"
-(cat $LOCAL_TARGET_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms ; cat $SPLIT_MODEL_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms) | $CADSCORE_BIN_DIR/voroprot2 --mode x-renumber-residues-by-reference --match 10 --mismatch -10 --gap-start -10 --gap-extension 0 --output-in-pdb-format --print-summary-log > $RENUMBERED_MODEL_FILE
+(cat $LOCAL_TARGET_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms ; cat $SPLIT_MODEL_FILE | $CADSCORE_BIN_DIR/voroprot2 --mode collect-atoms) | $CADSCORE_BIN_DIR/voroprot2 --mode x-renumber-residues-by-reference --match 10 --mismatch -5 --gap-start -10 --gap-extension 0 --output-in-pdb-format --print-summary-log > $RENUMBERED_MODEL_FILE
 
 $CADSCORE_BIN_DIR/CADscore_calc.bash -D $TMP_DIR/db -t $LOCAL_TARGET_FILE -m $RENUMBERED_MODEL_FILE -n -u -q -x 2> /dev/null
 COMBINED_INTER_RESIDUE_CONTACTS_FILE="$TMP_DIR/db/targets/target/models/renumbered_model/combined_inter_residue_contacts"
