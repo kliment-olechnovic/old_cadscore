@@ -184,6 +184,7 @@ void x_print_topological_ordering_of_residues(const auxiliaries::CommandLineOpti
 							}
 						}
 					}
+					std::clog << (t==0 ? "protein chains" : "nucleic acid chains") << " count " << chains.size() << "\n";
 					for(std::map< FullResidueID, std::vector<protein::PDBAtomRecord> >::const_iterator it=named_records_map.begin();it!=named_records_map.end();++it)
 					{
 						const std::vector<protein::PDBAtomRecord>& residue_records=it->second;
