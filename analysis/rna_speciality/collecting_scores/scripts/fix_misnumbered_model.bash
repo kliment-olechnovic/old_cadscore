@@ -5,6 +5,10 @@ GEOMETRIC_CHAINS_SPLITTING=$2
 TARGET_FILE=$3
 MODEL_FILE=$4
 
+echo "Target file name:  " $(basename $TARGET_FILE) 1>&2
+echo "Model file name:   " $(basename $MODEL_FILE) 1>&2
+echo "" 1>&2
+
 TMP_DIR=$(mktemp -d)
 
 LOCAL_TARGET_FILE="$TMP_DIR/target"
@@ -33,6 +37,8 @@ then
 else
   cp $RENUMBERED_MODEL_FILE $FINAL_MODEL_FILE
 fi
+
+echo "" 1>&2
 
 cat $FINAL_MODEL_FILE
 
