@@ -2,8 +2,18 @@
 
 CADSCORE_BIN_DIR=$1
 GEOMETRIC_CHAINS_SPLITTING=$2
-TARGET_FILE=$3
-MODEL_FILE=$4
+OUTPUT_DIR=$3
+TARGET_FILE=$4
+MODEL_FILE=$5
+
+TARGET_BASENAME=$(basename $TARGET_FILE)
+MODEL_BASENAME=$(basename $MODEL_FILE)
+
+mkdir -p $OUTPUT_DIR/results
+mkdir -p $OUTPUT_DIR/logs
+
+exec > $OUTPUT_DIR/results/$MODEL_BASENAME
+exec 2> $OUTPUT_DIR/logs/$MODEL_BASENAME
 
 echo "Target file name:  " $(basename $TARGET_FILE) 1>&2
 echo "Model file name:   " $(basename $MODEL_FILE) 1>&2
