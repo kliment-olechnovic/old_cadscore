@@ -1,4 +1,7 @@
-rt=read.table("./output/decoys/pairs_differences_table.bak", header=TRUE, stringsAsFactors=FALSE);
+args=commandArgs(trailingOnly=TRUE);
+working_set=args[1];
+
+rt=read.table(paste("./output/", working_set, "/pairs_differences_table.bak", sep=""), header=TRUE, stringsAsFactors=FALSE);
 
 rt=rt[which(abs(rt$diffs_AA)>0),];
 rt=rt[which(abs(rt$diffs_AS)>0),];
@@ -7,7 +10,6 @@ rt=rt[which(abs(rt$diffs_MM)>0),];
 rt=rt[which(abs(rt$diffs_rna_inf_norv)>0),];
 rt=rt[which(abs(rt$diffs_rna_rmsd)>0),];
 rt=rt[which(abs(rt$diffs_rna_di)>0),];
-rt=rt[which(abs(rt$diffs_GDT_C3)>0),];
 
 rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore);
 rt=rt[which(abs(rt$mp_sign_descriptor)==1),];
@@ -26,10 +28,9 @@ second_score_names=c();
 subset_names=c();
 subset_sizes=c();
 
-rmsd_thresholds=seq(2, 5, 0.5);
-rmsd_thresholds=c(rmsd_thresholds, 1000);
+rmsd_thresholds=1000;
 
-rna_inf_thresholds=seq(0.4, 0.9, 0.05);
+rna_inf_thresholds=seq(0.4, 1.0, 0.01);
 
 for(rmsd_threshold in rmsd_thresholds)
 {
@@ -46,7 +47,7 @@ for(rna_inf_threshold in rna_inf_thresholds)
 	CAD_score=sign(t[,paste("diffs_", cadscore_variant, sep="")])*ids;
 	MP_score=sign(t$mp_sign_descriptor)*ids;
 	
-	ev=data.frame(RNA_INF=sign(t$diffs_rna_inf_norv)*ids, RMSD=sign(t$diffs_rna_rmsd)*ids, RNA_DI=sign(t$diffs_rna_di)*ids, GDT_C3=sign(t$diffs_GDT_C3)*ids);
+	ev=data.frame(RNA_INF=sign(t$diffs_rna_inf_norv)*ids, RMSD=sign(t$diffs_rna_rmsd)*ids, RNA_DI=sign(t$diffs_rna_di)*ids);
 	
 	for(ev_name in colnames(ev))
 	{
@@ -85,6 +86,6 @@ for(rna_inf_threshold in rna_inf_thresholds)
 fractions=subset_sizes/set_sizes;
 
 result=data.frame(max_RMSD=used_rmsd_thresholds, min_RNA_INF=used_rna_inf_thresholds, set_size=set_sizes, second_score_name=second_score_names, subset_name=subset_names, subset_size=subset_sizes, fraction=fractions);
-write.table(result, paste("./output/decoys/molprobity_results_", cadscore_variant, ".txt", sep=""), quote=TRUE, row.names=FALSE);
+write.table(result, paste("./output/", working_set, "/molprobity_results_", cadscore_variant, ".txt", sep=""), quote=TRUE, row.names=FALSE);
 
 }
