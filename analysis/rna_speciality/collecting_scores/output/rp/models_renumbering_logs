@@ -473,6 +473,29 @@ G -> G
 H -> H
 
 Target file name:   2_solution_0.pdb
+Model file name:    2_major_1.pdb
+
+target_atoms 2074
+model_atoms 2136
+target_residues 98
+model_residues 100
+target_chains 8
+model_chains 8
+best_alignments_score 970
+mapped_model_residues 98
+target_sequence         A:ccggaggaacuacug B:ccggcagccu C:ccggaggaacuacug D:ccggcagccu E:ccggaggaacuacug F:ccggcagccu G:ccggaggaaccug H:ccggcagccu 
+model_sequence          A:ccggaggaacuacug B:ccggcagccu C:ccggaggaacuacug D:ccggcagccu E:ccggaggaacuacug F:ccggcagccu G:ccggaggaacuacug H:ccggcagccu 
+model_assigned_chains     AAAAAAAAAAAAAAA   BBBBBBBBBB   CCCCCCCCCCCCCCC   DDDDDDDDDD   EEEEEEEEEEEEEEE   FFFFFFFFFF   GGGGGGGGGG--GGG   HHHHHHHHHH 
+A -> A
+B -> B
+C -> C
+D -> D
+E -> E
+F -> F
+G -> G
+H -> H
+
+Target file name:   2_solution_0.pdb
 Model file name:    2_santalucia_1.pdb
 
 nucleic acid chains count 2
