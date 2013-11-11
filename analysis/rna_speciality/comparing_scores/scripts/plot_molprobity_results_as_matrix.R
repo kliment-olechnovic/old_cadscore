@@ -1,6 +1,9 @@
+args=commandArgs(trailingOnly=TRUE);
+working_set=args[1];
+
 library(gplots);
 
-rt=read.table("./output/decoys/pairs_differences_table.bak", header=TRUE, stringsAsFactors=FALSE);
+rt=read.table(paste("./output/", working_set, "/pairs_differences_table.bak", sep=""), header=TRUE, stringsAsFactors=FALSE);
 
 rt=rt[which(abs(rt$diffs_AA)>0),];
 rt=rt[which(abs(rt$diffs_AS)>0),];
@@ -9,7 +12,6 @@ rt=rt[which(abs(rt$diffs_MM)>0),];
 rt=rt[which(abs(rt$diffs_rna_inf_norv)>0),];
 rt=rt[which(abs(rt$diffs_rna_rmsd)>0),];
 rt=rt[which(abs(rt$diffs_rna_di)>0),];
-rt=rt[which(abs(rt$diffs_GDT_C3)>0),];
 
 rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore);
 rt=rt[which(abs(rt$mp_sign_descriptor)==1),];

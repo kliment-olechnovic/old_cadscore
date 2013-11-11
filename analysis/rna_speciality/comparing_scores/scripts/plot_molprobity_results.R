@@ -1,9 +1,12 @@
+args=commandArgs(trailingOnly=TRUE);
+working_set=args[1];
+
 cadscore_variants=c("AA", "AS", "SS", "MM");
 
 for(cadscore_variant in cadscore_variants)
 {
 
-rt=read.table(paste("./output/decoys/molprobity_results_", cadscore_variant, ".txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
+rt=read.table(paste("./output/", working_set, "/molprobity_results_", cadscore_variant, ".txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
 
 second_score_names=union(rt$second_score_name, rt$second_score_name);
 
