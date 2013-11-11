@@ -12,7 +12,8 @@ rm $SELECTION_FILE.uf
 R --vanilla << EOF
 ct=read.table("./output/rp/calculated_scores", header=TRUE, stringsAsFactors=FALSE);
 et=read.table("./output/rp/selected_external_scores", header=TRUE, stringsAsFactors=FALSE);
-mt=merge(ct, et);
+mpt=read.table("./input/rp_molprobity_scores", header=TRUE, stringsAsFactors=FALSE);
+mt=merge(ct, merge(et, mpt));
 write.table(mt, "./output/rp/merged_scores.uf", quote=FALSE, row.names=FALSE, col.names=TRUE);
 EOF
 cat $MERGED_SCORES_FILE.uf | column -t > $MERGED_SCORES_FILE
