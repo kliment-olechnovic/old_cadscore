@@ -16,16 +16,16 @@ t_any=t_any[which(is.element(t_any$pdb_id, pdb_ids_mcannotate)),];
 max_contact_area=300;
 t_any=t_any[which(t_any$contact_area<=max_contact_area),];
 
-allowed_basenames=c("A", "U", "G", "C");
+allowed_basenames=c("A", "U", "G", "C", "I", "DA", "DG", "DC");
 t_any=t_any[which(is.element(t_any$first_base_name, allowed_basenames)),];
 t_any=t_any[which(is.element(t_any$second_base_name, allowed_basenames)),];
 
 t_any_orig=t_any;
 
-t_any$first_base_name[which(is.element(t_any$first_base_name, c("A", "G")))]="B";
-t_any$first_base_name[which(is.element(t_any$first_base_name, c("U", "C")))]="b";
-t_any$second_base_name[which(is.element(t_any$second_base_name, c("A", "G")))]="B";
-t_any$second_base_name[which(is.element(t_any$second_base_name, c("U", "C")))]="b";
+t_any$first_base_name[which(is.element(t_any$first_base_name, c("A", "G", "I", "DA", "DG")))]="B";
+t_any$first_base_name[which(is.element(t_any$first_base_name, c("U", "C", "DC")))]="b";
+t_any$second_base_name[which(is.element(t_any$second_base_name, c("A", "G", "I", "DA", "DG")))]="B";
+t_any$second_base_name[which(is.element(t_any$second_base_name, c("U", "C", "DC")))]="b";
 
 basepairs=rep("xx", length(t_any[[1]]));
 for(i in 1:length(basepairs))
