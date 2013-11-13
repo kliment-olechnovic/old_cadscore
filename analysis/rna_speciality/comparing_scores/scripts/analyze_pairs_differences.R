@@ -11,8 +11,10 @@ rt=rt[which(abs(rt$diffs_rna_inf_norv)>0),];
 rt=rt[which(abs(rt$diffs_rna_rmsd)>0),];
 rt=rt[which(abs(rt$diffs_rna_di)>0),];
 
-rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore);
-rt=rt[which(abs(rt$mp_sign_descriptor)==1),];
+rt$mp_sign_descriptor=sign(rt$diffs_MP_clashscore)*100+sign(rt$diffs_MP_pct_badangles)*10+sign(rt$diffs_MP_pct_badbonds);
+allowed_descriptor_abs_values=c(1, 10, 100, 11, 101, 110, 111);
+rt=rt[which(is.element(abs(rt$mp_sign_descriptor), allowed_descriptor_abs_values)),];
+rt$mp_sign_descriptor=sign(rt$mp_sign_descriptor);
 
 #########################################
 
