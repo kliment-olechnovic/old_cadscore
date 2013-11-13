@@ -56,7 +56,7 @@ for(target in targets)
 				mins_AS[k]=min(st$AS[i], st$AS[j]);
 				mins_SS[k]=min(st$SS[i], st$SS[j]);
 				mins_MM[k]=min(st$MM[i], st$MM[j]);
-				mins_rna_inf_norv[k]=st$rna_inf_norv[j];
+				mins_rna_inf_norv[k]=min(st$rna_inf_norv[i], st$rna_inf_norv[j]);
 				mins_rna_rmsd[k]=min(st$rna_rmsd[i], st$rna_rmsd[j]);
 				maxs_rna_rmsd[k]=max(st$rna_rmsd[i], st$rna_rmsd[j]);
 				maxs_rna_di[k]=max(st$rna_di[i], st$rna_di[j]);
