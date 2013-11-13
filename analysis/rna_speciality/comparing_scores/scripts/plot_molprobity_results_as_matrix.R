@@ -22,10 +22,8 @@ size_rmsd=10;
 size_inf=10;
 
 emptyM=matrix(rep(0, size_rmsd*size_inf), nrow=size_rmsd, ncol=size_inf);
-bothM=emptyM;
 aM=emptyM;
 bM=emptyM;
-noneM=emptyM;
 
 step_rmsd=max(rt$maxs_rna_rmsd)/(size_rmsd-1);
 step_inf=max(rt$mins_rna_inf_norv)/(size_inf-1);
@@ -40,18 +38,7 @@ for(i in iterators)
 	b=sign(rt$diffs_rna_inf_norv[i]);
 	row_id=row_ids[i];
 	col_id=col_ids[i];
-	if(a==b)
-	{
-		if(a==rt$mp_sign_descriptor[i])
-		{
-			bothM[row_id, col_id]=bothM[row_id, col_id]+1;
-		}
-		else
-		{
-			noneM[row_id, col_id]=bothM[row_id, col_id]+1;
-		}
-	}
-	else
+	if(a!=b)
 	{
 		if(a==rt$mp_sign_descriptor[i])
 		{
@@ -69,10 +56,8 @@ for(i in 1:size_rmsd)
 {
 	for(j in 1:size_inf)
 	{
-#		both=bothM[i, j];
 		a=aM[i, j];
 		b=bM[i, j];
-#		none=noneM[i, j];
 		r=0;
 		if(a>b)
 		{
@@ -82,14 +67,6 @@ for(i in 1:size_rmsd)
 		{
 			r=2;
 		}
-#		else if(both>none)
-#		{
-#			r=3;
-#		}
-#		else if(none>both)
-#		{
-#			r=4;
-#		}
 		M[i, j]=r;
 	}
 }
