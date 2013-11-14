@@ -138,16 +138,25 @@ legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=
 #################
 
 max_ylim=max(c(h_BB$counts, h_bB$counts, h_bb$counts, roman_h$counts, nonroman_h$counts));
-
 barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts, roman_h$counts, nonroman_h$counts), names.arg=h_bb$mids, col=spec_cols[1:5], border=NA, ylim=c(0, max_ylim*1.5), xlab="Area", ylab="Frequency", main="Subdivided histogram of all areas");
 legend("topleft", c("Stacking pyrimidine-pyrimidine", "Stacking pyrimidine-purine", "Stacking purine-purine", "Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15, 15, 15), col=spec_cols[1:5]);
 
-plot(hist_x, h_BB$counts, type="l", col=spec_cols[3], lwd=2, xlim=c(0, max_contact_area), ylim=c(0, max_ylim), xlab="Area", ylab="Frequency", main="Subdivided histogram of all areas");
-points(hist_x, h_bB$counts, type="l", col=spec_cols[2], lwd=2);
-points(hist_x, h_bb$counts, type="l", col=spec_cols[1], lwd=2);
-points(hist_x, roman_h$counts, type="l", col=spec_cols[4], lwd=2);
-points(hist_x, nonroman_h$counts, type="l", col=spec_cols[5], lwd=2);
-legend("topright", c("Stacking pyrimidine-pyrimidine", "Stacking pyrimidine-purine", "Stacking purine-purine", "Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15, 15, 15), col=spec_cols[1:5]);
+max_ylim=max(c(h_BB$counts, h_bB$counts, h_bb$counts, roman_h$counts, nonroman_h$counts));
+png("./area_histograms.png", height=10, width=4, units="in", res=300);
+old_par=par(mfrow=c(5, 1));
+par(mar=c(4.0, 4.0, 1.5, 1.0));
+barplot(h_BB$counts, col=spec_cols[3], ylim=c(0, max_ylim), names.arg=h_bb$mids, xlab=NULL, ylab="Frequency", main=NULL);
+title("Stacking purine-purine", adj=1)
+barplot(h_bB$counts, col=spec_cols[2], ylim=c(0, max_ylim), names.arg=h_bb$mids, xlab=NULL, ylab="Frequency", main=NULL);
+title("Stacking pyrimidine-purine", adj=1)
+barplot(h_bb$counts, col=spec_cols[1], ylim=c(0, max_ylim), names.arg=h_bb$mids, xlab=NULL, ylab="Frequency", main=NULL);
+title("Stacking pyrimidine-pyrimidine", adj=1)
+barplot(roman_h$counts, col=spec_cols[4], ylim=c(0, max_ylim), names.arg=h_bb$mids, xlab=NULL, ylab="Frequency", main=NULL);
+title("Pairings with two or three H-bonds", adj=1)
+barplot(nonroman_h$counts, col=spec_cols[5], ylim=c(0, max_ylim), names.arg=h_bb$mids, xlab="Area", ylab="Frequency", main=NULL);
+title("Other pairings", adj=1)
+par(old_par);
+dev.off();
 
 max_ylim=max(c(h_BB$counts*hist_x, h_bB$counts*hist_x, h_bb$counts*hist_x, roman_h$counts*hist_x, nonroman_h$counts*hist_x));
 plot(hist_x, h_BB$counts*hist_x, type="l", col=spec_cols[3], lwd=2, xlim=c(0, max_contact_area), ylim=c(0, max_ylim), xlab="Area", ylab="Frequency * Area", main="Contributions of all areas");
