@@ -109,16 +109,6 @@ h_BB=hist(t_stack_sel[which(t_stack_sel$basepairs=="BB"), "contact_area"], break
 barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts), names.arg=h_bb$mids, col=spec_cols[1:3], border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
 legend(0, 2500, c("pyrimidine-pyrimidine", "pyrimidine-purine", "purine-purine"), pch=c(15, 15, 15), col=spec_cols[1:3]);
 
-plot(hist_x, h_BB$counts, xlim=c(0, max_contact_area), type="l", col=spec_cols[3], lwd=2, xlab="Area", ylab="Frequency", main="Subdivided histogram of stacking areas");
-points(hist_x, h_bB$counts, xlim=c(0, max_contact_area), type="l", col=spec_cols[2], lwd=2);
-points(hist_x, h_bb$counts, xlim=c(0, max_contact_area), type="l", col=spec_cols[1], lwd=2);
-legend("topleft", c("pyrimidine-pyrimidine", "pyrimidine-purine", "purine-purine"), pch=c(15, 15, 15), col=spec_cols[1:3]);
-
-plot(hist_x, h_BB$counts*hist_x, xlim=c(0, max_contact_area), type="l", col=spec_cols[3], lwd=2, xlab="Area", ylab="Frequency", main="Contributions of stacking areas");
-points(hist_x, h_bB$counts*hist_x, xlim=c(0, max_contact_area), type="l", col=spec_cols[2], lwd=2);
-points(hist_x, h_bb$counts*hist_x, xlim=c(0, max_contact_area), type="l", col=spec_cols[1], lwd=2);
-legend("topleft", c("pyrimidine-pyrimidine", "pyrimidine-purine", "purine-purine"), pch=c(15, 15, 15), col=spec_cols[1:3]);
-
 #################
 
 roman_codes=c("P_I", "P_II", "P_III", "P_IV", "P_V", "P_VI", "P_VII", "P_VIII", "P_IX", "P_X", "P_XI", "P_XII", "P_XIII", "P_XIV", "P_XV", "P_XVI", "P_XVII", "P_XVIII", "P_XIX", "P_XX", "P_XXI", "P_XXII", "P_XXIII", "P_XXIV", "P_XXV", "P_XXVI", "P_XXVII", "P_XXVIII");
@@ -145,17 +135,13 @@ nonroman_h=hist(nonroman_t_side_sel$contact_area, breaks=hist_breaks, plot=FALSE
 barplot(rbind(roman_h$counts, nonroman_h$counts), names.arg=roman_h$mids, col=spec_cols[4:5], border=NA, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
 legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15), col=spec_cols[4:5]);
 
-plot(hist_x, roman_h$counts, xlim=c(0, max_contact_area), type="l", col=spec_cols[4], lwd=2, xlab="Area", ylab="Frequency", main="Subdivided histogram of siding areas");
-points(hist_x, nonroman_h$counts, xlim=c(0, max_contact_area), type="l", col=spec_cols[5], lwd=2);
-legend("topright", c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15), col=spec_cols[4:5]);
-
-plot(hist_x, roman_h$counts*hist_x, xlim=c(0, max_contact_area), type="l", col=spec_cols[4], lwd=2, xlab="Area", ylab="Frequency", main="Contribution of siding areas");
-points(hist_x, nonroman_h$counts*hist_x, xlim=c(0, max_contact_area), type="l", col=spec_cols[5], lwd=2);
-legend("topright", c("Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15), col=spec_cols[4:5]);
-
 #################
 
 max_ylim=max(c(h_BB$counts, h_bB$counts, h_bb$counts, roman_h$counts, nonroman_h$counts));
+
+barplot(rbind(h_bb$counts, h_bB$counts, h_BB$counts, roman_h$counts, nonroman_h$counts), names.arg=h_bb$mids, col=spec_cols[1:5], border=NA, ylim=c(0, max_ylim*1.5), xlab="Area", ylab="Frequency", main="Subdivided histogram of all areas");
+legend("topleft", c("Stacking pyrimidine-pyrimidine", "Stacking pyrimidine-purine", "Stacking purine-purine", "Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15, 15, 15), col=spec_cols[1:5]);
+
 plot(hist_x, h_BB$counts, type="l", col=spec_cols[3], lwd=2, xlim=c(0, max_contact_area), ylim=c(0, max_ylim), xlab="Area", ylab="Frequency", main="Subdivided histogram of all areas");
 points(hist_x, h_bB$counts, type="l", col=spec_cols[2], lwd=2);
 points(hist_x, h_bb$counts, type="l", col=spec_cols[1], lwd=2);
@@ -164,7 +150,7 @@ points(hist_x, nonroman_h$counts, type="l", col=spec_cols[5], lwd=2);
 legend("topright", c("Stacking pyrimidine-pyrimidine", "Stacking pyrimidine-purine", "Stacking purine-purine", "Pairings with two or three H-bonds", "Other pairings"), pch=c(15, 15, 15, 15, 15), col=spec_cols[1:5]);
 
 max_ylim=max(c(h_BB$counts*hist_x, h_bB$counts*hist_x, h_bb$counts*hist_x, roman_h$counts*hist_x, nonroman_h$counts*hist_x));
-plot(hist_x, h_BB$counts*hist_x, type="l", col=spec_cols[3], lwd=2, xlim=c(0, max_contact_area), ylim=c(0, max_ylim), xlab="Area", ylab="Frequency", main="Contributions of all areas");
+plot(hist_x, h_BB$counts*hist_x, type="l", col=spec_cols[3], lwd=2, xlim=c(0, max_contact_area), ylim=c(0, max_ylim), xlab="Area", ylab="Frequency * Area", main="Contributions of all areas");
 points(hist_x, h_bB$counts*hist_x, type="l", col=spec_cols[2], lwd=2);
 points(hist_x, h_bb$counts*hist_x, type="l", col=spec_cols[1], lwd=2);
 points(hist_x, roman_h$counts*hist_x, type="l", col=spec_cols[4], lwd=2);
