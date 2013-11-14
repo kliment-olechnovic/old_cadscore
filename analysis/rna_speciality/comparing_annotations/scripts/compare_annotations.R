@@ -53,19 +53,19 @@ t_side_sel=t_side[which(is.element(t_side$contact_id, ids_side_mcannotate)),];
 
 t_any_orig_not_sel=t_any_orig[which(!is.element(t_any_orig$contact_id, ids_mcannotate)),];
 t_any_orig_not_sel=t_any_orig_not_sel[rev(order(t_any_orig_not_sel$contact_area)),];
-write.table(t_any_orig_not_sel, "differences_from_mc_annotate", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(t_any_orig_not_sel, "./output/differences_from_mc_annotate", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 #################
 
 length(t_stack_mcannotate[[1]]);
 missed_stack=t_stack_mcannotate[which(is.element(t_stack_mcannotate$contact_id, setdiff(ids_stack_mcannotate, t_any$contact_id))),];
 length(missed_stack[[1]]);
-write.table(missed_stack, "missed_mc_annotate_stacking_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(missed_stack, "./output/missed_mc_annotate_stacking_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 length(t_side_mcannotate[[1]]);
 missed_side=t_side_mcannotate[which(is.element(t_side_mcannotate$contact_id, setdiff(ids_side_mcannotate, t_any$contact_id))),];
 length(missed_side[[1]]);
-write.table(missed_side, "missed_mc_annotate_siding_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(missed_side, "./output/missed_mc_annotate_siding_interactions", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 #################
 
@@ -138,12 +138,12 @@ legend(25, 2500, c("Pairings with two or three H-bonds", "Other pairings"), pch=
 #################
 
 t_stack_sel_sorted=t_stack_sel[order(t_stack_sel$contact_area), c("contact_id", "contact_area")];
-write.table(t_stack_sel_sorted, "sorted_stack_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(t_stack_sel_sorted, "./output/sorted_stack_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 t_side_sel_sorted=t_side_sel[order(t_side_sel$contact_area), c("contact_id", "contact_area")];
-write.table(t_side_sel_sorted, "sorted_side_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(t_side_sel_sorted, "./output/sorted_side_contacts", quote=FALSE, row.names=FALSE, col.names=TRUE);
 
 #################
 
 histograms_summary=data.frame(area=hist_x, f_all=hist_any$counts, f_all_confirmed=hist_any_sel$counts, f_stack=hist_stack$counts, f_stack_confirmed=hist_stack_sel$counts, f_side=hist_side$counts, f_side_confirmed=hist_side_sel$counts, f_stack_confirmed_pp=h_bb$counts, f_stack_confirmed_pP=h_bB$counts, f_stack_confirmed_PP=h_BB$counts, f_side_confirmed_strong=roman_h$counts, f_side_confirmed_weak=nonroman_h$counts);
-write.table(histograms_summary, "histograms_summary.txt", quote=FALSE, row.names=FALSE, col.names=TRUE);
+write.table(histograms_summary, "./output/histograms_summary.txt", quote=FALSE, row.names=FALSE, col.names=TRUE);
