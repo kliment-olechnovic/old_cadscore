@@ -23,6 +23,9 @@
 #   M - main chain
 #   S - side chain
 # Contact types ending with 'W' denote solvent-accessible surface areas
+# 
+# Renamed chains from ( A B ) to ( A B )
+# 
 
 combined_residue_contacts
 260

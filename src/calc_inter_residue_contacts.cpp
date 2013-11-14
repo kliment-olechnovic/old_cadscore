@@ -15,36 +15,6 @@
 namespace
 {
 
-void print_combined_inter_residue_contact_file_comments()
-{
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "This file contains combined inter-residue contact areas");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "calculated by accumulating inter-atom contact areas.");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "The file is structured as follows:");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  file_header (always equals 'combined_residue_contacts')");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  N (the number of inter-residue contacts)");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[1]");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[2]");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[N]");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each contact record has the following format:");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  first_residue_chain_name first_residue_number second_residue_chain_name second_residue_number");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M (the number of contact types)");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[1] corresponding_area_in_target corresponding_area_in_model");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[2] corresponding_area_in_target corresponding_area_in_model");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[M] corresponding_area_in_target corresponding_area_in_model");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types are two-letter strings indicating what residue parts are in contact.");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each residue part is coded as a single letter:");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  A - all residue atoms");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M - main chain");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "  S - side chain");
-	auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
-	std::cout << "\n";
-}
-
 template<typename ContactsMap>
 std::vector<std::string> collect_chain_names_from_contacts_map(const ContactsMap& contacts)
 {
@@ -98,6 +68,7 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	CombinedInterResidueContacts resulting_combined_inter_residue_contacts;
 
 	bool renaming_performed=false;
+	std::string renaming_comment="";
 	if(clo.isopt("--optimally-rename-chains"))
 	{
 		const std::map<protein::ResidueID, protein::ResidueSummary> residue_ids_1=auxiliaries::STDContainersIO::read_map<protein::ResidueID, protein::ResidueSummary>(std::cin, "target residue identifiers", "residue_ids", false);;
@@ -150,6 +121,21 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 					{
 						best_variation.first=score_from_ratio;
 						best_variation.second=combined_inter_residue_contacts;
+						{
+							std::ostringstream renaming_comment_stream;
+							renaming_comment_stream << "Renamed chains from ( ";
+							for(std::size_t j=0;j<chain_names_2.size();j++)
+							{
+								renaming_comment_stream << chain_names_2[j] << " ";
+							}
+							renaming_comment_stream << ") to ( ";
+							for(std::size_t j=0;j<chain_names_2.size();j++)
+							{
+								renaming_comment_stream << chain_names_permutation[j] << " ";
+							}
+							renaming_comment_stream << ")";
+							renaming_comment=renaming_comment_stream.str();
+						}
 					}
 				}
 
@@ -191,7 +177,38 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 	}
 	else
 	{
-		print_combined_inter_residue_contact_file_comments();
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "This file contains combined inter-residue contact areas");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "calculated by accumulating inter-atom contact areas.");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "The file is structured as follows:");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  file_header (always equals 'combined_residue_contacts')");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  N (the number of inter-residue contacts)");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[1]");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[2]");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_record[N]");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each contact record has the following format:");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  first_residue_chain_name first_residue_number second_residue_chain_name second_residue_number");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M (the number of contact types)");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[1] corresponding_area_in_target corresponding_area_in_model");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[2] corresponding_area_in_target corresponding_area_in_model");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[M] corresponding_area_in_target corresponding_area_in_model");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types are two-letter strings indicating what residue parts are in contact.");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each residue part is coded as a single letter:");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  A - all residue atoms");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M - main chain");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  S - side chain");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
+		if(!renaming_comment.empty())
+		{
+			auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+			auxiliaries::STDContainersIO::print_file_comment(std::cout, renaming_comment);
+			auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+		}
+		std::cout << "\n";
 		auxiliaries::STDContainersIO::print_map(std::cout, "combined_residue_contacts", resulting_combined_inter_residue_contacts, true);
 	}
 }
