@@ -69,7 +69,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3D2G 3D2G_A17-A19 G U stack 180.163
 3U5F 3U5F_6315-6350 A U stack 180.157
 3U5B 3U5B_2706-2734 A A stack 180.152
-1QCU 1QCU_A11-D112 G G side 179.77
 3GX6 3GX6_A21-A32 G G stack 179.618
 3GX7 3GX7_A15-A16 G G stack 179.446
 3OWZ 3OWZ_A13-A22 A A stack 178.931
@@ -181,7 +180,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1NUV 1NUV_C27-D44 C G stack 160.348
 3U5D 3U5D_11114-11115 U G stack 160.221
 3U5F 3U5F_61537-61572 C G stack 160.218
-1QCU 1QCU_A1-D122 G G side 160.024
 430D 430D_A7-A8 U C side 159.818
 1YLS 1YLS_D210-D237 C G stack 159.671
 1FG0 1FG0_A2494-A2529 G G stack 159.668
@@ -405,7 +403,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4E8Q 4E8Q_A48-A58 G G stack 149.51
 3SLM 3SLM_A61-A79 C A stack 149.493
 3U5D 3U5D_1184-1185 U C stack 149.476
-1QCU 1QCU_A9-D114 G G side 149.453
 1L8V 1L8V_B223-B251 C G stack 149.393
 1Q29 1Q29_A20-A21 U G side 149.38
 3SKI 3SKI_A40-A41 A U stack 149.22
@@ -454,7 +451,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1KH6 1KH6_A21-A22 C G stack 148.318
 4G6R 4G6R_D31-D32 U C stack 148.313
 2O3V 2O3V_A10-A11 U C stack 148.311
-1QCU 1QCU_A10-D113 G G side 148.277
 3OWI 3OWI_B4-B5 U C stack 148.265
 3U5F 3U5F_6693-6695 U U stack 148.262
 3U5D 3U5D_11341-11342 U C stack 148.229
@@ -583,7 +579,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3P59 3P59_H104-H105 C C stack 145.805
 4E8Q 4E8Q_A185-A186 C A stack 145.794
 4E8N 4E8N_A197-A198 C U stack 145.787
-1QCU 1QCU_A4-D119 G G side 145.755
 3U5B 3U5B_2327-2328 U A stack 145.751
 3SD3 3SD3_A35-A41 U G stack 145.733
 1U9S 1U9S_A80-A95 C G stack 145.697
@@ -608,7 +603,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4FE5 4FE5_B24-B72 A G stack 145.423
 3U5H 3U5H_52885-52938 C G stack 145.416
 3U5F 3U5F_6310-6357 C G stack 145.413
-1QCU 1QCU_A6-D117 G G side 145.401
 3TRA 3TRA_A52-A61 G C stack 145.397
 2G5K 2G5K_B33-B34 U C stack 145.385
 3SKZ 3SKZ_B25-B26 C U stack 145.383
@@ -875,7 +869,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1GID 1GID_A121-A201 C G stack 141.529
 4E8N 4E8N_A69-A70 C C stack 141.497
 2D2L 2D2L_D31-D32 U C stack 141.497
-1QCU 1QCU_A3-D120 G G side 141.495
 3U5D 3U5D_1113-1319 C A stack 141.479
 4JF2 4JF2_A38-A74 C G stack 141.472
 1NUJ 1NUJ_E28-F43 C G stack 141.472
@@ -1249,7 +1242,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3IVN 3IVN_A66-A67 U A stack 137.689
 4E8Q 4E8Q_A53-A54 C A stack 137.686
 3GS8 3GS8_D32-D33 C G stack 137.673
-1QCU 1QCU_A8-D115 G G side 137.654
 4FAU 4FAU_A196-A197 C C stack 137.651
 165D 165D_A4-B15 U G stack 137.633
 3OXE 3OXE_B46-B47 U G stack 137.632
@@ -1257,7 +1249,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1ZFT 1ZFT_A3-B13 C G stack 137.63
 3Q50 3Q50_A17-A18 C C stack 137.603
 3BNP 3BNP_A11-B12 C G stack 137.598
-1QCU 1QCU_A7-D116 G G side 137.59
 2GDI 2GDI_X29-Y31 G G stack 137.578
 2O3X 2O3X_B32-B33 C A stack 137.568
 2A04 2A04_C12-C13 C G stack 137.563
@@ -2101,7 +2092,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1TN2 1TN2_A30-A41 G U stack 130.987
 1TN1 1TN1_A30-A41 G U stack 130.987
 2FCZ 2FCZ_A15-A16 C A stack 130.986
-1QCU 1QCU_A2-D121 G G side 130.98
 3B4B 3B4B_B118-B119 C U stack 130.972
 4G6R 4G6R_D44-D45 C C stack 130.935
 3B4B 3B4B_A11-B31 U G stack 130.933
@@ -2806,7 +2796,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5B 3U5B_2523-2524 G U stack 126.441
 3DW5 3DW5_A2652-A2669 C G stack 126.437
 2ET3 2ET3_B29-B30 C A stack 126.433
-1QCU 1QCU_A5-D118 G G side 126.43
 1L8V 1L8V_B212-B213 C C stack 126.43
 4FAU 4FAU_A112-A113 C G stack 126.416
 2B8S 2B8S_A11-A12 U G stack 126.406
@@ -13769,7 +13758,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2QWY 2QWY_C9-C42 A G stack 52.1334
 1ZX7 1ZX7_G12-H25 C U side 52.1316
 3U5D 3U5D_11915-11938 A U stack 52.1295
-1QCU 1QCU_C110-D114 C G stack 52.1217
 1Q96 1Q96_A9-A20 A A stack 52.1215
 3S49 3S49_A5-B11 A A stack 52.1186
 1X9C 1X9C_D36-D37 G U side 52.1168
@@ -13897,7 +13885,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1GID 1GID_B117-B205 G U stack 51.2138
 3U5H 3U5H_53317-53318 U G stack 51.2133
 3U5H 3U5H_5638-5652 C G stack 51.1977
-1QCU 1QCU_C106-D118 C G stack 51.1834
 3U5F 3U5F_61656-61658 U G stack 51.168
 1Z43 1Z43_A157-A173 U U stack 51.1669
 4ERL 4ERL_A23-A62 A A stack 51.1597
@@ -13942,7 +13929,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3P59 3P59_D109-D110 A G stack 50.8496
 1YRJ 1YRJ_A4-B46 C C stack 50.8481
 3GX3 3GX3_A68-A84 G A stack 50.848
-1QCU 1QCU_C102-D122 C G stack 50.8413
 1ZX7 1ZX7_C14-C15 C G stack 50.8363
 1ZX7 1ZX7_E14-E15 C G stack 50.8279
 3K1V 3K1V_A3-A21 A C stack 50.8266
@@ -14105,7 +14091,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4E8N 4E8N_A357-A387 C U stack 49.6938
 4FAU 4FAU_A77-A111 A G stack 49.6903
 1ET4 1ET4_C427-C430 U G side 49.6847
-1QCU 1QCU_C107-D117 C G stack 49.6692
 3NPQ 3NPQ_C20-C26 C C stack 49.6674
 2YIE 2YIE_X38-X39 A U stack 49.6647
 2NOK 2NOK_A65-B103 C U stack 49.6635
@@ -14497,7 +14482,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2ESI 2ESI_A0-A1 U U stack 46.976
 3DIX 3DIX_A39-A41 A C stack 46.9665
 3U5B 3U5B_2705-2732 U G side 46.9498
-1QCU 1QCU_C104-D120 C G stack 46.9409
 3U5B 3U5B_21652-21749 C A side 46.9251
 1Q29 1Q29_A20-B108 U A stack 46.9228
 4ENC 4ENC_A21-A22 A C side 46.9115
@@ -14644,7 +14628,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3LA5 3LA5_A25-A46 U G stack 46.1413
 2EEU 2EEU_A25-A53 U C stack 46.1399
 3U5D 3U5D_12945-12949 G U stack 46.1287
-1QCU 1QCU_C111-D113 C G stack 46.1197
 3U5D 3U5D_12368-12380 A U stack 46.1189
 3U5D 3U5D_1718-1750 G G side 46.1156
 3U5F 3U5F_6237-6834 C G side 46.1087
@@ -14700,7 +14683,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1DDY 1DDY_C227-C230 U G side 45.7914
 3U5F 3U5F_6331-6338 A C stack 45.7864
 3U5F 3U5F_6443-6444 C C stack 45.7841
-1QCU 1QCU_A3-B21 G C stack 45.7832
 2PN4 2PN4_A66-B100 A G stack 45.7794
 4ENB 4ENB_A21-A22 A C side 45.7775
 3U5H 3U5H_51728-51730 G G stack 45.7737
@@ -14768,7 +14750,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_13110-13125 C U stack 45.4147
 3U5H 3U5H_531-554 C C stack 45.408
 3G78 3G78_A24-A36 U G stack 45.387
-1QCU 1QCU_C108-D116 C G stack 45.3866
 2QUS 2QUS_B25-B43 U G side 45.3831
 3U5D 3U5D_12827-12863 U G stack 45.3825
 3IVN 3IVN_A54-A55 U A stack 45.3764
@@ -15173,7 +15154,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_1308-12222 A A stack 42.8339
 4E8N 4E8N_A74-A114 C G stack 42.8298
 3U5H 3U5H_5992-51058 A U stack 42.8261
-1QCU 1QCU_A5-B19 G C stack 42.8205
 3U5F 3U5F_6652-6680 G U side 42.8109
 3C44 3C44_B7-B9 G A side 42.8071
 3G78 3G78_A153-A224 G A stack 42.8069
@@ -15382,7 +15362,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5H 3U5H_51815-51816 U A stack 41.651
 1NTA 1NTA_A15-A18 C C side 41.6257
 4ERL 4ERL_A39-A48 A A side 41.6225
-1QCU 1QCU_C105-D119 C G stack 41.615
 3U5D 3U5D_11626-11818 U U stack 41.6143
 1L8V 1L8V_A254-B171 G A stack 41.6066
 1Q93 1Q93_C9-C10 A G stack 41.6034
@@ -16833,7 +16812,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4FRG 4FRG_B3-B82 C C stack 33.7351
 3U5H 3U5H_51247-51266 U G stack 33.7338
 3U5H 3U5H_51021-51030 G A stack 33.7326
-1QCU 1QCU_A7-B17 G C stack 33.732
 1MSY 1MSY_A2658-A2664 C G stack 33.7105
 3U5F 3U5F_6678-6680 A U stack 33.707
 2ET5 2ET5_A13-B32 G A stack 33.7035
@@ -17384,7 +17362,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3B58 3B58_A6-B24 G A side 31.1681
 3U5B 3U5B_21485-21605 C G side 31.1631
 3U5F 3U5F_6518-6519 A C stack 31.1628
-1QCU 1QCU_A11-B13 G C stack 31.1551
 3U5B 3U5B_21618-21620 C C stack 31.1544
 3U5D 3U5D_11445-12357 U A stack 31.1398
 3U5F 3U5F_6872-6956 G C stack 31.1315
@@ -17448,7 +17425,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3SKZ 3SKZ_B33-B51 G C stack 30.9249
 3BBI 3BBI_B21-C44 G C stack 30.9229
 3U5H 3U5H_53114-53119 A U stack 30.9132
-1QCU 1QCU_A6-B18 G C stack 30.9093
 3RKF 3RKF_D21-D49 A U stack 30.9057
 2O3X 2O3X_A8-B39 A G stack 30.9047
 3D2G 3D2G_A17-A21 G A stack 30.8987
@@ -17750,7 +17726,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1L8V 1L8V_A142-A162 U U stack 29.7691
 3DS7 3DS7_A38-A61 G C stack 29.7663
 4ERL 4ERL_A65-A124 G A stack 29.7642
-1QCU 1QCU_C109-D115 C G stack 29.7614
 2A04 2A04_C3-D33 U C stack 29.7609
 2YIE 2YIE_X29-Z93 A G stack 29.7572
 2GCV 2GCV_B56-B59 A U stack 29.7556
@@ -19952,7 +19927,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5F 3U5F_6802-6804 G A stack 23.4307
 3U5H 3U5H_52189-52318 U U side 23.4278
 1MWL 1MWL_A13-B31 G A stack 23.4263
-1QCU 1QCU_C103-D121 C G stack 23.4261
 3F4H 3F4H_X12-X31 G C side 23.4254
 1Y6T 1Y6T_A4-B19 G G stack 23.4243
 2HO6 2HO6_A1-B52 G C stack 23.4219
@@ -22056,7 +22030,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5F 3U5F_6309-6358 C U stack 18.6351
 3DJ2 3DJ2_A79-A81 C A stack 18.6335
 3U5D 3U5D_11305-11306 U G side 18.6304
-1QCU 1QCU_A4-B20 G C stack 18.6303
 1GID 1GID_B227-B246 G A stack 18.6296
 3R1C 3R1C_i8-j2 C C stack 18.6283
 3U5H 3U5H_52248-52314 C U side 18.6276
@@ -22757,7 +22730,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_1302-1314 U U stack 17.1746
 2QUS 2QUS_B51-B52 A A stack 17.1696
 3U5D 3U5D_13086-13376 A A side 17.1658
-1QCU 1QCU_A8-B16 G C stack 17.1647
 2HO6 2HO6_B30-B116 A G side 17.164
 3RKF 3RKF_B30-B41 U C stack 17.1607
 1Q96 1Q96_B4-B27 U C stack 17.1586
@@ -23235,7 +23207,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2QBZ 2QBZ_X39-X147 U C stack 16.1778
 2NPY 2NPY_C17-D48 C C stack 16.1777
 3U5F 3U5F_6554-6571 C G side 16.1738
-1QCU 1QCU_A2-B22 G C stack 16.1735
 3U5H 3U5H_51230-51261 G G stack 16.1723
 1L8V 1L8V_B131-B193 U C stack 16.1671
 1VTQ 1VTQ_A24-A45 A G side 16.1651
@@ -26850,7 +26821,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2BCZ 2BCZ_C15-D48 G C stack 9.71448
 4FEN 4FEN_B21-B47 A U stack 9.71439
 2NOK 2NOK_C63-D103 U U stack 9.71398
-1QCU 1QCU_B17-C106 C C side 9.71347
 2OUE 2OUE_A1-D37 G U side 9.71002
 2EEU 2EEU_A22-A73 A A side 9.70984
 3U5B 3U5B_21144-21633 U A side 9.70973
@@ -28367,7 +28337,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3B4C 3B4C_B55-B105 G A stack 7.90111
 3U5H 3U5H_52625-52626 C A stack 7.90029
 1Q93 1Q93_B11-B21 U A stack 7.89917
-1QCU 1QCU_B21-C102 C C side 7.89885
 3NPN 3NPN_A15-A31 G G stack 7.89854
 3U5D 3U5D_12663-12706 G G stack 7.8984
 3DIL 3DIL_A12-A81 G A stack 7.89759
@@ -28700,7 +28669,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3NPQ 3NPQ_B15-B31 G G side 7.52958
 3U5D 3U5D_1496-1622 C A side 7.52938
 4E8N 4E8N_A176-A188 U A stack 7.5279
-1QCU 1QCU_B18-C105 C C side 7.52706
 433D 433D_A1-B27 G C stack 7.52575
 4JRC 4JRC_B56-B62 G G stack 7.52435
 1Y95 1Y95_A18-B5 A C stack 7.52389
@@ -29165,7 +29133,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5F 3U5F_61084-61093 A A side 6.97732
 3U5D 3U5D_11648-11806 A A stack 6.97723
 3B31 3B31_A6177-A6198 U U side 6.97697
-1QCU 1QCU_B22-C102 C C stack 6.97485
 2ZY6 2ZY6_A12-A23 G A side 6.97467
 2GDI 2GDI_X21-X37 G G stack 6.97306
 4E8N 4E8N_A177-A187 U A stack 6.97179
@@ -30305,7 +30272,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3D0X 3D0X_A25-A63 U A stack 5.85359
 4ERL 4ERL_A28-A58 G G stack 5.85327
 4E8Q 4E8Q_A73-A113 A G stack 5.85282
-1QCU 1QCU_B14-C110 C C stack 5.85249
 1Y26 1Y26_X51-X74 U U side 5.85172
 3U5D 3U5D_12439-12507 A C side 5.85104
 2FCX 2FCX_B1-B22 C A stack 5.85075
@@ -30405,7 +30371,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 280D 280D_C30-D42 U U stack 5.7815
 1L2X 1L2X_A6-A14 G C stack 5.78119
 3U5H 3U5H_5341-5344 G A stack 5.78066
-1QCU 1QCU_A10-D112 G G stack 5.78048
 2EEU 2EEU_A51-A74 U C side 5.77882
 4FAW 4FAW_A359-A383 G G stack 5.77879
 3U5H 3U5H_5498-53274 A A stack 5.77799
@@ -30763,7 +30728,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5H 3U5H_52616-52626 C A side 5.45788
 3BNS 3BNS_C17-D7 A C stack 5.45766
 3U5B 3U5B_2391-2405 A C side 5.45762
-1QCU 1QCU_A4-D118 G G stack 5.45732
 3SUH 3SUH_X21-X75 C C side 5.45673
 3RG5 3RG5_B26-B43 U U side 5.45621
 3IQR 3IQR_A29-A62 C A side 5.45454
@@ -30807,7 +30771,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2QWY 2QWY_B22-B42 G G stack 5.42089
 3G78 3G78_A287-A289 A C stack 5.42073
 2BCY 2BCY_A6-B9 G A side 5.42047
-1QCU 1QCU_A9-B15 G C stack 5.41956
 3D2X 3D2X_A43-A47 A U side 5.4183
 3OWI 3OWI_B43-B59 C A stack 5.41818
 3U5F 3U5F_6402-6406 C U side 5.41817
@@ -31149,7 +31112,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3RG5 3RG5_A2-A70 C G stack 5.14232
 359D 359D_A60-B170 A C stack 5.14222
 3DJ2 3DJ2_A43-A97 G U stack 5.1406
-1QCU 1QCU_B16-C108 C C stack 5.14022
 2GCS 2GCS_B77-B86 U G stack 5.14001
 3U5F 3U5F_61342-61382 C A side 5.13821
 2GCS 2GCS_A5-A7 C G stack 5.13809
@@ -31342,7 +31304,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3SLQ 3SLQ_A52-A60 U C side 4.99277
 3DIQ 3DIQ_A17-A74 C G stack 4.98799
 2QUW 2QUW_B34-B55 G C stack 4.98791
-1QCU 1QCU_A10-B14 G C stack 4.98733
 3GS5 3GS5_C35-C54 A U stack 4.98649
 3U5F 3U5F_61177-61195 C C stack 4.98562
 3DS7 3DS7_B234-B266 U A stack 4.98522
@@ -31363,7 +31324,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3OXB 3OXB_A5-A83 C A stack 4.96732
 299D 299D_B152-B161 C U stack 4.96683
 3F2T 3F2T_X32-X63 G A stack 4.96654
-1QCU 1QCU_A7-D115 G G stack 4.96637
 3U5F 3U5F_6237-6238 C U side 4.96554
 3DJ0 3DJ0_A91-A102 A C side 4.96554
 4B5R 4B5R_A48-A50 C G stack 4.96454
@@ -31397,7 +31357,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2PN3 2PN3_A50-B112 A C stack 4.95123
 3U5H 3U5H_51448-52357 U A side 4.95053
 2QWY 2QWY_B27-B36 C A side 4.94969
-1QCU 1QCU_A2-D120 G G stack 4.94943
 3L0U 3L0U_A30-A39 G U side 4.94867
 3U5D 3U5D_11214-11290 U A stack 4.94788
 1F27 1F27_A11-B30 A C stack 4.94762
@@ -31506,7 +31465,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_13024-13030 A G stack 4.86604
 3U5H 3U5H_5518-5520 G U side 4.86389
 3U5F 3U5F_61237-61247 G U stack 4.8625
-1QCU 1QCU_A5-D117 G G stack 4.86245
 3U5H 3U5H_51758-51766 G G side 4.86209
 3D2X 3D2X_B10-B34 G G side 4.86164
 3GX3 3GX3_A7-A86 U G stack 4.85916
@@ -31736,7 +31694,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4GPX 4GPX_A5-B43 G U stack 4.68553
 2QWY 2QWY_B5-B26 G U stack 4.68505
 2GIS 2GIS_A46-A56 A G side 4.68411
-1QCU 1QCU_A3-D119 G G stack 4.68206
 3U5B 3U5B_21469-21571 A C side 4.68176
 1GID 1GID_A182-A188 U G stack 4.68167
 429D 429D_C126-D145 G A stack 4.68005
@@ -31783,7 +31740,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3OWW 3OWW_A3-A85 C A stack 4.65234
 3U5H 3U5H_721-757 G G stack 4.65183
 2OIJ 2OIJ_A5-B18 C G stack 4.65029
-1QCU 1QCU_A8-D114 G G stack 4.65012
 1XPF 1XPF_B2-B21 U A stack 4.64894
 2HO7 2HO7_B75-B88 G C side 4.64886
 3U5H 3U5H_51543-52167 G A side 4.64842
@@ -31820,7 +31776,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3D2X 3D2X_B9-B72 G A stack 4.62205
 1VTQ 1VTQ_A5-A66 U C stack 4.62058
 3U5B 3U5B_21537-21540 C G side 4.61791
-1QCU 1QCU_A6-D116 G G stack 4.61773
 3U5F 3U5F_6549-6588 G U side 4.61753
 3SKL 3SKL_A26-A82 U U stack 4.61725
 3G78 3G78_A305-A313 C A stack 4.61639
@@ -31890,7 +31845,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2HOM 2HOM_A17-A48 G C side 4.56933
 2GDI 2GDI_X16-X49 G C stack 4.56933
 3B5F 3B5F_B23-C41 A U stack 4.56865
-1QCU 1QCU_A1-D121 G G stack 4.56851
 4E8Q 4E8Q_A75-A111 G G stack 4.56751
 2HOM 2HOM_A56-A82 A G side 4.5669
 1GID 1GID_B182-B188 U G stack 4.5668
@@ -32065,7 +32019,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2QUW 2QUW_A6-B58 C G stack 4.45373
 1Z43 1Z43_A144-A233 C C side 4.45354
 3U5H 3U5H_51950-52095 U G stack 4.45287
-1QCU 1QCU_A9-B13 G C side 4.4525
 4ERJ 4ERJ_A88-A99 A C side 4.45241
 3U5D 3U5D_1679-1700 U C side 4.45112
 3MEI 3MEI_A1-B22 C G stack 4.45098
@@ -32279,7 +32232,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5B 3U5B_2615-21105 A C stack 4.28882
 3DIQ 3DIQ_A143-A159 C U stack 4.28778
 1LC4 1LC4_A13-B34 G C stack 4.28687
-1QCU 1QCU_C104-D118 C G stack 4.28615
 3GX7 3GX7_A4-A89 U G stack 4.28557
 3U5H 3U5H_51345-51358 G C stack 4.28532
 3G78 3G78_A377-A382 C G side 4.2849
@@ -32404,7 +32356,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5B 3U5B_236-2769 C A side 4.20074
 3SUH 3SUH_X30-X55 C G stack 4.19922
 4ERJ 4ERJ_A12-A78 C A stack 4.19893
-1QCU 1QCU_C110-D112 C G stack 4.19863
 3U5H 3U5H_51671-51778 C G stack 4.1986
 3G78 3G78_A169-A196 G C stack 4.19851
 2P7F 2P7F_C23-D41 A U stack 4.19795
@@ -32568,7 +32519,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5F 3U5F_6698-6739 U G side 4.08319
 1GID 1GID_A219-A253 A U stack 4.08307
 3U5H 3U5H_52532-52546 U C side 4.08224
-1QCU 1QCU_C101-D121 C G stack 4.08174
 3F4H 3F4H_Y67-Y76 G C side 4.08074
 1Y6T 1Y6T_A17-B6 C U side 4.07981
 3TRA 3TRA_A5-A66 U C stack 4.07787
@@ -32581,7 +32531,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_11478-11874 C A stack 4.07411
 3SLQ 3SLQ_A58-A81 C U stack 4.0741
 4GPX 4GPX_A20-B28 U G stack 4.07342
-1QCU 1QCU_A3-B19 G C side 4.07272
 3DJ0 3DJ0_A43-A96 G C stack 4.07087
 1Z43 1Z43_A146-A231 G G stack 4.06951
 2QWY 2QWY_C27-C36 C A side 4.06458
@@ -32723,7 +32672,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_1827-1897 A U stack 3.96927
 1HR2 1HR2_B214-B260 A C stack 3.96736
 2GCS 2GCS_B106-B126 A U stack 3.96547
-1QCU 1QCU_A7-B15 G C stack 3.96442
 3R1D 3R1D_C10-D1 G G stack 3.96415
 1ZX7 1ZX7_B34-G15 C G stack 3.96398
 1X9C 1X9C_B9-D38 A A side 3.96357
@@ -32792,13 +32740,11 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_1178-1239 U G side 3.92291
 3U5H 3U5H_5915-52136 A C stack 3.92274
 3U5H 3U5H_52156-52181 C C stack 3.92179
-1QCU 1QCU_B19-C105 C C stack 3.92177
 3OWZ 3OWZ_B14-B26 A G stack 3.92144
 3G78 3G78_A366-A374 A G side 3.92144
 3U5D 3U5D_12408-12812 U C side 3.92057
 3GX2 3GX2_A35-A36 G A side 3.92024
 3U5F 3U5F_653-6424 G C side 3.92022
-1QCU 1QCU_A9-D113 G G stack 3.92003
 3GOG 3GOG_A22-A73 U A side 3.92
 300D 300D_A50-B153 G U stack 3.91841
 2A43 2A43_A9-A27 C G stack 3.9175
@@ -32817,12 +32763,10 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5H 3U5H_5359-5922 U U side 3.90972
 3IVN 3IVN_A9-A68 A C side 3.9095
 2QEK 2QEK_A17-B9 C A side 3.90844
-1QCU 1QCU_B18-C106 C C stack 3.90811
 3U5B 3U5B_21164-21613 G U stack 3.90701
 3U5F 3U5F_6657-6673 U A stack 3.9069
 3U5H 3U5H_51677-51690 G C stack 3.90631
 3U5D 3U5D_11341-11362 U G side 3.90538
-1QCU 1QCU_C107-D115 C G stack 3.90417
 3P22 3P22_B1-C36 A C side 3.90339
 3U5D 3U5D_12584-12586 G G side 3.90324
 3Q51 3Q51_A14-A28 A A side 3.90276
@@ -33349,7 +33293,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3F2Q 3F2Q_X32-X82 G C stack 3.49377
 3U5H 3U5H_53349-53353 C G stack 3.49366
 3U5H 3U5H_51675-51692 G U stack 3.49341
-1QCU 1QCU_A2-B20 G C stack 3.49329
 3U5D 3U5D_12877-12948 G C stack 3.49319
 1U9S 1U9S_A137-A139 A C side 3.49177
 1Q29 1Q29_B109-B119 C U stack 3.49122
@@ -33500,7 +33443,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3DIQ 3DIQ_A82-A112 A C stack 3.39118
 3F2Q 3F2Q_X4-X108 U G side 3.39093
 3OXM 3OXM_B44-B58 U G stack 3.39068
-1QCU 1QCU_C108-D114 C G stack 3.39018
 3DJ2 3DJ2_A8-A166 G C side 3.39017
 420D 420D_A13-B19 C A stack 3.38963
 3U5B 3U5B_21646-21756 C A stack 3.38877
@@ -33533,7 +33475,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5H 3U5H_51627-51630 U U side 3.37154
 3OXD 3OXD_A39-A62 C G stack 3.37096
 1LNT 1LNT_A10-B14 C G stack 3.37095
-1QCU 1QCU_A5-B17 G C stack 3.36978
 3DIM 3DIM_A3-A171 C G stack 3.36838
 3U5H 3U5H_51235-51237 U G stack 3.36815
 3B4A 3B4A_A15-B25 A C stack 3.36761
@@ -33566,7 +33507,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5H 3U5H_5877-5885 C U stack 3.3488
 3RKF 3RKF_C22-C73 U A side 3.34755
 3DIQ 3DIQ_A4-A170 C C stack 3.34742
-1QCU 1QCU_A6-B16 G C stack 3.3471
 1DDY 1DDY_E407-E421 G C side 3.34592
 3U5D 3U5D_12799-12800 A G side 3.34539
 2OE6 2OE6_A1410-B1489 U U stack 3.34528
@@ -33856,13 +33796,11 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5F 3U5F_61002-61780 G G side 3.17512
 2FGP 2FGP_A5-B11 A G stack 3.17435
 3U5B 3U5B_21720-21721 G A stack 3.17405
-1QCU 1QCU_A1-B21 G C stack 3.17344
 4FEO 4FEO_B23-B53 A C side 3.1721
 3U5H 3U5H_5675-5788 C C stack 3.17206
 3SLM 3SLM_B59-B79 G A side 3.17165
 4E8Q 4E8Q_A287-A289 A C stack 3.17152
 3U5F 3U5F_6620-61108 A G side 3.17137
-1QCU 1QCU_A8-B14 G C stack 3.17111
 3U5H 3U5H_5718-5751 G A side 3.16938
 3U5H 3U5H_51819-51822 U C stack 3.16905
 3GX2 3GX2_A7-A86 U G stack 3.16717
@@ -33873,13 +33811,11 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3DIG 3DIG_X41-X51 C A side 3.16497
 4ERJ 4ERJ_A138-A154 G G stack 3.16476
 3U5B 3U5B_2764-2773 U C stack 3.16245
-1QCU 1QCU_C106-D116 C G stack 3.16243
 1NUJ 1NUJ_A18-B49 C C stack 3.16202
 4B5R 4B5R_A47-A55 C G stack 3.16179
 1GID 1GID_B197-B201 C G side 3.16104
 1GID 1GID_B108-B212 G G stack 3.15903
 2OE5 2OE5_A1404-B1496 C C stack 3.15877
-1QCU 1QCU_C105-D117 C G stack 3.15809
 4E8Q 4E8Q_A270-A282 G A stack 3.15732
 2QUS 2QUS_A16-A27 G C stack 3.15726
 4E8Q 4E8Q_A134-A141 A C stack 3.15706
@@ -33896,7 +33832,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3G78 3G78_A121-A248 A G stack 3.15145
 2HOL 2HOL_A25-A37 U G side 3.15076
 3GX5 3GX5_A5-A88 U U stack 3.1496
-1QCU 1QCU_C102-D120 C G stack 3.14945
 3E5C 3E5C_A3-A50 U G stack 3.14941
 3E5E 3E5E_A3-A50 U G stack 3.14829
 4G6R 4G6R_C30-D31 G U side 3.14778
@@ -33952,7 +33887,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3BBK 3BBK_A12-B2 C C stack 3.12318
 3IQR 3IQR_A14-A41 A C side 3.12229
 2W89 2W89_A905-B967 C G stack 3.12209
-1QCU 1QCU_C103-D119 C G stack 3.12205
 3U5D 3U5D_124-156 G G side 3.12173
 3U5H 3U5H_71-7119 G U stack 3.12139
 435D 435D_C5-D9 C G stack 3.12018
@@ -34495,7 +34429,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5D 3U5D_11566-11571 A A stack 2.8127
 3U5H 3U5H_52690-52702 G A stack 2.81241
 3FO6 3FO6_A54-A71 C C side 2.81209
-1QCU 1QCU_A4-B18 G C stack 2.81167
 3U5B 3U5B_2626-2939 U A stack 2.81112
 4J50 4J50_A14-B1 A U side 2.81096
 3SD3 3SD3_A22-A66 A C side 2.81049
@@ -34923,7 +34856,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2GRB 2GRB_F5-H6 G U stack 2.56565
 3SUX 3SUX_X25-X75 A C side 2.56407
 3IVN 3IVN_B14-B44 A C side 2.56394
-1QCU 1QCU_B13-C111 C C stack 2.56328
 3U5H 3U5H_52627-52797 C C stack 2.56326
 1ZFV 1ZFV_D42-D43 U A stack 2.56241
 3DW6 3DW6_A2651-A2668 C G stack 2.56218
@@ -34956,7 +34888,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3R1C 3R1C_e2-f6 C G stack 2.55119
 1GID 1GID_A117-A203 G C stack 2.55024
 2PWT 2PWT_A4-B41 G U stack 2.54951
-1QCU 1QCU_B17-C107 C C stack 2.54856
 3U5D 3U5D_12876-12949 C U stack 2.5482
 3U5D 3U5D_11654-11800 A A stack 2.54726
 3D2V 3D2V_B49-B66 A G stack 2.54623
@@ -35382,7 +35313,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3G78 3G78_A37-A38 U C stack 2.30919
 3GX2 3GX2_A24-A64 A U stack 2.30785
 3PDR 3PDR_A51-A122 C A stack 2.30732
-1QCU 1QCU_C109-D113 C G stack 2.30687
 2TRA 2TRA_A2-A69 C G stack 2.3051
 3OXB 3OXB_B11-B72 A G side 2.30407
 3GX6 3GX6_A45-A47 A C stack 2.3037
@@ -36749,7 +36679,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3VRS 3VRS_A9-A45 A C stack 1.59884
 2P7F 2P7F_A12-B2 C C stack 1.59772
 3DJ2 3DJ2_A11-A141 G G side 1.59672
-1QCU 1QCU_B18-C104 C C stack 1.59649
 3U5B 3U5B_21154-21623 G C side 1.59598
 2GCS 2GCS_B37-B51 G U stack 1.59541
 3U5B 3U5B_21758-21780 U G stack 1.59534
@@ -36780,7 +36709,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1WVD 1WVD_A13-B11 C U stack 1.5848
 3G78 3G78_A182-Z4 U U side 1.58474
 4FEP 4FEP_B54-B71 C C side 1.58472
-1QCU 1QCU_B21-C103 C C stack 1.58415
 3U5D 3U5D_1339-1341 C G stack 1.5827
 3P22 3P22_C12-C27 U U side 1.5824
 3B5A 3B5A_B18-C45 A C stack 1.58149
@@ -37413,7 +37341,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5H 3U5H_53246-53247 G G stack 1.23097
 2GCV 2GCV_B112-B118 A C stack 1.22999
 3U5B 3U5B_2327-2340 U U stack 1.22965
-1QCU 1QCU_B15-C107 C C stack 1.22964
 437D 437D_A5-A15 C C stack 1.22962
 3DIG 3DIG_X18-X73 C G stack 1.22956
 3OWW 3OWW_B39-B62 C G stack 1.22888
@@ -37532,7 +37459,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3DIX 3DIX_A141-A165 G G stack 1.16683
 1L8V 1L8V_B103-B255 G C side 1.16655
 1L8V 1L8V_B116-B204 G C stack 1.16617
-1QCU 1QCU_A10-B12 G C stack 1.16557
 2G5Q 2G5Q_A8-B36 C U stack 1.16544
 3RG5 3RG5_A52-A61 G C stack 1.16541
 1L8V 1L8V_A232-A243 C U stack 1.16529
@@ -37560,7 +37486,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3GES 3GES_A22-A53 U C stack 1.15351
 4J50 4J50_A18-B3 C G stack 1.15323
 1D4R 1D4R_A3-B25 U C stack 1.15272
-1QCU 1QCU_B19-C103 C C stack 1.14922
 1FG0 1FG0_A2096-A2534 A C side 1.14897
 3U5H 3U5H_51527-51832 C C side 1.14852
 3IQN 3IQN_A27-A65 G C side 1.14817
@@ -37705,7 +37630,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4G6R 4G6R_B9-D38 A A side 1.08032
 3U5H 3U5H_847-855 C U side 1.08003
 2W89 2W89_A902-B970 C U stack 1.07963
-1QCU 1QCU_B16-C106 C C stack 1.07962
 2HOL 2HOL_A10-A88 C C stack 1.07649
 3FU2 3FU2_B9-B32 U U side 1.07619
 3OXE 3OXE_A30-A72 C G stack 1.07617
@@ -37718,7 +37642,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4FAR 4FAR_A3-A79 G G stack 1.072
 4GPY 4GPY_A21-B27 C C stack 1.07196
 3R1C 3R1C_E3-F5 G C stack 1.07162
-1QCU 1QCU_B17-C105 C C stack 1.07067
 3DIL 3DIL_A40-A51 U A side 1.07028
 3DIM 3DIM_A148-A154 A C stack 1.07021
 2HO6 2HO6_B111-B119 C U stack 1.06985
@@ -37730,7 +37653,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 2HO6 2HO6_A10-B30 C A stack 1.06803
 3R1C 3R1C_g6-h2 G C stack 1.06694
 3PDR 3PDR_A35-A149 C G stack 1.06663
-1QCU 1QCU_B20-C102 C C side 1.06575
 3U5D 3U5D_11451-11881 C A stack 1.06311
 3U5D 3U5D_11452-11890 A U side 1.06185
 3U5D 3U5D_12144-12326 A A stack 1.06157
@@ -38062,7 +37984,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3U5F 3U5F_6115-6301 G A stack 0.898007
 2QBZ 2QBZ_X102-X169 C A stack 0.897861
 4ENC 4ENC_A4-A21 C A stack 0.897461
-1QCU 1QCU_B13-C109 C C stack 0.897064
 3U5B 3U5B_21661-21739 U C stack 0.89703
 3U5D 3U5D_12829-12859 U U side 0.896961
 3P22 3P22_A8-A30 U U side 0.896612
@@ -38551,7 +38472,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 3B31 3B31_B6208-B6212 A U stack 0.631042
 3PDR 3PDR_X96-X109 C U stack 0.630795
 3U5D 3U5D_11378-11427 U U stack 0.630474
-1QCU 1QCU_B20-C104 C C stack 0.630165
 3U5B 3U5B_21687-21713 U G side 0.629454
 3MIJ 3MIJ_A4-A11 G G stack 0.629432
 1QC0 1QC0_A14-B24 C C side 0.628932
@@ -38669,7 +38589,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 4B5R 4B5R_A24-A67 A U stack 0.570082
 3U5D 3U5D_12503-12505 G U stack 0.570005
 3U5H 3U5H_5160-5260 G C stack 0.569372
-1QCU 1QCU_B14-C108 C C side 0.569309
 3DIX 3DIX_A82-A112 A C stack 0.569211
 364D 364D_B82-C93 U C stack 0.568958
 3G4M 3G4M_A26-A43 C C stack 0.56809
@@ -39078,7 +38997,6 @@ pdb_id contact_id first_base_name second_base_name contact_type contact_area
 1O3Z 1O3Z_A3-B20 U C stack 0.353365
 4FRG 4FRG_B34-B63 U A stack 0.351853
 3U5F 3U5F_61293-61303 U U stack 0.351033
-1QCU 1QCU_B12-C110 C C stack 0.349807
 4JRC 4JRC_B39-B59 G G side 0.349012
 433D 433D_A11-B17 U U side 0.348954
 3D0X 3D0X_A19-A66 G G side 0.348844

@@ -1,7 +1,10 @@
 t_contacts=read.table("../reformatting_annotations/output/stack_and_side_by_voroprot2_contacts", header=TRUE, stringsAsFactors=FALSE);
-t_faces=read.table("../reformatting_annotations/output/stack_and_side_by_voroprot2_faces", header=TRUE, stringsAsFactors=FALSE);
 t_stack_mcannotate=read.table("../reformatting_annotations/output/stack_by_mc_annotate", header=TRUE, stringsAsFactors=FALSE);
 t_side_mcannotate=read.table("../reformatting_annotations/output/side_by_mc_annotate", header=TRUE, stringsAsFactors=FALSE);
+
+t_contacts=t_contacts[which(t_contacts$pdb_id!="1QCU"),];
+t_stack_mcannotate=t_stack_mcannotate[which(t_stack_mcannotate$pdb_id!="1QCU"),];
+t_side_mcannotate=t_side_mcannotate[which(t_side_mcannotate$pdb_id!="1QCU"),];
 
 ids_stack_mcannotate=union(t_stack_mcannotate$contact_id, t_stack_mcannotate$contact_id);
 ids_side_mcannotate=union(t_side_mcannotate$contact_id, t_side_mcannotate$contact_id);
