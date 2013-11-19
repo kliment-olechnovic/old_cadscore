@@ -76,10 +76,11 @@ struct NucleotidePlane
 
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--diagnostic-output --use-atom-centers");
+	clo.check_allowed_options("--diagnostic-output --use-atom-centers --output-normals-cos");
 
 	const bool diagnostic_output=clo.isopt("--diagnostic-output");
 	const bool use_atom_centers=clo.isopt("--use-atom-centers");
+	const bool output_normals_cos=clo.isopt("--output-normals-cos");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -172,7 +173,12 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 							{
 								std::cout << rid_a.chain_id << " " << rid_a.residue_number << " " << atoms[atom_id_a].residue_name << " ";
 								std::cout << rid_b.chain_id << " " << rid_b.residue_number << " " << atoms[atom_id_b].residue_name << " ";
-								std::cout << contact_type << " " << area << " " << (rid_a<rid_b ? "left_to_right" : "right_to_left") << "\n";
+								std::cout << contact_type << " " << area << " " << (rid_a<rid_b ? "left_to_right" : "right_to_left");
+								if(output_normals_cos)
+								{
+									std::cout << " " << apollota::dot_product(nucleotides_planes.find(rid_a)->second.normal, nucleotides_planes.find(rid_b)->second.normal);
+								}
+								std::cout << "\n";
 							}
 						}
 					}
