@@ -76,11 +76,12 @@ struct NucleotidePlane
 
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--diagnostic-output --use-atom-centers --output-normals-cos");
+	clo.check_allowed_options("--diagnostic-output --use-atom-centers --output-normals-cos --output-rings-shift");
 
 	const bool diagnostic_output=clo.isopt("--diagnostic-output");
 	const bool use_atom_centers=clo.isopt("--use-atom-centers");
 	const bool output_normals_cos=clo.isopt("--output-normals-cos");
+	const bool output_rings_shift=clo.isopt("--output-rings-shift");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -177,6 +178,16 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 								if(output_normals_cos)
 								{
 									std::cout << " " << apollota::dot_product(nucleotides_planes.find(rid_a)->second.normal, nucleotides_planes.find(rid_b)->second.normal);
+								}
+								if(output_rings_shift)
+								{
+									const NucleotidePlane& plane_a=nucleotides_planes.find(rid_a)->second;
+									const NucleotidePlane& plane_b=nucleotides_planes.find(rid_b)->second;
+									const apollota::SimplePoint ab=(plane_b.point-plane_a.point);
+									const double ab_proj=apollota::dot_product(ab, plane_a.normal);
+									const double shift_dist=sqrt(apollota::squared_point_module(ab)-(ab_proj*ab_proj));
+									const double shift_cos=ab_proj/ab.module();
+									std::cout << " " << shift_dist << " " << shift_cos;
 								}
 								std::cout << "\n";
 							}
