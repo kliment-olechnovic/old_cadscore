@@ -12,6 +12,22 @@ cadscore_names=c("AA", "AM", "AS", "MA", "MM", "MS", "SA", "SM", "SS", "na_stack
 all_refscore_names=c("rna_di", "rna_inf_norv", "rna_inf_norv_os", "rna_inf_norv_obp", "rna_rmsd", "RMSD_C3", "GDT_C3", "RMSD_ALL", "GDT_ALL");
 refscore_names=intersect(all_refscore_names, colnames(t));
 
+global_good_sel=1:length(t[[1]]);
+for(refscore_name in refscore_names)
+{
+	finite_sel=which(is.finite(t[, refscore_name]));
+	positive_sel=which(t[, refscore_name]>=0);
+	good_sel=intersect(finite_sel, positive_sel);
+	global_good_sel=intersect(global_good_sel, good_sel);
+}
+if(length(global_good_sel)<length(t[[1]]))
+{
+global_bad_sel=setdiff(1:length(t[[1]]), global_good_sel);
+bad_t=t[global_bad_sel,];
+write.table(bad_t, paste(output_directory, "/unused_scores.txt", sep=""), quote=FALSE, row.names=FALSE);
+}
+t=t[global_good_sel,];
+
 cadscore_names=c("title", cadscore_names);
 refscore_names=c("title", refscore_names);
 
@@ -41,14 +57,17 @@ else if(refscore_name=="title")
 else if(refscore_name!=score_name)
 {
   finite_sel=which(is.finite(t[, refscore_name]));
-  positive_sel=which(t[, refscore_name]>0);
+  positive_sel=which(t[, refscore_name]>=0);
   good_sel=intersect(finite_sel, positive_sel);
   x=t[good_sel, score_name];
   y=t[good_sel, refscore_name];
   
+  used_targets=t[good_sel, "target"];
+  used_targets_count=length(union(used_targets, used_targets))
+  
   cor_pearson=cor(x, y, method="pearson");
   cor_spearman=cor(x, y, method="spearman");
-  cor_row=data.frame(ref_score_name=refscore_name, cad_score_name=score_name, models_count=length(x), cor_pearson=cor_pearson, cor_spearman=cor_spearman);
+  cor_row=data.frame(ref_score_name=refscore_name, cad_score_name=score_name, targets_count=used_targets_count, models_count=length(x), cor_pearson=cor_pearson, cor_spearman=cor_spearman);
   if(length(cor_table)==0)
   {
     cor_table=cor_row;
