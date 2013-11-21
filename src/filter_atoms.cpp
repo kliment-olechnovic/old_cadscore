@@ -8,10 +8,11 @@
 
 void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--detailed --print-rejected");
+	clo.check_allowed_options("--detailed --print-rejected --allow-unmatched-residue-names");
 
 	const bool detailed=clo.isopt("--detailed");
 	const bool print_rejected=clo.isopt("--print-rejected");
+	const bool allow_unmatched_residue_names=clo.isopt("--allow-unmatched-residue-names");
 
 	const std::vector<protein::Atom> atoms_of_model=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "model atoms", "atoms", false);
 
@@ -85,7 +86,7 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 				{
 					result.push_back(atom);
 				}
-				else
+				else if(!allow_unmatched_residue_names)
 				{
 					std::ostringstream output;
 					output << "Model atom chain name and residue number matched the target, but model atom residue name did not: " << atom.string_for_human_reading();
