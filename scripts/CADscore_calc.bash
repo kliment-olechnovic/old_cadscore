@@ -85,7 +85,7 @@ THREAD_SAFE_ON=true
 RADII_OPTION=""
 EXTRA_COMMAND=""
 
-while getopts "hD:t:m:lcqgi:arunsyxjv:e:" OPTION
+while getopts "hD:t:m:lcqgi:arubnsyxjv:e:" OPTION
 do
   case $OPTION in
     h)
