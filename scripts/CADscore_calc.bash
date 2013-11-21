@@ -28,6 +28,7 @@ $0 parameters:
     -a    flag to compute atomic global scores
     -r    flag to reset chain names to 'A', 'B', 'C', etc.
     -u    flag to disable model atoms filtering by target atoms
+    -b    flag to allow unmatched residue names after filtering
     -s    flag to print summary to standard output
     -y    flag to generate more detailed summary
     -x    flag to delete non-summary data calculated for model
@@ -74,6 +75,7 @@ INTER_INTERVAL_OPTION=""
 USE_ATOMIC_CADSCORE=false
 RESETTING_CHAIN_NAMES=""
 DISABLE_MODEL_ATOMS_FILTERING=false
+ALLOW_UNMATCHED_RESIDUE_NAMES_IN_FILTERING=""
 NUCLEIC_ACIDS_MODE=false
 GLOBAL_SCORES_CATEGORIES="--categories AA,AM,AS,AW,MA,MM,MS,MW,SA,SM,SS,SW"
 PRINT_SUMMARY_TO_STDOUT=false
@@ -122,6 +124,9 @@ do
       ;;
     u)
       DISABLE_MODEL_ATOMS_FILTERING=true
+      ;;
+    b)
+      ALLOW_UNMATCHED_RESIDUE_NAMES_IN_FILTERING="--allow-unmatched-residue-names"
       ;;
     n)
       NUCLEIC_ACIDS_MODE=true
@@ -294,7 +299,7 @@ then
   MODEL_FILTERED_ATOMS_FILE=$MODEL_ATOMS_FILE
 fi
 
-test -f $MODEL_FILTERED_ATOMS_FILE || (cat $MODEL_ATOMS_FILE ; cat $TARGET_ATOMS_FILE) | $VOROPROT --mode filter-atoms-by-target > $MODEL_FILTERED_ATOMS_FILE
+test -f $MODEL_FILTERED_ATOMS_FILE || (cat $MODEL_ATOMS_FILE ; cat $TARGET_ATOMS_FILE) | $VOROPROT --mode filter-atoms-by-target $ALLOW_UNMATCHED_RESIDUE_NAMES_IN_FILTERING > $MODEL_FILTERED_ATOMS_FILE
 if [ ! -s "$MODEL_FILTERED_ATOMS_FILE" ] ; then echo "Fatal error: no atoms left in the model after filtering by target" 1>&2 ; exit 1 ; fi
 
 test -f $MODEL_INTER_ATOM_CONTACTS_FILE || cat $MODEL_FILTERED_ATOMS_FILE | $VOROPROT --mode calc-inter-atom-contacts > $MODEL_INTER_ATOM_CONTACTS_FILE
