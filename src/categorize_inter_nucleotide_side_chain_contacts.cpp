@@ -76,7 +76,12 @@ struct NucleotidePlane
 
 void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--diagnostic-output");
+	clo.check_allowed_options("--diagnostic-output --use-atom-centers --output-normals-cos --output-rings-shift");
+
+	const bool diagnostic_output=clo.isopt("--diagnostic-output");
+	const bool use_atom_centers=clo.isopt("--use-atom-centers");
+	const bool output_normals_cos=clo.isopt("--output-normals-cos");
+	const bool output_rings_shift=clo.isopt("--output-rings-shift");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -109,11 +114,13 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 				}
 				if(!sc_atoms_ids_b.empty())
 				{
-					const int first_halfspace=apollota::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[0]]);
+					const protein::Atom& first_atom=atoms[sc_atoms_ids_b[0]];
+					const int first_halfspace=apollota::halfspace_of_sphere(plane_a.point, plane_a.normal, apollota::SimpleSphere(first_atom, (use_atom_centers ? 0.0 : first_atom.r)));
 					bool one_halfspace=(first_halfspace!=0);
 					for(std::size_t i=1;i<sc_atoms_ids_b.size() && one_halfspace;i++)
 					{
-						const int atom_halfspace=apollota::halfspace_of_sphere(plane_a.point, plane_a.normal, atoms[sc_atoms_ids_b[i]]);
+						const protein::Atom& another_atom=atoms[sc_atoms_ids_b[i]];
+						const int atom_halfspace=apollota::halfspace_of_sphere(plane_a.point, plane_a.normal, apollota::SimpleSphere(another_atom, (use_atom_centers ? 0.0 : another_atom.r)));
 						if(atom_halfspace!=first_halfspace)
 						{
 							one_halfspace=false;
@@ -140,7 +147,7 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 		}
 	}
 
-	if(clo.isopt("--diagnostic-output"))
+	if(diagnostic_output)
 	{
 		std::vector<std::string> contact_types_of_interest;
 		contact_types_of_interest.push_back("na_stacking");
@@ -167,7 +174,22 @@ void categorize_inter_nucleotide_side_chain_contacts(const auxiliaries::CommandL
 							{
 								std::cout << rid_a.chain_id << " " << rid_a.residue_number << " " << atoms[atom_id_a].residue_name << " ";
 								std::cout << rid_b.chain_id << " " << rid_b.residue_number << " " << atoms[atom_id_b].residue_name << " ";
-								std::cout << contact_type << " " << area << " " << (rid_a<rid_b ? "left_to_right" : "right_to_left") << "\n";
+								std::cout << contact_type << " " << area << " " << (rid_a<rid_b ? "left_to_right" : "right_to_left");
+								if(output_normals_cos)
+								{
+									std::cout << " " << apollota::dot_product(nucleotides_planes.find(rid_a)->second.normal, nucleotides_planes.find(rid_b)->second.normal);
+								}
+								if(output_rings_shift)
+								{
+									const NucleotidePlane& plane_a=nucleotides_planes.find(rid_a)->second;
+									const NucleotidePlane& plane_b=nucleotides_planes.find(rid_b)->second;
+									const apollota::SimplePoint ab=(plane_b.point-plane_a.point);
+									const double ab_proj=apollota::dot_product(ab, plane_a.normal);
+									const double shift_dist=sqrt(apollota::squared_point_module(ab)-(ab_proj*ab_proj));
+									const double shift_cos=ab_proj/ab.module();
+									std::cout << " " << shift_dist << " " << shift_cos;
+								}
+								std::cout << "\n";
 							}
 						}
 					}
