@@ -1,13 +1,19 @@
 t=read.table("../collecting_scores/output/rp/calculated_scores_for_chopped", header=TRUE, stringsAsFactors=FALSE);
 
+t$rna_di=(t$rna_rmsd/t$rna_inf_norv);
+t$rna_rmsd_inv=0.0-t$rna_rmsd;
+t$rna_di_inv=0.0-t$rna_di;
+
 models=union(t$model, t$model);
 
-score_names=c("AA", "SS", "TM_score", "rna_inf_norv");
-mishandles=rep(0, length(score_names));
+score_names=c("AA", "SS", "TM_score", "rna_inf_norv", "rna_rmsd_inv", "rna_di_inv");
+
+monitored_score_name_v=c();
+monitored_chopped_v=c();
 
 for(score_name in score_names)
 {
-	plot(x=c(0, max(t$chopped)), y=c(0, 1), type="n", main=paste("Chopped models ",  score_name, " scores", sep=""), xlab="One end chopped percents", ylab="Score");
+	plot(x=c(0, max(t$chopped)), y=c(min(t[,score_name]), max(t[,score_name])), type="n", main=paste("Chopped models ",  score_name, " scores", sep=""), xlab="One end chopped percents", ylab="Score");
 	
 	for(model in models)
 	{
@@ -16,7 +22,7 @@ for(score_name in score_names)
 		points(x=st$chopped, y=st[,score_name], type="l", col="black", lwd=0.1);
 	}
 
-	plot(x=c(0, max(t$chopped)), y=c(0, 1), type="n", main=paste("Chopped models badly adjusted ",  score_name, " scores", sep=""), xlab="One end chopped percents", ylab="Score");
+	plot(x=c(0, max(t$chopped)), y=c(min(t[,score_name]), max(t[,score_name])), type="n", main=paste("Chopped models badly adjusted ",  score_name, " scores", sep=""), xlab="One end chopped percents", ylab="Score");
 	
 	for(model in models)
 	{
@@ -43,28 +49,31 @@ for(score_name in score_names)
 				{
 					col="red";
 					lwd=2.0;
+					monitored_score_name_v=c(monitored_score_name_v, score_name);
+					monitored_chopped_v=c(monitored_chopped_v, st$chopped[j]);
 				}
 				points(x=st$chopped[c(i,j)], y=st[c(i,j),score_name], type="l", col=col, lwd=lwd);
 			}
-			mishandles[which(score_names==score_name)]=mishandles[which(score_names==score_name)]+1;
 		}
 	}
-	
-	plot(x=c(0, 1), y=c(0, 1), type="n", main=paste("Chopped models ",  score_name, " scores fractions", sep=""), xlab="Model size fraction", ylab="Score fraction");
-	
-	for(model in models)
-	{
-		st=t[which(t$model==model),];
-		st=st[order(st$chopped),];
-		points(x=(1-(st$chopped*2/100)), y=(st[,score_name]/st[which(st$chopped==0),score_name]), type="l", col="black", lwd=0.1);
-	}
-	
-	points(c(0, 1), c(0, 1), col="green", type="l");
 }
 
 length(models);
-score_names
-mishandles
+
+monitored_chopped_union=sort(union(monitored_chopped_v, monitored_chopped_v));
+monitored_score_name_union=union(score_names, monitored_score_name_v);
+report_t=data.frame(one_end_chopped_pct=monitored_chopped_union);
+for(monitored_score_name in monitored_score_name_union)
+{
+	counts=rep(0, length(monitored_chopped_union))
+	for(monitored_chopped in monitored_chopped_union)
+	{
+		i=which(monitored_chopped_union==monitored_chopped)[1];
+		counts[i]=length(intersect(which(monitored_chopped_v==monitored_chopped), which(monitored_score_name_v==monitored_score_name)));
+	}
+	report_t[,monitored_score_name]=counts;
+}
+write.table(report_t, "./output/rp/chopping_mishandles.txt", quote=FALSE, row.names=FALSE);
 
 ###############################################
 
