@@ -3,6 +3,7 @@
 #include "protein/atom.h"
 
 #include "apollota/triangulation.h"
+#include "apollota/utilities_for_triangulation.h"
 #include "apollota/inter_sphere_contact_face_on_hyperboloid.h"
 
 #include "contacto/inter_atom_contact.h"
@@ -27,11 +28,11 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const apollota::Triangulation::PairsNeighborsMap pairs_neighbours_map=apollota::Triangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(atoms, 3.5, false, false).quadruples_map);
+	const apollota::UtilitiesForTriangulation::PairsNeighborsMap pairs_neighbours_map=apollota::UtilitiesForTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(apollota::UtilitiesForTriangulation::collect_simple_spheres(atoms), 3.5, false, false).quadruples_map);
 
 	std::set<contacto::InterAtomContact> inter_atom_contacts;
 
-	for(apollota::Triangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	for(apollota::UtilitiesForTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::size_t a_id=it->first.get(0);
 		const std::size_t b_id=it->first.get(1);
@@ -41,7 +42,7 @@ void calc_inter_atom_faces(const auxiliaries::CommandLineOptions& clo)
 
 		std::vector<const protein::Atom*> cs;
 		cs.reserve(it->second.size());
-		for(apollota::Triangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+		for(apollota::UtilitiesForTriangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
 		{
 			cs.push_back(&(atoms[*jt]));
 		}

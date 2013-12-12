@@ -3,6 +3,7 @@
 #include "protein/atom.h"
 
 #include "apollota/triangulation.h"
+#include "apollota/utilities_for_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
 #include "auxiliaries/std_containers_io.h"
@@ -61,7 +62,7 @@ void calc_quadruples(
 
 	const std::vector<SphereType>& atoms=(*atoms_ptr);
 
-	const apollota::Triangulation::Result apollonius_triangulation_result=apollota::Triangulation::construct_result(atoms, bsi_init_radius, false, augment);
+	const apollota::Triangulation::Result apollonius_triangulation_result=apollota::Triangulation::construct_result(apollota::UtilitiesForTriangulation::collect_simple_spheres(atoms), bsi_init_radius, false, augment);
 
 	if(!skip_output)
 	{
@@ -84,13 +85,7 @@ void calc_quadruples(
 
 void calc_quadruples(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--epsilon: --bsi-init-radius: --raw-input --use-one-radius --augment --skip-output --print-log --check");
-
-	if(clo.isopt("--epsilon"))
-	{
-		const double epsilon=clo.arg_with_min_value<double>("--epsilon", 0.0);
-		apollota::comparison_epsilon_reference()=epsilon;
-	}
+	clo.check_allowed_options("--bsi-init-radius: --raw-input --use-one-radius --augment --skip-output --print-log --check");
 
 	const double bsi_init_radius=clo.isopt("--bsi-init-radius") ? clo.arg_with_min_value<double>("--bsi-radius", 1) : 3.5;
 	const bool raw_input=clo.isopt("--raw-input");
