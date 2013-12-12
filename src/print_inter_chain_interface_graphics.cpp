@@ -12,6 +12,7 @@
 #include "contacto/contact_classification.h"
 
 #include "apollota/triangulation.h"
+#include "apollota/utilities_for_triangulation.h"
 #include "apollota/inter_sphere_contact_face_on_hyperboloid.h"
 #include "apollota/opengl_printer.h"
 
@@ -636,7 +637,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
-	const apollota::Triangulation::PairsNeighborsMap pairs_neighbours_map=apollota::Triangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(atoms, 3.5, false, false).quadruples_map);
+	const apollota::UtilitiesForTriangulation::PairsNeighborsMap pairs_neighbours_map=apollota::UtilitiesForTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(apollota::UtilitiesForTriangulation::collect_simple_spheres(atoms), 3.5, false, false).quadruples_map);
 
 	std::auto_ptr<ContactAccepterInterface> contact_accepter;
 	if(groups_option.substr(0,1)=="(")
@@ -663,7 +664,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	else if(groups_option=="inter_chain_region")
 	{
 		std::set<protein::ResidueID> region_residue_ids;
-		for(apollota::Triangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+		for(apollota::UtilitiesForTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 		{
 			const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
 			const protein::Atom& a=atoms[atoms_ids_pair.first];
@@ -687,7 +688,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	typedef std::map< std::pair<std::string, std::string>, std::vector< std::pair<std::size_t, std::size_t> > > InterfacesMap;
 	InterfacesMap inter_chain_interfaces;
 
-	for(apollota::Triangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
+	for(apollota::UtilitiesForTriangulation::PairsNeighborsMap::const_iterator it=pairs_neighbours_map.begin();it!=pairs_neighbours_map.end();++it)
 	{
 		const std::pair<std::size_t, std::size_t> atoms_ids_pair=std::make_pair(it->first.get(0), it->first.get(1));
 
@@ -698,7 +699,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		{
 			std::vector<const protein::Atom*> cs;
 			cs.reserve(it->second.size());
-			for(apollota::Triangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
+			for(apollota::UtilitiesForTriangulation::PairsNeighborsMap::mapped_type::const_iterator jt=it->second.begin();jt!=it->second.end();++jt)
 			{
 				cs.push_back(&(atoms[*jt]));
 			}

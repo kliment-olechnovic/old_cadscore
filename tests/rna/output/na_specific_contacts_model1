@@ -124,7 +124,7 @@ Z 24 C Z 25 U na_stacking 144.33 left_to_right
 Z 24 C Z 47 G na_stacking 3.7488 left_to_right
 Z 25 U Z 9 G na_siding 2.01447 right_to_left
 Z 25 U Z 11 A na_siding 73.2478 right_to_left
-Z 25 U Z 12 G na_stacking 49.933 right_to_left
+Z 25 U Z 12 G na_stacking 49.8414 right_to_left
 Z 25 U Z 24 C na_stacking 127.923 right_to_left
 Z 25 U Z 26 C na_stacking 132.005 left_to_right
 Z 25 U Z 46 G na_stacking 1.15273 left_to_right
@@ -202,7 +202,7 @@ Z 41 C Z 32 G na_stacking 102.246 right_to_left
 Z 41 C Z 40 C na_stacking 94.0994 right_to_left
 Z 41 C Z 42 C na_stacking 130.83 left_to_right
 Z 42 C Z 30 G na_siding 82.6902 right_to_left
-Z 42 C Z 31 G na_stacking 118.322 right_to_left
+Z 42 C Z 31 G na_stacking 118.217 right_to_left
 Z 42 C Z 41 C na_siding 82.7172 right_to_left
 Z 42 C Z 43 G na_stacking 116.82 left_to_right
 Z 43 G Z 28 U na_stacking 4.5643 right_to_left
