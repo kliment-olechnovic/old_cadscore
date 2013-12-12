@@ -6,6 +6,7 @@
 #include <limits>
 #include <vector>
 #include <map>
+#include <set>
 
 #ifdef _MSC_VER
 #include <unordered_map>
@@ -31,11 +32,7 @@ class Triangulation
 {
 public:
 	typedef std::tr1::unordered_map<Quadruple, std::vector<SimpleSphere>, Quadruple::HashFunctor> QuadruplesMap;
-	typedef std::map<QuadruplesMap::key_type, QuadruplesMap::mapped_type> QuadruplesOrderedMap;
-	typedef std::tr1::unordered_map<std::size_t, std::tr1::unordered_set<std::size_t> > NeighborsMap;
-	typedef std::vector< std::vector<std::size_t> > NeighborsGraph;
-	typedef std::tr1::unordered_map<Pair, std::tr1::unordered_set<std::size_t>, Pair::HashFunctor> PairsNeighborsMap;
-	typedef std::tr1::unordered_map<Triple, std::tr1::unordered_set<std::size_t>, Triple::HashFunctor> TriplesNeighborsMap;
+	typedef std::vector< std::pair<Quadruple, SimpleSphere> > VerticesVector;
 
 	struct QuadruplesSearchLog
 	{
@@ -71,19 +68,22 @@ public:
 		{
 			output << "quadruples " << quadruples_map.size() << "\n";
 			output << "tangent_spheres " << count_tangent_spheres_in_quadruples_map(quadruples_map) << "\n";
-			output << "processed_faces " << quadruples_search_log.processed_faces << "\n";
-			output << "difficult_faces " << quadruples_search_log.encountered_difficult_faces << "\n";
+			output << "processed_triples " << quadruples_search_log.processed_faces << "\n";
+			output << "loose_triples " << quadruples_search_log.encountered_difficult_faces << "\n";
 			output << "first_iterations " << quadruples_search_log.performed_iterations_for_finding_first_faces << "\n";
 			output << "surplus_tangent_spheres " << surplus_quadruples_search_log.surplus_tangent_spheres << "\n";
 			output << "excluded_hidden_balls " << excluded_hidden_spheres_ids.size() << "\n";
-			output << "ignored_balls " << ignored_spheres_ids.size() << "\n";
-			output << "epsilon " << comparison_epsilon() << "\n";
+			output << "ignored_balls " << ignored_spheres_ids.size();
+			for(std::set<std::size_t>::const_iterator it=ignored_spheres_ids.begin();it!=ignored_spheres_ids.end();++it)
+			{
+				output << (it==ignored_spheres_ids.begin() ? ":" : ",") << (*it);
+			}
+			output << "\n";
 		}
 	};
 
-	template<typename SphereType>
 	static Result construct_result(
-			const std::vector<SphereType>& spheres,
+			const std::vector<SimpleSphere>& spheres,
 			const double initial_radius_for_spheres_bucketing,
 			const bool exclude_hidden_spheres,
 			const bool include_surplus_valid_quadruples)
@@ -175,83 +175,40 @@ public:
 		}
 	}
 
-	static QuadruplesOrderedMap collect_ordered_map_of_quadruples(const QuadruplesMap& quadruples_map)
+	static VerticesVector collect_vertices_vector_from_quadruples_map(const QuadruplesMap& quadruples_map)
 	{
-		QuadruplesOrderedMap quadruples_ordered_map;
+		typedef std::multimap<QuadruplesMap::key_type, QuadruplesMap::mapped_type> QuadruplesOrderedMultimap;
+		QuadruplesOrderedMultimap quadruples_ordered_multimap;
 		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
 		{
-			quadruples_ordered_map.insert(*it);
+			quadruples_ordered_multimap.insert(*it);
 		}
-		return quadruples_ordered_map;
-	}
-
-	static NeighborsMap collect_neighbors_map_from_quadruples_map(const QuadruplesMap& quadruples_map)
-	{
-		NeighborsMap neighbors_map;
-		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
+		VerticesVector vertices_vector;
+		vertices_vector.reserve(count_tangent_spheres_in_quadruples_map(quadruples_map));
+		for(QuadruplesOrderedMultimap::const_iterator it=quadruples_ordered_multimap.begin();it!=quadruples_ordered_multimap.end();++it)
 		{
-			const Quadruple& quadruple=it->first;
-			for(int a=0;a<4;a++)
+			const std::vector<SimpleSphere>& tangent_spheres=it->second;
+			if(tangent_spheres.size()==1)
 			{
-				for(int b=a+1;b<4;b++)
+				vertices_vector.push_back(std::make_pair(it->first, tangent_spheres.front()));
+			}
+			else if(tangent_spheres.size()==2)
+			{
+				const SimpleSphere& a=tangent_spheres.front();
+				const SimpleSphere& b=tangent_spheres.back();
+				if(std::make_pair(a.r, std::make_pair(a.x, std::make_pair(a.y, a.z)))<std::make_pair(b.r, std::make_pair(b.x, std::make_pair(b.y, b.z))))
 				{
-					neighbors_map[quadruple.get(a)].insert(quadruple.get(b));
-					neighbors_map[quadruple.get(b)].insert(quadruple.get(a));
+					vertices_vector.push_back(std::make_pair(it->first, a));
+					vertices_vector.push_back(std::make_pair(it->first, b));
+				}
+				else
+				{
+					vertices_vector.push_back(std::make_pair(it->first, b));
+					vertices_vector.push_back(std::make_pair(it->first, a));
 				}
 			}
 		}
-		return neighbors_map;
-	}
-
-	static NeighborsGraph collect_neighbors_graph_from_neighbors_map(const NeighborsMap& neighbors_map, const std::size_t number_of_vertices)
-	{
-		NeighborsGraph neighbors_graph(number_of_vertices);
-		for(NeighborsMap::const_iterator it=neighbors_map.begin();it!=neighbors_map.end();++it)
-		{
-			if((it->first)<neighbors_graph.size())
-			{
-				neighbors_graph[it->first].insert(neighbors_graph[it->first].end(), it->second.begin(), it->second.end());
-			}
-		}
-		return neighbors_graph;
-	}
-
-	static PairsNeighborsMap collect_pairs_neighbors_map_from_quadruples_map(const QuadruplesMap& quadruples_map)
-	{
-		PairsNeighborsMap pairs_neighbors_map;
-		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
-		{
-			const Quadruple& quadruple=it->first;
-			for(int a=0;a<4;a++)
-			{
-				for(int b=a+1;b<4;b++)
-				{
-					const Pair pair(quadruple.get(a), quadruple.get(b));
-					for(int c=0;c<4;c++)
-					{
-						if(c!=a && c!=b)
-						{
-							pairs_neighbors_map[pair].insert(quadruple.get(c));
-						}
-					}
-				}
-			}
-		}
-		return pairs_neighbors_map;
-	}
-
-	static TriplesNeighborsMap collect_triples_neighbors_map_from_quadruples_map(const QuadruplesMap& quadruples_map)
-	{
-		TriplesNeighborsMap triples_neighbors_map;
-		for(QuadruplesMap::const_iterator it=quadruples_map.begin();it!=quadruples_map.end();++it)
-		{
-			const Quadruple& quadruple=it->first;
-			for(int a=0;a<4;a++)
-			{
-				triples_neighbors_map[quadruple.exclude(a)].insert(quadruple.get(a));
-			}
-		}
-		return triples_neighbors_map;
+		return vertices_vector;
 	}
 
 	static std::size_t count_tangent_spheres_in_quadruples_map(const QuadruplesMap& quadruples_map)
@@ -264,55 +221,22 @@ public:
 		return sum;
 	}
 
-	static void print_quadruples_map(const QuadruplesMap& quadruples_map, std::ostream& output)
+	static void print_vertices_vector(const VerticesVector& vertices_vector, std::ostream& output)
 	{
 		output.precision(std::numeric_limits<double>::digits10);
 		output << std::fixed;
-		const QuadruplesOrderedMap quadruples_ordered_map=collect_ordered_map_of_quadruples(quadruples_map);
-		for(QuadruplesOrderedMap::const_iterator it=quadruples_ordered_map.begin();it!=quadruples_ordered_map.end();++it)
+		for(VerticesVector::const_iterator it=vertices_vector.begin();it!=vertices_vector.end();++it)
 		{
 			const Quadruple& quadruple=it->first;
-			const std::vector<SimpleSphere>& tangent_spheres=it->second;
-			for(std::size_t i=0;i<tangent_spheres.size();i++)
-			{
-				const SimpleSphere& tangent_sphere=tangent_spheres[i];
-				output << quadruple.get(0) << " " << quadruple.get(1) << " " << quadruple.get(2) << " " << quadruple.get(3) << " ";
-				output << tangent_sphere.x << " " << tangent_sphere.y << " " << tangent_sphere.z << " " << tangent_sphere.r << "\n";
-			}
+			const SimpleSphere& tangent_sphere=it->second;
+			output << quadruple.get(0) << " " << quadruple.get(1) << " " << quadruple.get(2) << " " << quadruple.get(3) << " ";
+			output << tangent_sphere.x << " " << tangent_sphere.y << " " << tangent_sphere.z << " " << tangent_sphere.r << "\n";
 		}
 	}
 
-	static QuadruplesMap read_quadruples_map(std::istream& input)
+	static void print_quadruples_map(const QuadruplesMap& quadruples_map, std::ostream& output)
 	{
-		QuadruplesMap quadruples_map;
-		bool valid=true;
-		while(input.good() && valid)
-		{
-			std::string line;
-			std::getline(input, line);
-			line=line.substr(0, line.find("#", 0));
-			if(!line.empty())
-			{
-				std::istringstream line_stream(line);
-				std::size_t q[4]={0, 0, 0, 0};
-				double s[4]={0, 0, 0, 0};
-				for(int i=0;i<4 && valid;i++)
-				{
-					line_stream >> q[i];
-					valid=!line_stream.fail();
-				}
-				for(int i=0;i<4 && valid;i++)
-				{
-					line_stream >> s[i];
-					valid=!line_stream.fail();
-				}
-				if(valid)
-				{
-					quadruples_map[Quadruple(q[0], q[1], q[2], q[3])].push_back(SimpleSphere(s[0], s[1], s[2], s[3]));
-				}
-			}
-		}
-		return quadruples_map;
+		print_vertices_vector(collect_vertices_vector_from_quadruples_map(quadruples_map), output);
 	}
 
 	template<typename SphereType>
@@ -322,20 +246,13 @@ public:
 		{
 			const QuadruplesMap::key_type& q=it->first;
 			const QuadruplesMap::mapped_type& ts=it->second;
-			if(q.has_repetetions() || ts.empty() || ts.size()>2 || (ts.size()==2 && spheres_equal(ts.front(), ts.back())))
+			if(q.has_repetetions() || ts.empty() || ts.size()>2)
 			{
 				return false;
 			}
 			for(std::size_t i=0;i<ts.size();i++)
 			{
 				const SimpleSphere& t=ts[i];
-				for(int j=0;j<4;j++)
-				{
-					if(!sphere_touches_sphere(t, spheres[q.get(j)]))
-					{
-						return false;
-					}
-				}
 				for(std::size_t j=0;j<spheres.size();j++)
 				{
 					if(sphere_intersects_sphere(t, spheres[j]))
@@ -993,7 +910,7 @@ private:
 		else
 		{
 			std::vector<SimpleSphere>& quadruple_tangent_spheres_list=qm_it->second;
-			if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere))
+			if(quadruple_tangent_spheres_list.size()==1 && !spheres_equal(quadruple_tangent_spheres_list.front(), quadruple_tangent_sphere, tangent_spheres_equality_epsilon()))
 			{
 				quadruple_tangent_spheres_list.push_back(quadruple_tangent_sphere);
 				quadruple_tangent_sphere_added=true;
@@ -1111,7 +1028,7 @@ private:
 			for(std::size_t i=0;i<tangent_spheres.size();i++)
 			{
 				const SimpleSphere& tangent_sphere=tangent_spheres[i];
-				const SimpleSphere expanded_tangent_sphere(tangent_sphere, tangent_sphere.r+(3*comparison_epsilon()));
+				const SimpleSphere expanded_tangent_sphere(tangent_sphere, tangent_sphere.r+tangent_spheres_equality_epsilon());
 				const std::vector<std::size_t> expanded_collisions=SearchForSphericalCollisions::find_all_collisions(bsh, expanded_tangent_sphere);
 				std::vector<std::size_t> refined_collisions;
 				for(std::size_t j=0;j<expanded_collisions.size();j++)
@@ -1189,6 +1106,11 @@ private:
 			}
 		}
 		return ignored_spheres_ids;
+	}
+
+	inline static double tangent_spheres_equality_epsilon()
+	{
+		return std::max(default_comparison_epsilon(), 0.001);
 	}
 };
 

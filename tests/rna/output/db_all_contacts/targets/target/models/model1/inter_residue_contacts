@@ -2004,14 +2004,14 @@ na_siding 73.2478
 
 Z 25 Z 12
 8
-AA 54.487
-AS 54.487
+AA 54.3954
+AS 54.3954
 MA 4.55401
 MS 4.55401
-SA 49.933
-SS 49.933
-na_stacking 49.933
-na_stacking_down 49.933
+SA 49.8414
+SS 49.8414
+na_stacking 49.8414
+na_stacking_down 49.8414
 
 Z 25 Z 24
 11
@@ -3046,14 +3046,14 @@ na_siding 82.6902
 
 Z 42 Z 31
 8
-AA 125.354
-AS 125.354
+AA 125.25
+AS 125.25
 MA 7.03246
 MS 7.03246
-SA 118.322
-SS 118.322
-na_stacking 118.322
-na_stacking_down 118.322
+SA 118.217
+SS 118.217
+na_stacking 118.217
+na_stacking_down 118.217
 
 Z 42 Z 41
 10
