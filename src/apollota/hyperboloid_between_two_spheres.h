@@ -99,11 +99,11 @@ private:
 
 			const SimplePoint tp1=a+(v*t1);
 			const SimplePoint tp2=a+(v*t2);
-			if(greater(t1, 0) && less(t1, ab.module()) && equal(tp1.z, sqrt(k*tp1.x*tp1.x+k*tp1.y*tp1.y+m)))
+			if(greater(t1, 0) && less(t1, ab.module()) && equal(tp1.z, sqrt(k*tp1.x*tp1.x+k*tp1.y*tp1.y+m), 0.000001))
 			{
 				return t1;
 			}
-			else if(greater(t2, 0) && less(t2, ab.module()) && equal(tp2.z, sqrt(k*tp2.x*tp2.x+k*tp2.y*tp2.y+m)))
+			else if(greater(t2, 0) && less(t2, ab.module()) && equal(tp2.z, sqrt(k*tp2.x*tp2.x+k*tp2.y*tp2.y+m), 0.000001))
 			{
 				return t2;
 			}

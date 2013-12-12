@@ -342,7 +342,7 @@ Z 73 A Z 1 C na_siding 29.4384 right_to_left
 Z 73 A Z 2 G na_stacking 92.1854 right_to_left
 Z 73 A Z 72 C na_stacking 173.092 right_to_left
 Z 73 A Z 74 A na_stacking 203.996 left_to_right
-Z 74 A Z 1 C na_siding 80.1431 right_to_left
+Z 74 A Z 1 C na_siding 80.2066 right_to_left
 Z 74 A Z 73 A na_stacking 209.969 right_to_left
 Z 74 A Z 75 C na_stacking 177.516 left_to_right
 Z 75 C Z 74 A na_stacking 148.292 right_to_left

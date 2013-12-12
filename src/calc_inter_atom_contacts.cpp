@@ -3,6 +3,7 @@
 #include "protein/atom.h"
 
 #include "apollota/triangulation.h"
+#include "apollota/utilities_for_triangulation.h"
 #include "apollota/inter_sphere_contact_surface_on_sphere.h"
 
 #include "contacto/inter_atom_contact.h"
@@ -24,7 +25,7 @@ void calc_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo)
 		throw std::runtime_error("Less than 4 atoms provided");
 	}
 
-	const std::vector< std::vector<std::size_t> > graph=apollota::Triangulation::collect_neighbors_graph_from_neighbors_map(apollota::Triangulation::collect_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(atoms, 3.5, false, false).quadruples_map), atoms.size());
+	const std::vector< std::vector<std::size_t> > graph=apollota::UtilitiesForTriangulation::collect_neighbors_graph_from_neighbors_map(apollota::UtilitiesForTriangulation::collect_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(apollota::UtilitiesForTriangulation::collect_simple_spheres(atoms), 3.5, false, false).quadruples_map), atoms.size());
 
 	for(std::size_t i=0;i<graph.size();i++)
 	{
