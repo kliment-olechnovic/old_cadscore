@@ -1,5 +1,0 @@
-one_end_chopped_pct AA SS TM_score rna_inf_norv rna_rmsd_inv rna_di_inv
-10 0 0 4 0 56 18
-20 0 0 4 5 88 19
-30 0 0 1 1 69 17
-40 0 0 0 1 102 36
