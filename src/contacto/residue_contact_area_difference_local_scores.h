@@ -39,13 +39,16 @@ std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<R
 
 		const contacto::Ratio ratio=residue_score.ratio(category);
 		double local_score_value=-3;
-		if(absolute)
+		if(ratio.reference>0)
 		{
-			local_score_value=ratio.difference;
-		}
-		else if(ratio.reference>0)
-		{
-			local_score_value=(ratio.difference/ratio.reference);
+			if(absolute)
+			{
+				local_score_value=ratio.difference;
+			}
+			else
+			{
+				local_score_value=(ratio.difference/ratio.reference);
+			}
 		}
 		insertion_it=local_scores.insert(insertion_it, std::make_pair(residue_id, local_score_value));
 	}
