@@ -19,6 +19,7 @@ $0 parameters:
   Optional (basic):
     -l    flag to include heteroatoms
     -c    flag to consider only inter-chain contacts
+    -z    flag to consider only inter-chain interface zone contacts
     -q    flag to try to rearrange chain names for best possible scores
     -g    flag to use TM-score
     -i    inter-interval contacts specification
@@ -69,6 +70,7 @@ TARGET_FILE=""
 MODEL_FILE=""
 HETATM_FLAG=""
 INTER_CHAIN_FLAG=""
+INTERFACE_ZONE_FLAG=""
 QUATERNARY_CHAINS_RENAMING=false
 USE_TMSCORE=false
 INTER_INTERVAL_OPTION=""
@@ -85,7 +87,7 @@ THREAD_SAFE_ON=true
 RADII_OPTION=""
 EXTRA_COMMAND=""
 
-while getopts "hD:t:m:lcqgi:arubnsyxjv:e:" OPTION
+while getopts "hD:t:m:lczqgi:arubnsyxjv:e:" OPTION
 do
   case $OPTION in
     h)
@@ -106,6 +108,9 @@ do
       ;;
     c)
       INTER_CHAIN_FLAG="--inter-chain"
+      ;;
+    z)
+      INTERFACE_ZONE_FLAG="--interface-zone"
       ;;
     q)
       QUATERNARY_CHAINS_RENAMING=true
@@ -209,7 +214,7 @@ SUMMARY_FILE="$MODEL_DIR/summary"
 
 VERSION_STRING=$($VOROPROT --version | tr -d '\n')
 
-TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION $NUCLEIC_ACIDS_MODE"
+TARGET_PARAMETERS="$HETATM_FLAG $RADII_OPTION $RESETTING_CHAIN_NAMES $INTER_CHAIN_FLAG $INTERFACE_ZONE_FLAG $INTER_INTERVAL_OPTION $NUCLEIC_ACIDS_MODE"
 
 mkdir -p $DATABASE
 if [ ! -d "$DATABASE" ] ; then echo "Fatal error: could not create database directory ($DATABASE)" 1>&2 ; exit 1 ; fi
@@ -242,9 +247,9 @@ then
   then
     if $NUCLEIC_ACIDS_MODE
     then
-      (cat $TARGET_ATOMS_FILE ; cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION) | $VOROPROT --mode categorize-inter-nucleotide-side-chain-contacts > $TARGET_INTER_RESIDUE_CONTACTS_FILE
+      (cat $TARGET_ATOMS_FILE ; cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTERFACE_ZONE_FLAG $INTER_INTERVAL_OPTION) | $VOROPROT --mode categorize-inter-nucleotide-side-chain-contacts > $TARGET_INTER_RESIDUE_CONTACTS_FILE
     else
-      cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE
+      cat $TARGET_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTERFACE_ZONE_FLAG $INTER_INTERVAL_OPTION > $TARGET_INTER_RESIDUE_CONTACTS_FILE
     fi
   fi
 
@@ -312,9 +317,9 @@ if [ ! -f $MODEL_INTER_RESIDUE_CONTACTS_FILE ]
 then
   if $NUCLEIC_ACIDS_MODE
   then
-  	(cat $MODEL_FILTERED_ATOMS_FILE ; cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION) | $VOROPROT --mode categorize-inter-nucleotide-side-chain-contacts > $MODEL_INTER_RESIDUE_CONTACTS_FILE
+  	(cat $MODEL_FILTERED_ATOMS_FILE ; cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTERFACE_ZONE_FLAG $INTER_INTERVAL_OPTION) | $VOROPROT --mode categorize-inter-nucleotide-side-chain-contacts > $MODEL_INTER_RESIDUE_CONTACTS_FILE
   else
-    cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTER_INTERVAL_OPTION > $MODEL_INTER_RESIDUE_CONTACTS_FILE
+    cat $MODEL_INTER_ATOM_CONTACTS_FILE | $VOROPROT --mode calc-inter-residue-contacts $INTER_CHAIN_FLAG $INTERFACE_ZONE_FLAG $INTER_INTERVAL_OPTION > $MODEL_INTER_RESIDUE_CONTACTS_FILE
   fi
 fi
 if [ ! -s "$MODEL_INTER_RESIDUE_CONTACTS_FILE" ] ; then echo "Fatal error: no inter-residue contacts in the model" 1>&2 ; exit 1 ; fi

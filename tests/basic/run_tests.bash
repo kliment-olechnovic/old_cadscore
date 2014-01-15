@@ -62,6 +62,18 @@ $CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/$DBNAME | sort
 
 
 (
+DBNAME="db_interface_zone_contacts"
+for MODEL in $INPUT_DIR/model*
+do
+  $CADSCORE_BIN_DIR/CADscore_calc.bash -D $OUTPUT_DIR/$DBNAME -t $INPUT_DIR/target -m $MODEL -z
+  $CADSCORE_BIN_DIR/CADscore_read_local_scores.bash -D $OUTPUT_DIR/$DBNAME -t $INPUT_DIR/target -m $MODEL -c AA -w 1 > $OUTPUT_DIR/$DBNAME/local_scores_$(basename $MODEL)
+  $CADSCORE_BIN_DIR/CADscore_read_local_scores.bash -D $OUTPUT_DIR/$DBNAME -t $INPUT_DIR/target -m $MODEL -c AA -a > $OUTPUT_DIR/$DBNAME/local_scores_absolute_$(basename $MODEL)
+done
+$CADSCORE_BIN_DIR/CADscore_read_global_scores.bash -D $OUTPUT_DIR/$DBNAME | sort -r | column -t > $OUTPUT_DIR/$DBNAME/global_scores
+) &
+
+
+(
 DBNAME="db_custom_contacts"
 for MODEL in $INPUT_DIR/model*
 do
