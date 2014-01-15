@@ -10,7 +10,7 @@ namespace contacto
 {
 
 template<typename ResidueID>
-std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<ResidueID, contacto::ResidueContactAreaDifferenceScore>& profile, const std::string& category)
+std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<ResidueID, contacto::ResidueContactAreaDifferenceScore>& profile, const std::string& category, const bool absolute)
 {
 	std::map<ResidueID, double> local_scores;
 	typename std::map<ResidueID, double>::iterator insertion_it=local_scores.begin();
@@ -37,8 +37,17 @@ std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<R
 			}
 		}
 
-		contacto::Ratio ratio=residue_score.ratio(category);
-		insertion_it=local_scores.insert(insertion_it, std::make_pair(residue_id, ((ratio.reference>0) ? (ratio.difference/ratio.reference) : -3)));
+		const contacto::Ratio ratio=residue_score.ratio(category);
+		double local_score_value=-3;
+		if(absolute)
+		{
+			local_score_value=ratio.difference;
+		}
+		else if(ratio.reference>0)
+		{
+			local_score_value=(ratio.difference/ratio.reference);
+		}
+		insertion_it=local_scores.insert(insertion_it, std::make_pair(residue_id, local_score_value));
 	}
 	return local_scores;
 }
