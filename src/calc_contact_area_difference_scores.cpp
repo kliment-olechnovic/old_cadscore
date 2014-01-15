@@ -13,14 +13,15 @@
 
 void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--category: --window:");
+	clo.check_allowed_options("--category: --window: --absolute");
 
 	const std::string category=clo.arg<std::string>("--category");
 	const int window_size=clo.arg_in_interval<int>("--window", 0, 1000);
+	const bool absolute=clo.isopt("--absolute");
 
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::STDContainersIO::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>(std::cin, " CAD profile", "cad_profile", false);
 
-	const std::map<protein::ResidueID, double> local_scores=contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category), window_size);
+	const std::map<protein::ResidueID, double> local_scores=contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category, absolute), window_size);
 
 	if(local_scores.empty())
 	{
@@ -31,7 +32,10 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "This file contains contact area differences for each residue.");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each line contains residue chain name, residue number and the difference value.");
-		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each non-negative difference value is in the range [0, 1]. 0 means no difference.");
+		if(!absolute)
+		{
+			auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each non-negative difference value is in the range [0, 1]. 0 means no difference.");
+		}
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Negative difference values mean that contacts are undefined.");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, category+" contact category was used");
