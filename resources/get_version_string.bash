@@ -2,6 +2,6 @@
 
 cd $(dirname "$0")
 
-VERSION=$(hg branches | egrep '^experimental' | awk '{print $2}' | tr ':' '_')
+VERSION=$(hg branches | egrep '^default' | awk '{print $2}' | tr ':' '_')
 
-echo "cadscore_"$VERSION"_experimental"
+echo "cadscore_"$VERSION
