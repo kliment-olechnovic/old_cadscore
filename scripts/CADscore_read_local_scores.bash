@@ -14,6 +14,7 @@ $0 parameters:
     -t    target name in the database
     -m    model name in the database
     -c    contacts category
+    -a    flag for non-normalized output
 
   Optional:
     -w    bluring window size
@@ -45,9 +46,10 @@ DATABASE=""
 TARGET_NAME=""
 MODEL_NAME=""
 CATEGORY=""
+ABSOLUTE_FLAG=""
 WINDOW="0"
 
-while getopts "hD:t:m:c:w:" OPTION
+while getopts "hD:t:m:c:aw:" OPTION
 do
   case $OPTION in
     h)
@@ -65,6 +67,9 @@ do
       ;;
     c)
       CATEGORY=$OPTARG
+      ;;
+    a)
+      ABSOLUTE_FLAG="--absolute"
       ;;
     w)
       WINDOW=$OPTARG
@@ -92,4 +97,4 @@ then
   exit 1
 fi
 
-cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-local-scores --category $CATEGORY --window $WINDOW
+cat $CAD_PROFILE_FILE | $VOROPROT --mode calc-CAD-local-scores --category $CATEGORY --window $WINDOW $ABSOLUTE_FLAG
