@@ -10,7 +10,11 @@ namespace contacto
 {
 
 template<typename ResidueID>
-std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<ResidueID, contacto::ResidueContactAreaDifferenceScore>& profile, const std::string& category, const bool absolute)
+std::map<ResidueID, double> construct_local_scores_from_profile(
+		const std::map<ResidueID, contacto::ResidueContactAreaDifferenceScore>& profile,
+		const std::string& category,
+		const bool get_differences,
+		const bool get_references)
 {
 	std::map<ResidueID, double> local_scores;
 	typename std::map<ResidueID, double>::iterator insertion_it=local_scores.begin();
@@ -41,9 +45,13 @@ std::map<ResidueID, double> construct_local_scores_from_profile(const std::map<R
 		double local_score_value=-3;
 		if(ratio.reference>0)
 		{
-			if(absolute)
+			if(get_differences && !get_references)
 			{
 				local_score_value=ratio.difference;
+			}
+			else if(!get_differences && get_references)
+			{
+				local_score_value=ratio.reference;
 			}
 			else
 			{
@@ -111,6 +119,35 @@ std::map<ResidueID, double> blur_local_scores(const std::map<ResidueID, double>&
 		insertion_it=blured_scores.insert(insertion_it, std::make_pair(residue_id, (sum/count)));
 	}
 	return blured_scores;
+}
+
+template<typename ResidueID>
+std::map<ResidueID, double> ratios_of_local_scores(const std::map<ResidueID, double>& scores1, const std::map<ResidueID, double>& scores2)
+{
+	std::map<ResidueID, double> combined_scores;
+	if(scores1.size()==scores2.size())
+	{
+		typename std::map<ResidueID, double>::iterator insertion_it=combined_scores.begin();
+		typename std::map<ResidueID, double>::const_iterator it1=scores1.begin();
+		typename std::map<ResidueID, double>::const_iterator it2=scores2.begin();
+		while(it1!=scores1.end() && it2!=scores2.end() && it1->first==it2->first)
+		{
+			const ResidueID& rid=it1->first;
+			double value=std::min(it1->second, it2->second);
+			if(value>0.0)
+			{
+				value=(it1->second/it2->second);
+			}
+			insertion_it=combined_scores.insert(insertion_it, std::make_pair(rid, value));
+			++it1;
+			++it2;
+		}
+		if(combined_scores.size()!=scores1.size())
+		{
+			combined_scores.clear();
+		}
+	}
+	return combined_scores;
 }
 
 }

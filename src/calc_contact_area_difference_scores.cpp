@@ -21,7 +21,11 @@ void calc_contact_area_difference_local_scores(const auxiliaries::CommandLineOpt
 
 	const std::map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore> profile=auxiliaries::STDContainersIO::read_map<protein::ResidueID, contacto::ResidueContactAreaDifferenceScore>(std::cin, " CAD profile", "cad_profile", false);
 
-	const std::map<protein::ResidueID, double> local_scores=contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category, absolute), window_size);
+	std::map<protein::ResidueID, double> local_scores=contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category, true, false), window_size);
+	if(!absolute)
+	{
+		local_scores=contacto::ratios_of_local_scores(local_scores, contacto::blur_local_scores(contacto::construct_local_scores_from_profile(profile, category, false, true), window_size));
+	}
 
 	if(local_scores.empty())
 	{
