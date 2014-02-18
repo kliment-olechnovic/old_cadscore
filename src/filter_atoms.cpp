@@ -82,11 +82,11 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 			std::map<protein::ResidueID, protein::ResidueSummary>::const_iterator it=residue_ids_of_target.find(protein::ResidueID::from_atom(atom));
 			if(it!=residue_ids_of_target.end())
 			{
-				if(atom.residue_name==it->second.name)
+				if(atom.residue_name==it->second.name || allow_unmatched_residue_names)
 				{
 					result.push_back(atom);
 				}
-				else if(!allow_unmatched_residue_names)
+				else
 				{
 					std::ostringstream output;
 					output << "Model atom chain name and residue number matched the target, but model atom residue name did not: " << atom.string_for_human_reading();
