@@ -3,6 +3,7 @@
 #include "protein/atom.h"
 
 #include "apollota/triangulation.h"
+#include "apollota/triangulation_output.h"
 #include "apollota/utilities_for_triangulation.h"
 
 #include "auxiliaries/command_line_options.h"
@@ -66,13 +67,13 @@ void calc_quadruples(
 
 	if(!skip_output)
 	{
-		apollota::Triangulation::print_quadruples_map(apollonius_triangulation_result.quadruples_map, std::cout);
+		apollota::TriangulationOutput::print_vertices_vector(apollota::Triangulation::collect_vertices_vector_from_quadruples_map(apollonius_triangulation_result.quadruples_map), std::cout);
 	}
 
 	if(print_log)
 	{
 		std::clog << "atoms " <<  atoms.size() << "\n";
-		apollonius_triangulation_result.print_status(std::clog);
+		apollota::TriangulationOutput::print_status(apollonius_triangulation_result, std::clog);
 	}
 
 	if(check)
