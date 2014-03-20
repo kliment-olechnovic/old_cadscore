@@ -190,18 +190,23 @@ void calc_combined_inter_residue_contacts(const auxiliaries::CommandLineOptions&
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each contact record has the following format:");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  first_residue_chain_name first_residue_number second_residue_chain_name second_residue_number");
-		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M (the number of contact types)");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M (the number of contact types with non-zero areas)");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[1] corresponding_area_in_target corresponding_area_in_model");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[2] corresponding_area_in_target corresponding_area_in_model");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  ...");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  contact_type[M] corresponding_area_in_target corresponding_area_in_model");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "If chain name is not available, it is denoted as '?'.");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "If first_residue_chain_name==second_residue_chain_name and first_residue_number==second_residue_number,");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "then a contact record describes residue solvent-accessible surface areas.");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types are two-letter strings indicating what residue parts are in contact.");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Each residue part is coded as a single letter:");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  A - all residue atoms");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  M - main chain");
 		auxiliaries::STDContainersIO::print_file_comment(std::cout, "  S - side chain");
-		auxiliaries::STDContainersIO::print_file_comment(std::cout, "Contact types ending with 'W' denote solvent-accessible surface areas");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "There are 9 possible inter-residue contact types: AA, AM, AS, MA, MM, MS, SA, SM, SS.");
+		auxiliaries::STDContainersIO::print_file_comment(std::cout, "There are 3 possible solvent-accessible surface types: AW, MW, SW.");
 		if(!renaming_comment.empty())
 		{
 			auxiliaries::STDContainersIO::print_file_comment(std::cout, "");
