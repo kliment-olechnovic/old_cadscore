@@ -11,18 +11,23 @@
 # 
 # Each contact record has the following format:
 #   first_residue_chain_name first_residue_number second_residue_chain_name second_residue_number
-#   M (the number of contact types)
+#   M (the number of contact types with non-zero areas)
 #   contact_type[1] corresponding_area_in_target corresponding_area_in_model
 #   contact_type[2] corresponding_area_in_target corresponding_area_in_model
 #   ...
 #   contact_type[M] corresponding_area_in_target corresponding_area_in_model
+# 
+# If chain name is not available, it is denoted as '?'.
+# If first_residue_chain_name==second_residue_chain_name and first_residue_number==second_residue_number,
+# then a contact record describes residue solvent-accessible surface areas.
 # 
 # Contact types are two-letter strings indicating what residue parts are in contact.
 # Each residue part is coded as a single letter:
 #   A - all residue atoms
 #   M - main chain
 #   S - side chain
-# Contact types ending with 'W' denote solvent-accessible surface areas
+# There are 9 possible inter-residue contact types: AA, AM, AS, MA, MM, MS, SA, SM, SS.
+# There are 3 possible solvent-accessible surface types: AW, MW, SW.
 
 combined_residue_contacts
 236
