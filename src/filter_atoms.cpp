@@ -98,7 +98,7 @@ void filter_atoms_by_target(const auxiliaries::CommandLineOptions& clo)
 
 	if(result.empty())
 	{
-		throw std::runtime_error("Sequence and numbering of the model did not match the target, therefore all the model atoms were rejected");
+		throw std::runtime_error("Chain naming and/or residue numbering of the model did not match the target, therefore all the model atoms were rejected");
 	}
 	else
 	{
