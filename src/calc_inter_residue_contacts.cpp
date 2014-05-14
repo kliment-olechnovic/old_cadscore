@@ -33,15 +33,39 @@ std::vector<std::string> collect_chain_names_from_contacts_map(const ContactsMap
 
 void calc_inter_residue_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("--inter-interval: --inter-chain --core --interface-zone");
+	clo.check_allowed_options("--inter-interval: --inter-chain --core --interface-zone --preserve-reflexive");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
 	const std::vector<contacto::InterAtomContact> inter_atom_contacts=auxiliaries::STDContainersIO::read_vector<contacto::InterAtomContact>(std::cin, "inter-atom contacts", "contacts", false);
 
-	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
+	const std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > unfiltered_inter_residue_contacts=contacto::construct_inter_residue_contacts<protein::Atom, protein::ResidueID>(atoms, inter_atom_contacts);
 
+	std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > inter_residue_contacts=unfiltered_inter_residue_contacts;
 	contacto::filter_custom_contacts<protein::ResidueID, contacto::InterResidueContactAreas, protein::ResidueIDsIntervalsReader>(inter_residue_contacts, clo.isopt("--core"), clo.isopt("--interface-zone"), clo.isopt("--inter-chain"), (clo.isopt("--inter-interval") ? clo.arg<std::string>("--inter-interval") : std::string("")));
+
+	if(clo.isopt("--preserve-reflexive"))
+	{
+		std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas > reflexive_contacts;
+		for(std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >::const_iterator it=inter_residue_contacts.begin();it!=inter_residue_contacts.end();++it)
+		{
+			{
+				std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >::const_iterator jt=unfiltered_inter_residue_contacts.find(contacto::ContactID<protein::ResidueID>(it->first.a, it->first.a));
+				if(jt!=unfiltered_inter_residue_contacts.end())
+				{
+					reflexive_contacts.insert(*jt);
+				}
+			}
+			{
+				std::map< contacto::ContactID<protein::ResidueID>, contacto::InterResidueContactAreas >::const_iterator jt=unfiltered_inter_residue_contacts.find(contacto::ContactID<protein::ResidueID>(it->first.b, it->first.b));
+				if(jt!=unfiltered_inter_residue_contacts.end())
+				{
+					reflexive_contacts.insert(*jt);
+				}
+			}
+		}
+		inter_residue_contacts.insert(reflexive_contacts.begin(), reflexive_contacts.end());
+	}
 
 	if(inter_residue_contacts.empty())
 	{
