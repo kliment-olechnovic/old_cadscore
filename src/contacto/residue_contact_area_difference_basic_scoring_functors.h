@@ -6,6 +6,14 @@
 namespace contacto
 {
 
+struct RawDifferenceProducer
+{
+	double operator()(const double target_area, const double model_area) const
+	{
+		return (target_area-model_area);
+	}
+};
+
 struct SimpleDifferenceProducer
 {
 	double operator()(const double target_area, const double model_area) const

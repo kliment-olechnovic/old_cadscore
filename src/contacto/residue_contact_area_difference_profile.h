@@ -56,9 +56,12 @@ ResidueContactAreaDifferenceScore calculate_global_contact_area_difference_score
 		const ResidueContactAreaDifferenceScore& residue_score=it->second;
 		for(ResidueContactAreaDifferenceScore::RatiosMap::const_iterator jt=residue_score.ratios.begin();jt!=residue_score.ratios.end();++jt)
 		{
-			Ratio& ratio=global_score.ratios[jt->first];
-			ratio.difference+=(use_min ? std::min(jt->second.difference, jt->second.reference) : jt->second.difference);
-			ratio.reference+=jt->second.reference;
+			if(jt->second.reference>0.0)
+			{
+				Ratio& ratio=global_score.ratios[jt->first];
+				ratio.difference+=(use_min ? std::min(jt->second.difference, jt->second.reference) : jt->second.difference);
+				ratio.reference+=jt->second.reference;
+			}
 		}
 	}
 	return global_score;
