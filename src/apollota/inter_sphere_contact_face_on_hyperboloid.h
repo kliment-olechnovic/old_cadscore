@@ -191,8 +191,10 @@ private:
 			{
 				std::list<SimplePoint>::iterator right_it=left_it;
 				++right_it;
+				bool right_it_was_on_end=false;
 				if(right_it==contour.end())
 				{
+					right_it_was_on_end=true;
 					right_it=contour.begin();
 				}
 				const SimplePoint& left_point=*left_it;
@@ -209,7 +211,7 @@ private:
 						intersection_iterators.push_back(std::make_pair(intersection_iterator, right_halfspace));
 					}
 				}
-				if(right_it==contour.begin())
+				if(right_it_was_on_end)
 				{
 					left_it=contour.end();
 				}
