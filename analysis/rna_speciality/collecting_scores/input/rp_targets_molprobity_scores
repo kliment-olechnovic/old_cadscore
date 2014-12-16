@@ -1,6 +1,0 @@
-target        MP_chains  MP_residues  MP_nucacids  MP_clashscore  MP_pct_badbonds  MP_pct_badangles
-6_solution_0  1          163          162          14.07          0.62             0.62
-4_solution_0  1          126          126          34.31          0.00             7.14
-3_solution_0  1          84           84           1.83           0.00             5.95
-2_solution_0  8          98           98           36.1           0.00             0.00
-1_solution_0  2          46           46           1.36           4.35             47.83
