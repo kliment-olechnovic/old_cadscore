@@ -62,7 +62,7 @@ private:
 		{
 			const PDBAtomRecord& record=PDB_atom_records[i];
 			if(!record.name.empty() &&
-					record.name.find("H")!=0 &&
+					(record.name.find("H")!=0 || (!record.element.empty() && record.element!="H")) &&
 					record.name.find("1H")!=0 &&
 					record.name.find("2H")!=0 &&
 					record.name.find("3H")!=0 &&

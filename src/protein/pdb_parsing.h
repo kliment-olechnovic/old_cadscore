@@ -22,6 +22,7 @@ struct PDBAtomRecord
 	double y;
 	double z;
 	double temperature_factor;
+	std::string element;
 
 	PDBAtomRecord(const std::string& PDB_file_line) :
 		label(basic_parsing::substring_of_columned_file_line(PDB_file_line, 1, 6)),
@@ -35,7 +36,8 @@ struct PDBAtomRecord
 		x(basic_parsing::convert_string<double>(basic_parsing::substring_of_columned_file_line(PDB_file_line, 31, 38))),
 		y(basic_parsing::convert_string<double>(basic_parsing::substring_of_columned_file_line(PDB_file_line, 39, 46))),
 		z(basic_parsing::convert_string<double>(basic_parsing::substring_of_columned_file_line(PDB_file_line, 47, 54))),
-		temperature_factor(basic_parsing::safe_convert_string<double>(basic_parsing::substring_of_columned_file_line(PDB_file_line, 61, 66), 0))
+		temperature_factor(basic_parsing::safe_convert_string<double>(basic_parsing::substring_of_columned_file_line(PDB_file_line, 61, 66), 0)),
+		element(basic_parsing::substring_of_columned_file_line(PDB_file_line, 77, 78))
 	{
 		if (label.empty() || name.empty() || residue_name.empty())
 		{
@@ -62,6 +64,7 @@ struct PDBAtomRecord
 		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(y, 3), 39, 46, true, line);
 		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(z, 3), 47, 54, true, line);
 		basic_parsing::insert_string_to_columned_file_line(basic_parsing::convert_double_to_string(temperature_factor, 2), 61, 66, true, line);
+		//basic_parsing::insert_string_to_columned_file_line(element, 77, 78, true, line);
 		return line;
 	}
 
