@@ -1,3 +1,5 @@
 /Release/
 /src/resources/version.h
 /tests/*/output/db_*/version
+/.cproject
+/.project
