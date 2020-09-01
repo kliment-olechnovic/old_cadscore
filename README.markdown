@@ -44,7 +44,9 @@ A compiled static executable for GNU/Linux is included in the package. However, 
 
 ## Basic command-line usage example
 
-Assume that we want to score two protein structure models "model1.pdb" and "model2.pdb" against the reference structure "target.pdb"
+Assume that we want to score two protein structure models "[model1.pdb](https://raw.githubusercontent.com/kliment-olechnovic/old_cadscore/master/tests/basic/input/model1)"
+and "[model2.pdb](https://raw.githubusercontent.com/kliment-olechnovic/old_cadscore/master/tests/basic/input/model2)"
+against the reference structure "[target.pdb](https://raw.githubusercontent.com/kliment-olechnovic/old_cadscore/master/tests/basic/input/target)"
 (note that residue sequence, residue numbering and chains naming in the models should be consistent with the target).
 Scoring is done by running the following commands:
 
@@ -61,7 +63,7 @@ Local contact differences for the "target.pdb" model "model1.pdb" are collected 
 
 Here "-c AS" means that we are interested in "A-S" contacts and "-w 3" means that that we want each value to be smoothed by window of (3+1+3) positions.
 
-If TMscore program is available in your system binary path, you can use "-g" flag to tell "CADscore_calc.bash" to additionally compute TM-score, GDT-TS and GDT-HA global scores.
+If [TMscore](http://zhanglab.ccmb.med.umich.edu/TM-score/) program is available in your system binary path, you can use "-g" flag to tell "CADscore_calc.bash" to additionally compute TM-score, GDT-TS and GDT-HA global scores.
 
 Note that CAD-score uses file base-names, not file full-paths as identifiers. So, for a single database directory, base-names of target files should be unique. And, for each target in a database, base-names of model files should be unique.
 
