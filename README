@@ -1,19 +1,23 @@
+== Note ==
+
+Please note that the new CAD-score implementation is the "voronota-cadscore"
+script in the Voronota package that is available from:
+
+https://github.com/kliment-olechnovic/voronota/releases
+
+
 == Overview ==
 
 CAD-score is a command-line software that constructs the Voronoi diagram
 of protein atom spheres, calculates inter-atom contact surfaces
 and uses them to compare protein structures of the same sequence.
 
-A brief tutorial is available from CAD-score site:
-
-https://bitbucket.org/kliment/cadscore/wiki/Home
-
 
 == Preparing to use ==
 
 Download the latest package from CAD-score downloads page:
 
-https://bitbucket.org/kliment/cadscore/downloads
+https://github.com/kliment-olechnovic/old_cadscore/releases
 
 A compiled static executable for GNU/Linux is included in the package.
 However, it is recommended to rebuild the executable
