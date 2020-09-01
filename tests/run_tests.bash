@@ -30,4 +30,4 @@ wait
 
 rm -r ./cadscore_package
 
-hg status ./
+git status -s ./

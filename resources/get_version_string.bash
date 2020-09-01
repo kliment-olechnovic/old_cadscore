@@ -2,6 +2,6 @@
 
 cd $(dirname "$0")
 
-VERSION=$(hg branches | egrep '^default' | awk '{print $2}' | tr ':' '_')
+VERSION=$(git rev-list --all --count)
 
-echo "cadscore_"$VERSION
+echo "cadscore_1.${VERSION}"

@@ -16,7 +16,7 @@
 
 protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& radius_classes_file_name, const std::string& radius_members_file_name)
 {
-	std::auto_ptr<std::istream> radius_classes_stream;
+	std::unique_ptr<std::istream> radius_classes_stream;
 	if(radius_classes_file_name.empty())
 	{
 		radius_classes_stream.reset(new std::istringstream(std::string(reinterpret_cast<const char*>(resources::vdwr_classes), resources::vdwr_classes_len)));
@@ -26,7 +26,7 @@ protein::VanDerWaalsRadiusAssigner construct_radius_assigner(const std::string& 
 		radius_classes_stream.reset(new std::ifstream(radius_classes_file_name.c_str()));
 	}
 
-	std::auto_ptr<std::istream> radius_members_stream;
+	std::unique_ptr<std::istream> radius_members_stream;
 	if(radius_members_file_name.empty())
 	{
 		radius_members_stream.reset(new std::istringstream(std::string(reinterpret_cast<const char*>(resources::vdwr_members), resources::vdwr_members_len)));

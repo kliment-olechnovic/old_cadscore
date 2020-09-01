@@ -1,8 +1,0 @@
-syntax: regexp
-^Release$
-
-syntax: regexp
-^src/resources/version\.h$
-
-syntax: regexp
-^tests/.*/output/db_.*/version$
