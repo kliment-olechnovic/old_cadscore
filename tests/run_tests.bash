@@ -26,6 +26,7 @@ fi
 
 ./basic/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH &
 ./rna/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH &
+./seqalign/run_tests.bash $CADSCORE_BIN_DIR_ABSOLUTE_PATH &
 wait
 
 rm -r ./cadscore_package
