@@ -3,3 +3,4 @@
 /tests/*/output/db_*/version
 /.cproject
 /.project
+/.settings/
