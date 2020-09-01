@@ -39,6 +39,7 @@ void x_rename_chains(const auxiliaries::CommandLineOptions& clo);
 void x_renumber_residues_by_reference(const auxiliaries::CommandLineOptions& clo);
 void x_renumber_residues_in_inter_atom_contacts(const auxiliaries::CommandLineOptions& clo);
 void x_summarize_dssp_file(const auxiliaries::CommandLineOptions& clo);
+void x_restrict_inter_chain_contacts(const auxiliaries::CommandLineOptions& clo);
 
 int main(const int argc, const char** argv)
 {
@@ -101,6 +102,7 @@ int main(const int argc, const char** argv)
 		modes_map["x-renumber-residues-by-reference"]=ModeFunctionPointer(x_renumber_residues_by_reference);
 		modes_map["x-renumber-residues-in-inter-atom-contacts"]=ModeFunctionPointer(x_renumber_residues_in_inter_atom_contacts);
 		modes_map["x-summarize-dssp-file"]=ModeFunctionPointer(x_summarize_dssp_file);
+		modes_map["x-restrict-inter-chain-contacts"]=ModeFunctionPointer(x_restrict_inter_chain_contacts);
 
 		if(modes_map.count(mode)==1)
 		{
