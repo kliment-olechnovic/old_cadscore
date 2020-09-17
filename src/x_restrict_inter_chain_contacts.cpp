@@ -9,7 +9,9 @@
 
 void x_restrict_inter_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 {
-	clo.check_allowed_options("");
+	clo.check_allowed_options("--no-solvent");
+
+	const bool no_solvent=clo.isopt("--no-solvent");
 
 	const std::vector<protein::Atom> atoms=auxiliaries::STDContainersIO::read_vector<protein::Atom>(std::cin, "atoms", "atoms", false);
 
@@ -24,7 +26,7 @@ void x_restrict_inter_chain_contacts(const auxiliaries::CommandLineOptions& clo)
 		const protein::Atom& a=atoms.at(contact.a);
 		const protein::Atom& b=atoms.at(contact.b);
 
-		if(a.chain_id!=b.chain_id)
+		if(a.chain_id!=b.chain_id || (!no_solvent && contact.a==contact.b))
 		{
 			restricted_inter_atom_contacts.push_back(contact);
 		}
