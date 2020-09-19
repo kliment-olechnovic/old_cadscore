@@ -639,7 +639,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 
 	const apollota::UtilitiesForTriangulation::PairsNeighborsMap pairs_neighbours_map=apollota::UtilitiesForTriangulation::collect_pairs_neighbors_map_from_quadruples_map(apollota::Triangulation::construct_result(apollota::UtilitiesForTriangulation::collect_simple_spheres(atoms), 3.5, false, false).quadruples_map);
 
-	std::unique_ptr<ContactAccepterInterface> contact_accepter;
+#ifdef FOR_OLDER_COMPILERS
+	typedef std::auto_ptr<ContactAccepterInterface> AutoPtrToContactAccepterInterface;
+#else
+	typedef std::unique_ptr<ContactAccepterInterface> AutoPtrToContactAccepterInterface;
+#endif
+
+	AutoPtrToContactAccepterInterface contact_accepter;
 	if(groups_option.substr(0,1)=="(")
 	{
 		std::string intervals_string=groups_option;
@@ -722,7 +728,13 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 		throw std::runtime_error("No interfaces found");
 	}
 
-	std::unique_ptr<const ContactColorizerInterface> face_colorizer;
+#ifdef FOR_OLDER_COMPILERS
+	typedef std::auto_ptr<const ContactColorizerInterface> AutoPtrToContactColorizerInterface;
+#else
+	typedef std::unique_ptr<const ContactColorizerInterface> AutoPtrToContactColorizerInterface;
+#endif
+
+	AutoPtrToContactColorizerInterface face_colorizer;
 	if(face_coloring_mode=="residue_type")
 	{
 		face_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());
@@ -802,7 +814,7 @@ void print_inter_chain_interface_graphics(const auxiliaries::CommandLineOptions&
 	if(!selection_coloring_mode.empty())
 	{
 		bool color_pymol_selection_at_atomic_level=true;
-		std::unique_ptr<const ContactColorizerInterface> selection_colorizer;
+		AutoPtrToContactColorizerInterface selection_colorizer;
 		if(selection_coloring_mode=="residue_type")
 		{
 			selection_colorizer.reset(new ContactColorizerByFirstResidueName<ResidueNameColorizerByResidueType>());

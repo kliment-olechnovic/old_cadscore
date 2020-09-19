@@ -42,6 +42,10 @@ A compiled static executable for GNU/Linux is included in the package. However, 
 
     g++ -O3 -o bin/voroprot2 src/*.cpp
 
+Users of very old C++ old compilers may need to provide an additional option:
+
+    g++ -DFOR_OLDER_COMPILERS -O3 -o bin/voroprot2 src/*.cpp
+
 ## Basic command-line usage example
 
 Assume that we want to score two protein structure models "[model1.pdb](https://raw.githubusercontent.com/kliment-olechnovic/old_cadscore/master/tests/basic/input/model1)"
